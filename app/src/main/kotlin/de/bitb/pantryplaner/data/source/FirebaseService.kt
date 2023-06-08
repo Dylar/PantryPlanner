@@ -1,5 +1,6 @@
 package de.bitb.pantryplaner.data.source
 
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.SetOptions
@@ -13,10 +14,21 @@ import kotlinx.coroutines.tasks.await
 
 class FirestoreService(
     private val firestore: FirebaseFirestore,
-) : ItemRemoteDao {
+    private val fireAuth: FirebaseAuth
+) : ItemRemoteDao, UserRemoteDao {
 
     private val itemCollection
         get() = firestore.collection("items")
+
+    override suspend fun loginUser(): Resource<Boolean> {
+        return tryIt(
+            onError = { Resource.Error(it, false) },
+            onTry = {
+                fireAuth.signInAnonymously().await()
+                Resource.Success(true)
+            },
+        )
+    }
 
     //TODO maybe flow in resource ... or whatever
     override fun getItems(): Flow<Resource<List<Item>>> = callbackFlow {
@@ -44,36 +56,36 @@ class FirestoreService(
         }
     }
 
-
-    override suspend fun saveItem(item: Item): Resource<Unit> {
+    override suspend fun saveItem(item: Item): Resource<Boolean> {
         return tryIt {
             val querySnapshot = itemCollection
                 .whereEqualTo("name", item.name)
-                .get()
-                .await()
+                .get().await()
 
             if (querySnapshot.isEmpty) {
                 itemCollection.add(item).await()
+                Resource.Success(true)
             } else {
                 val documentId = querySnapshot.documents.first().id
                 itemCollection.document(documentId).set(item, SetOptions.merge()).await()
+                Resource.Success(false)
             }
-            Resource.Success()
         }
     }
 
-    override suspend fun removeItem(item: Item): Resource<Unit> {
+    override suspend fun removeItem(item: Item): Resource<Boolean> {
         return tryIt {
             val querySnapshot = itemCollection
                 .whereEqualTo("name", item.name)
-                .get()
-                .await()
+                .get().await()
 
-            if (!querySnapshot.isEmpty) {
+            if (querySnapshot.isEmpty) {
+                Resource.Success(false)
+            } else {
                 val documentId = querySnapshot.documents.first().id
                 itemCollection.document(documentId).delete().await()
+                Resource.Success(true)
             }
-            Resource.Success()
         }
     }
 

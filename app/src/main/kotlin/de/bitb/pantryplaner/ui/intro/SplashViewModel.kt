@@ -2,7 +2,7 @@ package de.bitb.pantryplaner.ui.intro
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.bitb.buttonbuddy.R
+import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.atLeast
 import de.bitb.pantryplaner.ui.base.BaseViewModel
 import de.bitb.pantryplaner.usecase.ItemUseCases

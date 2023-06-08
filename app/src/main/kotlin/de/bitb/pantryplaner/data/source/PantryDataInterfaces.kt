@@ -5,14 +5,19 @@ import de.bitb.pantryplaner.data.model.Item
 import kotlinx.coroutines.flow.Flow
 
 // REMOTE
-interface RemoteService : ItemRemoteDao
+interface RemoteService : ItemRemoteDao, UserRemoteDao
 
 class PantryRemoteService(fireService: FirestoreService) :
     RemoteService,
+    UserRemoteDao by fireService,
     ItemRemoteDao by fireService
 
+interface UserRemoteDao {
+    suspend fun loginUser(): Resource<Boolean>
+}
+
 interface ItemRemoteDao {
-     fun getItems(): Flow<Resource<List<Item>>>
-    suspend fun removeItem(item: Item): Resource<Unit>
-    suspend fun saveItem(item: Item): Resource<Unit>
+    fun getItems(): Flow<Resource<List<Item>>>
+    suspend fun removeItem(item: Item): Resource<Boolean>
+    suspend fun saveItem(item: Item): Resource<Boolean>
 }

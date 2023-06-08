@@ -6,7 +6,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import de.bitb.buttonbuddy.R
+import de.bitb.pantryplaner.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -17,8 +17,7 @@ fun AddDialog(onConfirm: (String) -> Unit, onDismiss: () -> Unit) {
         title = { Text("Add Item") },
         text = {
             OutlinedTextField(
-                modifier = Modifier
-                    .padding(top = 32.dp, start = 16.dp, end = 16.dp),
+                modifier = Modifier.padding(top = 32.dp, start = 16.dp, end = 16.dp),
                 singleLine = true,
                 value = name,
                 onValueChange = { name = it },

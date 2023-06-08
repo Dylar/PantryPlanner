@@ -5,20 +5,23 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
-import de.bitb.buttonbuddy.R
+import de.bitb.pantryplaner.R
+import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.BaseFragment
+import de.bitb.pantryplaner.ui.base.composable.ErrorScreen
 import de.bitb.pantryplaner.ui.base.composable.LoadingIndicator
+import de.bitb.pantryplaner.ui.base.composable.asResString
 import de.bitb.pantryplaner.ui.info.InfoDialog
 
 @AndroidEntryPoint
@@ -42,28 +45,33 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
                 TopAppBar(
                     modifier = Modifier.testTag(APPBAR_TAG),
                     title = { Text(getString(R.string.check_title)) },
-                    navigationIcon = {
+                    actions = {
                         IconButton(
                             onClick = { showInfoDialog = true },
                             modifier = Modifier.testTag(INFO_BUTTON_TAG)
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Menu,
-                                contentDescription = "Toggle drawer"
+                                imageVector = Icons.Default.Info,
+                                contentDescription = "Info dialog"
                             )
                         }
-                    },
+                    }
                 )
             },
             floatingActionButton = {
                 FloatingActionButton(
                     modifier = Modifier.testTag(ADD_BUTTON_TAG),
                     onClick = { showAddDialog = true }
-                ) { Icon(Icons.Filled.QrCodeScanner, contentDescription = "Scan Buddy") }
+                ) { Icon(Icons.Filled.Add, contentDescription = "Add Item") }
             },
         ) { innerPadding ->
-            val list by viewModel.checkList.observeAsState(null)
-            CheckList(innerPadding, list)
+            val list by viewModel.checkList.collectAsState(null)
+            if (list is Resource.Error) {
+                showSnackBar("ERROR".asResString())
+                ErrorScreen(list!!.message!!.asString())
+            } else {
+                CheckList(innerPadding, list?.data)
+            }
         }
 
         if (showInfoDialog) {
@@ -72,8 +80,11 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
 
         if (showAddDialog) {
             AddDialog(
-                onConfirm = viewModel::addItem,
-                onDismiss =  { showAddDialog = false },
+                onConfirm = {
+                    viewModel.addItem(it)
+                    showAddDialog = false
+                },
+                onDismiss = { showAddDialog = false },
             )
         }
     }
@@ -82,13 +93,14 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
     fun CheckList(innerPadding: PaddingValues, check: List<Item>?) {
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding).fillMaxSize()
         ) {
             when {
                 check == null -> LoadingIndicator()
                 check.isEmpty() -> Text(
                     modifier = Modifier.fillMaxSize(),
-                    text = getString(R.string.no_check)
+                    text = getString(R.string.no_check),
+                    textAlign = TextAlign.Center,
                 )
                 else -> {
                     LazyColumn(

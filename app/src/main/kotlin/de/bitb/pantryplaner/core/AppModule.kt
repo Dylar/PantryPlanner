@@ -2,6 +2,7 @@ package de.bitb.pantryplaner.core
 
 import android.app.Application
 import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
@@ -10,7 +11,7 @@ import dagger.hilt.components.SingletonComponent
 import de.bitb.pantryplaner.data.*
 import de.bitb.pantryplaner.data.source.*
 import de.bitb.pantryplaner.usecase.ItemUseCases
-import de.bitb.pantryplaner.usecase.user.*
+import de.bitb.pantryplaner.usecase.item.*
 import javax.inject.Singleton
 
 @Module
@@ -23,7 +24,8 @@ object AppModule {
     fun provideRemoteDatabase(app: Application): RemoteService {
         FirebaseApp.initializeApp(app)
         val fireData = FirebaseFirestore.getInstance()
-        val fireService = FirestoreService(fireData)
+        val fireAuth = FirebaseAuth.getInstance()
+        val fireService = FirestoreService(fireData, fireAuth)
 
         return PantryRemoteService(fireService)
     }
@@ -31,18 +33,26 @@ object AppModule {
     // REPO
     @Provides
     @Singleton
+    fun provideUserRepository(
+        remoteService: RemoteService,
+    ): UserRepository = UserRepositoryImpl(remoteService)
+
+    @Provides
+    @Singleton
     fun provideItemRepository(
         remoteService: RemoteService,
-    ): ItemRepository = PantryRepositoryImpl(remoteService)
+    ): ItemRepository = ItemRepositoryImpl(remoteService)
 
     //USE CASES
     @Provides
     @Singleton
     fun provideItemUseCases(
+        userRepo: UserRepository,
         itemRepo: ItemRepository,
     ): ItemUseCases {
         return ItemUseCases(
-            loadDataUC = LoadDataUC( itemRepo),
+            loadDataUC = LoadDataUC(userRepo),
+            addItemUC = AddItemUC(itemRepo)
         )
     }
 

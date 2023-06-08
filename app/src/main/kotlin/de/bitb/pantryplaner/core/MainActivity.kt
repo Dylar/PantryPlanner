@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
-import de.bitb.buttonbuddy.R
+import de.bitb.pantryplaner.R
 
 @HiltAndroidApp
 class PantryApp : Application()
