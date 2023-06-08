@@ -34,4 +34,15 @@ class CheckViewModel @Inject constructor(
             }
         }
     }
+
+    fun removeItem(item: Item) {
+        viewModelScope.launch {
+            val resp = itemUseCases.removeItemUC(item)
+            when {
+                resp is Resource.Error -> showSnackbar(resp.message!!)
+                resp.data == true -> showSnackbar("Item entfernt".asResString())
+                else -> showSnackbar("Item nicht entfernt".asResString())
+            }
+        }
+    }
 }

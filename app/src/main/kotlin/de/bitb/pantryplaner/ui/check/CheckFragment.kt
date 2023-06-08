@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
@@ -22,6 +23,7 @@ import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.composable.ErrorScreen
 import de.bitb.pantryplaner.ui.base.composable.LoadingIndicator
 import de.bitb.pantryplaner.ui.base.composable.asResString
+import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.info.InfoDialog
 
 @AndroidEntryPoint
@@ -93,7 +95,7 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
     fun CheckList(innerPadding: PaddingValues, check: List<Item>?) {
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier.padding(innerPadding).fillMaxSize()
+            modifier = Modifier.padding(innerPadding)
         ) {
             when {
                 check == null -> LoadingIndicator()
@@ -116,32 +118,56 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
         }
     }
 
+    @OptIn(ExperimentalMaterialApi::class)
     @Composable
     fun CheckListItem(item: Item) {
-        Card(
-            elevation = 4.dp,
-            modifier = Modifier
-                .padding(8.dp)
-                .clickable { viewModel.checkItem(item) }
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    item.name,
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 16.dp)
-                )
-                Checkbox(
-                    item.checked,
-                    onCheckedChange = { viewModel.checkItem(item) },
-                )
+        val dismissState = rememberDismissState(
+            confirmStateChange = {
+                if (it == DismissValue.DismissedToEnd) {
+                    viewModel.removeItem(item)
+                    true
+                }else false
             }
-        }
+        )
+
+        SwipeToDismiss(
+            state = dismissState,
+            directions = setOf(DismissDirection.StartToEnd),
+            background = {
+                Text(
+                    text = "Delete",
+                    fontSize = 20.sp,
+                    modifier = Modifier.padding(16.dp),
+                    color = BaseColors.FireRed,
+                )
+            },
+            dismissContent = {
+                Card(
+                    elevation = 4.dp,
+                    modifier = Modifier
+                        .padding(vertical = 4.dp)
+                        .clickable { viewModel.checkItem(item) }
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 1.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            item.name,
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(start = 16.dp)
+                        )
+                        Checkbox(
+                            item.checked,
+                            onCheckedChange = { viewModel.checkItem(item) },
+                        )
+                    }
+                }
+            }
+        )
     }
 }

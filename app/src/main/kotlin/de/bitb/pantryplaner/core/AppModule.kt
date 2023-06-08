@@ -52,7 +52,8 @@ object AppModule {
     ): ItemUseCases {
         return ItemUseCases(
             loadDataUC = LoadDataUC(userRepo),
-            addItemUC = AddItemUC(itemRepo)
+            addItemUC = AddItemUC(itemRepo),
+            removeItemUC = RemoveItemUC(itemRepo)
         )
     }
 
