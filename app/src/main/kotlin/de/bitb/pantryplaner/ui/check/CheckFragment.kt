@@ -1,5 +1,6 @@
 package de.bitb.pantryplaner.ui.check
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -101,11 +102,16 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
         ) {
             when {
                 check == null -> LoadingIndicator()
-                check.isEmpty() -> Text(
+                check.isEmpty() -> Box(
+                    contentAlignment = Alignment.Center,
                     modifier = Modifier.fillMaxSize(),
-                    text = getString(R.string.no_check),
-                    textAlign = TextAlign.Center,
-                )
+                ) {
+                    Text(
+                        modifier = Modifier.fillMaxSize(),
+                        text = getString(R.string.no_check),
+                        textAlign = TextAlign.Center,
+                    )
+                }
                 else -> {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -145,12 +151,26 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
             state = dismissState,
             directions = setOf(DismissDirection.StartToEnd),
             background = {
-                Text(
-                    text = "Delete",
-                    fontSize = 20.sp,
-                    modifier = Modifier.padding(16.dp),
-                    color = BaseColors.FireRed,
-                )
+                Card(
+                    elevation = 4.dp,
+                    modifier = Modifier
+                        .padding(vertical = 4.dp)
+                        .clickable { viewModel.checkItem(item) }
+                ) {
+                    Box(
+                        contentAlignment = Alignment.CenterStart,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(BaseColors.FireRed)
+                            .padding(12.dp)
+                    ) {
+                        Text(
+                            text = "Delete",
+                            fontSize = 20.sp,
+                            color = BaseColors.White
+                        )
+                    }
+                }
             },
             dismissContent = {
                 Card(
