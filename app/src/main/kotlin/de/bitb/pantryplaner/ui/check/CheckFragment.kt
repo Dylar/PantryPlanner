@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -30,8 +31,9 @@ import de.bitb.pantryplaner.ui.info.InfoDialog
 class CheckFragment : BaseFragment<CheckViewModel>() {
     companion object {
         const val APPBAR_TAG = "CheckAppbar"
-        const val INFO_BUTTON_TAG = "CheckInfobutton"
-        const val ADD_BUTTON_TAG = "CheckAddbutton"
+        const val INFO_BUTTON_TAG = "CheckInfoButton"
+        const val ADD_BUTTON_TAG = "CheckAddButton"
+        const val UNCHECK_BUTTON_TAG = "CheckUncheckButton"
         const val LIST_TAG = "CheckList"
     }
 
@@ -105,14 +107,23 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
                     textAlign = TextAlign.Center,
                 )
                 else -> {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .testTag(LIST_TAG),
-                        verticalArrangement = Arrangement.Top,
+                    Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        contentPadding = innerPadding
-                    ) { items(check.size) { CheckListItem(check[it]) } }
+                        modifier = Modifier.padding(8.dp)
+                    ) {
+                        FloatingActionButton(
+                            modifier = Modifier.testTag(UNCHECK_BUTTON_TAG).padding(bottom = 8.dp),
+                            onClick = { viewModel.uncheckAllItems() }
+                        ) { Icon(Icons.Filled.Close, contentDescription = "Uncheck Items") }
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .testTag(LIST_TAG),
+                            verticalArrangement = Arrangement.Top,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            contentPadding = innerPadding
+                        ) { items(check.size) { CheckListItem(check[it]) } }
+                    }
                 }
             }
         }
@@ -151,7 +162,7 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 1.dp),
+                            .padding(horizontal = 4.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {

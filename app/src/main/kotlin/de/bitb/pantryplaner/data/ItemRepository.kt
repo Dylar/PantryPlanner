@@ -7,8 +7,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface ItemRepository {
     fun getLiveCheckList(): Flow<Resource<List<Item>>>
-    suspend fun saveItem(item: Item): Resource<Boolean>
+    suspend fun addItem(item: Item): Resource<Boolean>
     suspend fun removeItem(item: Item): Resource<Boolean>
+    suspend fun saveItems(items: List<Item>): Resource<Unit>
 }
 
 class ItemRepositoryImpl(
@@ -16,6 +17,7 @@ class ItemRepositoryImpl(
 ) : ItemRepository {
 
     override fun getLiveCheckList(): Flow<Resource<List<Item>>> = remoteDB.getItems()
-    override suspend fun saveItem(item: Item): Resource<Boolean> = remoteDB.saveItem(item)
+    override suspend fun addItem(item: Item)  = remoteDB.addItem(item)
     override suspend fun removeItem(item: Item): Resource<Boolean> = remoteDB.removeItem(item)
+    override suspend fun saveItems(items: List<Item>): Resource<Unit> = remoteDB.saveItems(items)
 }

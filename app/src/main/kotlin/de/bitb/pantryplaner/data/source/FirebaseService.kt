@@ -56,7 +56,23 @@ class FirestoreService(
         }
     }
 
-    override suspend fun saveItem(item: Item): Resource<Boolean> {
+    override suspend fun saveItems(items: List<Item>): Resource<Unit> {
+        return tryIt {
+            firestore.batch().apply {
+                itemCollection
+                    .whereIn("name", items.map { it.name })
+                    .get().await().documents
+                    .forEach { snap ->
+                        val name = snap.data?.get("name") ?: ""
+                        set(snap.reference, items.first { it.name == name })
+                    }
+                commit()
+            }
+            Resource.Success()
+        }
+    }
+
+    override suspend fun addItem(item: Item): Resource<Boolean> {
         return tryIt {
             val querySnapshot = itemCollection
                 .whereEqualTo("name", item.name)

@@ -20,13 +20,6 @@ class CheckViewModel @Inject constructor(
 
     val checkList: Flow<Resource<List<Item>>> = itemRepo.getLiveCheckList()
 
-    fun checkItem(item: Item) {
-        viewModelScope.launch {
-            val resp = itemUseCases.checkItemUC(item)
-            if (resp is Resource.Error) showSnackbar(resp.message!!)
-        }
-    }
-
     fun addItem(name: String) {
         viewModelScope.launch {
             val resp = itemUseCases.addItemUC(name)
@@ -45,6 +38,23 @@ class CheckViewModel @Inject constructor(
                 resp is Resource.Error -> showSnackbar(resp.message!!)
                 resp.data == true -> showSnackbar("Item entfernt".asResString())
                 else -> showSnackbar("Item nicht entfernt".asResString())
+            }
+        }
+    }
+
+    fun checkItem(item: Item) {
+        viewModelScope.launch {
+            val resp = itemUseCases.checkItemUC(item)
+            if (resp is Resource.Error) showSnackbar(resp.message!!)
+        }
+    }
+
+    fun uncheckAllItems() {
+        viewModelScope.launch {
+            val resp = itemUseCases.uncheckAllItemsUC()
+            when (resp) {
+                is Resource.Error -> showSnackbar(resp.message!!)
+                else -> showSnackbar("Alle Haken entfernt".asResString())
             }
         }
     }

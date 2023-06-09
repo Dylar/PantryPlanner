@@ -8,8 +8,13 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import de.bitb.pantryplaner.data.*
-import de.bitb.pantryplaner.data.source.*
+import de.bitb.pantryplaner.data.ItemRepository
+import de.bitb.pantryplaner.data.ItemRepositoryImpl
+import de.bitb.pantryplaner.data.UserRepository
+import de.bitb.pantryplaner.data.UserRepositoryImpl
+import de.bitb.pantryplaner.data.source.FirestoreService
+import de.bitb.pantryplaner.data.source.PantryRemoteService
+import de.bitb.pantryplaner.data.source.RemoteService
 import de.bitb.pantryplaner.usecase.ItemUseCases
 import de.bitb.pantryplaner.usecase.item.*
 import javax.inject.Singleton
@@ -55,6 +60,7 @@ object AppModule {
             addItemUC = AddItemUC(itemRepo),
             removeItemUC = RemoveItemUC(itemRepo),
             checkItemUC = CheckItemUC(itemRepo),
+            uncheckAllItemsUC = UncheckAllItemsUC(itemRepo),
         )
     }
 

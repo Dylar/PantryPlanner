@@ -11,7 +11,7 @@ class CheckItemUC(
     suspend operator fun invoke(item: Item): Resource<Unit> {
         return tryIt {
             val checkItem = item.copy(checked = !item.checked)
-            val resp = itemRepo.saveItem(checkItem)
+            val resp = itemRepo.saveItems(listOf(checkItem))
             if (resp is Resource.Error) {
                 resp.castTo()
             } else Resource.Success()

@@ -13,7 +13,7 @@ class AddItemUC(
             onError = { Resource.Error(it, false) },
             onTry = {
                 val item = Item(name)
-                itemRepo.saveItem(item)
+                itemRepo.addItem(item)
             },
         )
     }
