@@ -20,5 +20,5 @@ interface ItemRemoteDao {
     fun getItems(): Flow<Resource<List<Item>>>
     suspend fun addItem(item: Item): Resource<Boolean>
     suspend fun removeItem(item: Item): Resource<Boolean>
-    suspend fun saveItems(item: List<Item>): Resource<Unit>
+    suspend fun saveItems(items: List<Item>): Resource<Unit>
 }

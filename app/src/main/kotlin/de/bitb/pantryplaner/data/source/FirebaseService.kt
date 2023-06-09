@@ -30,13 +30,11 @@ class FirestoreService(
         )
     }
 
-    //TODO maybe flow in resource ... or whatever
     override fun getItems(): Flow<Resource<List<Item>>> = callbackFlow {
         var snapshotStateListener: ListenerRegistration? = null
         try {
             snapshotStateListener = itemCollection
-//                .orderBy("timestamp") TODO order by checked
-//                .whereEqualTo("userId", userId)
+                .orderBy("checked")
                 .addSnapshotListener { snapshot, e ->
                     val response = if (snapshot != null) {
                         val notes = snapshot.toObjects(Item::class.java)
