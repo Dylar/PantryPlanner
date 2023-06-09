@@ -126,7 +126,7 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
                 if (it == DismissValue.DismissedToEnd) {
                     viewModel.removeItem(item)
                     true
-                }else false
+                } else false
             }
         )
 

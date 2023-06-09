@@ -21,7 +21,10 @@ class CheckViewModel @Inject constructor(
     val checkList: Flow<Resource<List<Item>>> = itemRepo.getLiveCheckList()
 
     fun checkItem(item: Item) {
-
+        viewModelScope.launch {
+            val resp = itemUseCases.checkItemUC(item)
+            if (resp is Resource.Error) showSnackbar(resp.message!!)
+        }
     }
 
     fun addItem(name: String) {

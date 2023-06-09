@@ -6,6 +6,6 @@ data class ItemUseCases(
     val loadDataUC: LoadDataUC,
     val addItemUC: AddItemUC,
     val removeItemUC: RemoveItemUC,
-//    val checkItemUC: checkItemUC,
-//    val uncheckAllItemsUC: uncheckAllItemsUC,
+    val checkItemUC: CheckItemUC,
+//    val uncheckAllItemsUC: UncheckAllItemsUC,
 )
