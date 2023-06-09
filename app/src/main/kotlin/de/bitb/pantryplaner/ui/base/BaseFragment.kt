@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import de.bitb.pantryplaner.ui.base.composable.ResString
-import de.bitb.pantryplaner.ui.base.styles.ButtonPantryAppTheme
+import de.bitb.pantryplaner.ui.base.styles.PantryAppTheme
 import kotlinx.coroutines.launch
 
 abstract class BaseFragment<T : BaseViewModel> : Fragment() {
@@ -41,7 +41,7 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
     ): View = ComposeView(requireContext()).apply {
         setContent {
             scaffoldState = rememberScaffoldState()
-            ButtonPantryAppTheme(
+            PantryAppTheme(
                 useDarkTheme = isSystemInDarkTheme()
             ) { ScreenContent() }
         }

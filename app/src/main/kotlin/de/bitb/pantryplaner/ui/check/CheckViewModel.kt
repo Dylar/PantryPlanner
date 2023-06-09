@@ -25,8 +25,8 @@ class CheckViewModel @Inject constructor(
             val resp = itemUseCases.addItemUC(name)
             when {
                 resp is Resource.Error -> showSnackbar(resp.message!!)
-                resp.data == true -> showSnackbar("Item hinzugefügt".asResString())
-                else -> showSnackbar("Item gibt es schon".asResString())
+                resp.data == true -> showSnackbar("Item hinzugefügt: $name".asResString())
+                else -> showSnackbar("Item gibt es schon: $name".asResString())
             }
         }
     }
@@ -36,8 +36,8 @@ class CheckViewModel @Inject constructor(
             val resp = itemUseCases.removeItemUC(item)
             when {
                 resp is Resource.Error -> showSnackbar(resp.message!!)
-                resp.data == true -> showSnackbar("Item entfernt".asResString())
-                else -> showSnackbar("Item nicht entfernt".asResString())
+                resp.data == true -> showSnackbar("Item entfernt: ${item.name}".asResString())
+                else -> showSnackbar("Item nicht entfernt: ${item.name}".asResString())
             }
         }
     }
@@ -51,8 +51,7 @@ class CheckViewModel @Inject constructor(
 
     fun uncheckAllItems() {
         viewModelScope.launch {
-            val resp = itemUseCases.uncheckAllItemsUC()
-            when (resp) {
+            when (val resp = itemUseCases.uncheckAllItemsUC()) {
                 is Resource.Error -> showSnackbar(resp.message!!)
                 else -> showSnackbar("Alle Haken entfernt".asResString())
             }

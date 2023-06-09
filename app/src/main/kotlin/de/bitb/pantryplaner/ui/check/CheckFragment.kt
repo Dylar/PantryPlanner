@@ -85,9 +85,11 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
 
         if (showAddDialog) {
             AddDialog(
-                onConfirm = {
-                    viewModel.addItem(it)
-                    showAddDialog = false
+                onConfirm = { name, close ->
+                    viewModel.addItem(name)
+                    if (close) {
+                        showAddDialog = false
+                    }
                 },
                 onDismiss = { showAddDialog = false },
             )
@@ -138,14 +140,32 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
     @OptIn(ExperimentalMaterialApi::class)
     @Composable
     fun CheckListItem(item: Item) {
+        var showRemoveDialog by remember { mutableStateOf(false) }
         val dismissState = rememberDismissState(
             confirmStateChange = {
                 if (it == DismissValue.DismissedToEnd) {
-                    viewModel.removeItem(item)
+                    showRemoveDialog = true
                     true
                 } else false
             }
         )
+
+        LaunchedEffect(dismissState.currentValue) {
+            if (dismissState.currentValue != DismissValue.Default) {
+                dismissState.reset()
+            }
+        }
+
+        if (showRemoveDialog) {
+            RemoveDialog(
+                item,
+                onConfirm = {
+                    viewModel.removeItem(it)
+                    showRemoveDialog = false
+                },
+                onDismiss = { showRemoveDialog = false },
+            )
+        }
 
         SwipeToDismiss(
             state = dismissState,
