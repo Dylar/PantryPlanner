@@ -9,20 +9,20 @@ import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.data.model.Item
 
 @Composable
-fun RemoveDialog(item: Item, onConfirm: (Item) -> Unit, onDismiss: () -> Unit) {
+fun ConfirmDialog(title:String, msg:String, onConfirm: () -> Unit, onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Remove Item") },
+        title = { Text(title) },
         text = {
             Text(
-                "Möchtest du folgendes Item entfernen?\n${item.name}",
+                msg,
                 modifier = Modifier.padding(top = 32.dp, start = 16.dp, end = 16.dp),
             )
         },
         confirmButton = {
             Button(
-                onClick = { onConfirm(item) },
-                content = { Text("ENTFERNEN") }
+                onClick = { onConfirm() },
+                content = { Text("OK") }
             )
         },
         dismissButton = {

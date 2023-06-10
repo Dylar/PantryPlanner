@@ -12,7 +12,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun AddDialog(onConfirm: (String, Boolean) -> Unit, onDismiss: () -> Unit) {
     var name by remember { mutableStateOf("") }

@@ -1,4 +1,4 @@
-package de.bitb.pantryplaner.ui.widgets
+package de.bitb.pantryplaner.ui.check
 
 import android.content.Context
 import android.content.Intent
@@ -7,14 +7,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
-import androidx.glance.GlanceId
-import androidx.glance.GlanceModifier
+import androidx.glance.*
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.*
 import androidx.glance.appwidget.lazy.LazyColumn
-import androidx.glance.background
 import androidx.glance.layout.*
 import androidx.glance.text.Text
+import androidx.glance.text.TextAlign
+import androidx.glance.text.TextDecoration
+import androidx.glance.text.TextDefaults
+import androidx.glance.unit.ColorProvider
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -72,9 +74,31 @@ class ScreenWidget : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         refresh(context)
         provideContent {
-            when {
-                items.isEmpty() -> EmptyListContent()
-                else -> CheckListContent(context)
+            Column(modifier = GlanceModifier.fillMaxSize()) {
+                Box(
+                    modifier = GlanceModifier
+                        .fillMaxWidth()
+                        .padding(4.dp)
+                        .background(BaseColors.Black)
+                ) {
+                    Button(
+                        modifier = GlanceModifier.fillMaxWidth().padding(2.dp),
+                        text = "Refresh",
+                        style = TextDefaults.defaultTextStyle.copy(
+                            color = ColorProvider(BaseColors.White),
+                            textAlign = TextAlign.Center,
+                        ),
+                        colors = ButtonDefaults.buttonColors(
+                            ColorProvider(BaseColors.LightGreen),
+                            ColorProvider(BaseColors.Black)
+                        ),
+                        onClick = { refresh(context) }
+                    )
+                }
+                when {
+                    items.isEmpty() -> EmptyListContent()
+                    else -> CheckListContent(context)
+                }
             }
         }
     }
@@ -93,7 +117,7 @@ class ScreenWidget : GlanceAppWidget() {
         Box(
             modifier = GlanceModifier
                 .padding(2.dp)
-                .background(BaseColors.LightGreen.copy(alpha = .4f))
+                .background(BaseColors.LightGray.copy(alpha = .2f))
         ) {
             LazyColumn(
                 modifier = GlanceModifier.fillMaxSize(),
@@ -123,8 +147,13 @@ class ScreenWidget : GlanceAppWidget() {
             Text(
                 modifier = GlanceModifier
                     .fillMaxWidth()
-                    .background(BaseColors.FireRed.copy(alpha = .7f)),
-                text = item.name
+                    .padding(horizontal = 4.dp, vertical = 2.dp)
+                    .background(BaseColors.LightGray.copy(alpha = .3f)),
+                text = item.name,
+                style = TextDefaults.defaultTextStyle.copy(
+                    color = ColorProvider(BaseColors.White),
+                    textDecoration = if (item.checked) TextDecoration.LineThrough else TextDecoration.None
+                )
             )
         }
     }

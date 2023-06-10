@@ -4,16 +4,20 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.GridOff
+import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.viewModels
@@ -33,17 +37,21 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
     companion object {
         const val APPBAR_TAG = "CheckAppbar"
         const val INFO_BUTTON_TAG = "CheckInfoButton"
+        const val LAYOUT_BUTTON_TAG = "CheckLayoutButton"
         const val ADD_BUTTON_TAG = "CheckAddButton"
         const val UNCHECK_BUTTON_TAG = "CheckUncheckButton"
         const val LIST_TAG = "CheckList"
+        const val GRID_TAG = "CheckGrid"
     }
 
     override val viewModel: CheckViewModel by viewModels()
 
     @Composable
     override fun ScreenContent() {
+        var showGridLayout by remember { mutableStateOf(false) }
         var showInfoDialog by remember { mutableStateOf(false) }
         var showAddDialog by remember { mutableStateOf(false) }
+        var showUncheckDialog by remember { mutableStateOf(false) }
         Scaffold(
             scaffoldState = scaffoldState,
             topBar = {
@@ -60,22 +68,60 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
                                 contentDescription = "Info dialog"
                             )
                         }
+                        IconButton(
+                            onClick = { showGridLayout = !showGridLayout },
+                            modifier = Modifier.testTag(LAYOUT_BUTTON_TAG)
+                        ) {
+                            Icon(
+                                imageVector = if (showGridLayout) Icons.Default.GridOff else Icons.Default.GridOn,
+                                contentDescription = "Layout button"
+                            )
+                        }
                     }
                 )
             },
-            floatingActionButton = {
-                FloatingActionButton(
-                    modifier = Modifier.testTag(ADD_BUTTON_TAG),
-                    onClick = { showAddDialog = true }
-                ) { Icon(Icons.Filled.Add, contentDescription = "Add Item") }
-            },
+            bottomBar = {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .weight(2f)
+                    ) {
+                        Button(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp)
+                                .testTag(UNCHECK_BUTTON_TAG),
+                            onClick = { viewModel.uncheckAllItems() },
+                            content = { Text("Haken entfernen") }
+                        )
+                    }
+                    Box(
+                        modifier = Modifier
+                            .padding(8.dp)
+                    ) {
+                        FloatingActionButton(
+                            modifier = Modifier
+                                .padding(bottom = 8.dp)
+                                .testTag(ADD_BUTTON_TAG),
+                            onClick = { showAddDialog = true }
+                        ) { Icon(Icons.Filled.Add, contentDescription = "Add Item") }
+                    }
+                }
+            }
         ) { innerPadding ->
             val list by viewModel.checkList.collectAsState(null)
             if (list is Resource.Error) {
                 showSnackBar("ERROR".asResString())
                 ErrorScreen(list!!.message!!.asString())
             } else {
-                CheckList(innerPadding, list?.data)
+                CheckList(innerPadding, showGridLayout, list?.data)
             }
         }
 
@@ -94,10 +140,22 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
                 onDismiss = { showAddDialog = false },
             )
         }
+
+        if (showUncheckDialog) {
+            ConfirmDialog(
+                "Haken entfernen?",
+                "Möchten Sie alle Haken entfernen?",
+                onConfirm = {
+                    viewModel.uncheckAllItems()
+                    showUncheckDialog = false
+                },
+                onDismiss = { showUncheckDialog = false },
+            )
+        }
     }
 
     @Composable
-    fun CheckList(innerPadding: PaddingValues, check: List<Item>?) {
+    fun CheckList(innerPadding: PaddingValues, showGridLayout: Boolean, check: List<Item>?) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.padding(innerPadding)
@@ -115,21 +173,24 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
                     )
                 }
                 else -> {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.padding(8.dp)
-                    ) {
-                        FloatingActionButton(
-                            modifier = Modifier.testTag(UNCHECK_BUTTON_TAG).padding(bottom = 8.dp),
-                            onClick = { viewModel.uncheckAllItems() }
-                        ) { Icon(Icons.Filled.Close, contentDescription = "Uncheck Items") }
+                    if (showGridLayout) {
+                        LazyVerticalGrid(
+                            GridCells.Fixed(2),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .testTag(GRID_TAG),
+                            verticalArrangement = Arrangement.Top,
+                            horizontalArrangement = Arrangement.Center,
+                            contentPadding = PaddingValues(4.dp),
+                        ) { items(check.size) { CheckListItem(check[it]) } }
+                    } else {
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .testTag(LIST_TAG),
                             verticalArrangement = Arrangement.Top,
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            contentPadding = innerPadding
+                            contentPadding = PaddingValues(4.dp),
                         ) { items(check.size) { CheckListItem(check[it]) } }
                     }
                 }
@@ -157,10 +218,11 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
         }
 
         if (showRemoveDialog) {
-            RemoveDialog(
-                item,
+            ConfirmDialog(
+                "Remove Item",
+                "Möchtest du folgendes Item entfernen?\n${item.name}",
                 onConfirm = {
-                    viewModel.removeItem(it)
+                    viewModel.removeItem(item)
                     showRemoveDialog = false
                 },
                 onDismiss = { showRemoveDialog = false },
@@ -168,6 +230,7 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
         }
 
         SwipeToDismiss(
+            modifier = Modifier.padding(2.dp),
             state = dismissState,
             directions = setOf(DismissDirection.StartToEnd),
             background = {
@@ -206,15 +269,16 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        Checkbox(
+                            item.checked,
+                            onCheckedChange = { viewModel.checkItem(item) },
+                        )
                         Text(
                             item.name,
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(start = 16.dp)
-                        )
-                        Checkbox(
-                            item.checked,
-                            onCheckedChange = { viewModel.checkItem(item) },
+                                .padding(start = 16.dp),
+                            textDecoration = if (item.checked) TextDecoration.LineThrough else TextDecoration.None
                         )
                     }
                 }
