@@ -1,5 +1,6 @@
 package de.bitb.pantryplaner.ui.base
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -32,6 +33,7 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
             }
         }
         viewModel.showSnackbar = ::showSnackBar
+        viewModel.updateWidgets = ::updateWidgets
     }
 
     override fun onCreateView(
@@ -57,5 +59,10 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
 //                    actionLabel = "Do something"
             )
         }
+    }
+
+    private fun updateWidgets() {
+        val intent = Intent("android.appwidget.action.APPWIDGET_UPDATE")
+        requireContext().sendBroadcast(intent)
     }
 }

@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 @HiltViewModel
 class CheckViewModel @Inject constructor(
     itemRepo: ItemRepository,
@@ -25,7 +26,7 @@ class CheckViewModel @Inject constructor(
             val resp = itemUseCases.addItemUC(name)
             when {
                 resp is Resource.Error -> showSnackbar(resp.message!!)
-                resp.data == true -> showSnackbar("Item hinzugefügt: $name".asResString())
+                resp.data == true -> showSnackbar("Item hinzugefügt: $name".asResString()).also { updateWidgets() }
                 else -> showSnackbar("Item gibt es schon: $name".asResString())
             }
         }
@@ -36,7 +37,7 @@ class CheckViewModel @Inject constructor(
             val resp = itemUseCases.removeItemUC(item)
             when {
                 resp is Resource.Error -> showSnackbar(resp.message!!)
-                resp.data == true -> showSnackbar("Item entfernt: ${item.name}".asResString())
+                resp.data == true -> showSnackbar("Item entfernt: ${item.name}".asResString()).also { updateWidgets() }
                 else -> showSnackbar("Item nicht entfernt: ${item.name}".asResString())
             }
         }
@@ -44,8 +45,10 @@ class CheckViewModel @Inject constructor(
 
     fun checkItem(item: Item) {
         viewModelScope.launch {
-            val resp = itemUseCases.checkItemUC(item)
-            if (resp is Resource.Error) showSnackbar(resp.message!!)
+            when (val resp = itemUseCases.checkItemUC(item)) {
+                is Resource.Error -> showSnackbar(resp.message!!)
+                else -> updateWidgets()
+            }
         }
     }
 
@@ -53,8 +56,9 @@ class CheckViewModel @Inject constructor(
         viewModelScope.launch {
             when (val resp = itemUseCases.uncheckAllItemsUC()) {
                 is Resource.Error -> showSnackbar(resp.message!!)
-                else -> showSnackbar("Alle Haken entfernt".asResString())
+                else -> showSnackbar("Alle Haken entfernt".asResString()).also { updateWidgets() }
             }
         }
     }
+
 }
