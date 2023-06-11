@@ -16,7 +16,7 @@ class SplashViewModel @Inject constructor(
 
     fun loadData() {
         viewModelScope.launch {
-            val userResp = atLeast(0) { itemUseCases.loadDataUC() }
+            val userResp = atLeast(1000) { itemUseCases.loadDataUC() }
             val route = if (userResp.data != true) {
                 R.id.splash_to_check
             } else {

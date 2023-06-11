@@ -17,7 +17,7 @@ class ItemRepositoryImpl(
 ) : ItemRepository {
 
     override fun getLiveCheckList(): Flow<Resource<List<Item>>> = remoteDB.getItems()
-    override suspend fun addItem(item: Item)  = remoteDB.addItem(item)
+    override suspend fun addItem(item: Item) = remoteDB.addItem(item)
     override suspend fun removeItem(item: Item): Resource<Boolean> = remoteDB.removeItem(item)
     override suspend fun saveItems(items: List<Item>): Resource<Unit> = remoteDB.saveItems(items)
 }
