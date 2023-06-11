@@ -2,15 +2,15 @@ package de.bitb.pantryplaner.ui.check
 
 import android.content.Context
 import android.content.Intent
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.glance.*
+import androidx.glance.GlanceId
+import androidx.glance.GlanceModifier
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.*
 import androidx.glance.appwidget.lazy.LazyColumn
+import androidx.glance.background
 import androidx.glance.layout.*
 import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
@@ -24,6 +24,7 @@ import dagger.hilt.components.SingletonComponent
 import de.bitb.pantryplaner.data.ItemRepository
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
+import de.bitb.pantryplaner.ui.base.styles.BaseColors.FilterColors
 import de.bitb.pantryplaner.usecase.ItemUseCases
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
@@ -56,6 +57,7 @@ class ScreenWidget : GlanceAppWidget() {
         get() = dependencies.getUCs()
 
     private var items by mutableStateOf<List<Item>>(emptyList())
+    private val filterBy = mutableStateOf(FilterColors.first())
 
     override suspend fun onDelete(context: Context, glanceId: GlanceId) {
         super.onDelete(context, glanceId)
@@ -74,30 +76,19 @@ class ScreenWidget : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         refresh(context)
         provideContent {
+            val showItems =
+                if (filterBy.value == FilterColors.first()) items else items.filter { filterBy.value == it.color }
+
             Column(modifier = GlanceModifier.fillMaxSize()) {
                 Box(
                     modifier = GlanceModifier
                         .fillMaxWidth()
                         .padding(4.dp)
                         .background(BaseColors.Black)
-                ) {
-                    Button(
-                        modifier = GlanceModifier.fillMaxWidth().padding(2.dp),
-                        text = "Refresh",
-                        style = TextDefaults.defaultTextStyle.copy(
-                            color = ColorProvider(BaseColors.White),
-                            textAlign = TextAlign.Center,
-                        ),
-                        colors = ButtonDefaults.buttonColors(
-                            ColorProvider(BaseColors.LightGreen),
-                            ColorProvider(BaseColors.Black)
-                        ),
-                        onClick = { refresh(context) }
-                    )
-                }
+                ) { ColorRow(context, filterBy, FilterColors) }
                 when {
-                    items.isEmpty() -> EmptyListContent()
-                    else -> CheckListContent(context)
+                    showItems.isEmpty() -> EmptyListContent()
+                    else -> CheckListContent(context, showItems)
                 }
             }
         }
@@ -107,13 +98,24 @@ class ScreenWidget : GlanceAppWidget() {
     private fun EmptyListContent() {
         Box(
             modifier = GlanceModifier
+                .padding(2.dp)
                 .fillMaxSize()
-                .padding(top = 16.dp)
-        ) { Text(text = "No items") }
+                .background(BaseColors.LightGray.copy(alpha = .2f)),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                modifier = GlanceModifier.fillMaxSize(),
+                text = "No items",
+                style = TextDefaults.defaultTextStyle.copy(
+                    color = ColorProvider(BaseColors.White),
+                    textAlign = TextAlign.Center
+                )
+            )
+        }
     }
 
     @Composable
-    private fun CheckListContent(context: Context) {
+    private fun CheckListContent(context: Context, items: List<Item>) {
         Box(
             modifier = GlanceModifier
                 .padding(2.dp)
@@ -161,4 +163,50 @@ class ScreenWidget : GlanceAppWidget() {
             )
         }
     }
+
+    @Composable
+    fun ColorRow(
+        context: Context,
+        selectedCircleIndex: MutableState<Color>,
+        selectableColors: List<Color>
+    ) {
+        Row(
+            modifier = GlanceModifier
+                .fillMaxWidth()
+                .padding(vertical = 2.dp)
+                .background(BaseColors.White),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            for (index in selectableColors.indices) {
+                val color = selectableColors[index]
+                ColorDongle(
+                    index,
+                    color = color,
+                    isSelected = color == selectedCircleIndex.value,
+                ) {
+                    selectedCircleIndex.value = color
+                    refresh(context)
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun ColorDongle(
+        index: Int,
+        color: Color,
+        isSelected: Boolean,
+        onSelect: (Color) -> Unit,
+    ) {
+        Text(
+            index.toString(),
+            modifier = GlanceModifier
+                .background(if (isSelected) BaseColors.Black.copy(alpha = .4f) else Color.Transparent)
+                .padding(horizontal = 4.dp, vertical = 2.dp)
+                .clickable { onSelect(color) },
+            style = TextDefaults.defaultTextStyle.copy(color = ColorProvider(color))
+        )
+    }
 }
+
