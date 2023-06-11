@@ -35,7 +35,6 @@
     <string name="pw_missing_special">Password must contain at least one special character</string>
 
 
-
     <string name="login_title">Login</string>
     <string name="login_register_account">Noch kein Account?\nKlicken Sie hier um sich zu registrieren</string>
     <string name="register_title">Registrieren</string>

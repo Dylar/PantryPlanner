@@ -1,15 +1,15 @@
 package de.bitb.pantryplaner.ui.dialogs
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
-import de.bitb.pantryplaner.data.model.Item
 
 @Composable
-fun ConfirmDialog(title:String, msg:String, onConfirm: () -> Unit, onDismiss: () -> Unit) {
+fun ConfirmDialog(title: String, msg: String, onConfirm: () -> Unit, onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(title) },

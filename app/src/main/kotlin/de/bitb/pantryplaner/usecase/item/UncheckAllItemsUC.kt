@@ -16,7 +16,7 @@ class UncheckAllItemsUC(
             }
 
             val items = getItemsResp.data ?: listOf()
-            if(items.isEmpty()){
+            if (items.isEmpty()) {
                 return@tryIt Resource.Success()
             }
 

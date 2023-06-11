@@ -18,6 +18,5 @@
     <fragment
         android:id="@+id/checkFragment"
         android:name="de.bitb.pantryplaner.ui.check.CheckFragment"
-        android:label="check">
-    </fragment>
+        android:label="check"></fragment>
 </navigation>

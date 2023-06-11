@@ -10,7 +10,10 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.GridOff
+import androidx.compose.material.icons.filled.GridOn
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
