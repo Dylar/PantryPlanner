@@ -13,11 +13,23 @@ object BaseColors {
 
     val AdultBlue = Color(0xff0B5394)
     val LightGreen = Color(0xffe7ed9b)
+    val DarkGreen = Color(0xFF006400)
     val BabyBlue = Color(0xff89CFF0)
     val SunYellow = Color(0xFFFFFF00)
     val ZergPurple = Color(0xffA259FF)
     val FireRed = Color(0xFFFF4500)
+
+    val SelectableColors = listOf(
+        LightGray,
+        FireRed,
+        ZergPurple,
+        BabyBlue,
+        AdultBlue,
+        LightGreen,
+        DarkGreen,
+    )
 }
+
 
 val lightColorPalette = lightColors(
     primary = BaseColors.AdultBlue,

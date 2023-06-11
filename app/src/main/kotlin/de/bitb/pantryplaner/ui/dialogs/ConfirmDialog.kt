@@ -1,4 +1,4 @@
-package de.bitb.pantryplaner.ui.check
+package de.bitb.pantryplaner.ui.dialogs
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*

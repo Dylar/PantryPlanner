@@ -143,6 +143,10 @@ class ScreenWidget : GlanceAppWidget() {
             CheckBox(
                 item.checked,
                 onCheckedChange = ::onTap,
+                colors = CheckboxDefaults.colors(
+                    checkedColor = item.color,
+                    uncheckedColor = item.color
+                )
             )
             Text(
                 modifier = GlanceModifier

@@ -30,7 +30,9 @@ import de.bitb.pantryplaner.ui.base.composable.ErrorScreen
 import de.bitb.pantryplaner.ui.base.composable.LoadingIndicator
 import de.bitb.pantryplaner.ui.base.composable.asResString
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
-import de.bitb.pantryplaner.ui.info.InfoDialog
+import de.bitb.pantryplaner.ui.dialogs.AddDialog
+import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
+import de.bitb.pantryplaner.ui.dialogs.InfoDialog
 
 @AndroidEntryPoint
 class CheckFragment : BaseFragment<CheckViewModel>() {
@@ -48,7 +50,7 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
 
     @Composable
     override fun ScreenContent() {
-        var showGridLayout by remember { mutableStateOf(false) }
+        var showGridLayout by remember { mutableStateOf(true) }
         var showInfoDialog by remember { mutableStateOf(false) }
         var showAddDialog by remember { mutableStateOf(false) }
         var showUncheckDialog by remember { mutableStateOf(false) }
@@ -98,7 +100,7 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
                                 .fillMaxWidth()
                                 .padding(bottom = 8.dp)
                                 .testTag(UNCHECK_BUTTON_TAG),
-                            onClick = { viewModel.uncheckAllItems() },
+                            onClick = { showUncheckDialog = true },
                             content = { Text("Haken entfernen") }
                         )
                     }
@@ -131,8 +133,8 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
 
         if (showAddDialog) {
             AddDialog(
-                onConfirm = { name, close ->
-                    viewModel.addItem(name)
+                onConfirm = { name, color, close ->
+                    viewModel.addItem(name, color)
                     if (close) {
                         showAddDialog = false
                     }
@@ -266,18 +268,30 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 4.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
+                        horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        Box(
+                            Modifier.weight(.1f)
+                                .fillMaxHeight()
+                                .width(8.dp)
+                                .background(BaseColors.FireRed)
+                        )
                         Checkbox(
                             item.checked,
+                            modifier = Modifier
+                                .weight(.2f),
                             onCheckedChange = { viewModel.checkItem(item) },
+                            colors = CheckboxDefaults.colors(
+                                checkedColor = item.color,
+                                uncheckedColor = item.color
+                            )
                         )
                         Text(
                             item.name,
                             modifier = Modifier
-                                .weight(1f)
-                                .padding(start = 16.dp),
+                                .weight(.7f)
+                                .padding(start = 2.dp),
                             textDecoration = if (item.checked) TextDecoration.LineThrough else TextDecoration.None
                         )
                     }

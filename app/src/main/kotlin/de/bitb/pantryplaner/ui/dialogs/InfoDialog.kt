@@ -1,4 +1,4 @@
-package de.bitb.pantryplaner.ui.info
+package de.bitb.pantryplaner.ui.dialogs
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth

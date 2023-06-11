@@ -1,5 +1,6 @@
 package de.bitb.pantryplaner.ui.check
 
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.bitb.pantryplaner.core.misc.Resource
@@ -21,9 +22,9 @@ class CheckViewModel @Inject constructor(
 
     val checkList: Flow<Resource<List<Item>>> = itemRepo.getLiveCheckList()
 
-    fun addItem(name: String) {
+    fun addItem(name: String, color: Color) {
         viewModelScope.launch {
-            val resp = itemUseCases.addItemUC(name)
+            val resp = itemUseCases.addItemUC(name, color)
             when {
                 resp is Resource.Error -> showSnackbar(resp.message!!)
                 resp.data == true -> showSnackbar("Item hinzugefügt: $name".asResString()).also { updateWidgets() }

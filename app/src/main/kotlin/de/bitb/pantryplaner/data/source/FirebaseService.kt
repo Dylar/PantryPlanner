@@ -34,13 +34,14 @@ class FirestoreService(
         var snapshotStateListener: ListenerRegistration? = null
         try {
             snapshotStateListener = itemCollection
-                .orderBy("checked")
+                .orderBy("name")
                 .addSnapshotListener { snapshot, e ->
                     val response = if (snapshot != null) {
-                        val notes = snapshot.toObjects(Item::class.java)
-                        Resource.Success(notes)
+                        val items = snapshot.toObjects(Item::class.java)
+                            .apply { sortBy { it.checked } }
+                        Resource.Success(items)
                     } else {
-                        Resource.Error(e?.cause!!) //TODO crash haha
+                        Resource.Error(e?.cause!!) //TODO crash? haha
                     }
                     trySend(response)
                 }
