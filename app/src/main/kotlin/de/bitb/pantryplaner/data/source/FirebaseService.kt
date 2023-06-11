@@ -80,7 +80,7 @@ class FirestoreService(
             if (querySnapshot.isEmpty) {
                 itemCollection.add(item).await()
                 Resource.Success(true)
-            } else {
+            } else { //TODO really update?
                 val documentId = querySnapshot.documents.first().id
                 itemCollection.document(documentId).set(item, SetOptions.merge()).await()
                 Resource.Success(false)

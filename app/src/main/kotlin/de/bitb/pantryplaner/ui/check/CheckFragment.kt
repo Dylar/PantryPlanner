@@ -1,7 +1,9 @@
 package de.bitb.pantryplaner.ui.check
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -31,6 +33,7 @@ import de.bitb.pantryplaner.ui.base.composable.LoadingIndicator
 import de.bitb.pantryplaner.ui.base.composable.asResString
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.dialogs.AddDialog
+import de.bitb.pantryplaner.ui.dialogs.ColorPickerDialog
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 import de.bitb.pantryplaner.ui.dialogs.InfoDialog
 
@@ -54,6 +57,7 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
         var showInfoDialog by remember { mutableStateOf(false) }
         var showAddDialog by remember { mutableStateOf(false) }
         var showUncheckDialog by remember { mutableStateOf(false) }
+
         Scaffold(
             scaffoldState = scaffoldState,
             topBar = {
@@ -200,10 +204,11 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
         }
     }
 
-    @OptIn(ExperimentalMaterialApi::class)
+    @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
     @Composable
     fun CheckListItem(item: Item) {
         var showRemoveDialog by remember { mutableStateOf(false) }
+        var showColorPicker by remember { mutableStateOf(false) }
         val dismissState = rememberDismissState(
             confirmStateChange = {
                 if (it == DismissValue.DismissedToEnd) {
@@ -228,6 +233,18 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
                     showRemoveDialog = false
                 },
                 onDismiss = { showRemoveDialog = false },
+            )
+        }
+
+        if (showColorPicker) {
+            val color = remember { mutableStateOf(item.color) }
+            ColorPickerDialog(
+                color,
+                onConfirm = {
+                    viewModel.selectItemColor(item, it)
+                    showColorPicker = false
+                },
+                onDismiss = { showColorPicker = false },
             )
         }
 
@@ -262,7 +279,10 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
                     elevation = 4.dp,
                     modifier = Modifier
                         .padding(vertical = 4.dp)
-                        .clickable { viewModel.checkItem(item) }
+                        .combinedClickable(
+                            onClick = { viewModel.checkItem(item) },
+                            onLongClick = { showColorPicker = true },
+                        ),
                 ) {
                     Row(
                         modifier = Modifier
@@ -271,12 +291,6 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Box(
-                            Modifier.weight(.1f)
-                                .fillMaxHeight()
-                                .width(8.dp)
-                                .background(BaseColors.FireRed)
-                        )
                         Checkbox(
                             item.checked,
                             modifier = Modifier

@@ -53,6 +53,15 @@ class CheckViewModel @Inject constructor(
         }
     }
 
+    fun selectItemColor(item: Item, color: Color) {
+        viewModelScope.launch {
+            when (val resp = itemUseCases.selectItemColorUC(item, color)) {
+                is Resource.Error -> showSnackbar(resp.message!!)
+                else -> updateWidgets()
+            }
+        }
+    }
+
     fun uncheckAllItems() {
         viewModelScope.launch {
             when (val resp = itemUseCases.uncheckAllItemsUC()) {
