@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Circle
@@ -21,12 +20,13 @@ import de.bitb.pantryplaner.ui.base.styles.BaseColors
 @Composable
 fun CircleRow(
     selectedCircleIndex: MutableState<Color>,
+    selectableColors: List<Color>
 ) {
     Row(
         modifier = Modifier.padding(vertical = 8.dp).fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
-        for (color in BaseColors.SelectableColors) {
+        for (color in selectableColors) {
             Circle(
                 color = color,
                 isSelected = color == selectedCircleIndex.value,

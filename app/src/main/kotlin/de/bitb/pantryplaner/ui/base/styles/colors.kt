@@ -28,6 +28,7 @@ object BaseColors {
         LightGreen,
         DarkGreen,
     )
+    val FilterColors = listOf(Black, *SelectableColors.toTypedArray())
 }
 
 

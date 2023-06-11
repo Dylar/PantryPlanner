@@ -42,7 +42,7 @@ fun AddDialog(onConfirm: (String, Color, Boolean) -> Unit, onDismiss: () -> Unit
                         name = ""
                     }),
                 )
-                CircleRow(selectedCircleIndex = color)
+                CircleRow(selectedCircleIndex = color, selectableColors = BaseColors.SelectableColors)
             }
         },
         confirmButton = {

@@ -10,10 +10,9 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.GridOff
-import androidx.compose.material.icons.filled.GridOn
-import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.FilterAlt
+import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +31,8 @@ import de.bitb.pantryplaner.ui.base.composable.ErrorScreen
 import de.bitb.pantryplaner.ui.base.composable.LoadingIndicator
 import de.bitb.pantryplaner.ui.base.composable.asResString
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
+import de.bitb.pantryplaner.ui.base.styles.BaseColors.FilterColors
+import de.bitb.pantryplaner.ui.base.styles.BaseColors.SelectableColors
 import de.bitb.pantryplaner.ui.dialogs.AddDialog
 import de.bitb.pantryplaner.ui.dialogs.ColorPickerDialog
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
@@ -43,6 +44,7 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
         const val APPBAR_TAG = "CheckAppbar"
         const val INFO_BUTTON_TAG = "CheckInfoButton"
         const val LAYOUT_BUTTON_TAG = "CheckLayoutButton"
+        const val FILTER_BUTTON_TAG = "CheckFilterButton"
         const val ADD_BUTTON_TAG = "CheckAddButton"
         const val UNCHECK_BUTTON_TAG = "CheckUncheckButton"
         const val LIST_TAG = "CheckList"
@@ -54,6 +56,8 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
     @Composable
     override fun ScreenContent() {
         var showGridLayout by remember { mutableStateOf(true) }
+        var showFilterDialog by remember { mutableStateOf(false) }
+        val filterBy = remember { mutableStateOf(FilterColors.first()) }
         var showInfoDialog by remember { mutableStateOf(false) }
         var showAddDialog by remember { mutableStateOf(false) }
         var showUncheckDialog by remember { mutableStateOf(false) }
@@ -83,6 +87,16 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
                                 contentDescription = "Layout button"
                             )
                         }
+                        IconButton(
+                            onClick = { showFilterDialog = !showFilterDialog },
+                            modifier = Modifier.testTag(FILTER_BUTTON_TAG)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.FilterList,
+                                contentDescription = "Filter button"
+                            )
+                        }
+
                     }
                 )
             },
@@ -127,12 +141,27 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
                 showSnackBar("ERROR".asResString())
                 ErrorScreen(list!!.message!!.asString())
             } else {
-                CheckList(innerPadding, showGridLayout, list?.data)
+                var items = list?.data
+                if (list?.hasData == true && filterBy.value != FilterColors.first()) {
+                    items = items?.filter { it.color == filterBy.value }
+                }
+                CheckList(innerPadding, showGridLayout, items)
             }
         }
 
         if (showInfoDialog) {
             InfoDialog { showInfoDialog = false }
+        }
+
+        if (showFilterDialog) {
+            fun onDismiss() {
+                showFilterDialog = false
+            }
+            ColorPickerDialog(
+                filterBy,
+                onConfirm = ::onDismiss,
+                onDismiss = ::onDismiss,
+            )
         }
 
         if (showAddDialog) {
@@ -240,8 +269,9 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
             val color = remember { mutableStateOf(item.color) }
             ColorPickerDialog(
                 color,
+                selectableColors = SelectableColors,
                 onConfirm = {
-                    viewModel.selectItemColor(item, it)
+                    viewModel.selectItemColor(item, color.value)
                     showColorPicker = false
                 },
                 onDismiss = { showColorPicker = false },

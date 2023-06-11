@@ -7,21 +7,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.graphics.Color
 import de.bitb.pantryplaner.ui.base.composable.CircleRow
+import de.bitb.pantryplaner.ui.base.styles.BaseColors.FilterColors
 
 @Composable
 fun ColorPickerDialog(
     color: MutableState<Color>,
-    onConfirm: (Color) -> Unit,
+    selectableColors: List<Color> = FilterColors,
+    onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
-
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Select Color") },
-        text = { CircleRow(selectedCircleIndex = color) },
+        text = { CircleRow(selectedCircleIndex = color, selectableColors = selectableColors) },
         confirmButton = {
             Button(
-                onClick = { onConfirm(color.value) },
+                onClick = { onConfirm() },
                 content = { Text("SELECT") }
             )
         },
