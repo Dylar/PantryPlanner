@@ -8,6 +8,7 @@
     <string name="check_title">Checklist</string>
     <string name="no_check">Nothing to check</string>
     <string name="item_name">Name</string>
+    <string name="item_category">Kategorie</string>
 
     <string name="loading_text">Loading…</string>
 

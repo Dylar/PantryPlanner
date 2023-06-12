@@ -60,7 +60,7 @@ object AppModule {
             addItemUC = AddItemUC(itemRepo),
             removeItemUC = RemoveItemUC(itemRepo),
             checkItemUC = CheckItemUC(itemRepo),
-            selectItemColorUC = SelectItemColorUC(itemRepo),
+            editItemUC = EditItemUC(itemRepo),
             uncheckAllItemsUC = UncheckAllItemsUC(itemRepo),
         )
     }

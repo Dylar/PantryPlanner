@@ -15,60 +15,45 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
+import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.composable.CircleRow
-import de.bitb.pantryplaner.ui.base.styles.BaseColors
+import de.bitb.pantryplaner.ui.base.styles.BaseColors.SelectableColors
 
 @Composable
-fun AddDialog(onConfirm: (String, String, Color, Boolean) -> Unit, onDismiss: () -> Unit) {
-    var name by remember { mutableStateOf("") }
+fun EditDialog(
+    item: Item,
+    onConfirm: (String, Color) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val color = remember { mutableStateOf(item.color) }
     var category by remember { mutableStateOf("") }
-    val color = remember { mutableStateOf(BaseColors.SelectableColors.first()) }
     val focusRequester = remember { FocusRequester() }
-
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Add Item") },
+        title = { Text("Edit item") },
         text = {
-            Column {
+            Column(
+
+            ) {
                 OutlinedTextField(
                     modifier = Modifier
                         .padding(top = 32.dp, start = 16.dp, end = 16.dp)
                         .focusRequester(focusRequester),
                     singleLine = true,
-                    label = { Text(stringResource(R.string.item_name)) },
-                    value = name,
-                    onValueChange = { name = it },
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            onConfirm(name, category, color.value, false)
-                            name = ""
-                        }
-                    ),
-                )
-                OutlinedTextField(
-                    modifier = Modifier
-                        .padding(top = 32.dp, start = 16.dp, end = 16.dp),
-                    singleLine = true,
                     label = { Text(stringResource(R.string.item_category)) },
                     value = category,
                     onValueChange = { category = it },
                     keyboardActions = KeyboardActions(
-                        onDone = {
-                            onConfirm(name, category, color.value, false)
-                            name = ""
-                        }
+                        onDone = { onConfirm(category, color.value) }
                     ),
                 )
-                CircleRow(
-                    selectedCircleIndex = color,
-                    selectableColors = BaseColors.SelectableColors
-                )
+                CircleRow(selectedCircleIndex = color, selectableColors = SelectableColors)
             }
         },
         confirmButton = {
             Button(
-                onClick = { onConfirm(name, category, color.value, true) },
-                content = { Text("ADD") }
+                onClick = { onConfirm(category, color.value) },
+                content = { Text("EDIT") }
             )
         },
         dismissButton = {

@@ -11,14 +11,14 @@ import de.bitb.pantryplaner.data.model.Item
 class AddItemUC(
     private val itemRepo: ItemRepository,
 ) {
-    suspend operator fun invoke(name: String, color: Color): Resource<Boolean> {
+    suspend operator fun invoke(name: String, category: String, color: Color): Resource<Boolean> {
         return tryIt(
             onError = { Resource.Error(it, false) },
             onTry = {
                 if (name.isBlank()) {
                     return@tryIt "Name darf nicht leer sein".asResourceError()
                 }
-                val item = Item(name, colorHex = color.toArgb())
+                val item = Item(name, category, colorHex = color.toArgb())
                 itemRepo.addItem(item)
             },
         )

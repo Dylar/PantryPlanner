@@ -22,9 +22,9 @@ class CheckViewModel @Inject constructor(
 
     val checkList: Flow<Resource<List<Item>>> = itemRepo.getLiveCheckList()
 
-    fun addItem(name: String, color: Color) {
+    fun addItem(name: String, category: String, color: Color) {
         viewModelScope.launch {
-            val resp = itemUseCases.addItemUC(name, color)
+            val resp = itemUseCases.addItemUC(name, category, color)
             when {
                 resp is Resource.Error -> showSnackbar(resp.message!!)
                 resp.data == true -> showSnackbar("Item hinzugefügt: $name".asResString()).also { updateWidgets() }
@@ -53,9 +53,9 @@ class CheckViewModel @Inject constructor(
         }
     }
 
-    fun selectItemColor(item: Item, color: Color) {
+    fun editItem(item: Item, category: String, color: Color) {
         viewModelScope.launch {
-            when (val resp = itemUseCases.selectItemColorUC(item, color)) {
+            when (val resp = itemUseCases.editItemUC(item, category, color)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
                 else -> updateWidgets()
             }
