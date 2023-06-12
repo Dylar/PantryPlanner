@@ -183,7 +183,7 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
                 "Haken entfernen?",
                 "Möchten Sie alle Haken entfernen?",
                 onConfirm = {
-                    viewModel.uncheckAllItems()
+                    viewModel.uncheckAllItems(filterBy.value)
                     showUncheckDialog = false
                 },
                 onDismiss = { showUncheckDialog = false },
