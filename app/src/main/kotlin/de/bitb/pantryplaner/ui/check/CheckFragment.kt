@@ -32,6 +32,7 @@ import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.composable.ErrorScreen
 import de.bitb.pantryplaner.ui.base.composable.LoadingIndicator
 import de.bitb.pantryplaner.ui.base.composable.asResString
+import de.bitb.pantryplaner.ui.base.composable.stickyGridHeader
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.styles.BaseColors.FilterColors
 import de.bitb.pantryplaner.ui.dialogs.*
@@ -187,6 +188,7 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
         }
     }
 
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     fun CheckList(innerPadding: PaddingValues, showGridLayout: Boolean, check: List<Item>?) {
         Box(
@@ -206,6 +208,8 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
                     )
                 }
                 else -> {
+                    val groupedItems = check.groupBy { it.category }
+                        .toSortedMap { a1, a2 -> a1.compareTo(a2) }
                     if (showGridLayout) {
                         LazyVerticalGrid(
                             GridCells.Fixed(2),
@@ -215,7 +219,12 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
                             verticalArrangement = Arrangement.Top,
                             horizontalArrangement = Arrangement.Center,
                             contentPadding = PaddingValues(4.dp),
-                        ) { items(check.size) { CheckListItem(check[it]) } }
+                        ) {
+                            groupedItems.forEach { (initial, contactsForInitial) ->
+                                stickyGridHeader { Header(initial) }
+                                items(contactsForInitial.size) { CheckListItem(contactsForInitial[it]) }
+                            }
+                        }
                     } else {
                         LazyColumn(
                             modifier = Modifier
@@ -224,11 +233,27 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
                             verticalArrangement = Arrangement.Top,
                             horizontalAlignment = Alignment.CenterHorizontally,
                             contentPadding = PaddingValues(4.dp),
-                        ) { items(check.size) { CheckListItem(check[it]) } }
+                        ) {
+                            groupedItems.forEach { (initial, list) ->
+                                stickyHeader { Header(initial) }
+                                items(list.size) { CheckListItem(list[it]) }
+                            }
+                        }
                     }
                 }
             }
         }
+    }
+
+    @Composable
+    private fun Header(initial: String?) {
+        Text(
+            initial ?: "",
+            textAlign = TextAlign.Start,
+            modifier = Modifier.fillMaxWidth()
+                .padding(start = 60.dp),
+            textDecoration = TextDecoration.Underline
+        )
     }
 
     @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
