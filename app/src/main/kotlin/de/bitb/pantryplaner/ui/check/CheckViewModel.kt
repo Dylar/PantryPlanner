@@ -62,9 +62,9 @@ class CheckViewModel @Inject constructor(
         }
     }
 
-    fun uncheckAllItems() {
+    fun uncheckAllItems(color: Color) {
         viewModelScope.launch {
-            when (val resp = itemUseCases.uncheckAllItemsUC()) {
+            when (val resp = itemUseCases.uncheckAllItemsUC(color)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
                 else -> showSnackbar("Alle Haken entfernt".asResString()).also { updateWidgets() }
             }
