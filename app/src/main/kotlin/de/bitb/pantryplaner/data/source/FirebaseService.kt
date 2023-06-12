@@ -4,6 +4,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.SetOptions
+import de.bitb.pantryplaner.BuildConfig
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.model.Item
@@ -18,7 +19,10 @@ class FirestoreService(
 ) : ItemRemoteDao, UserRemoteDao {
 
     private val itemCollection
-        get() = firestore.collection("items")
+        get() = firestore
+            .collection("stage")
+            .document(BuildConfig.FLAVOR)
+            .collection("items")
 
     override suspend fun loginUser(): Resource<Boolean> {
         return tryIt(
