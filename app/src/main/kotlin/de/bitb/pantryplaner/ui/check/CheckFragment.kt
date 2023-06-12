@@ -34,11 +34,7 @@ import de.bitb.pantryplaner.ui.base.composable.LoadingIndicator
 import de.bitb.pantryplaner.ui.base.composable.asResString
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.styles.BaseColors.FilterColors
-import de.bitb.pantryplaner.ui.base.styles.BaseColors.SelectableColors
-import de.bitb.pantryplaner.ui.dialogs.AddDialog
-import de.bitb.pantryplaner.ui.dialogs.ColorPickerDialog
-import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
-import de.bitb.pantryplaner.ui.dialogs.InfoDialog
+import de.bitb.pantryplaner.ui.dialogs.*
 
 @AndroidEntryPoint
 class CheckFragment : BaseFragment<CheckViewModel>() {
@@ -168,8 +164,8 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
 
         if (showAddDialog) {
             AddDialog(
-                onConfirm = { name, color, close ->
-                    viewModel.addItem(name, color)
+                onConfirm = { name, category, color, close ->
+                    viewModel.addItem(name, category, color)
                     if (close) {
                         showAddDialog = false
                     }
@@ -239,7 +235,7 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
     @Composable
     fun CheckListItem(item: Item) {
         var showRemoveDialog by remember { mutableStateOf(false) }
-        var showColorPicker by remember { mutableStateOf(false) }
+        var showEditDialog by remember { mutableStateOf(false) }
         val dismissState = rememberDismissState(
             confirmStateChange = {
                 if (it == DismissValue.DismissedToEnd) {
@@ -267,16 +263,14 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
             )
         }
 
-        if (showColorPicker) {
-            val color = remember { mutableStateOf(item.color) }
-            ColorPickerDialog(
-                color,
-                selectableColors = SelectableColors,
-                onConfirm = {
-                    viewModel.selectItemColor(item, color.value)
-                    showColorPicker = false
+        if (showEditDialog) {
+            EditDialog(
+                item = item,
+                onConfirm = { category, color ->
+                    viewModel.editItem(item, category, color)
+                    showEditDialog = false
                 },
-                onDismiss = { showColorPicker = false },
+                onDismiss = { showEditDialog = false },
             )
         }
 
@@ -313,7 +307,7 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
                         .padding(vertical = 4.dp)
                         .combinedClickable(
                             onClick = { viewModel.checkItem(item) },
-                            onLongClick = { showColorPicker = true },
+                            onLongClick = { showEditDialog = true },
                         ),
                 ) {
                     Row(
@@ -333,13 +327,26 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
                                 uncheckedColor = item.color
                             )
                         )
-                        Text(
-                            item.name,
+                        Column(
                             modifier = Modifier
+                                .padding(start = 2.dp)
                                 .weight(.7f)
-                                .padding(start = 2.dp),
-                            textDecoration = if (item.checked) TextDecoration.LineThrough else TextDecoration.None
                         )
+                        {
+                            if (item.category.isNotBlank()) {
+                                Text(
+                                    item.category,
+                                    modifier = Modifier,
+                                    fontSize = 10.sp,
+                                )
+                            }
+                            Text(
+                                item.name,
+                                modifier = Modifier,
+                                fontSize = 16.sp,
+                                textDecoration = if (item.checked) TextDecoration.LineThrough else TextDecoration.None
+                            )
+                        }
                     }
                 }
             }

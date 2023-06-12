@@ -7,6 +7,7 @@ import de.bitb.pantryplaner.ui.base.styles.BaseColors
 
 data class Item(
     val name: String = "",
+    val category: String = "",
     val checked: Boolean = false,
     val colorHex: Int = BaseColors.LightGray.toArgb(),
     //TODO timestamp
