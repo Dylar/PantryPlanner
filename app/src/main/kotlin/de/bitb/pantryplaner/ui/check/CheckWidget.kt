@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.action.clickable
@@ -138,29 +139,48 @@ class ScreenWidget : GlanceAppWidget() {
             modifier = GlanceModifier
                 .fillMaxWidth()
                 .padding(2.dp)
+                .background(BaseColors.LightGray.copy(alpha = .3f))
                 .clickable { onTap() },
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalAlignment = Alignment.CenterVertically,
         ) {
             CheckBox(
                 item.checked,
+                modifier = GlanceModifier,
                 onCheckedChange = ::onTap,
                 colors = CheckboxDefaults.colors(
                     checkedColor = item.color,
                     uncheckedColor = item.color
                 )
             )
-            Text(
+            Column(
                 modifier = GlanceModifier
                     .fillMaxWidth()
                     .padding(horizontal = 4.dp, vertical = 2.dp)
-                    .background(BaseColors.LightGray.copy(alpha = .3f)),
-                text = item.name,
-                style = TextDefaults.defaultTextStyle.copy(
-                    color = ColorProvider(BaseColors.White),
-                    textDecoration = if (item.checked) TextDecoration.LineThrough else TextDecoration.None
-                )
             )
+            {
+                if (item.category.isNotBlank()) {
+                    Text(
+                        item.category,
+                        modifier = GlanceModifier
+                            .padding(start = 2.dp),
+                        style = TextDefaults.defaultTextStyle.copy(
+                            color = ColorProvider(BaseColors.White),
+                            fontSize = 10.sp,
+                        )
+                    )
+                }
+                Text(
+                    modifier = GlanceModifier
+                        .padding(start = 2.dp),
+                    text = item.name,
+                    style = TextDefaults.defaultTextStyle.copy(
+                        color = ColorProvider(BaseColors.White),
+                        fontSize = 16.sp,
+                        textDecoration = if (item.checked) TextDecoration.LineThrough else TextDecoration.None
+                    )
+                )
+            }
         }
     }
 
