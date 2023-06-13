@@ -220,9 +220,11 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
                             horizontalArrangement = Arrangement.Center,
                             contentPadding = PaddingValues(4.dp),
                         ) {
-                            groupedItems.forEach { (initial, contactsForInitial) ->
-                                stickyGridHeader { Header(initial) }
-                                items(contactsForInitial.size) { CheckListItem(contactsForInitial[it]) }
+                            groupedItems.forEach { (headerText, list) ->
+                                if (headerText.isNotBlank()) {
+                                    stickyGridHeader { Header(headerText) }
+                                }
+                                items(list.size) { CheckListItem(list[it]) }
                             }
                         }
                     } else {
@@ -234,8 +236,10 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
                             horizontalAlignment = Alignment.CenterHorizontally,
                             contentPadding = PaddingValues(4.dp),
                         ) {
-                            groupedItems.forEach { (initial, list) ->
-                                stickyHeader { Header(initial) }
+                            groupedItems.forEach { (headerText, list) ->
+                                if (headerText.isNotBlank()) {
+                                    stickyHeader { Header(headerText) }
+                                }
                                 items(list.size) { CheckListItem(list[it]) }
                             }
                         }
@@ -246,9 +250,9 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
     }
 
     @Composable
-    private fun Header(initial: String?) {
+    private fun Header(initial: String) {
         Text(
-            initial ?: "",
+            initial,
             textAlign = TextAlign.Start,
             modifier = Modifier.fillMaxWidth()
                 .padding(start = 60.dp),

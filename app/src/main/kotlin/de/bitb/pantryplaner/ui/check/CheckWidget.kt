@@ -116,7 +116,8 @@ class ScreenWidget : GlanceAppWidget() {
     }
 
     @Composable
-    private fun CheckListContent(context: Context, items: List<Item>) {
+    private fun CheckListContent(context: Context, itemsList: List<Item>) {
+        val renderItems = itemsList.groupBy { it.category }
         Box(
             modifier = GlanceModifier
                 .padding(2.dp)
@@ -125,7 +126,36 @@ class ScreenWidget : GlanceAppWidget() {
             LazyColumn(
                 modifier = GlanceModifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-            ) { items(items.size) { CheckListItem(context, items[it]) } }
+            ) {
+                renderItems.forEach { (header, list) ->
+                    if (header.isNotBlank()) {
+                        item {
+                            Box(
+                                GlanceModifier
+                                    .fillMaxWidth()
+                                    .padding(top = 4.dp, bottom = 2.dp)
+                                    .background(BaseColors.Black.copy(alpha = .4f)),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Text(
+                                    header,
+                                    modifier = GlanceModifier
+                                        .padding(4.dp)
+                                        .background(BaseColors.LightGray.copy(alpha = .4f)),
+                                    style = TextDefaults.defaultTextStyle.copy(
+                                        color = ColorProvider(BaseColors.White),
+                                        fontSize = 10.sp,
+                                        textDecoration = TextDecoration.Underline
+                                    ),
+                                )
+                            }
+                        }
+                    }
+                    items(list.size) {
+                        CheckListItem(context, list[it])
+                    }
+                }
+            }
         }
     }
 
@@ -163,7 +193,7 @@ class ScreenWidget : GlanceAppWidget() {
                     Text(
                         item.category,
                         modifier = GlanceModifier
-                            .padding(start = 2.dp),
+                            .padding(2.dp),
                         style = TextDefaults.defaultTextStyle.copy(
                             color = ColorProvider(BaseColors.White),
                             fontSize = 10.sp,
@@ -224,9 +254,9 @@ class ScreenWidget : GlanceAppWidget() {
             modifier = GlanceModifier
                 .background(if (isSelected) BaseColors.Black.copy(alpha = .4f) else Color.Transparent)
                 .padding(horizontal = 4.dp, vertical = 2.dp)
+                .cornerRadius(30.dp)
                 .clickable { onSelect(color) },
             style = TextDefaults.defaultTextStyle.copy(color = ColorProvider(color))
         )
     }
 }
-
