@@ -1,5 +1,6 @@
 package de.bitb.pantryplaner.core.misc
 
+import android.content.Context
 import kotlinx.coroutines.delay
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -44,4 +45,7 @@ fun calculateMilliseconds(hours: Int, minutes: Int): Long {
     val totalMinutes = hours * 60 + minutes
     return totalMinutes * 60 * 1000L
 }
+
+fun readTextFromAsset(context: Context, fileName: String): String =
+    context.assets.open(fileName).bufferedReader().use { it.readText() }.replace("\\n", "\n")
 

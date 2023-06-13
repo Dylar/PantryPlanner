@@ -18,5 +18,15 @@
     <fragment
         android:id="@+id/checkFragment"
         android:name="de.bitb.pantryplaner.ui.check.CheckFragment"
-        android:label="check"></fragment>
+        android:label="check">
+        <action
+            android:id="@+id/check_to_releasenotes"
+            app:destination="@id/releaseNotesFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/releaseNotesFragment"
+        android:name="de.bitb.pantryplaner.ui.ReleaseNotesFragment"
+        android:label="releaseNotes">
+    </fragment>
 </navigation>

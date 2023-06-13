@@ -4,9 +4,6 @@ buildscript {
         google()
         mavenCentral()
         maven { url 'https://jitpack.io' }
-//        jcenter()
-//        jcenter()
-//        maven { url "https://jitpack.io" }
     }
     dependencies {
         classpath 'com.google.gms:google-services:4.3.15'

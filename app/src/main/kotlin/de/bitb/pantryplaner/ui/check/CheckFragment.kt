@@ -33,6 +33,7 @@ import de.bitb.pantryplaner.ui.base.composable.ErrorScreen
 import de.bitb.pantryplaner.ui.base.composable.LoadingIndicator
 import de.bitb.pantryplaner.ui.base.composable.asResString
 import de.bitb.pantryplaner.ui.base.composable.stickyGridHeader
+import de.bitb.pantryplaner.ui.base.naviToReleaseNotes
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.styles.BaseColors.FilterColors
 import de.bitb.pantryplaner.ui.dialogs.*
@@ -149,7 +150,7 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
         }
 
         if (showInfoDialog) {
-            InfoDialog { showInfoDialog = false }
+            InfoDialog(naviToReleaseNotes = ::naviToReleaseNotes) { showInfoDialog = false }
         }
 
         if (showFilterDialog) {

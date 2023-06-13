@@ -1,0 +1,61 @@
+[{
+"version":"New",
+"commits":[
+"infodialog scrollable",
+"nu aber",
+"push it",
+"more test",
+"test",
+"adding releaseNotes",
+"clean",
+"add tag script"
+]
+}
+,{
+"version":"v0.0.42",
+"commits":[
+"app name per flavor",
+"Show commit messages in info dialog",
+"sticky header for widget",
+"add sticky header",
+"add application suffix",
+"add categorys"
+]
+}
+,{
+"version":"v0.0.35",
+"commits":[
+"remove ticks on filtered color",
+"stages firstore",
+"loading screen",
+"clean",
+"widget color filter",
+"filter color",
+"select item color",
+"add colors",
+"layouting",
+"homescreen widget"
+]
+}
+,{
+"version":"v0.0.25",
+"commits":[
+"sort by checked",
+"remove item confirm dialog",
+"fix gradle",
+"fix gradle wrapper",
+"remove swipe background red"
+]
+}
+,{
+"version":"v0.0.12",
+"commits":[
+"uncheck all items",
+"check item",
+"remove item",
+"add item",
+"init app",
+"add gitignore",
+"Initial commit"
+]
+}]

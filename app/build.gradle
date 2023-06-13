@@ -20,8 +20,6 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
-        def commitMessages = System.getenv("commit_messages") ?: "No commit messages"
-        buildConfigField("String", "COMMIT_MESSAGES", "\"$commitMessages\"")
     }
     buildTypes {
         release {

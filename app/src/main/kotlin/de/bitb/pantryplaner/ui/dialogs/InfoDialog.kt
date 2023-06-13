@@ -10,15 +10,21 @@ import androidx.compose.ui.Modifier
 import de.bitb.pantryplaner.BuildConfig
 
 @Composable
-fun InfoDialog(onDismiss: () -> Unit) {
+fun InfoDialog(naviToReleaseNotes: () -> Unit, onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Info") },
         text = { InfoContent() },
         confirmButton = {
             Button(
+                onClick = naviToReleaseNotes,
+                content = { Text("ReleaseNotes") }
+            )
+        },
+        dismissButton = {
+            Button(
                 onClick = onDismiss,
-                content = { Text("OK") }
+                content = { Text("CLOSE") }
             )
         }
     )
@@ -33,6 +39,5 @@ private fun InfoContent() {
         Text(text = "VersionCode: ${BuildConfig.VERSION_CODE}")
         Text(text = "Env: ${BuildConfig.FLAVOR}")
         Text(text = "BuildType: ${BuildConfig.BUILD_TYPE}")
-        Text(text = "ReleaseNotes: ${BuildConfig.COMMIT_MESSAGES}")
     }
 }
