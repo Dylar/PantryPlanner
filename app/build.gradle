@@ -20,7 +20,7 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
-        def commitMessages = System.getenv("COMMIT_MESSAGES") ?: "No commit messages"
+        def commitMessages = System.getenv("commit_messages") ?: "No commit messages"
         buildConfigField("String", "COMMIT_MESSAGES", "\"$commitMessages\"")
     }
     buildTypes {
@@ -66,15 +66,18 @@ android {
             dimension "env"
             versionNameSuffix "-dev"
             applicationIdSuffix ".dev"
+            resValue "string", "app_name", "PantryPlaner DEV"
         }
         stage {
             dimension "env"
             versionNameSuffix "-stage"
             applicationIdSuffix ".stage"
+            resValue "string", "app_name", "PantryPlaner STAGE"
         }
         prod {
             dimension "env"
             versionNameSuffix "-prod"
+            resValue "string", "app_name", "PantryPlaner"
         }
     }
 }
