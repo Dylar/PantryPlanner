@@ -33,5 +33,6 @@ private fun InfoContent() {
         Text(text = "VersionCode: ${BuildConfig.VERSION_CODE}")
         Text(text = "Env: ${BuildConfig.FLAVOR}")
         Text(text = "BuildType: ${BuildConfig.BUILD_TYPE}")
+        Text(text = "ReleaseNotes: ${BuildConfig.COMMIT_MESSAGES}")
     }
 }

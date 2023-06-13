@@ -20,6 +20,8 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+        def commitMessages = System.getenv("COMMIT_MESSAGES") ?: "No commit messages"
+        buildConfigField("String", "COMMIT_MESSAGES", "\"$commitMessages\"")
     }
     buildTypes {
         release {
@@ -43,7 +45,7 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.4.2'
+        kotlinCompilerExtensionVersion '1.4.7'
     }
     packagingOptions {
         resources {
