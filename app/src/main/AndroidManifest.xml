@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="de.bitb.pantryplaner">
 
-
     <application
         android:name=".core.PantryApp"
         android:allowBackup="false"
@@ -18,7 +17,6 @@
         <activity
             android:name=".core.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.PantryPlaner"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
