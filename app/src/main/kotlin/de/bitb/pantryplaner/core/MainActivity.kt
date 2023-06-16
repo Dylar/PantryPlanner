@@ -9,12 +9,14 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 import de.bitb.pantryplaner.R
+import de.bitb.pantryplaner.core.misc.Logger
 
 @HiltAndroidApp
 class PantryApp : Application(){
     override fun onCreate() {
         super.onCreate()
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
+        Logger.logCrashlytics(Exception("MUUH"))
     }
 }
 
