@@ -1,6 +1,7 @@
 package de.bitb.pantryplaner.core.misc
 
 import androidx.annotation.StringRes
+import de.bitb.pantryplaner.core.misc.Logger.logCrashlytics
 import de.bitb.pantryplaner.ui.base.composable.ResString
 
 sealed class Resource<T>(val data: T? = null, val message: ResString? = null) {
@@ -36,5 +37,6 @@ suspend fun <T> tryIt(
     onTry()
 } catch (e: Exception) {
     e.printStackTrace()
+    logCrashlytics(e)
     onError(e) ?: e.asResourceError()
 }

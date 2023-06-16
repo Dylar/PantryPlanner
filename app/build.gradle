@@ -3,6 +3,8 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
 }
 
 android {
@@ -81,6 +83,7 @@ android {
 }
 
 dependencies {
+
     // QR Scanner
 //    implementation 'com.github.yuriy-budiyev:code-scanner:2.3.2'
 //    implementation 'com.github.androidmads:QRGenerator:1.0.1'
@@ -134,9 +137,12 @@ dependencies {
     implementation 'androidx.room:room-ktx:2.5.1'
     kapt 'androidx.room:room-compiler:2.5.1'
 
-    // Firebase database & messaging & auth
-    implementation 'com.google.firebase:firebase-firestore-ktx:24.6.1'
-    implementation 'com.google.firebase:firebase-auth:22.0.0'
+    // Firebase shit
+    implementation platform('com.google.firebase:firebase-bom:32.1.1')
+    implementation 'com.google.firebase:firebase-firestore-ktx'
+    implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
 
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'

@@ -1,4 +1,3 @@
-#!/bin/bash
 
 git fetch --all --tags
 tags=($(git tag))
@@ -10,14 +9,14 @@ do
     tag=${tags[i]}
 
     if ((i == 0))
-    then
+    then # last tag to last commit
         commit_messages=$(git log "$tag" --pretty=format:"\"%s\",")
         joined_commits="$(IFS=,; echo "${commit_messages[*]}")"
         joined_commits="${joined_commits::${#joined_commits}-1}"
         commits+=("{\n\"version\":\"$tag\",\n\"commits\":[\n$joined_commits\n]\n}")
     fi
     if ((i > 0))
-    then
+    then # commits between tags
         prev_tag=${tags[i-1]}
         commit_messages=$(git log "$prev_tag".."$tag" --pretty=format:"\"%s\",")
         joined_commits="$(IFS=,; echo "${commit_messages[*]}")"
@@ -25,7 +24,7 @@ do
         commits+=("{\n\"version\":\"$tag\",\n\"commits\":[\n$joined_commits\n]\n}")
     fi
     if((i == tagsLength-1))
-    then
+    then # first commit to first tag
         commit_messages=$(git log "$tag"..HEAD --pretty=format:"\"%s\",")
         joined_commits="$(IFS=,; echo "${commit_messages[*]}")"
         joined_commits="${joined_commits::${#joined_commits}-1}"
@@ -34,7 +33,7 @@ do
 done
 
 result=()
-first=true
+first=true # comma between commits (but no trailing comma)
 for ((i=${#commits[@]}-1; i>=0; i--)); do
     if [[ $first == true ]]; then
       result=("${commits[$i]}")
@@ -46,4 +45,5 @@ done
 
 all="[$(printf "%s\n" "${result[@]}")]"
 echo "$all" > releaseNotes.json
+#mv releaseNotes.json $BITRISE_SOURCE_DIR/app/src/main/assets
 mv releaseNotes.json ./app/src/main/assets

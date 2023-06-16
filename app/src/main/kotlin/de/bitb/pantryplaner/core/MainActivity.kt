@@ -5,12 +5,18 @@ import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 import de.bitb.pantryplaner.R
 
 @HiltAndroidApp
-class PantryApp : Application()
+class PantryApp : Application(){
+    override fun onCreate() {
+        super.onCreate()
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
+    }
+}
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {

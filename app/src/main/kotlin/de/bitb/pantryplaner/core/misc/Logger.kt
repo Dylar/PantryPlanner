@@ -1,6 +1,7 @@
 package de.bitb.pantryplaner.core.misc
 
 import android.util.Log
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -85,6 +86,10 @@ object Logger {
 
             LogData(xThread, xParams, xStack)
         }
+    }
+
+    fun logCrashlytics(e: Exception) {
+        FirebaseCrashlytics.getInstance().recordException(e)
     }
 }
 
