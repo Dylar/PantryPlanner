@@ -53,9 +53,9 @@ class CheckViewModel @Inject constructor(
         }
     }
 
-    fun editItem(item: Item, category: String, color: Color) {
+    fun editItem(item: Item, name: String, category: String, color: Color) {
         viewModelScope.launch {
-            when (val resp = itemUseCases.editItemUC(item, category, color)) {
+            when (val resp = itemUseCases.editItemUC(item, name, category, color)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
                 else -> showSnackbar("Item editiert".asResString()).also { updateWidgets() }
             }

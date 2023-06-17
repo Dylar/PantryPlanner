@@ -10,11 +10,17 @@ import de.bitb.pantryplaner.data.model.Item
 class EditItemUC(
     private val itemRepo: ItemRepository,
 ) {
-    suspend operator fun invoke(item: Item, category: String, color: Color): Resource<Unit> {
+    suspend operator fun invoke(
+        item: Item,
+        name: String,
+        category: String,
+        color: Color,
+    ): Resource<Unit> {
         return tryIt {
             itemRepo.saveItems(
                 listOf(
                     item.copy(
+                        name = name,
                         category = category,
                         colorHex = color.toArgb()
                     )

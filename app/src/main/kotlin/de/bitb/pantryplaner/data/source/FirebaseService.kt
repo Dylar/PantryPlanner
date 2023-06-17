@@ -3,7 +3,6 @@ package de.bitb.pantryplaner.data.source
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.SetOptions
 import de.bitb.pantryplaner.BuildConfig
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.tryIt
@@ -38,14 +37,9 @@ class FirestoreService(
         var snapshotStateListener: ListenerRegistration? = null
         try {
             snapshotStateListener = itemCollection
-                .orderBy("name")
                 .addSnapshotListener { snapshot, e ->
                     val response = if (snapshot != null) {
                         val items = snapshot.toObjects(Item::class.java)
-                            .apply {
-                                sortBy { it.category }
-                                sortBy { it.checked }
-                            }
                         Resource.Success(items)
                     } else {
                         Resource.Error(e?.cause!!) //TODO crash? haha
@@ -66,11 +60,11 @@ class FirestoreService(
         return tryIt {
             firestore.batch().apply {
                 itemCollection
-                    .whereIn("name", items.map { it.name })
+                    .whereIn("uuid", items.map { it.uuid })
                     .get().await().documents
                     .forEach { snap ->
-                        val name = snap.data?.get("name") ?: ""
-                        set(snap.reference, items.first { it.name == name })
+                        val uuid = snap.data?.get("uuid") ?: ""
+                        set(snap.reference, items.first { it.uuid == uuid })
                     }
                 commit()
             }
@@ -81,15 +75,13 @@ class FirestoreService(
     override suspend fun addItem(item: Item): Resource<Boolean> {
         return tryIt {
             val querySnapshot = itemCollection
-                .whereEqualTo("name", item.name)
+                .whereEqualTo("uuid", item.uuid)
                 .get().await()
 
             if (querySnapshot.isEmpty) {
                 itemCollection.add(item).await()
                 Resource.Success(true)
-            } else { //TODO really update?
-                val documentId = querySnapshot.documents.first().id
-                itemCollection.document(documentId).set(item, SetOptions.merge()).await()
+            } else {
                 Resource.Success(false)
             }
         }
@@ -98,7 +90,7 @@ class FirestoreService(
     override suspend fun removeItem(item: Item): Resource<Boolean> {
         return tryIt {
             val querySnapshot = itemCollection
-                .whereEqualTo("name", item.name)
+                .whereEqualTo("uuid", item.uuid)
                 .get().await()
 
             if (querySnapshot.isEmpty) {

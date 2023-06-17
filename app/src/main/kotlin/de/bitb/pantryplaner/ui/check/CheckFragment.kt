@@ -322,8 +322,8 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
         if (showEditDialog) {
             EditItemDialog(
                 item = item,
-                onConfirm = { category, color ->
-                    viewModel.editItem(item, category, color)
+                onConfirm = { name, category, color ->
+                    viewModel.editItem(item, name, category, color)
                     showEditDialog = false
                 },
                 onDismiss = { showEditDialog = false },
