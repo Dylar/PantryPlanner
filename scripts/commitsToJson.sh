@@ -1,34 +1,40 @@
+#!/bin/bash
+
+commit_format="\"%s\","
 
 git fetch --all --tags
-tags=($(git tag))
+tags=($(git tag -l --sort=-v:refname))
 commits=()
 
-tagsLength=${#tags[@]}
+tagsLength=${#tags[@]}-1
 for ((i=0; i<${#tags[@]}; i++))
 do
     tag=${tags[i]}
 
     if ((i == 0))
-    then # last tag to last commit
-        commit_messages=$(git log "$tag" --pretty=format:"\"%s\",")
-        joined_commits="$(IFS=,; echo "${commit_messages[*]}")"
-        joined_commits="${joined_commits::${#joined_commits}-1}"
-        commits+=("{\n\"version\":\"$tag\",\n\"commits\":[\n$joined_commits\n]\n}")
-    fi
-    if ((i > 0))
-    then # commits between tags
-        prev_tag=${tags[i-1]}
-        commit_messages=$(git log "$prev_tag".."$tag" --pretty=format:"\"%s\",")
-        joined_commits="$(IFS=,; echo "${commit_messages[*]}")"
-        joined_commits="${joined_commits::${#joined_commits}-1}"
-        commits+=("{\n\"version\":\"$tag\",\n\"commits\":[\n$joined_commits\n]\n}")
-    fi
-    if((i == tagsLength-1))
-    then # first commit to first tag
-        commit_messages=$(git log "$tag"..HEAD --pretty=format:"\"%s\",")
+    then # last commit to last tag
+        echo "NEW - last commit to last tag ($tag)"
+        commit_messages=$(git log "$tag"..HEAD --pretty=format:"$commit_format")
         joined_commits="$(IFS=,; echo "${commit_messages[*]}")"
         joined_commits="${joined_commits::${#joined_commits}-1}"
         commits+=("{\n\"version\":\"New\",\n\"commits\":[\n$joined_commits\n]\n}")
+    fi
+    if ((i < tagsLength))
+    then # commits between tags
+        next_tag=${tags[i+1]}
+        echo "commits between tags ($tag to $next_tag)"
+        commit_messages=$(git log "$next_tag".."$tag" --pretty=format:"$commit_format")
+        joined_commits="$(IFS=,; echo "${commit_messages[*]}")"
+        joined_commits="${joined_commits::${#joined_commits}-1}"
+        commits+=("{\n\"version\":\"$tag\",\n\"commits\":[\n$joined_commits\n]\n}")
+    fi
+    if((i == tagsLength))
+    then # first tag to first commit
+          echo "first tag to first commit"
+          commit_messages=$(git log "$tag" --pretty=format:"$commit_format")
+          joined_commits="$(IFS=,; echo "${commit_messages[*]}")"
+          joined_commits="${joined_commits::${#joined_commits}-1}"
+          commits+=("{\n\"version\":\"$tag\",\n\"commits\":[\n$joined_commits\n]\n}")
     fi
 done
 
@@ -45,5 +51,5 @@ done
 
 all="[$(printf "%s\n" "${result[@]}")]"
 echo "$all" > releaseNotes.json
-#mv releaseNotes.json $BITRISE_SOURCE_DIR/app/src/main/assets
+#mv releaseNotes.json "$BITRISE_SOURCE_DIR"/app/src/main/assets
 mv releaseNotes.json ./app/src/main/assets

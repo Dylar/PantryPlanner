@@ -1,35 +1,24 @@
 [
   {
-    "version": "New",
+    "version": "v0.0.12",
     "commits": [
-      "signing stage",
-      "add crashlytics"
+      "uncheck all items",
+      "check item",
+      "remove item",
+      "add item",
+      "init app",
+      "add gitignore",
+      "Initial commit"
     ]
   },
   {
-    "version": "v0.0.92",
+    "version": "v0.0.25",
     "commits": [
-      "adding releaseNotes",
-      "app name per flavor",
-      "Show commit messages in info dialog",
-      "sticky header for widget",
-      "add sticky header",
-      "add application suffix",
-      "add categorys",
-      "remove ticks on filtered color",
-      "stages firstore",
-      "loading screen"
-    ]
-  },
-  {
-    "version": "v0.0.42",
-    "commits": [
-      "app name per flavor",
-      "Show commit messages in info dialog",
-      "sticky header for widget",
-      "add sticky header",
-      "add application suffix",
-      "add categorys"
+      "sort by checked",
+      "remove item confirm dialog",
+      "fix gradle",
+      "fix gradle wrapper",
+      "remove swipe background red"
     ]
   },
   {
@@ -48,25 +37,44 @@
     ]
   },
   {
-    "version": "v0.0.25",
+    "version": "v0.0.42",
     "commits": [
-      "sort by checked",
-      "remove item confirm dialog",
-      "fix gradle",
-      "fix gradle wrapper",
-      "remove swipe background red"
+      "app name per flavor",
+      "Show commit messages in info dialog",
+      "sticky header for widget",
+      "add sticky header",
+      "add application suffix",
+      "add categorys"
     ]
   },
   {
-    "version": "v0.0.12",
+    "version": "v0.0.92",
     "commits": [
-      "uncheck all items",
-      "check item",
-      "remove item",
-      "add item",
-      "init app",
-      "add gitignore",
-      "Initial commit"
+      "adding releaseNotes",
+      "app name per flavor",
+      "Show commit messages in info dialog",
+      "sticky header for widget",
+      "add sticky header",
+      "add application suffix",
+      "add categorys",
+      "remove ticks on filtered color",
+      "stages firstore",
+      "loading screen"
+    ]
+  },
+  {
+    "version": "v0.0.101",
+    "commits": [
+      "signing stage",
+      "add crashlytics"
+    ]
+  },
+  {
+    "version": "New",
+    "commits": [
+      "category layout",
+      "categorys editable",
+      "clean"
     ]
   }
 ]
