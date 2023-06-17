@@ -20,7 +20,7 @@ import de.bitb.pantryplaner.ui.base.composable.CircleRow
 import de.bitb.pantryplaner.ui.base.styles.BaseColors.SelectableColors
 
 @Composable
-fun EditDialog(
+fun EditItemDialog(
     item: Item,
     onConfirm: (String, Color) -> Unit,
     onDismiss: () -> Unit
@@ -32,9 +32,7 @@ fun EditDialog(
         onDismissRequest = onDismiss,
         title = { Text("Edit item") },
         text = {
-            Column(
-
-            ) {
+            Column {
                 OutlinedTextField(
                     modifier = Modifier
                         .padding(top = 32.dp, start = 16.dp, end = 16.dp)

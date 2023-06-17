@@ -27,6 +27,5 @@
     <fragment
         android:id="@+id/releaseNotesFragment"
         android:name="de.bitb.pantryplaner.ui.ReleaseNotesFragment"
-        android:label="releaseNotes">
-    </fragment>
+        android:label="releaseNotes"></fragment>
 </navigation>

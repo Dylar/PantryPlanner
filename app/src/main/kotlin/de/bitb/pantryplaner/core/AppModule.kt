@@ -61,6 +61,7 @@ object AppModule {
             removeItemUC = RemoveItemUC(itemRepo),
             checkItemUC = CheckItemUC(itemRepo),
             editItemUC = EditItemUC(itemRepo),
+            editCategoryUC = EditCategoryUC(itemRepo),
             uncheckAllItemsUC = UncheckAllItemsUC(itemRepo),
         )
     }

@@ -8,5 +8,6 @@ data class ItemUseCases(
     val removeItemUC: RemoveItemUC,
     val checkItemUC: CheckItemUC,
     val editItemUC: EditItemUC,
+    val editCategoryUC: EditCategoryUC,
     val uncheckAllItemsUC: UncheckAllItemsUC,
 )

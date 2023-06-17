@@ -250,15 +250,36 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
         }
     }
 
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    private fun Header(initial: String) {
-        Text(
-            initial,
-            textAlign = TextAlign.Start,
-            modifier = Modifier.fillMaxWidth()
-                .padding(start = 60.dp),
-            textDecoration = TextDecoration.Underline
-        )
+    private fun Header(category: String) {
+        var showEditDialog by remember { mutableStateOf(false) }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .combinedClickable(
+                    onClick = {}, // requiered? Oo
+                    onLongClick = { showEditDialog = true }
+                ),
+        ) {
+            Text(
+                category,
+                modifier = Modifier.padding(start = 60.dp),
+                textAlign = TextAlign.Start,
+                textDecoration = TextDecoration.Underline
+            )
+        }
+
+        if (showEditDialog) {
+            EditCategoryDialog(
+                category,
+                onConfirm = {
+                    viewModel.editCategory(category, it)
+                    showEditDialog = false
+                },
+                onDismiss = { showEditDialog = false },
+            )
+        }
     }
 
     @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
@@ -294,7 +315,7 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
         }
 
         if (showEditDialog) {
-            EditDialog(
+            EditItemDialog(
                 item = item,
                 onConfirm = { category, color ->
                     viewModel.editItem(item, category, color)
