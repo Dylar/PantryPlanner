@@ -16,7 +16,6 @@ class PantryApp : Application(){
     override fun onCreate() {
         super.onCreate()
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
-        Logger.logCrashlytics(Exception("MUUH"))
     }
 }
 

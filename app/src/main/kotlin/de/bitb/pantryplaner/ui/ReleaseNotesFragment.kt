@@ -82,14 +82,14 @@ class ReleaseNotesFragment : BaseFragment<ReleaseNotesViewModel>() {
                 text = releaseVersion.version.trim(),
                 textDecoration = TextDecoration.Underline
             )
-            releaseVersion.commits.map {
-                "- ${it.trim()}"
-            }.forEach {
-                Text(
-                    modifier = Modifier.padding(start = 20.dp, top = 8.dp),
-                    text = it
-                )
-            }
+            releaseVersion.commits
+                .map { "- ${it.trim()}" }
+                .forEach {
+                    Text(
+                        modifier = Modifier.padding(start = 20.dp, top = 8.dp),
+                        text = it
+                    )
+                }
         }
     }
 
