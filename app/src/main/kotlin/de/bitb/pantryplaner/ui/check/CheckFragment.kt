@@ -257,17 +257,22 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .combinedClickable(
-                    onClick = {}, // requiered? Oo
-                    onLongClick = { showEditDialog = true }
-                ),
+                .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 4.dp),
+            contentAlignment = Alignment.Center
         ) {
-            Text(
-                category,
-                modifier = Modifier.padding(start = 60.dp),
-                textAlign = TextAlign.Start,
-                textDecoration = TextDecoration.Underline
-            )
+            Card(
+                modifier = Modifier.combinedClickable(
+                    onClick = {}, // required? Oo
+                    onLongClick = { showEditDialog = true }
+                )
+            ) {
+                Text(
+                    category,
+                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+                    textAlign = TextAlign.Center,
+                    textDecoration = TextDecoration.Underline
+                )
+            }
         }
 
         if (showEditDialog) {
