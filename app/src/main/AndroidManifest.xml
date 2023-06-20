@@ -25,7 +25,7 @@
             </intent-filter>
         </activity>
         <receiver
-            android:name=".ui.check.WidgetReceiver"
+            android:name=".ui.checklist.WidgetReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

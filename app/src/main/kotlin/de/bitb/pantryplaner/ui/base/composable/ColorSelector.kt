@@ -11,17 +11,20 @@ import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Circle
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 
 @Composable
 fun CircleRow(
-    selectedCircleIndex: MutableState<Color>,
+    selectedCircleIndex: MutableStateFlow<Color>,
     selectableColors: List<Color>
 ) {
+    val state = selectedCircleIndex.collectAsState()
     Row(
         modifier = Modifier.padding(vertical = 8.dp).fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
@@ -29,8 +32,8 @@ fun CircleRow(
         for (color in selectableColors) {
             Circle(
                 color = color,
-                isSelected = color == selectedCircleIndex.value,
-                onSelect = { selectedCircleIndex.value = color },
+                isSelected = color == state.value,
+                onSelect = { selectedCircleIndex.update { color } },
             )
         }
     }

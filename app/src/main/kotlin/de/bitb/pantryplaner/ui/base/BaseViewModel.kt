@@ -8,4 +8,5 @@ abstract class BaseViewModel : ViewModel() {
     lateinit var navigate: (Int) -> Unit
     lateinit var navigateBack: (Int?) -> Unit
     open lateinit var showSnackbar: (ResString) -> Unit
+    open fun isBackable(): Boolean = true
 }

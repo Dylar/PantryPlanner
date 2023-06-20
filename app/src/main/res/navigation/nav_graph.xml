@@ -5,27 +5,48 @@
     app:startDestination="@id/splashFragment">
 
     <fragment
+        android:id="@+id/releaseNotesFragment"
+        android:name="de.bitb.pantryplaner.ui.ReleaseNotesFragment"
+        android:label="releaseNotes" />
+
+    <fragment
         android:id="@+id/splashFragment"
         android:name="de.bitb.pantryplaner.ui.intro.SplashFragment"
         android:label="splash">
         <action
-            android:id="@+id/splash_to_check"
-            app:destination="@id/checkFragment"
+            android:id="@+id/splash_to_overview"
+            app:destination="@id/overviewFragment"
             app:popUpTo="@+id/nav_graph"
             app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
-        android:id="@+id/checkFragment"
-        android:name="de.bitb.pantryplaner.ui.check.CheckFragment"
-        android:label="check">
+        android:id="@+id/overviewFragment"
+        android:name="de.bitb.pantryplaner.ui.overview.OverviewFragment"
+        android:label="overview">
         <action
-            android:id="@+id/check_to_releasenotes"
+            android:id="@+id/overview_to_releasenotes"
             app:destination="@id/releaseNotesFragment" />
+        <action
+            android:id="@+id/overview_to_items"
+            app:destination="@id/itemsFragment" />
+        <action
+            android:id="@+id/overview_to_checklist"
+            app:destination="@id/checklistFragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/releaseNotesFragment"
-        android:name="de.bitb.pantryplaner.ui.ReleaseNotesFragment"
-        android:label="releaseNotes"></fragment>
+        android:id="@+id/itemsFragment"
+        android:name="de.bitb.pantryplaner.ui.items.ItemsFragment"
+        android:label="items">
+    </fragment>
+
+    <fragment
+        android:id="@+id/checklistFragment"
+        android:name="de.bitb.pantryplaner.ui.checklist.ChecklistFragment"
+        android:label="checklist">
+        <action
+            android:id="@+id/check_to_items"
+            app:destination="@id/itemsFragment" />
+    </fragment>
 </navigation>

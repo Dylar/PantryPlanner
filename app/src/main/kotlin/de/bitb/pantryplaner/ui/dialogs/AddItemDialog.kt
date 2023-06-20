@@ -17,12 +17,13 @@ import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.ui.base.composable.CircleRow
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
-fun AddDialog(onConfirm: (String, String, Color, Boolean) -> Unit, onDismiss: () -> Unit) {
+fun AddItemDialog(onConfirm: (String, String, Color, Boolean) -> Unit, onDismiss: () -> Unit) {
     var name by remember { mutableStateOf("") }
     var category by remember { mutableStateOf("") }
-    val color = remember { mutableStateOf(BaseColors.SelectableColors.first()) }
+    val color = remember { MutableStateFlow(BaseColors.SelectableColors.first()) }
     val focusRequester = remember { FocusRequester() }
 
     AlertDialog(

@@ -8,14 +8,15 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import de.bitb.pantryplaner.data.ItemRepository
-import de.bitb.pantryplaner.data.ItemRepositoryImpl
-import de.bitb.pantryplaner.data.UserRepository
-import de.bitb.pantryplaner.data.UserRepositoryImpl
-import de.bitb.pantryplaner.data.source.FirestoreService
+import de.bitb.pantryplaner.data.*
+import de.bitb.pantryplaner.data.source.FirestoreCheckService
+import de.bitb.pantryplaner.data.source.FirestoreItemService
 import de.bitb.pantryplaner.data.source.PantryRemoteService
 import de.bitb.pantryplaner.data.source.RemoteService
+import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
+import de.bitb.pantryplaner.usecase.checklist.AddChecklistUC
+import de.bitb.pantryplaner.usecase.checklist.RemoveChecklistUC
 import de.bitb.pantryplaner.usecase.item.*
 import javax.inject.Singleton
 
@@ -30,9 +31,10 @@ object AppModule {
         FirebaseApp.initializeApp(app)
         val fireData = FirebaseFirestore.getInstance()
         val fireAuth = FirebaseAuth.getInstance()
-        val fireService = FirestoreService(fireData, fireAuth)
+        val itemService = FirestoreItemService(fireData, fireAuth)
+        val checkService = FirestoreCheckService(fireData)
 
-        return PantryRemoteService(fireService)
+        return PantryRemoteService(itemService, checkService)
     }
 
     // REPO
@@ -47,6 +49,12 @@ object AppModule {
     fun provideItemRepository(
         remoteService: RemoteService,
     ): ItemRepository = ItemRepositoryImpl(remoteService)
+
+    @Provides
+    @Singleton
+    fun provideCheckRepository(
+        remoteService: RemoteService,
+    ): CheckRepository = CheckRepositoryImpl(remoteService)
 
     //USE CASES
     @Provides
@@ -63,6 +71,17 @@ object AppModule {
             editItemUC = EditItemUC(itemRepo),
             editCategoryUC = EditCategoryUC(itemRepo),
             uncheckAllItemsUC = UncheckAllItemsUC(itemRepo),
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideCheckListUseCases(
+        checkRepo: CheckRepository,
+    ): ChecklistUseCases {
+        return ChecklistUseCases(
+            addChecklistUC = AddChecklistUC(checkRepo),
+            removeChecklistUC = RemoveChecklistUC(checkRepo),
         )
     }
 

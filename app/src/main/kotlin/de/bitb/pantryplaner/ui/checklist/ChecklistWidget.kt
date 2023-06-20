@@ -1,4 +1,4 @@
-package de.bitb.pantryplaner.ui.check
+package de.bitb.pantryplaner.ui.checklist
 
 import android.content.Context
 import android.content.Intent
@@ -69,7 +69,7 @@ class ScreenWidget : GlanceAppWidget() {
         coroutineScope.launch {
             dependencies =
                 EntryPointAccessors.fromApplication(context, ScreenWidgetEntryPoint::class.java)
-            items = itemRepo.getLiveCheckList().first().data!!
+            items = itemRepo.getLiveItems().first().data!!
             updateAll(context)
         }
     }

@@ -12,7 +12,7 @@ class UncheckAllItemsUC(
 ) {
     suspend operator fun invoke(color: Color): Resource<Unit> {
         return tryIt {
-            val getItemsResp = itemRepo.getLiveCheckList().first()
+            val getItemsResp = itemRepo.getLiveItems().first()
             if (getItemsResp is Resource.Error) {
                 return@tryIt getItemsResp.castTo()
             }

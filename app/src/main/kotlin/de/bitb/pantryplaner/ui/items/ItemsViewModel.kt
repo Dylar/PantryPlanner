@@ -1,4 +1,4 @@
-package de.bitb.pantryplaner.ui.check
+package de.bitb.pantryplaner.ui.items
 
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewModelScope
@@ -8,19 +8,44 @@ import de.bitb.pantryplaner.data.ItemRepository
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.BaseViewModel
 import de.bitb.pantryplaner.ui.base.composable.asResString
+import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.usecase.ItemUseCases
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
 @HiltViewModel
-class CheckViewModel @Inject constructor(
+class ItemsViewModel @Inject constructor(
     itemRepo: ItemRepository,
     private val itemUseCases: ItemUseCases,
 ) : BaseViewModel() {
 
-    val checkList: Flow<Resource<List<Item>>> = itemRepo.getLiveCheckList()
+    var showGridLayout = MutableStateFlow(true)
+    var showFilterDialog = MutableStateFlow(false)
+    val filterBy = MutableStateFlow(BaseColors.FilterColors.first())
+    var showAddDialog = MutableStateFlow(false)
+    var showAddToDialog = MutableStateFlow(false)
+
+    val checkedItems = MutableStateFlow(listOf<String>())
+    override fun isBackable(): Boolean = checkedItems.value.isEmpty()
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val checkList: Flow<Resource<Map<String, List<Item>>>> = filterBy.flatMapLatest {
+        itemRepo.getLiveItems().map { resp ->
+            if (resp is Resource.Error) {
+                return@map resp.castTo<Map<String, List<Item>>>()
+            }
+
+            val items = if (it != BaseColors.FilterColors.first())
+                resp.data?.filter { it.color == filterBy.value }
+            else resp.data
+            val groupedItems =
+                items?.groupBy { it.category }?.toSortedMap { a1, a2 -> a1.compareTo(a2) }
+            Resource.Success(groupedItems ?: emptyMap())
+        }
+    }
 
     fun addItem(name: String, category: String, color: Color) {
         viewModelScope.launch {
@@ -44,12 +69,14 @@ class CheckViewModel @Inject constructor(
         }
     }
 
-    fun checkItem(item: Item) {
-        viewModelScope.launch {
-            when (val resp = itemUseCases.checkItemUC(item)) {
-                is Resource.Error -> showSnackbar(resp.message!!)
-                else -> updateWidgets()
-            }
+    fun checkItem(uuid: String) {
+        checkedItems.update {
+            it.toMutableList()
+                .apply {
+                    if (!remove(uuid)) {
+                        add(uuid)
+                    }
+                }.toList()
         }
     }
 
@@ -71,13 +98,8 @@ class CheckViewModel @Inject constructor(
         }
     }
 
-    fun uncheckAllItems(color: Color) {
-        viewModelScope.launch {
-            when (val resp = itemUseCases.uncheckAllItemsUC(color)) {
-                is Resource.Error -> showSnackbar(resp.message!!)
-                else -> showSnackbar("Alle Haken entfernt".asResString()).also { updateWidgets() }
-            }
-        }
+    fun addToChecklist() {
+        TODO("Not yet implemented")
     }
 
 }

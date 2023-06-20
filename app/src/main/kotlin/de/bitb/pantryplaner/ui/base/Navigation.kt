@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import de.bitb.pantryplaner.R
@@ -16,5 +17,15 @@ fun Activity.openAppSettings() {
 }
 
 fun Fragment.naviToReleaseNotes() {
-    NavHostFragment.findNavController(this).navigate(R.id.check_to_releasenotes)
+    NavHostFragment.findNavController(this).navigate(R.id.overview_to_releasenotes)
 }
+
+fun Fragment.naviToItems() {
+    NavHostFragment.findNavController(this).navigate(R.id.overview_to_items)
+}
+
+fun Fragment.naviToChecklist(uuid: String) {
+    NavHostFragment.findNavController(this)
+        .navigate(R.id.overview_to_checklist, bundleOf(KEY_CHECKLIST_UUID to uuid))
+}
+

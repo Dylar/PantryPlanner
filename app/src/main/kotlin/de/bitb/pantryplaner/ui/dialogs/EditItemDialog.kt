@@ -20,6 +20,7 @@ import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.composable.CircleRow
 import de.bitb.pantryplaner.ui.base.styles.BaseColors.SelectableColors
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
 fun EditItemDialog(
@@ -36,7 +37,7 @@ fun EditItemDialog(
         )
     }
     var category by remember { mutableStateOf(item.category) }
-    val color = remember { mutableStateOf(item.color) }
+    val color = remember { MutableStateFlow(item.color) }
     val focusRequester = remember { FocusRequester() }
     AlertDialog(
         onDismissRequest = onDismiss,

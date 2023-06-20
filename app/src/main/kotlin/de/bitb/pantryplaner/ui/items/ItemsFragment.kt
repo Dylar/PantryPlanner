@@ -1,0 +1,384 @@
+package de.bitb.pantryplaner.ui.items
+
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.GridOff
+import androidx.compose.material.icons.filled.GridOn
+import androidx.compose.material.icons.outlined.FilterList
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.fragment.app.viewModels
+import dagger.hilt.android.AndroidEntryPoint
+import de.bitb.pantryplaner.R
+import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.data.model.Item
+import de.bitb.pantryplaner.ui.base.BaseFragment
+import de.bitb.pantryplaner.ui.base.composable.*
+import de.bitb.pantryplaner.ui.base.styles.BaseColors
+import de.bitb.pantryplaner.ui.dialogs.*
+import kotlinx.coroutines.flow.update
+
+@AndroidEntryPoint
+class ItemsFragment : BaseFragment<ItemsViewModel>() {
+    companion object {
+        const val APPBAR_TAG = "ItemAppbar"
+        const val LAYOUT_BUTTON_TAG = "ItemLayoutButton"
+        const val FILTER_BUTTON_TAG = "ItemFilterButton"
+        const val ADD_BUTTON_TAG = "ItemAddButton"
+        const val ADD_TO_BUTTON_TAG = "ItemAddToButton"
+        const val LIST_TAG = "CheckList"
+        const val GRID_TAG = "CheckGrid"
+    }
+
+    override val viewModel: ItemsViewModel by viewModels()
+
+    @Composable
+    override fun ScreenContent() {
+        onBack { onDismiss ->
+            ConfirmDialog(
+                "Discard changes?",
+                "Möchten Sie die Item Auswahl verwerfen?",
+                onConfirm = { navController.popBackStack() },
+                onDismiss = { onDismiss() },
+            )
+        }
+        Scaffold(
+            scaffoldState = scaffoldState,
+            topBar = { buildAppBar() },
+            content = { buildContent(it) },
+            bottomBar = { buildBottomBar() },
+        )
+
+        if (viewModel.showFilterDialog.collectAsState().value) {
+            ColorPickerDialog(
+                viewModel.filterBy,
+                onConfirm = { viewModel.showFilterDialog.value = false },
+                onDismiss = { viewModel.showFilterDialog.value = false },
+            )
+        }
+
+        if (viewModel.showAddDialog.collectAsState().value) {
+            AddItemDialog(
+                onConfirm = { name, category, color, close ->
+                    viewModel.addItem(name, category, color)
+                    if (close) {
+                        viewModel.showAddDialog.value = false
+                    }
+                },
+                onDismiss = { viewModel.showAddDialog.value = false },
+            )
+        }
+
+        if (viewModel.showAddToDialog.collectAsState().value) {
+            ConfirmDialog(
+                "Hinzufügen?",
+                "Möchten Sie alle markierten Items einer Checklist hinzufügen?",
+                onConfirm = {
+                    viewModel.addToChecklist()
+                    viewModel.showAddToDialog.value = false
+                },
+                onDismiss = { viewModel.showAddToDialog.value = false },
+            )
+        }
+    }
+
+    @Composable
+    private fun buildAppBar() {
+        val gridLayout by viewModel.showGridLayout.collectAsState()
+        TopAppBar(
+            modifier = Modifier.testTag(APPBAR_TAG),
+            title = { Text(getString(R.string.items_title)) },
+            actions = {
+                IconButton(
+                    modifier = Modifier.testTag(LAYOUT_BUTTON_TAG),
+                    onClick = { viewModel.showGridLayout.update { !it } },
+                ) {
+                    Icon(
+                        imageVector = if (gridLayout) Icons.Default.GridOff else Icons.Default.GridOn,
+                        contentDescription = "Layout button"
+                    )
+                }
+                IconButton(
+                    modifier = Modifier.testTag(FILTER_BUTTON_TAG),
+                    onClick = { viewModel.showFilterDialog.update { !it } },
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.FilterList,
+                        contentDescription = "Filter button"
+                    )
+                }
+            }
+        )
+    }
+
+    @Composable
+    private fun buildBottomBar() {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 4.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .weight(2f)
+            ) {
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp)
+                        .testTag(ADD_TO_BUTTON_TAG),
+                    onClick = { viewModel.showAddToDialog.update { true } },
+                    content = { Text("Add to Checklist") }
+                )
+            }
+            Box(
+                modifier = Modifier.padding(8.dp)
+            ) {
+                FloatingActionButton(
+                    modifier = Modifier
+                        .padding(bottom = 8.dp)
+                        .testTag(ADD_BUTTON_TAG),
+                    onClick = { viewModel.showAddDialog.update { true } }
+                ) { Icon(Icons.Filled.Add, contentDescription = "Add Item") }
+            }
+        }
+    }
+
+    @Composable
+    private fun buildContent(innerPadding: PaddingValues) {
+        val items by viewModel.checkList.collectAsState(null)
+        when {
+            items is Resource.Error -> {
+                showSnackBar("ERROR".asResString())
+                ErrorScreen(items!!.message!!.asString())
+            }
+            items == null -> LoadingIndicator()
+            items?.data?.isEmpty() == true -> EmptyListComp(getString(R.string.no_items))
+            else -> ItemList(innerPadding, items!!.data!!)
+        }
+    }
+
+    @OptIn(ExperimentalFoundationApi::class)
+    @Composable
+    fun ItemList(innerPadding: PaddingValues, items: Map<String, List<Item>>) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            val gridLayout by viewModel.showGridLayout.collectAsState()
+            if (gridLayout) {
+                LazyVerticalGrid(
+                    GridCells.Fixed(2),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .testTag(GRID_TAG),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalArrangement = Arrangement.Center,
+                    contentPadding = PaddingValues(4.dp),
+                ) {
+                    items.forEach { (headerText, list) ->
+                        if (headerText.isNotBlank()) {
+                            stickyGridHeader { Header(headerText) }
+                        }
+                        items(list.size) { CheckListItem(list[it]) }
+                    }
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .testTag(LIST_TAG),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    contentPadding = PaddingValues(4.dp),
+                ) {
+                    items.forEach { (headerText, list) ->
+                        if (headerText.isNotBlank()) {
+                            stickyHeader { Header(headerText) }
+                        }
+                        items(list.size) { CheckListItem(list[it]) }
+                    }
+                }
+            }
+        }
+    }
+
+    @OptIn(ExperimentalFoundationApi::class)
+    @Composable
+    private fun Header(category: String) {
+        var showEditDialog by remember { mutableStateOf(false) }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 4.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Card(
+                modifier = Modifier.combinedClickable(
+                    onClick = {}, // required? Oo
+                    onLongClick = { showEditDialog = true }
+                )
+            ) {
+                Text(
+                    category,
+                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+                    textAlign = TextAlign.Center,
+                    textDecoration = TextDecoration.Underline
+                )
+            }
+        }
+
+        if (showEditDialog) {
+            EditCategoryDialog(
+                category,
+                onConfirm = {
+                    viewModel.editCategory(category, it)
+                    showEditDialog = false
+                },
+                onDismiss = { showEditDialog = false },
+            )
+        }
+    }
+
+    @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
+    @Composable
+    fun CheckListItem(item: Item) {
+        var showRemoveDialog by remember { mutableStateOf(false) }
+        var showEditDialog by remember { mutableStateOf(false) }
+        val dismissState = rememberDismissState(
+            confirmStateChange = {
+                if (it == DismissValue.DismissedToEnd) {
+                    showRemoveDialog = true
+                    true
+                } else false
+            }
+        )
+
+        LaunchedEffect(dismissState.currentValue) {
+            if (dismissState.currentValue != DismissValue.Default) {
+                dismissState.reset()
+            }
+        }
+
+        if (showRemoveDialog) {
+            ConfirmDialog(
+                "Remove Item",
+                "Möchtest du folgendes Item entfernen?\n${item.name}",
+                onConfirm = {
+                    viewModel.removeItem(item)
+                    showRemoveDialog = false
+                },
+                onDismiss = { showRemoveDialog = false },
+            )
+        }
+
+        if (showEditDialog) {
+            EditItemDialog(
+                item = item,
+                onConfirm = { name, category, color ->
+                    viewModel.editItem(item, name, category, color)
+                    showEditDialog = false
+                },
+                onDismiss = { showEditDialog = false },
+            )
+        }
+
+        SwipeToDismiss(
+            modifier = Modifier.padding(2.dp),
+            state = dismissState,
+            directions = setOf(DismissDirection.StartToEnd),
+            background = { deleteItemCard() },
+            dismissContent = {
+                Card(
+                    elevation = 4.dp,
+                    modifier = Modifier
+                        .padding(vertical = 4.dp)
+                        .combinedClickable(
+                            onClick = { viewModel.checkItem(item.uuid) },
+                            onLongClick = { showEditDialog = true },
+                        ),
+                ) {
+                    val checkedItems = viewModel.checkedItems.collectAsState()
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 4.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Checkbox(
+                            checkedItems.value.contains(item.uuid),
+                            modifier = Modifier
+                                .weight(.2f),
+                            onCheckedChange = { viewModel.checkItem(item.uuid) },
+                            colors = CheckboxDefaults.colors(
+                                checkedColor = item.color,
+                                uncheckedColor = item.color
+                            )
+                        )
+                        Column(
+                            modifier = Modifier
+                                .padding(start = 2.dp)
+                                .weight(.7f)
+                        )
+                        {
+                            if (item.category.isNotBlank()) {
+                                Text(
+                                    item.category,
+                                    modifier = Modifier,
+                                    fontSize = 10.sp,
+                                )
+                            }
+                            Text(
+                                item.name,
+                                modifier = Modifier,
+                                fontSize = 16.sp,
+                                textDecoration = if (item.checked) TextDecoration.LineThrough else TextDecoration.None
+                            )
+                        }
+                        //TODO add item count
+                    }
+                }
+            }
+        )
+    }
+
+    @Composable
+    private fun deleteItemCard() {
+        Card(
+            elevation = 4.dp,
+            modifier = Modifier.padding(vertical = 4.dp)
+        ) {
+            Box(
+                contentAlignment = Alignment.CenterStart,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(BaseColors.FireRed)
+                    .padding(12.dp)
+            ) {
+                Text(
+                    text = "Delete",
+                    fontSize = 20.sp,
+                    color = BaseColors.White
+                )
+            }
+        }
+    }
+}

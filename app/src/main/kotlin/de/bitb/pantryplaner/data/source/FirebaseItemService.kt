@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
-class FirestoreService(
+class FirestoreItemService(
     private val firestore: FirebaseFirestore,
     private val fireAuth: FirebaseAuth
 ) : ItemRemoteDao, UserRemoteDao {
@@ -33,19 +33,21 @@ class FirestoreService(
         )
     }
 
-    override fun getItems(): Flow<Resource<List<Item>>> = callbackFlow {
+    override fun getItems(ids: List<String>?): Flow<Resource<List<Item>>> = callbackFlow {
         var snapshotStateListener: ListenerRegistration? = null
         try {
-            snapshotStateListener = itemCollection
-                .addSnapshotListener { snapshot, e ->
-                    val response = if (snapshot != null) {
-                        val items = snapshot.toObjects(Item::class.java)
-                        Resource.Success(items)
-                    } else {
-                        Resource.Error(e?.cause!!) //TODO crash? haha
-                    }
-                    trySend(response)
+            val ref =
+                if (ids == null) itemCollection
+                else itemCollection.whereIn("uuid", ids)
+            snapshotStateListener = ref.addSnapshotListener { snapshot, e ->
+                val response = if (snapshot != null) {
+                    val items = snapshot.toObjects(Item::class.java)
+                    Resource.Success(items)
+                } else {
+                    Resource.Error(e?.cause!!) //TODO crash? haha
                 }
+                trySend(response)
+            }
         } catch (e: Exception) {
             trySend(Resource.Error(e))
             e.printStackTrace()

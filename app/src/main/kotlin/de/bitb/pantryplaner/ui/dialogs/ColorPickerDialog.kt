@@ -8,10 +8,11 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.graphics.Color
 import de.bitb.pantryplaner.ui.base.composable.CircleRow
 import de.bitb.pantryplaner.ui.base.styles.BaseColors.FilterColors
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
 fun ColorPickerDialog(
-    color: MutableState<Color>,
+    color: MutableStateFlow<Color>,
     selectableColors: List<Color> = FilterColors,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit

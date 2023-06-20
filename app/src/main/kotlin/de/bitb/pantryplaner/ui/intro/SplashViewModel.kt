@@ -21,7 +21,7 @@ class SplashViewModel @Inject constructor(
             val userResp = atLeast(1000) { itemUseCases.loadDataUC() }
             when {
                 userResp is Resource.Error -> showSnackbar(userResp.message!!)
-                userResp.data == true -> navigate(R.id.splash_to_check)
+                userResp.data == true -> navigate(R.id.splash_to_overview)
                 else -> showSnackbar("Daten konnten nicht geladen werden".asResString())
             }
         }

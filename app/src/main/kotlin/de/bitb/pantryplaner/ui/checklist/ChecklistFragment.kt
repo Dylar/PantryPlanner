@@ -1,4 +1,4 @@
-package de.bitb.pantryplaner.ui.check
+package de.bitb.pantryplaner.ui.checklist
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -29,20 +29,17 @@ import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.BaseFragment
-import de.bitb.pantryplaner.ui.base.composable.ErrorScreen
-import de.bitb.pantryplaner.ui.base.composable.LoadingIndicator
-import de.bitb.pantryplaner.ui.base.composable.asResString
-import de.bitb.pantryplaner.ui.base.composable.stickyGridHeader
+import de.bitb.pantryplaner.ui.base.composable.*
 import de.bitb.pantryplaner.ui.base.naviToReleaseNotes
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.styles.BaseColors.FilterColors
 import de.bitb.pantryplaner.ui.dialogs.*
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @AndroidEntryPoint
-class CheckFragment : BaseFragment<CheckViewModel>() {
+class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
     companion object {
         const val APPBAR_TAG = "CheckAppbar"
-        const val INFO_BUTTON_TAG = "CheckInfoButton"
         const val LAYOUT_BUTTON_TAG = "CheckLayoutButton"
         const val FILTER_BUTTON_TAG = "CheckFilterButton"
         const val ADD_BUTTON_TAG = "CheckAddButton"
@@ -51,14 +48,13 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
         const val GRID_TAG = "CheckGrid"
     }
 
-    override val viewModel: CheckViewModel by viewModels()
+    override val viewModel: ChecklistViewModel by viewModels()
 
     @Composable
     override fun ScreenContent() {
         var showGridLayout by remember { mutableStateOf(true) }
         var showFilterDialog by remember { mutableStateOf(false) }
-        val filterBy = remember { mutableStateOf(FilterColors.first()) }
-        var showInfoDialog by remember { mutableStateOf(false) }
+        val filterBy = remember { MutableStateFlow(FilterColors.first()) }
         var showAddDialog by remember { mutableStateOf(false) }
         var showUncheckDialog by remember { mutableStateOf(false) }
 
@@ -69,15 +65,6 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
                     modifier = Modifier.testTag(APPBAR_TAG),
                     title = { Text(getString(R.string.check_title)) },
                     actions = {
-                        IconButton(
-                            onClick = { showInfoDialog = true },
-                            modifier = Modifier.testTag(INFO_BUTTON_TAG)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Info,
-                                contentDescription = "Info dialog"
-                            )
-                        }
                         IconButton(
                             onClick = { showGridLayout = !showGridLayout },
                             modifier = Modifier.testTag(LAYOUT_BUTTON_TAG)
@@ -123,8 +110,7 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
                         )
                     }
                     Box(
-                        modifier = Modifier
-                            .padding(8.dp)
+                        modifier = Modifier.padding(8.dp)
                     ) {
                         FloatingActionButton(
                             modifier = Modifier
@@ -149,10 +135,6 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
             }
         }
 
-        if (showInfoDialog) {
-            InfoDialog(naviToReleaseNotes = ::naviToReleaseNotes) { showInfoDialog = false }
-        }
-
         if (showFilterDialog) {
             fun onDismiss() {
                 showFilterDialog = false
@@ -165,7 +147,7 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
         }
 
         if (showAddDialog) {
-            AddDialog(
+            AddItemDialog(
                 onConfirm = { name, category, color, close ->
                     viewModel.addItem(name, category, color)
                     if (close) {
@@ -198,16 +180,7 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
         ) {
             when {
                 check == null -> LoadingIndicator()
-                check.isEmpty() -> Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxSize(),
-                ) {
-                    Text(
-                        modifier = Modifier.fillMaxSize(),
-                        text = getString(R.string.no_check),
-                        textAlign = TextAlign.Center,
-                    )
-                }
+                check.isEmpty() -> EmptyListComp(getString(R.string.no_check))
                 else -> {
                     val groupedItems = check.groupBy { it.category }
                         .toSortedMap { a1, a2 -> a1.compareTo(a2) }
@@ -337,9 +310,7 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
             background = {
                 Card(
                     elevation = 4.dp,
-                    modifier = Modifier
-                        .padding(vertical = 4.dp)
-                        .clickable { viewModel.checkItem(item) }
+                    modifier = Modifier.padding(vertical = 4.dp),
                 ) {
                     Box(
                         contentAlignment = Alignment.CenterStart,
@@ -392,14 +363,12 @@ class CheckFragment : BaseFragment<CheckViewModel>() {
                             if (item.category.isNotBlank()) {
                                 Text(
                                     item.category,
-                                    modifier = Modifier,
                                     fontSize = 10.sp,
                                 )
                             }
                             Text(
                                 item.name,
                                 modifier = Modifier,
-                                fontSize = 16.sp,
                                 textDecoration = if (item.checked) TextDecoration.LineThrough else TextDecoration.None
                             )
                         }
