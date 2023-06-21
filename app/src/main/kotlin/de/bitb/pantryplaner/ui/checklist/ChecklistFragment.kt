@@ -1,8 +1,8 @@
 package de.bitb.pantryplaner.ui.checklist
 
+import android.os.Bundle
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,11 +13,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.GridOff
 import androidx.compose.material.icons.filled.GridOn
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -29,12 +29,13 @@ import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.BaseFragment
+import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
 import de.bitb.pantryplaner.ui.base.composable.*
-import de.bitb.pantryplaner.ui.base.naviToReleaseNotes
-import de.bitb.pantryplaner.ui.base.styles.BaseColors
-import de.bitb.pantryplaner.ui.base.styles.BaseColors.FilterColors
-import de.bitb.pantryplaner.ui.dialogs.*
-import kotlinx.coroutines.flow.MutableStateFlow
+import de.bitb.pantryplaner.ui.base.naviChecklistToItems
+import de.bitb.pantryplaner.ui.dialogs.ColorPickerDialog
+import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
+import de.bitb.pantryplaner.ui.dialogs.EditCategoryDialog
+import de.bitb.pantryplaner.ui.dialogs.EditItemDialog
 
 @AndroidEntryPoint
 class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
@@ -50,173 +51,178 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
 
     override val viewModel: ChecklistViewModel by viewModels()
 
+    private lateinit var showGridLayout: MutableState<Boolean>
+    private lateinit var showFilterDialog: MutableState<Boolean>
+    private lateinit var showUncheckDialog: MutableState<Boolean>
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val uuid = arguments?.getString(KEY_CHECKLIST_UUID) ?: throw Exception()
+        viewModel.initChecklist(uuid)
+    }
+
     @Composable
     override fun ScreenContent() {
-        var showGridLayout by remember { mutableStateOf(true) }
-        var showFilterDialog by remember { mutableStateOf(false) }
-        val filterBy = remember { MutableStateFlow(FilterColors.first()) }
-        var showAddDialog by remember { mutableStateOf(false) }
-        var showUncheckDialog by remember { mutableStateOf(false) }
+        showGridLayout = remember { mutableStateOf(true) }
+        showFilterDialog = remember { mutableStateOf(false) }
+        showUncheckDialog = remember { mutableStateOf(false) }
 
         Scaffold(
             scaffoldState = scaffoldState,
-            topBar = {
-                TopAppBar(
-                    modifier = Modifier.testTag(APPBAR_TAG),
-                    title = { Text(getString(R.string.check_title)) },
-                    actions = {
-                        IconButton(
-                            onClick = { showGridLayout = !showGridLayout },
-                            modifier = Modifier.testTag(LAYOUT_BUTTON_TAG)
-                        ) {
-                            Icon(
-                                imageVector = if (showGridLayout) Icons.Default.GridOff else Icons.Default.GridOn,
-                                contentDescription = "Layout button"
-                            )
-                        }
-                        IconButton(
-                            onClick = { showFilterDialog = !showFilterDialog },
-                            modifier = Modifier.testTag(FILTER_BUTTON_TAG)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.FilterList,
-                                contentDescription = "Filter button"
-                            )
-                        }
+            topBar = { buildAppBar() },
+            content = { buildContent(it) },
+            bottomBar = { buildBottomBar() },
+        )
 
-                    }
-                )
-            },
-            bottomBar = {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 4.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .weight(2f)
-                    ) {
-                        Button(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 8.dp)
-                                .testTag(UNCHECK_BUTTON_TAG),
-                            onClick = { showUncheckDialog = true },
-                            content = { Text("Haken entfernen") }
-                        )
-                    }
-                    Box(
-                        modifier = Modifier.padding(8.dp)
-                    ) {
-                        FloatingActionButton(
-                            modifier = Modifier
-                                .padding(bottom = 8.dp)
-                                .testTag(ADD_BUTTON_TAG),
-                            onClick = { showAddDialog = true }
-                        ) { Icon(Icons.Filled.Add, contentDescription = "Add Item") }
-                    }
-                }
-            }
-        ) { innerPadding ->
-            val list by viewModel.checkList.collectAsState(null)
-            if (list is Resource.Error) {
-                showSnackBar("ERROR".asResString())
-                ErrorScreen(list!!.message!!.asString())
-            } else {
-                var items = list?.data
-                if (list?.hasData == true && filterBy.value != FilterColors.first()) {
-                    items = items?.filter { it.color == filterBy.value }
-                }
-                CheckList(innerPadding, showGridLayout, items)
-            }
-        }
-
-        if (showFilterDialog) {
-            fun onDismiss() {
-                showFilterDialog = false
-            }
+        if (showFilterDialog.value) {
             ColorPickerDialog(
-                filterBy,
-                onConfirm = ::onDismiss,
-                onDismiss = ::onDismiss,
+                viewModel.filterBy,
+                onConfirm = { showFilterDialog.value = false },
+                onDismiss = { showFilterDialog.value = false },
             )
         }
 
-        if (showAddDialog) {
-            AddItemDialog(
-                onConfirm = { name, category, color, close ->
-                    viewModel.addItem(name, category, color)
-                    if (close) {
-                        showAddDialog = false
-                    }
-                },
-                onDismiss = { showAddDialog = false },
-            )
-        }
-
-        if (showUncheckDialog) {
+        if (showUncheckDialog.value) {
             ConfirmDialog(
                 "Haken entfernen?",
                 "Möchten Sie alle Haken entfernen?",
                 onConfirm = {
-                    viewModel.uncheckAllItems(filterBy.value)
-                    showUncheckDialog = false
+                    viewModel.uncheckAllItems()
+                    showUncheckDialog.value = false
                 },
-                onDismiss = { showUncheckDialog = false },
+                onDismiss = { showUncheckDialog.value = false },
             )
+        }
+    }
+
+    @Composable
+    private fun buildAppBar() {
+        val checklist by viewModel.checkList.collectAsState(null)
+        TopAppBar(
+            modifier = Modifier.testTag(APPBAR_TAG),
+            title = {
+                Text(
+                    getString(
+                        R.string.check_title,
+                        checklist?.data?.name ?: "Loading..."
+                    )
+                )
+            },
+            actions = {
+                IconButton(
+                    onClick = { showGridLayout.value = !showGridLayout.value },
+                    modifier = Modifier.testTag(LAYOUT_BUTTON_TAG)
+                ) {
+                    Icon(
+                        imageVector = if (showGridLayout.value) Icons.Default.GridOff else Icons.Default.GridOn,
+                        contentDescription = "Layout button"
+                    )
+                }
+                IconButton(
+                    onClick = { showFilterDialog.value = !showFilterDialog.value },
+                    modifier = Modifier.testTag(FILTER_BUTTON_TAG)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.FilterList,
+                        contentDescription = "Filter button"
+                    )
+                }
+            }
+        )
+    }
+
+    @Composable
+    private fun buildBottomBar() {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 4.dp)
+                .background(Color.Transparent),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .weight(2f)
+            ) {
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp)
+                        .testTag(UNCHECK_BUTTON_TAG),
+                    onClick = { showUncheckDialog.value = true },
+                    content = { Text("Haken entfernen") }
+                )
+            }
+            Box(
+                modifier = Modifier.padding(8.dp)
+            ) {
+                FloatingActionButton(
+                    modifier = Modifier
+                        .padding(bottom = 8.dp)
+                        .testTag(ADD_BUTTON_TAG),
+                    onClick = { naviChecklistToItems(viewModel.checkListId) }
+                ) { Icon(Icons.Filled.Add, contentDescription = "Add Item") }
+            }
+        }
+    }
+
+    @Composable
+    private fun buildContent(innerPadding: PaddingValues) {
+        val items by viewModel.itemMap.collectAsState(null)
+        when {
+            items is Resource.Error -> {
+                showSnackBar("ERROR".asResString())
+                ErrorScreen(items!!.message!!.asString())
+            }
+            items == null -> LoadingIndicator()
+            items?.data?.isEmpty() == true -> EmptyListComp(getString(R.string.no_items))
+            else -> CheckList(innerPadding, items!!.data!!)
         }
     }
 
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    fun CheckList(innerPadding: PaddingValues, showGridLayout: Boolean, check: List<Item>?) {
+    fun CheckList(
+        innerPadding: PaddingValues,
+        items: Map<String, List<Item>>
+    ) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.padding(innerPadding)
         ) {
-            when {
-                check == null -> LoadingIndicator()
-                check.isEmpty() -> EmptyListComp(getString(R.string.no_check))
-                else -> {
-                    val groupedItems = check.groupBy { it.category }
-                        .toSortedMap { a1, a2 -> a1.compareTo(a2) }
-                    if (showGridLayout) {
-                        LazyVerticalGrid(
-                            GridCells.Fixed(2),
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .testTag(GRID_TAG),
-                            verticalArrangement = Arrangement.Top,
-                            horizontalArrangement = Arrangement.Center,
-                            contentPadding = PaddingValues(4.dp),
-                        ) {
-                            groupedItems.forEach { (headerText, list) ->
-                                if (headerText.isNotBlank()) {
-                                    stickyGridHeader { Header(headerText) }
-                                }
-                                items(list.size) { CheckListItem(list[it]) }
-                            }
+            if (showGridLayout.value) {
+                LazyVerticalGrid(
+                    GridCells.Fixed(2),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .testTag(GRID_TAG),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalArrangement = Arrangement.Center,
+                    contentPadding = PaddingValues(4.dp),
+                ) {
+                    items.forEach { (headerText, list) ->
+                        if (headerText.isNotBlank()) {
+                            stickyGridHeader { Header(headerText) }
                         }
-                    } else {
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .testTag(LIST_TAG),
-                            verticalArrangement = Arrangement.Top,
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            contentPadding = PaddingValues(4.dp),
-                        ) {
-                            groupedItems.forEach { (headerText, list) ->
-                                if (headerText.isNotBlank()) {
-                                    stickyHeader { Header(headerText) }
-                                }
-                                items(list.size) { CheckListItem(list[it]) }
-                            }
+                        items(list.size) { CheckListItem(list[it]) }
+                    }
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .testTag(LIST_TAG),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    contentPadding = PaddingValues(4.dp),
+                ) {
+                    items.forEach { (headerText, list) ->
+                        if (headerText.isNotBlank()) {
+                            stickyHeader { Header(headerText) }
                         }
+                        items(list.size) { CheckListItem(list[it]) }
                     }
                 }
             }
@@ -307,26 +313,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
             modifier = Modifier.padding(2.dp),
             state = dismissState,
             directions = setOf(DismissDirection.StartToEnd),
-            background = {
-                Card(
-                    elevation = 4.dp,
-                    modifier = Modifier.padding(vertical = 4.dp),
-                ) {
-                    Box(
-                        contentAlignment = Alignment.CenterStart,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(BaseColors.FireRed)
-                            .padding(12.dp)
-                    ) {
-                        Text(
-                            text = "Delete",
-                            fontSize = 20.sp,
-                            color = BaseColors.White
-                        )
-                    }
-                }
-            },
+            background = { DeleteItemBackground() },
             dismissContent = {
                 Card(
                     elevation = 4.dp,

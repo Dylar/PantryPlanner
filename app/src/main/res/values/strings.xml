@@ -8,7 +8,7 @@
     <string name="items_title">Items</string>
     <string name="no_items">Keine Items vorhanden</string>
 
-    <string name="check_title">Checklist</string>
+    <string name="check_title">Checklist: %s</string>
     <string name="no_check">Nothing to check</string>
     <string name="item_name">Name</string>
     <string name="item_category">Kategorie</string>

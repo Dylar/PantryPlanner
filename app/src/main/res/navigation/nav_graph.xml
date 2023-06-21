@@ -38,15 +38,14 @@
     <fragment
         android:id="@+id/itemsFragment"
         android:name="de.bitb.pantryplaner.ui.items.ItemsFragment"
-        android:label="items">
-    </fragment>
+        android:label="items"></fragment>
 
     <fragment
         android:id="@+id/checklistFragment"
         android:name="de.bitb.pantryplaner.ui.checklist.ChecklistFragment"
         android:label="checklist">
         <action
-            android:id="@+id/check_to_items"
+            android:id="@+id/checklist_to_items"
             app:destination="@id/itemsFragment" />
     </fragment>
 </navigation>

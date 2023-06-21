@@ -1,5 +1,6 @@
 package de.bitb.pantryplaner.ui.items
 
+import android.os.Bundle
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -16,6 +17,7 @@ import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -27,10 +29,9 @@ import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.BaseFragment
+import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
 import de.bitb.pantryplaner.ui.base.composable.*
-import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.dialogs.*
-import kotlinx.coroutines.flow.update
 
 @AndroidEntryPoint
 class ItemsFragment : BaseFragment<ItemsViewModel>() {
@@ -46,8 +47,23 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
 
     override val viewModel: ItemsViewModel by viewModels()
 
+    private lateinit var showGridLayout: MutableState<Boolean>
+    private lateinit var showFilterDialog: MutableState<Boolean>
+    private lateinit var showAddDialog: MutableState<Boolean>
+    private lateinit var showAddToDialog: MutableState<Boolean>
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.fromChecklist = arguments?.getString(KEY_CHECKLIST_UUID)
+    }
+
     @Composable
     override fun ScreenContent() {
+        showGridLayout = remember { mutableStateOf(true) }
+        showFilterDialog = remember { mutableStateOf(false) }
+        showAddDialog = remember { mutableStateOf(false) }
+        showAddToDialog = remember { mutableStateOf(false) }
+
         onBack { onDismiss ->
             ConfirmDialog(
                 "Discard changes?",
@@ -63,58 +79,58 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
             bottomBar = { buildBottomBar() },
         )
 
-        if (viewModel.showFilterDialog.collectAsState().value) {
+        if (showFilterDialog.value) {
             ColorPickerDialog(
                 viewModel.filterBy,
-                onConfirm = { viewModel.showFilterDialog.value = false },
-                onDismiss = { viewModel.showFilterDialog.value = false },
+                onConfirm = { showFilterDialog.value = false },
+                onDismiss = { showFilterDialog.value = false },
             )
         }
 
-        if (viewModel.showAddDialog.collectAsState().value) {
+        if (showAddDialog.value) {
             AddItemDialog(
                 onConfirm = { name, category, color, close ->
                     viewModel.addItem(name, category, color)
                     if (close) {
-                        viewModel.showAddDialog.value = false
+                        showAddDialog.value = false
                     }
                 },
-                onDismiss = { viewModel.showAddDialog.value = false },
+                onDismiss = { showAddDialog.value = false },
             )
         }
 
-        if (viewModel.showAddToDialog.collectAsState().value) {
+        if (showAddToDialog.value) {
             ConfirmDialog(
+                // TODO select checklist dialog
                 "Hinzufügen?",
-                "Möchten Sie alle markierten Items einer Checklist hinzufügen?",
+                "Möchten Sie alle markierten Items der Checklist hinzufügen?",
                 onConfirm = {
-                    viewModel.addToChecklist()
-                    viewModel.showAddToDialog.value = false
+                    viewModel.addToChecklist(viewModel.fromChecklist!!)
+                    showAddToDialog.value = false
                 },
-                onDismiss = { viewModel.showAddToDialog.value = false },
+                onDismiss = { showAddToDialog.value = false },
             )
         }
     }
 
     @Composable
     private fun buildAppBar() {
-        val gridLayout by viewModel.showGridLayout.collectAsState()
         TopAppBar(
             modifier = Modifier.testTag(APPBAR_TAG),
             title = { Text(getString(R.string.items_title)) },
             actions = {
                 IconButton(
                     modifier = Modifier.testTag(LAYOUT_BUTTON_TAG),
-                    onClick = { viewModel.showGridLayout.update { !it } },
+                    onClick = { showGridLayout.value = !showGridLayout.value },
                 ) {
                     Icon(
-                        imageVector = if (gridLayout) Icons.Default.GridOff else Icons.Default.GridOn,
+                        imageVector = if (showGridLayout.value) Icons.Default.GridOff else Icons.Default.GridOn,
                         contentDescription = "Layout button"
                     )
                 }
                 IconButton(
                     modifier = Modifier.testTag(FILTER_BUTTON_TAG),
-                    onClick = { viewModel.showFilterDialog.update { !it } },
+                    onClick = { showFilterDialog.value = !showFilterDialog.value },
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.FilterList,
@@ -130,32 +146,37 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 4.dp),
+                .padding(horizontal = 4.dp)
+                .background(Color.Transparent),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .weight(2f)
-            ) {
-                Button(
+            if (viewModel.fromChecklist != null) {
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 8.dp)
-                        .testTag(ADD_TO_BUTTON_TAG),
-                    onClick = { viewModel.showAddToDialog.update { true } },
-                    content = { Text("Add to Checklist") }
-                )
+                        .padding(8.dp)
+                        .weight(2f)
+                        .background(Color.Transparent)
+                ) {
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp)
+                            .testTag(ADD_TO_BUTTON_TAG),
+                        onClick = { showAddToDialog.value = true },
+                        content = { Text("Add to Checklist") }
+                    )
+                }
             }
             Box(
                 modifier = Modifier.padding(8.dp)
+                    .background(Color.Transparent)
             ) {
                 FloatingActionButton(
                     modifier = Modifier
                         .padding(bottom = 8.dp)
                         .testTag(ADD_BUTTON_TAG),
-                    onClick = { viewModel.showAddDialog.update { true } }
+                    onClick = { showAddDialog.value = true }
                 ) { Icon(Icons.Filled.Add, contentDescription = "Add Item") }
             }
         }
@@ -182,8 +203,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
             contentAlignment = Alignment.Center,
             modifier = Modifier.padding(innerPadding)
         ) {
-            val gridLayout by viewModel.showGridLayout.collectAsState()
-            if (gridLayout) {
+            if (showGridLayout.value) {
                 LazyVerticalGrid(
                     GridCells.Fixed(2),
                     modifier = Modifier
@@ -304,7 +324,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
             modifier = Modifier.padding(2.dp),
             state = dismissState,
             directions = setOf(DismissDirection.StartToEnd),
-            background = { deleteItemCard() },
+            background = { DeleteItemBackground() },
             dismissContent = {
                 Card(
                     elevation = 4.dp,
@@ -350,7 +370,6 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
                                 item.name,
                                 modifier = Modifier,
                                 fontSize = 16.sp,
-                                textDecoration = if (item.checked) TextDecoration.LineThrough else TextDecoration.None
                             )
                         }
                         //TODO add item count
@@ -358,27 +377,5 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
                 }
             }
         )
-    }
-
-    @Composable
-    private fun deleteItemCard() {
-        Card(
-            elevation = 4.dp,
-            modifier = Modifier.padding(vertical = 4.dp)
-        ) {
-            Box(
-                contentAlignment = Alignment.CenterStart,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(BaseColors.FireRed)
-                    .padding(12.dp)
-            ) {
-                Text(
-                    text = "Delete",
-                    fontSize = 20.sp,
-                    color = BaseColors.White
-                )
-            }
-        }
     }
 }

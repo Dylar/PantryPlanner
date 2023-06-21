@@ -18,7 +18,7 @@ class AddItemUC(
                 if (name.isBlank()) {
                     return@tryIt "Name darf nicht leer sein".asResourceError()
                 }
-                val item = Item(name, category, colorHex = color.toArgb())
+                val item = Item(name = name, category = category, colorHex = color.toArgb())
                 itemRepo.addItem(item)
             },
         )

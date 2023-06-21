@@ -17,8 +17,8 @@ sealed class Resource<T>(val data: T? = null, val message: ResString? = null) {
         constructor(@StringRes stringId: Int, data: T? = null)
                 : this(ResString.ResourceString(stringId), data)
 
-        fun <E> castTo(): Error<E> {
-            return Error(message!!)
+        fun <E> castTo(data: E? = null): Error<E> {
+            return Error(message!!, data)
         }
     }
 

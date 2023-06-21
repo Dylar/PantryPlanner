@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 interface ItemRepository {
-    fun getLiveItems(ids: List<String>? = null): Flow<Resource<List<Item>>>
+    fun getItems(ids: List<String>? = null): Flow<Resource<List<Item>>>
     suspend fun addItem(item: Item): Resource<Boolean>
     suspend fun removeItem(item: Item): Resource<Boolean>
     suspend fun saveItems(items: List<Item>): Resource<Unit>
@@ -17,7 +17,7 @@ class ItemRepositoryImpl(
     private val remoteDB: RemoteService,
 ) : ItemRepository {
 
-    override fun getLiveItems(ids: List<String>?): Flow<Resource<List<Item>>> =
+    override fun getItems(ids: List<String>?): Flow<Resource<List<Item>>> =
         remoteDB.getItems(ids).map { res ->
             if (res is Resource.Error) {
                 res

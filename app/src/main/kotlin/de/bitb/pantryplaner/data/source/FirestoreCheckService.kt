@@ -1,14 +1,14 @@
 package de.bitb.pantryplaner.data.source
 
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.ktx.snapshots
 import de.bitb.pantryplaner.BuildConfig
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.model.Checklist
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 
 class FirestoreCheckService(
@@ -21,26 +21,19 @@ class FirestoreCheckService(
             .document(BuildConfig.FLAVOR)
             .collection("checklists")
 
-    override fun getCheckLists(): Flow<Resource<List<Checklist>>> = callbackFlow {
-        var snapshotStateListener: ListenerRegistration? = null
-        try {
-            snapshotStateListener = checkCollection
-                .addSnapshotListener { snapshot, e ->
-                    val response = if (snapshot != null) {
-                        val docs = snapshot.toObjects(Checklist::class.java)
-                        Resource.Success(docs)
-                    } else {
-                        Resource.Error(e?.cause!!) //TODO crash? haha
-                    }
-                    trySend(response)
-                }
-        } catch (e: Exception) {
-            trySend(Resource.Error(e))
-            e.printStackTrace()
+    override fun getCheckLists(ids: List<String>?): Flow<Resource<List<Checklist>>> {
+        if (ids?.isEmpty() == true) {
+            return MutableStateFlow(Resource.Success(emptyList()))
         }
+        val ref =
+            if (ids == null) checkCollection
+            else checkCollection.whereIn("uuid", ids)
 
-        awaitClose {
-            snapshotStateListener?.remove()
+        return ref.snapshots().map {
+            tryIt {
+                val docs = it.toObjects(Checklist::class.java)
+                Resource.Success(docs)
+            }
         }
     }
 

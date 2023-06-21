@@ -10,7 +10,7 @@ class EditCategoryUC(
 ) {
     suspend operator fun invoke(previousCategory: String, newCategory: String): Resource<Unit> {
         return tryIt {
-            val itemsResp = itemRepo.getLiveItems().first()
+            val itemsResp = itemRepo.getItems().first()
             if (itemsResp is Resource.Error) {
                 return@tryIt itemsResp.castTo()
             }

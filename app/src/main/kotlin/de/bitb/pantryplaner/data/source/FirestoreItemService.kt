@@ -2,14 +2,14 @@ package de.bitb.pantryplaner.data.source
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.ktx.snapshots
 import de.bitb.pantryplaner.BuildConfig
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.model.Item
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 
 class FirestoreItemService(
@@ -33,28 +33,19 @@ class FirestoreItemService(
         )
     }
 
-    override fun getItems(ids: List<String>?): Flow<Resource<List<Item>>> = callbackFlow {
-        var snapshotStateListener: ListenerRegistration? = null
-        try {
-            val ref =
-                if (ids == null) itemCollection
-                else itemCollection.whereIn("uuid", ids)
-            snapshotStateListener = ref.addSnapshotListener { snapshot, e ->
-                val response = if (snapshot != null) {
-                    val items = snapshot.toObjects(Item::class.java)
-                    Resource.Success(items)
-                } else {
-                    Resource.Error(e?.cause!!) //TODO crash? haha
-                }
-                trySend(response)
-            }
-        } catch (e: Exception) {
-            trySend(Resource.Error(e))
-            e.printStackTrace()
+    override fun getItems(ids: List<String>?): Flow<Resource<List<Item>>> {
+        if (ids?.isEmpty() == true) {
+            return MutableStateFlow(Resource.Success(emptyList()))
         }
+        val ref =
+            if (ids == null) itemCollection
+            else itemCollection.whereIn("uuid", ids)
 
-        awaitClose {
-            snapshotStateListener?.remove()
+        return ref.snapshots().map {
+            tryIt {
+                val items = it.toObjects(Item::class.java)
+                Resource.Success(items)
+            }
         }
     }
 

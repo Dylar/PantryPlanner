@@ -20,8 +20,13 @@ fun Fragment.naviToReleaseNotes() {
     NavHostFragment.findNavController(this).navigate(R.id.overview_to_releasenotes)
 }
 
-fun Fragment.naviToItems() {
+fun Fragment.naviOverviewToItems() {
     NavHostFragment.findNavController(this).navigate(R.id.overview_to_items)
+}
+
+fun Fragment.naviChecklistToItems(uuid: String) {
+    NavHostFragment.findNavController(this)
+        .navigate(R.id.checklist_to_items, bundleOf(KEY_CHECKLIST_UUID to uuid))
 }
 
 fun Fragment.naviToChecklist(uuid: String) {
