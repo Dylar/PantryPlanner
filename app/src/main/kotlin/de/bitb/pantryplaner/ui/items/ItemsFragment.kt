@@ -164,7 +164,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
                             .padding(bottom = 8.dp)
                             .testTag(ADD_TO_BUTTON_TAG),
                         onClick = { showAddToDialog.value = true },
-                        content = { Text("Add to Checklist") }
+                        content = { Text("Checkliste hinzufügen") }
                     )
                 }
             }
@@ -300,7 +300,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
         if (showRemoveDialog) {
             ConfirmDialog(
                 "Remove Item",
-                "Möchtest du folgendes Item entfernen?\n${item.name}",
+                "Möchten Sie folgendes Item entfernen?\n${item.name}",
                 onConfirm = {
                     viewModel.removeItem(item)
                     showRemoveDialog = false

@@ -15,9 +15,7 @@ import de.bitb.pantryplaner.data.source.PantryRemoteService
 import de.bitb.pantryplaner.data.source.RemoteService
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
-import de.bitb.pantryplaner.usecase.checklist.AddChecklistUC
-import de.bitb.pantryplaner.usecase.checklist.AddItemsToChecklistUC
-import de.bitb.pantryplaner.usecase.checklist.RemoveChecklistUC
+import de.bitb.pantryplaner.usecase.checklist.*
 import de.bitb.pantryplaner.usecase.item.*
 import javax.inject.Singleton
 
@@ -68,7 +66,6 @@ object AppModule {
             loadDataUC = LoadDataUC(userRepo),
             addItemUC = AddItemUC(itemRepo),
             removeItemUC = RemoveItemUC(itemRepo),
-            checkItemUC = CheckItemUC(itemRepo),
             editItemUC = EditItemUC(itemRepo),
             editCategoryUC = EditCategoryUC(itemRepo),
             uncheckAllItemsUC = UncheckAllItemsUC(itemRepo),
@@ -84,6 +81,10 @@ object AppModule {
             addChecklistUC = AddChecklistUC(checkRepo),
             removeChecklistUC = RemoveChecklistUC(checkRepo),
             addItemsToChecklistUC = AddItemsToChecklistUC(checkRepo),
+            removeItemsFromChecklistUC = RemoveItemsFromChecklistUC(checkRepo),
+            checkItemUC = CheckItemUC(checkRepo),
+            finishChecklistUC = FinishChecklistUC(checkRepo),
+            unfinishChecklistUC = UnfinishChecklistUC(checkRepo)
         )
     }
 

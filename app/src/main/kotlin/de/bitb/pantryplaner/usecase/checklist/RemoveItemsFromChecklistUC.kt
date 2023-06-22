@@ -6,7 +6,7 @@ import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.CheckRepository
 import kotlinx.coroutines.flow.first
 
-class AddItemsToChecklistUC(
+class RemoveItemsFromChecklistUC(
     private val checkRepo: CheckRepository,
 ) {
     suspend operator fun invoke(checkId: String, itemIds: List<String>): Resource<Boolean> {
@@ -23,12 +23,9 @@ class AddItemsToChecklistUC(
                 }
 
                 val checklist = getResp.data!!.first()
-                val saveChecklist = checklist.copy(
-                    items = setOf(
-                        *itemIds.toTypedArray(),
-                        *checklist.items.toTypedArray()
-                    ).toList()
-                )
+                val items = checklist.items.toMutableList()
+                items.removeAll(itemIds)
+                val saveChecklist = checklist.copy(items = items)
 
                 val saveResp = checkRepo.saveChecklist(saveChecklist)
                 if (saveResp is Resource.Error) {

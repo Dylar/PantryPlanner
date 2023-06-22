@@ -25,7 +25,6 @@ class ItemRepositoryImpl(
                 Resource.Success(res.data?.apply {
                     sortedBy { it.name }
                     sortedBy { it.category }
-                    sortedBy { it.checked }
                 })
             }
         }

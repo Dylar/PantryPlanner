@@ -162,7 +162,7 @@ class ScreenWidget : GlanceAppWidget() {
     @Composable
     private fun CheckListItem(context: Context, item: Item) {
         fun onTap() = CoroutineScope(Dispatchers.IO).launch {
-            itemUCs.checkItemUC(item)
+//            itemUCs.checkItemUC(item) //TODO repair widget
             refresh(context)
         }
         Row(
@@ -175,7 +175,7 @@ class ScreenWidget : GlanceAppWidget() {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             CheckBox(
-                item.checked,
+                false, //TODO repair widget
                 modifier = GlanceModifier,
                 onCheckedChange = ::onTap,
                 colors = CheckboxDefaults.colors(
@@ -207,7 +207,8 @@ class ScreenWidget : GlanceAppWidget() {
                     style = TextDefaults.defaultTextStyle.copy(
                         color = ColorProvider(BaseColors.White),
                         fontSize = 16.sp,
-                        textDecoration = if (item.checked) TextDecoration.LineThrough else TextDecoration.None
+                        //TODO repair widget
+//                        textDecoration = if (item.checked) TextDecoration.LineThrough else TextDecoration.None
                     )
                 )
             }

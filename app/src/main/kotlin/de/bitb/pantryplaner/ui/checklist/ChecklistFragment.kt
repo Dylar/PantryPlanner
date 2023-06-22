@@ -53,7 +53,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
 
     private lateinit var showGridLayout: MutableState<Boolean>
     private lateinit var showFilterDialog: MutableState<Boolean>
-    private lateinit var showUncheckDialog: MutableState<Boolean>
+    private lateinit var showFinishDialog: MutableState<Boolean>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,7 +65,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
     override fun ScreenContent() {
         showGridLayout = remember { mutableStateOf(true) }
         showFilterDialog = remember { mutableStateOf(false) }
-        showUncheckDialog = remember { mutableStateOf(false) }
+        showFinishDialog = remember { mutableStateOf(false) }
 
         Scaffold(
             scaffoldState = scaffoldState,
@@ -82,15 +82,15 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
             )
         }
 
-        if (showUncheckDialog.value) {
+        if (showFinishDialog.value) {
             ConfirmDialog(
-                "Haken entfernen?",
-                "Möchten Sie alle Haken entfernen?",
+                "Fertig?", // TODO add to stock?
+                "Möchten Sie die Checklist erledigen und die Items ihrem Bestand hinzufügen?",
                 onConfirm = {
-                    viewModel.uncheckAllItems()
-                    showUncheckDialog.value = false
+                    viewModel.finishChecklist()
+                    showFinishDialog.value = false
                 },
-                onDismiss = { showUncheckDialog.value = false },
+                onDismiss = { showFinishDialog.value = false },
             )
         }
     }
@@ -151,8 +151,8 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                         .fillMaxWidth()
                         .padding(bottom = 8.dp)
                         .testTag(UNCHECK_BUTTON_TAG),
-                    onClick = { showUncheckDialog.value = true },
-                    content = { Text("Haken entfernen") }
+                    onClick = { showFinishDialog.value = true },
+                    content = { Text("Erledigen") }
                 )
             }
             Box(
@@ -289,7 +289,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
         if (showRemoveDialog) {
             ConfirmDialog(
                 "Remove Item",
-                "Möchtest du folgendes Item entfernen?\n${item.name}",
+                "Möchten Sie folgendes Item entfernen?\n${item.name}",
                 onConfirm = {
                     viewModel.removeItem(item)
                     showRemoveDialog = false
@@ -309,6 +309,8 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
             )
         }
 
+        val checklist by viewModel.checkList.collectAsState(null)
+        val isChecked = checklist?.data?.checked?.contains(item.uuid) == true
         SwipeToDismiss(
             modifier = Modifier.padding(2.dp),
             state = dismissState,
@@ -332,7 +334,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Checkbox(
-                            item.checked,
+                            isChecked,
                             modifier = Modifier
                                 .weight(.2f),
                             onCheckedChange = { viewModel.checkItem(item) },
@@ -356,7 +358,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                             Text(
                                 item.name,
                                 modifier = Modifier,
-                                textDecoration = if (item.checked) TextDecoration.LineThrough else TextDecoration.None
+                                textDecoration = if (isChecked) TextDecoration.LineThrough else TextDecoration.None
                             )
                         }
                     }

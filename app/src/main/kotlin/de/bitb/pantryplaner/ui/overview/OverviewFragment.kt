@@ -53,6 +53,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
     private lateinit var showGridLayout: MutableState<Boolean>
     private lateinit var showInfoDialog: MutableState<Boolean>
     private lateinit var showAddDialog: MutableState<Boolean>
+    private lateinit var showUnfinishDialog: MutableState<Boolean>
 
 
     @Composable
@@ -60,6 +61,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
         showGridLayout = remember { mutableStateOf(true) }
         showInfoDialog = remember { mutableStateOf(false) }
         showAddDialog = remember { mutableStateOf(false) }
+        showUnfinishDialog = remember { mutableStateOf(false) }
 
         Scaffold(
             scaffoldState = scaffoldState,
@@ -132,13 +134,13 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
                         .padding(bottom = 8.dp)
                         .testTag(ChecklistFragment.UNCHECK_BUTTON_TAG),
                     onClick = ::naviOverviewToItems,
-                    content = { Text("Zu Items") }
+                    content = { Text("Zum Bestand") }
                 )
             }
             Box(
                 modifier = Modifier.padding(8.dp)
             ) {
-                FloatingActionButton( // TODO open multi items -> add template, checklist, item?
+                FloatingActionButton( // TODO open multi adding -> add template or checklist -> no everything is a checklist
                     modifier = Modifier
                         .padding(bottom = 8.dp)
                         .testTag(ADD_BUTTON_TAG),
@@ -184,7 +186,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
                 ) {
                     // TODO liste über header einklappbar machen
                     checklistsMap.forEach { (isFinished, list) ->
-                        stickyGridHeader { Header(if (isFinished) "Finished" else "Checklist") }
+                        stickyGridHeader { Header(if (isFinished) "Erledigt" else "Checklist") }
                         items(list.size) { CheckListItem(list[it]) }
                     }
                 }
@@ -199,7 +201,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
                 ) {
                     // TODO liste über header einklappbar machen
                     checklistsMap.forEach { (isFinished, list) ->
-                        stickyHeader { Header(if (isFinished) "Finished" else "Checklist") }
+                        stickyHeader { Header(if (isFinished) "Erledigt" else "Checklist") }
                         items(list.size) { CheckListItem(list[it]) }
                     }
                 }
@@ -248,12 +250,24 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
         if (showRemoveDialog) {
             ConfirmDialog(
                 "Remove Checklist",
-                "Möchtest du folgende Checklist entfernen?\n${checklist.name}",
+                "Möchten Sie folgende Checklist entfernen?\n${checklist.name}",
                 onConfirm = {
                     viewModel.removeChecklist(checklist)
                     showRemoveDialog = false
                 },
                 onDismiss = { showRemoveDialog = false },
+            )
+        }
+
+        if (showUnfinishDialog.value) {
+            ConfirmDialog(
+                "Checklist öffnen?",
+                "Checkliste ist schon erledigt, möchtest Sie sie wieder öffnen und die Items aus deinem Bestand nehmen?",
+                onConfirm = {
+                    viewModel.unfinishChecklist(checklist)
+                    showUnfinishDialog.value = false
+                },
+                onDismiss = { showUnfinishDialog.value = false },
             )
         }
 
@@ -271,7 +285,13 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(vertical = 4.dp)
-                        .clickable { naviToChecklist(checklist.uuid) },
+                        .clickable {
+                            if (checklist.finished) {
+                                showUnfinishDialog.value = true
+                            } else {
+                                naviToChecklist(checklist.uuid)
+                            }
+                        },
                 ) {
                     Box(
                         modifier = Modifier

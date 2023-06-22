@@ -11,6 +11,7 @@ import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.BaseViewModel
 import de.bitb.pantryplaner.ui.base.composable.asResString
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
+import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
@@ -21,6 +22,7 @@ import javax.inject.Inject
 class ChecklistViewModel @Inject constructor(
     private val itemRepo: ItemRepository,
     private val checkRepo: CheckRepository,
+    private val checkUseCases: ChecklistUseCases,
     private val itemUseCases: ItemUseCases,
 ) : BaseViewModel() {
 
@@ -60,20 +62,9 @@ class ChecklistViewModel @Inject constructor(
             }
     }
 
-    fun addItem(name: String, category: String, color: Color) {
-        viewModelScope.launch {
-            val resp = itemUseCases.addItemUC(name, category, color)
-            when {
-                resp is Resource.Error -> showSnackbar(resp.message!!)
-                resp.data == true -> showSnackbar("Item hinzugefügt: $name".asResString()).also { updateWidgets() }
-                else -> showSnackbar("Item gibt es schon: $name".asResString())
-            }
-        }
-    }
-
     fun removeItem(item: Item) {
         viewModelScope.launch {
-            val resp = itemUseCases.removeItemUC(item)
+            val resp = checkUseCases.removeItemsFromChecklistUC(checkListId, listOf(item.uuid))
             when {
                 resp is Resource.Error -> showSnackbar(resp.message!!)
                 resp.data == true -> showSnackbar("Item entfernt: ${item.name}".asResString()).also { updateWidgets() }
@@ -84,7 +75,7 @@ class ChecklistViewModel @Inject constructor(
 
     fun checkItem(item: Item) {
         viewModelScope.launch {
-            when (val resp = itemUseCases.checkItemUC(item)) {
+            when (val resp = checkUseCases.checkItemUC(checkListId, item.uuid)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
                 else -> updateWidgets()
             }
@@ -109,11 +100,14 @@ class ChecklistViewModel @Inject constructor(
         }
     }
 
-    fun uncheckAllItems() {
+    fun finishChecklist() {
         viewModelScope.launch {
-            when (val resp = itemUseCases.uncheckAllItemsUC(filterBy.value)) {
+            when (val resp = checkUseCases.finishChecklistUC(checkListId)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
-                else -> showSnackbar("Alle Haken entfernt".asResString()).also { updateWidgets() }
+                else -> {
+                    showSnackbar("Erledigt".asResString())
+                    navigateBack(null)
+                }
             }
         }
     }

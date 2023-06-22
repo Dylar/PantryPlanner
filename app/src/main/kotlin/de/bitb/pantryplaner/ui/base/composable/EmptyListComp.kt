@@ -1,6 +1,8 @@
 package de.bitb.pantryplaner.ui.base.composable
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -10,12 +12,13 @@ import androidx.compose.ui.text.style.TextAlign
 
 @Composable
 fun EmptyListComp(text: String) {
-    Box(
-        contentAlignment = Alignment.Center,
+    Column(
         modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            modifier = Modifier.fillMaxSize(),
+//            modifier = Modifier.fillMaxSize(),
             text = text,
             textAlign = TextAlign.Center,
         )
