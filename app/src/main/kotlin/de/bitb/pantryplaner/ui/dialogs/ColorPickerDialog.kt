@@ -5,25 +5,26 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.ui.base.composable.CircleRow
 import de.bitb.pantryplaner.ui.base.styles.BaseColors.FilterColors
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
-fun ColorPickerDialog(
-    color: MutableStateFlow<Color>,
+fun FilterDialog(
+    color: MutableStateFlow<Filter>,
     selectableColors: List<Color> = FilterColors,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Select Color") },
+        title = { Text("Filter") },
         text = { CircleRow(selectedCircleIndex = color, selectableColors = selectableColors) },
         confirmButton = {
             Button(
                 onClick = { onConfirm() },
-                content = { Text("SELECT") }
+                content = { Text("OK") }
             )
         },
         dismissButton = {

@@ -7,6 +7,7 @@ import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.CheckRepository
 import de.bitb.pantryplaner.data.ItemRepository
 import de.bitb.pantryplaner.data.model.Checklist
+import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.BaseViewModel
 import de.bitb.pantryplaner.ui.base.composable.asResString
@@ -14,7 +15,9 @@ import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,7 +29,7 @@ class ChecklistViewModel @Inject constructor(
     private val itemUseCases: ItemUseCases,
 ) : BaseViewModel() {
 
-    val filterBy = MutableStateFlow(BaseColors.FilterColors.first())
+    val filterBy = MutableStateFlow(Filter(BaseColors.UnselectedColor))
 
     lateinit var checkListId: String
     lateinit var checkList: Flow<Resource<Checklist>>
@@ -35,30 +38,11 @@ class ChecklistViewModel @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     fun initChecklist(uuid: String) {
         checkListId = uuid
-        checkList = checkRepo
-            .getCheckLists(listOf(checkListId))
-            .map {
-                if (it is Resource.Error) {
-                    return@map it.castTo<Checklist>()
-                }
-                Resource.Success(it.data!!.first())
-            }
+        checkList = checkRepo.getCheckList(checkListId)
         itemMap = checkList
             .flatMapLatest {
                 val ids = it.data?.items ?: emptyList()
-                itemRepo.getItems(ids)
-            }.combine(filterBy) { itemsResp, filter ->
-                if (itemsResp is Resource.Error) {
-                    return@combine itemsResp.castTo<Map<String, List<Item>>>()
-                }
-                val items =
-                    if (filter != BaseColors.FilterColors.first())
-                        itemsResp.data?.filter { it.color == filterBy.value }
-                    else itemsResp.data
-                val groupedItems =
-                    items?.groupBy { it.category }
-                        ?.toSortedMap { a1, a2 -> a1.compareTo(a2) }
-                Resource.Success(groupedItems ?: emptyMap())
+                itemRepo.getItems(ids, filterBy)
             }
     }
 

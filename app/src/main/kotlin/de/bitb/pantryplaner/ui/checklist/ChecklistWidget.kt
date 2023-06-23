@@ -69,7 +69,7 @@ class ScreenWidget : GlanceAppWidget() {
         coroutineScope.launch {
             dependencies =
                 EntryPointAccessors.fromApplication(context, ScreenWidgetEntryPoint::class.java)
-            items = itemRepo.getItems().first().data!!
+            items = itemRepo.getItems(filter = filterBy).first().data!!
             updateAll(context)
         }
     }

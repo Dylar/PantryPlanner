@@ -19,6 +19,7 @@ object BaseColors {
     val ZergPurple = Color(0xffA259FF)
     val FireRed = Color(0xFFFF4500)
 
+    val UnselectedColor = Black
     val SelectableColors = listOf(
         LightGray,
         FireRed,
@@ -28,7 +29,7 @@ object BaseColors {
         LightGreen,
         DarkGreen,
     )
-    val FilterColors = listOf(Black, *SelectableColors.toTypedArray())
+    val FilterColors = listOf(UnselectedColor, *SelectableColors.toTypedArray())
 }
 
 

@@ -80,7 +80,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
         )
 
         if (showFilterDialog.value) {
-            ColorPickerDialog(
+            FilterDialog(
                 viewModel.filterBy,
                 onConfirm = { showFilterDialog.value = false },
                 onDismiss = { showFilterDialog.value = false },
@@ -184,7 +184,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
 
     @Composable
     private fun buildContent(innerPadding: PaddingValues) {
-        val items by viewModel.checkList.collectAsState(null)
+        val items by viewModel.itemList.collectAsState(null)
         when {
             items is Resource.Error -> {
                 showSnackBar("ERROR".asResString())

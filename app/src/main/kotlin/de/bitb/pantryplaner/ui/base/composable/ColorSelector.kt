@@ -15,13 +15,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
 @Composable
 fun CircleRow(
-    selectedCircleIndex: MutableStateFlow<Color>,
+    selectedCircleIndex: MutableStateFlow<Filter>,
     selectableColors: List<Color>
 ) {
     val state = selectedCircleIndex.collectAsState()
@@ -32,8 +33,8 @@ fun CircleRow(
         for (color in selectableColors) {
             Circle(
                 color = color,
-                isSelected = color == state.value,
-                onSelect = { selectedCircleIndex.update { color } },
+                isSelected = color == state.value.color,
+                onSelect = { selectedCircleIndex.update { selectedCircleIndex.value.copy(color = color) } },
             )
         }
     }

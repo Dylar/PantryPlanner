@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.map
 
 interface CheckRepository {
     fun getCheckLists(uuids: List<String>? = null): Flow<Resource<List<Checklist>>>
+    fun getCheckList(uuid: String): Flow<Resource<Checklist>>
     suspend fun addChecklist(check: Checklist): Resource<Boolean>
     suspend fun removeChecklist(check: Checklist): Resource<Boolean>
     suspend fun saveChecklist(check: Checklist): Resource<Unit>
@@ -29,6 +30,15 @@ class CheckRepositoryImpl(
                     })
                 }
             }
+
+    override fun getCheckList(uuid: String): Flow<Resource<Checklist>> {
+        return getCheckLists(listOf(uuid)).map {
+            if (it is Resource.Error) {
+                return@map it.castTo<Checklist>()
+            }
+            Resource.Success(it.data!!.first())
+        }
+    }
 
     override suspend fun addChecklist(check: Checklist): Resource<Boolean> =
         remoteDB.addChecklist(check)

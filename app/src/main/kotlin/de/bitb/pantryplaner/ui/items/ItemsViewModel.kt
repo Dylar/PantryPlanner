@@ -5,14 +5,16 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.ItemRepository
+import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.BaseViewModel
 import de.bitb.pantryplaner.ui.base.composable.asResString
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,27 +27,11 @@ class ItemsViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     var fromChecklist: String? = null
-    val filterBy = MutableStateFlow(BaseColors.FilterColors.first())
+    val filterBy = MutableStateFlow(Filter(BaseColors.UnselectedColor))
+    val itemList: Flow<Resource<Map<String, List<Item>>>> = itemRepo.getItems(filterBy = filterBy)
 
     val checkedItems = MutableStateFlow(listOf<String>())
     override fun isBackable(): Boolean = checkedItems.value.isEmpty()
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val checkList: Flow<Resource<Map<String, List<Item>>>> = filterBy.flatMapLatest {
-        itemRepo.getItems().map { resp ->
-            if (resp is Resource.Error) {
-                return@map resp.castTo<Map<String, List<Item>>>()
-            }
-
-            val items =
-                if (it != BaseColors.FilterColors.first())
-                    resp.data?.filter { it.color == filterBy.value }
-                else resp.data
-            val groupedItems =
-                items?.groupBy { it.category }?.toSortedMap { a1, a2 -> a1.compareTo(a2) }
-            Resource.Success(groupedItems ?: emptyMap())
-        }
-    }
 
     fun addItem(name: String, category: String, color: Color) {
         viewModelScope.launch {

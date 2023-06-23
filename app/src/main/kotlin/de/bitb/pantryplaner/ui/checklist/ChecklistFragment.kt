@@ -32,7 +32,7 @@ import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
 import de.bitb.pantryplaner.ui.base.composable.*
 import de.bitb.pantryplaner.ui.base.naviChecklistToItems
-import de.bitb.pantryplaner.ui.dialogs.ColorPickerDialog
+import de.bitb.pantryplaner.ui.dialogs.FilterDialog
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 import de.bitb.pantryplaner.ui.dialogs.EditCategoryDialog
 import de.bitb.pantryplaner.ui.dialogs.EditItemDialog
@@ -75,7 +75,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
         )
 
         if (showFilterDialog.value) {
-            ColorPickerDialog(
+            FilterDialog(
                 viewModel.filterBy,
                 onConfirm = { showFilterDialog.value = false },
                 onDismiss = { showFilterDialog.value = false },
