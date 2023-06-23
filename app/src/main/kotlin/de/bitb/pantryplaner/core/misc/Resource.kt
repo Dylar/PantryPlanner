@@ -40,3 +40,10 @@ suspend fun <T> tryIt(
     logCrashlytics(e)
     onError(e) ?: e.asResourceError()
 }
+
+suspend fun <T, E> castOnError(
+    resp: Resource<E>,
+    func: () -> Resource.Success<T>
+): Resource<T> =
+    if (resp is Resource.Error) resp.castTo()
+    else tryIt { func() }

@@ -10,15 +10,14 @@ class EditCategoryUC(
 ) {
     suspend operator fun invoke(previousCategory: String, newCategory: String): Resource<Unit> {
         return tryIt {
-            val itemsResp = itemRepo.getItems(filter = filterBy).first()
+            val itemsResp = itemRepo.getItems().first()
             if (itemsResp is Resource.Error) {
                 return@tryIt itemsResp.castTo()
             }
 
-            val itemsToEdit = (itemsResp.data ?: listOf())
-                .filter { it.category == previousCategory }
-                .map { it.copy(category = newCategory) }
-            if (itemsToEdit.isEmpty()) Resource.Success()
+            val itemsMap = (itemsResp.data ?: mapOf())
+            val itemsToEdit = itemsMap[previousCategory]?.map { it.copy(category = newCategory) }
+            if (itemsToEdit?.isEmpty() != false) Resource.Success()
             else itemRepo.saveItems(itemsToEdit)
         }
     }

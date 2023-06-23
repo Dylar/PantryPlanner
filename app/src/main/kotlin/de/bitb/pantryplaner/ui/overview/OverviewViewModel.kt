@@ -3,6 +3,7 @@ package de.bitb.pantryplaner.ui.overview
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.castOnError
 import de.bitb.pantryplaner.data.CheckRepository
 import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.ui.base.BaseViewModel
@@ -23,14 +24,13 @@ class OverviewViewModel @Inject constructor(
         checkRepo
             .getCheckLists()
             .map { resp ->
-                if (resp is Resource.Error) {
-                    return@map resp.castTo()
+                castOnError(resp) {
+                    val groupedItems = resp.data
+                        ?.groupBy { it.finished }
+                        ?.toSortedMap { a1, a2 -> a1.compareTo(a2) }
+                        ?: emptyMap()
+                    Resource.Success(groupedItems)
                 }
-                val groupedItems = resp.data
-                    ?.groupBy { it.finished }
-                    ?.toSortedMap { a1, a2 -> a1.compareTo(a2) }
-                    ?: emptyMap()
-                Resource.Success(groupedItems)
             }
 
     fun addChecklist(name: String) {

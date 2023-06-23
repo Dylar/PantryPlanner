@@ -1,7 +1,7 @@
 package de.bitb.pantryplaner.data
 
 import de.bitb.pantryplaner.core.misc.Resource
-import de.bitb.pantryplaner.core.misc.tryIt
+import de.bitb.pantryplaner.core.misc.castOnError
 import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.data.source.RemoteService
@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.map
 interface ItemRepository {
     fun getItems(
         ids: List<String>? = null,
-        filterBy: MutableStateFlow<Filter>
+        filterBy: MutableStateFlow<Filter>? = null
     ): Flow<Resource<Map<String, List<Item>>>>
 
     suspend fun addItem(item: Item): Resource<Boolean>
@@ -27,33 +27,28 @@ class ItemRepositoryImpl(
 
     override fun getItems(
         ids: List<String>?,
-        filterBy: MutableStateFlow<Filter>
+        filterBy: MutableStateFlow<Filter>?
     ): Flow<Resource<Map<String, List<Item>>>> {
         return remoteDB
             .getItems(ids)
-            .map { res ->
-                if (res is Resource.Error) {
-                    res
-                } else {
-                    tryIt {
-                        val items = res.data
-                        items?.sortedBy { it.name }
-                        items?.sortedBy { it.category }
-                        Resource.Success(items)
-                    }
+            .map { resp ->
+                castOnError(resp) {
+                    val items = resp.data
+                    items?.sortedBy { it.name }
+                    items?.sortedBy { it.category }
+                    Resource.Success(items)
                 }
-            }.combine(filterBy) { resp, filter ->
-                if (resp is Resource.Error) {
-                    return@combine resp.castTo<Map<String, List<Item>>>()
+            }.combine(filterBy ?: MutableStateFlow(null)) { resp, filter ->
+                castOnError(resp) {
+                    val items =
+                        if (filter != null && filter.colorSelected) resp.data?.filter { it.color == filter.color }
+                        else resp.data
+                    val groupedItems = items
+                        ?.groupBy { it.category }
+                        ?.toSortedMap { a1, a2 -> a1.compareTo(a2) }
+                        ?: emptyMap()
+                    Resource.Success(groupedItems)
                 }
-                val items =
-                    if (filter.colorSelected) resp.data?.filter { it.color == filter.color }
-                    else resp.data
-                val groupedItems = items
-                    ?.groupBy { it.category }
-                    ?.toSortedMap { a1, a2 -> a1.compareTo(a2) }
-                    ?: emptyMap()
-                Resource.Success(groupedItems ?: emptyMap())
             }
     }
 

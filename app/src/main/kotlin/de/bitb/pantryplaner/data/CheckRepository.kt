@@ -1,6 +1,7 @@
 package de.bitb.pantryplaner.data
 
 import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.castOnError
 import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.data.source.RemoteService
 import kotlinx.coroutines.flow.Flow
@@ -20,14 +21,12 @@ class CheckRepositoryImpl(
 
     override fun getCheckLists(uuids: List<String>?): Flow<Resource<List<Checklist>>> =
         remoteDB.getCheckLists(uuids)
-            .map { res ->
-                if (res is Resource.Error) {
-                    res
-                } else {
-                    Resource.Success(res.data?.apply {
-                        sortedBy { it.name }
-                        sortedBy { it.finished }
-                    })
+            .map { resp ->
+                return@map castOnError(resp) {
+                    val lists = resp.data
+                    lists?.sortedBy { it.name }
+                    lists?.sortedBy { it.finished }
+                    Resource.Success(lists)
                 }
             }
 

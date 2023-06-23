@@ -56,13 +56,14 @@ class ItemsViewModel @Inject constructor(
     }
 
     fun checkItem(uuid: String) {
-        checkedItems.update {
-            it.toMutableList()
-                .apply {
-                    if (!remove(uuid)) {
-                        add(uuid)
-                    }
-                }.toList()
+        if (fromChecklist != null) {
+            checkedItems.update {
+                val items = it.toMutableList()
+                if (!items.remove(uuid)) {
+                    items.add(uuid)
+                }
+                items.toList()
+            }
         }
     }
 

@@ -17,6 +17,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
+import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.composable.CircleRow
 import de.bitb.pantryplaner.ui.base.styles.BaseColors.SelectableColors
@@ -37,7 +38,7 @@ fun EditItemDialog(
         )
     }
     var category by remember { mutableStateOf(item.category) }
-    val color = remember { MutableStateFlow(item.color) }
+    val color = remember { MutableStateFlow(Filter(color = item.color)) }
     val focusRequester = remember { FocusRequester() }
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -53,7 +54,7 @@ fun EditItemDialog(
                     value = name,
                     onValueChange = { name = it },
                     keyboardActions = KeyboardActions(
-                        onDone = { onConfirm(name.text, category, color.value) }
+                        onDone = { onConfirm(name.text, category, color.value.color) }
                     ),
                 )
                 OutlinedTextField(
@@ -64,7 +65,7 @@ fun EditItemDialog(
                     value = category,
                     onValueChange = { category = it },
                     keyboardActions = KeyboardActions(
-                        onDone = { onConfirm(name.text, category, color.value) }
+                        onDone = { onConfirm(name.text, category, color.value.color) }
                     ),
                 )
                 CircleRow(selectedCircleIndex = color, selectableColors = SelectableColors)
@@ -72,7 +73,7 @@ fun EditItemDialog(
         },
         confirmButton = {
             Button(
-                onClick = { onConfirm(name.text, category, color.value) },
+                onClick = { onConfirm(name.text, category, color.value.color) },
                 content = { Text("EDIT") }
             )
         },

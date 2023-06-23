@@ -321,7 +321,8 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
         }
 
         SwipeToDismiss(
-            modifier = Modifier.padding(2.dp),
+            modifier = Modifier
+                .padding(2.dp),
             state = dismissState,
             directions = setOf(DismissDirection.StartToEnd),
             background = { DeleteItemBackground() },
@@ -339,24 +340,27 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .height(55.dp)
                             .padding(horizontal = 4.dp),
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Checkbox(
-                            checkedItems.value.contains(item.uuid),
-                            modifier = Modifier
-                                .weight(.2f),
-                            onCheckedChange = { viewModel.checkItem(item.uuid) },
-                            colors = CheckboxDefaults.colors(
-                                checkedColor = item.color,
-                                uncheckedColor = item.color
+                        if (viewModel.fromChecklist != null) {
+                            Checkbox(
+                                checkedItems.value.contains(item.uuid),
+                                modifier = Modifier
+                                    .weight(.2f),
+                                onCheckedChange = { viewModel.checkItem(item.uuid) },
+                                colors = CheckboxDefaults.colors(
+                                    checkedColor = item.color,
+                                    uncheckedColor = item.color
+                                )
                             )
-                        )
+                        }
                         Column(
                             modifier = Modifier
                                 .padding(start = 2.dp)
-                                .weight(.7f)
+                                .weight(.7f),
                         )
                         {
                             if (item.category.isNotBlank()) {
@@ -364,12 +368,14 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
                                     item.category,
                                     modifier = Modifier,
                                     fontSize = 10.sp,
+                                    textAlign = TextAlign.Start
                                 )
                             }
                             Text(
                                 item.name,
                                 modifier = Modifier,
                                 fontSize = 16.sp,
+                                textAlign = TextAlign.Start
                             )
                         }
                         //TODO add item count
