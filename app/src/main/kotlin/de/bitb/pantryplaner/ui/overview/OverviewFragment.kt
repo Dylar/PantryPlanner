@@ -159,7 +159,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
                 ErrorScreen(checklists!!.message!!.asString())
             }
             checklists == null -> LoadingIndicator()
-            checklists?.data?.isEmpty() == true -> EmptyListComp(getString(R.string.no_items))
+            checklists?.data?.isEmpty() == true -> EmptyListComp(getString(R.string.no_checklists))
             else -> Checklists(innerPadding, checklists!!.data!!)
         }
     }
