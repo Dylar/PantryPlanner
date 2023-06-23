@@ -20,17 +20,18 @@ class OverviewViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     val checkList: Flow<Resource<Map<Boolean, List<Checklist>>>> =
-        checkRepo.getCheckLists().map { resp ->
-            if (resp is Resource.Error) {
-                return@map resp.castTo()
-            }
-
-            val checklists = resp.data
-            val groupedItems =
-                checklists?.groupBy { it.finished }
+        checkRepo
+            .getCheckLists()
+            .map { resp ->
+                if (resp is Resource.Error) {
+                    return@map resp.castTo()
+                }
+                val groupedItems = resp.data
+                    ?.groupBy { it.finished }
                     ?.toSortedMap { a1, a2 -> a1.compareTo(a2) }
-            Resource.Success(groupedItems)
-        }
+                    ?: emptyMap()
+                Resource.Success(groupedItems)
+            }
 
     fun addChecklist(name: String) {
         viewModelScope.launch {

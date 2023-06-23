@@ -46,12 +46,13 @@ class ItemRepositoryImpl(
                 if (resp is Resource.Error) {
                     return@combine resp.castTo<Map<String, List<Item>>>()
                 }
-
                 val items =
                     if (filter.colorSelected) resp.data?.filter { it.color == filter.color }
                     else resp.data
-                val groupedItems =
-                    items?.groupBy { it.category }?.toSortedMap { a1, a2 -> a1.compareTo(a2) }
+                val groupedItems = items
+                    ?.groupBy { it.category }
+                    ?.toSortedMap { a1, a2 -> a1.compareTo(a2) }
+                    ?: emptyMap()
                 Resource.Success(groupedItems ?: emptyMap())
             }
     }
