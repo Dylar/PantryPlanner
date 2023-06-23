@@ -17,7 +17,7 @@ class CheckItemUC(
 
             val checklist = getResp.data!!.first()
             val checked = checklist.checked
-            if (checked.remove(itemId)) {
+            if (!checked.remove(itemId)) {
                 checked.add((itemId))
             }
             val saveChecklist = checklist.copy(checked = checked)

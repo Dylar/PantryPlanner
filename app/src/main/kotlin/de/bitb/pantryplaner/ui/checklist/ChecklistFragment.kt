@@ -177,7 +177,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 ErrorScreen(items!!.message!!.asString())
             }
             items == null -> LoadingIndicator()
-            items?.data?.isEmpty() == true -> EmptyListComp(getString(R.string.no_items))
+            items?.data?.isEmpty() == true -> EmptyListComp(getString(R.string.no_checklists))
             else -> CheckList(innerPadding, items!!.data!!)
         }
     }
