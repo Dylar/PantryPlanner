@@ -70,11 +70,39 @@
     ]
   },
   {
-    "version": "New",
+    "version": "v0.0.107",
     "commits": [
+      "item name editable",
+      "fix release notes",
       "category layout",
       "categorys editable",
       "clean"
+    ]
+  },
+  {
+    "version": "v0.0.109",
+    "commits": [
+      "items checkable + checklist finishable",
+      "show items in checklist + items addable",
+      "checklist overview + items page"
+    ]
+  },
+  {
+    "version": "v0.0.116",
+    "commits": [
+      "fix item check"
+    ]
+  },
+  {
+    "version": "v0.0.118",
+    "commits": [
+      "fix empty list text"
+    ]
+  },
+  {
+    "version": "NEW",
+    "commits": [
+      "fix release note script"
     ]
   }
 ]

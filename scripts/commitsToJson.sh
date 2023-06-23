@@ -1,11 +1,23 @@
 #!/bin/bash
 
 commit_format="\"%s\","
+commits=()
+
+process_commits() {
+    local param2="$1"
+    local commit_messages=("$2")
+
+    if [ -z "$commit_messages" ]; then
+        return
+    fi
+
+    local joined_commits="$(IFS=,; echo "${commit_messages[*]}")"
+    joined_commits="${joined_commits::${#joined_commits}-1}"
+    commits+=("{\n\"version\":\"$param2\",\n\"commits\":[\n$joined_commits\n]\n}")
+}
 
 git fetch --all --tags
 tags=($(git tag -l --sort=-v:refname))
-commits=()
-
 tagsLength=${#tags[@]}-1
 for ((i=0; i<${#tags[@]}; i++))
 do
@@ -14,27 +26,18 @@ do
     if ((i == 0))
     then # last commit to last tag
         echo "NEW - last commit to last tag ($tag)"
-        commit_messages=$(git log "$tag"..HEAD --pretty=format:"$commit_format")
-        joined_commits="$(IFS=,; echo "${commit_messages[*]}")"
-        joined_commits="${joined_commits::${#joined_commits}-1}"
-        commits+=("{\n\"version\":\"New\",\n\"commits\":[\n$joined_commits\n]\n}")
+        process_commits "NEW" "$(git log "$tag"..HEAD --pretty=format:"$commit_format")"
     fi
     if ((i < tagsLength))
     then # commits between tags
         next_tag=${tags[i+1]}
         echo "commits between tags ($tag to $next_tag)"
-        commit_messages=$(git log "$next_tag".."$tag" --pretty=format:"$commit_format")
-        joined_commits="$(IFS=,; echo "${commit_messages[*]}")"
-        joined_commits="${joined_commits::${#joined_commits}-1}"
-        commits+=("{\n\"version\":\"$tag\",\n\"commits\":[\n$joined_commits\n]\n}")
+        process_commits "$tag" "$(git log "$next_tag".."$tag" --pretty=format:"$commit_format")"
     fi
     if((i == tagsLength))
     then # first tag to first commit
-          echo "first tag to first commit"
-          commit_messages=$(git log "$tag" --pretty=format:"$commit_format")
-          joined_commits="$(IFS=,; echo "${commit_messages[*]}")"
-          joined_commits="${joined_commits::${#joined_commits}-1}"
-          commits+=("{\n\"version\":\"$tag\",\n\"commits\":[\n$joined_commits\n]\n}")
+        echo "first tag to first commit"
+        process_commits "$tag" "$(git log "$tag" --pretty=format:"$commit_format")"
     fi
 done
 
