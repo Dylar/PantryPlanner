@@ -20,4 +20,5 @@ data class ChecklistUseCases(
     val checkItemUC: CheckItemUC,
     val finishChecklistUC: FinishChecklistUC,
     val unfinishChecklistUC: UnfinishChecklistUC,
+    val setItemAmountUC: SetChecklistItemAmountUC,
 )

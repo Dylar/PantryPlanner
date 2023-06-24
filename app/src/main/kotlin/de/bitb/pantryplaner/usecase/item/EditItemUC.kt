@@ -15,6 +15,7 @@ class EditItemUC(
         name: String,
         category: String,
         color: Color,
+        amount: Double,
     ): Resource<Unit> {
         return tryIt {
             itemRepo.saveItems(
@@ -22,7 +23,8 @@ class EditItemUC(
                     item.copy(
                         name = name,
                         category = category,
-                        colorHex = color.toArgb()
+                        colorHex = color.toArgb(),
+                        amount = amount,
                     )
                 )
             )

@@ -68,8 +68,8 @@ class ItemsViewModel @Inject constructor(
     }
 
     fun editItem(item: Item, name: String, category: String, color: Color) {
-        viewModelScope.launch {
-            when (val resp = itemUseCases.editItemUC(item, name, category, color)) {
+        viewModelScope.launch {//TODO make amount changedable
+            when (val resp = itemUseCases.editItemUC(item, name, category, color, item.amount)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
                 else -> showSnackbar("Item editiert".asResString()).also { updateWidgets() }
             }

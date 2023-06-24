@@ -24,8 +24,7 @@ class RemoveItemsFromChecklistUC(
                 }
 
                 val checklist = getResp.data!!.first()
-                val items = checklist.items.toMutableList()
-                items.removeAll(itemIds)
+                val items = checklist.items.filter { !itemIds.contains(it.uuid) }.toMutableList()
                 val saveChecklist = checklist.copy(items = items)
 
                 val saveResp = checkRepo.saveChecklist(saveChecklist)

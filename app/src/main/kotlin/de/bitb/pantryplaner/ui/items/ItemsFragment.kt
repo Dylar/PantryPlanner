@@ -27,6 +27,7 @@ import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.formatted
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
@@ -378,7 +379,12 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
                                 textAlign = TextAlign.Start
                             )
                         }
-                        //TODO add item count
+                        Text(
+                            item.amount.formatted,
+                            modifier = Modifier.padding(end = 4.dp),
+                            fontSize = 16.sp,
+                            textAlign = TextAlign.Start
+                        )
                     }
                 }
             }

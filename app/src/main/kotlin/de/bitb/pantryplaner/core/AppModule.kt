@@ -84,7 +84,8 @@ object AppModule {
             removeItemsFromChecklistUC = RemoveItemsFromChecklistUC(checkRepo),
             checkItemUC = CheckItemUC(checkRepo),
             finishChecklistUC = FinishChecklistUC(checkRepo),
-            unfinishChecklistUC = UnfinishChecklistUC(checkRepo)
+            unfinishChecklistUC = UnfinishChecklistUC(checkRepo),
+            setItemAmountUC = SetChecklistItemAmountUC(checkRepo)
         )
     }
 

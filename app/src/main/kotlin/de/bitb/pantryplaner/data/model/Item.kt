@@ -10,7 +10,7 @@ data class Item(
     val uuid: String = UUID.randomUUID().toString(),
     val name: String = "",
     val category: String = "",
-    val checked: Boolean = false,
+    val amount: Double = 0.0,
     val colorHex: Int = BaseColors.LightGray.toArgb(),
     //TODO timestamp
 ) {
@@ -18,3 +18,10 @@ data class Item(
     val color: Color
         get() = Color(colorHex)
 }
+
+data class CheckItem(
+    val uuid: String = "",
+    var checked: Boolean = false,
+    var amount: Double = 1.0,
+    //TODO timestamp
+)

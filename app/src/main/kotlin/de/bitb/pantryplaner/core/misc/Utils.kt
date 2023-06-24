@@ -2,6 +2,7 @@ package de.bitb.pantryplaner.core.misc
 
 import android.content.Context
 import kotlinx.coroutines.delay
+import java.text.DecimalFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.system.measureTimeMillis
@@ -46,6 +47,11 @@ fun calculateMilliseconds(hours: Int, minutes: Int): Long {
     return totalMinutes * 60 * 1000L
 }
 
+val Double.formatted: String
+    get() {
+        val decimalFormat = DecimalFormat("#.##")
+        return decimalFormat.format(this)
+    }
+
 fun readTextFromAsset(context: Context, fileName: String): String =
     context.assets.open(fileName).bufferedReader().use { it.readText() }.replace("\\n", "\n")
-

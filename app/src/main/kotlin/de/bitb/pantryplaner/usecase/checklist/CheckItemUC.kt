@@ -16,13 +16,11 @@ class CheckItemUC(
             }
 
             val checklist = getResp.data!!.first()
-            val checked = checklist.checked
-            if (!checked.remove(itemId)) {
-                checked.add((itemId))
-            }
-            val saveChecklist = checklist.copy(checked = checked)
+            val items = checklist.items.toMutableList()
+            val item = items.first { it.uuid == itemId }
+            item.checked = !item.checked
 
-            val saveResp = checkRepo.saveChecklist(saveChecklist)
+            val saveResp = checkRepo.saveChecklist(checklist)
             if (saveResp is Resource.Error) {
                 return@tryIt saveResp.castTo()
             }

@@ -4,6 +4,7 @@ import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.asResourceError
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.CheckRepository
+import de.bitb.pantryplaner.data.model.CheckItem
 import kotlinx.coroutines.flow.first
 
 class AddItemsToChecklistUC(
@@ -23,11 +24,15 @@ class AddItemsToChecklistUC(
                 }
 
                 val checklist = getResp.data!!.first()
+                val items = itemIds
+                    .filter { item ->
+                        checklist.items.firstOrNull { it.uuid == item } == null
+                    }.map { CheckItem(it) }
                 val saveChecklist = checklist.copy(
                     items = setOf(
-                        *itemIds.toTypedArray(),
+                        *items.toTypedArray(),
                         *checklist.items.toTypedArray()
-                    ).toList()
+                    ).toMutableList()
                 )
 
                 val saveResp = checkRepo.saveChecklist(saveChecklist)

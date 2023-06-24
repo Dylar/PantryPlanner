@@ -24,16 +24,17 @@ class UncheckAllItemsUC(
                 return@tryIt Resource.Success()
             }
 
-            val items = itemsMap.values
-                .fold(mutableListOf<Item>()) { previous, next -> previous.apply { addAll(next) } }
-            val resp =
-                itemRepo.saveItems(items
-                    .filter { color == FilterColors.first() || color == it.color }
-                    .map { it.copy(checked = false) }
-                )
-            if (resp is Resource.Error) {
-                return@tryIt resp.castTo()
-            }
+            // TODO do we need this?
+//            val items = itemsMap.values
+//                .fold(mutableListOf<Item>()) { previous, next -> previous.apply { addAll(next) } }
+//            val resp =
+//                itemRepo.saveItems(items
+//                    .filter { color == FilterColors.first() || color == it.color }
+//                    .map { it.apply { checked = false } }
+//                )
+//            if (resp is Resource.Error) {
+//                return@tryIt resp.castTo()
+//            }
             Resource.Success()
         }
     }

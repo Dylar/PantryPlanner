@@ -15,9 +15,8 @@ import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,21 +28,30 @@ class ChecklistViewModel @Inject constructor(
     private val itemUseCases: ItemUseCases,
 ) : BaseViewModel() {
 
+    val itemErrorList = MutableStateFlow<List<String>>(emptyList())
     val filterBy = MutableStateFlow(Filter(BaseColors.UnselectedColor))
 
     lateinit var checkListId: String
     lateinit var checkList: Flow<Resource<Checklist>>
     lateinit var itemMap: Flow<Resource<Map<String, List<Item>>>>
+    private val amountFlow: MutableStateFlow<Pair<String, String>?> = MutableStateFlow(null)
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
     fun initChecklist(uuid: String) {
         checkListId = uuid
         checkList = checkRepo.getCheckList(checkListId)
         itemMap = checkList
-            .flatMapLatest {
-                val ids = it.data?.items ?: emptyList()
-                itemRepo.getItems(ids, filterBy)
+            .flatMapLatest { resp ->
+                val ids = resp.data?.items ?: emptyList()
+                itemRepo.getItems(ids.map { it.uuid }, filterBy)
             }
+        viewModelScope.launch {
+            amountFlow
+                .filterNotNull()
+                .distinctUntilChanged()
+                .debounce(2000)
+                .collect { setItemAmount(it.first, it.second) }
+        }
     }
 
     fun removeItem(item: Item) {
@@ -67,8 +75,8 @@ class ChecklistViewModel @Inject constructor(
     }
 
     fun editItem(item: Item, name: String, category: String, color: Color) {
-        viewModelScope.launch {
-            when (val resp = itemUseCases.editItemUC(item, name, category, color)) {
+        viewModelScope.launch {//TODO make amount changedable
+            when (val resp = itemUseCases.editItemUC(item, name, category, color, item.amount)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
                 else -> showSnackbar("Item editiert".asResString()).also { updateWidgets() }
             }
@@ -96,4 +104,20 @@ class ChecklistViewModel @Inject constructor(
         }
     }
 
+    fun changeItemAmount(itemId: String, amount: String) {
+        val itemErrors = itemErrorList.value.toMutableList()
+        itemErrors.remove(itemId)
+        itemErrorList.value = itemErrors
+        amountFlow.update { itemId to amount }
+    }
+
+    private suspend fun setItemAmount(itemId: String, amount: String) {
+        val resp = checkUseCases.setItemAmountUC(checkListId, itemId, amount)
+        if (resp is Resource.Error) {
+            showSnackbar(resp.message!!)
+            val itemErrors = itemErrorList.value.toMutableList()
+            itemErrors.add(itemId)
+            itemErrorList.value = itemErrors
+        }
+    }
 }
