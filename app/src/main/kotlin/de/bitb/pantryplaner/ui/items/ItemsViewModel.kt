@@ -12,9 +12,8 @@ import de.bitb.pantryplaner.ui.base.composable.asResString
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,12 +25,18 @@ class ItemsViewModel @Inject constructor(
     private val itemUseCases: ItemUseCases,
 ) : BaseViewModel() {
 
+    val itemErrorList = MutableStateFlow<List<String>>(emptyList())
+
     var fromChecklist: String? = null
     val filterBy = MutableStateFlow(Filter(BaseColors.UnselectedColor))
     val itemList: Flow<Resource<Map<String, List<Item>>>> = itemRepo.getItems(filterBy = filterBy)
 
     val checkedItems = MutableStateFlow(listOf<String>())
     override fun isBackable(): Boolean = checkedItems.value.isEmpty()
+
+    fun initItems(checkUuid: String?) {
+        fromChecklist = checkUuid
+    }
 
     fun addItem(name: String, category: String, color: Color) {
         viewModelScope.launch {
@@ -68,8 +73,8 @@ class ItemsViewModel @Inject constructor(
     }
 
     fun editItem(item: Item, name: String, category: String, color: Color) {
-        viewModelScope.launch {//TODO make amount changedable
-            when (val resp = itemUseCases.editItemUC(item, name, category, color, item.amount)) {
+        viewModelScope.launch {
+            when (val resp = itemUseCases.editItemUC(item, name, category, color)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
                 else -> showSnackbar("Item editiert".asResString()).also { updateWidgets() }
             }
@@ -95,4 +100,19 @@ class ItemsViewModel @Inject constructor(
         }
     }
 
+    fun changeItemAmount(itemId: String, amount: String) {
+        val itemErrors = itemErrorList.value.toMutableList()
+        itemErrors.remove(itemId)
+        itemErrorList.value = itemErrors
+
+        viewModelScope.launch {
+            val resp = itemUseCases.editItemUC(itemId, amount)
+            if (resp is Resource.Error) {
+                showSnackbar(resp.message!!)
+                val errors = itemErrorList.value.toMutableList()
+                errors.add(itemId)
+                itemErrorList.value = itemErrors
+            }
+        }
+    }
 }

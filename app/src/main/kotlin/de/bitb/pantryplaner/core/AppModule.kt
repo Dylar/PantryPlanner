@@ -76,6 +76,7 @@ object AppModule {
     @Singleton
     fun provideCheckListUseCases(
         checkRepo: CheckRepository,
+        itemRepo: ItemRepository,
     ): ChecklistUseCases {
         return ChecklistUseCases(
             addChecklistUC = AddChecklistUC(checkRepo),
@@ -83,8 +84,8 @@ object AppModule {
             addItemsToChecklistUC = AddItemsToChecklistUC(checkRepo),
             removeItemsFromChecklistUC = RemoveItemsFromChecklistUC(checkRepo),
             checkItemUC = CheckItemUC(checkRepo),
-            finishChecklistUC = FinishChecklistUC(checkRepo),
-            unfinishChecklistUC = UnfinishChecklistUC(checkRepo),
+            finishChecklistUC = FinishChecklistUC(checkRepo, itemRepo),
+            unfinishChecklistUC = UnfinishChecklistUC(checkRepo, itemRepo),
             setItemAmountUC = SetChecklistItemAmountUC(checkRepo)
         )
     }

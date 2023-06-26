@@ -10,7 +10,7 @@ data class Item(
     val uuid: String = UUID.randomUUID().toString(),
     val name: String = "",
     val category: String = "",
-    val amount: Double = 0.0,
+    var amount: Double = 0.0,
     val colorHex: Int = BaseColors.LightGray.toArgb(),
     //TODO timestamp
 ) {

@@ -5,16 +5,16 @@ import de.bitb.pantryplaner.core.misc.castOnError
 import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.data.source.RemoteService
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 
 interface ItemRepository {
+    fun getItem(id: String): Flow<Resource<Item>>
     fun getItems(
         ids: List<String>? = null,
         filterBy: MutableStateFlow<Filter>? = null
     ): Flow<Resource<Map<String, List<Item>>>>
+
+    suspend fun getAllItems(ids: List<String>?): Resource<List<Item>>
 
     suspend fun addItem(item: Item): Resource<Boolean>
     suspend fun removeItem(item: Item): Resource<Boolean>
@@ -24,6 +24,15 @@ interface ItemRepository {
 class ItemRepositoryImpl(
     private val remoteDB: RemoteService,
 ) : ItemRepository {
+    override fun getItem(id: String): Flow<Resource<Item>> {
+        return remoteDB
+            .getItems(listOf(id))
+            .map { resp ->
+                castOnError(resp) {
+                    Resource.Success(resp.data?.first())
+                }
+            }
+    }
 
     override fun getItems(
         ids: List<String>?,
@@ -50,6 +59,19 @@ class ItemRepositoryImpl(
                     Resource.Success(groupedItems)
                 }
             }
+    }
+
+    override suspend fun getAllItems(ids: List<String>?): Resource<List<Item>> {
+        return remoteDB
+            .getItems(ids)
+            .map { resp ->
+                castOnError(resp) {
+                    val items = resp.data
+                    items?.sortedBy { it.name }
+                    items?.sortedBy { it.category }
+                    Resource.Success(items)
+                }
+            }.first()
     }
 
     override suspend fun addItem(item: Item) = remoteDB.addItem(item)

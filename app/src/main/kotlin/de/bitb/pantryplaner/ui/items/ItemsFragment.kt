@@ -4,10 +4,13 @@ import android.os.Bundle
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -19,6 +22,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -32,6 +39,7 @@ import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
 import de.bitb.pantryplaner.ui.base.composable.*
+import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.dialogs.*
 
 @AndroidEntryPoint
@@ -55,7 +63,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.fromChecklist = arguments?.getString(KEY_CHECKLIST_UUID)
+        viewModel.initItems(arguments?.getString(KEY_CHECKLIST_UUID))
     }
 
     @Composable
@@ -379,12 +387,52 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
                                 textAlign = TextAlign.Start
                             )
                         }
-                        Text(
-                            item.amount.formatted,
-                            modifier = Modifier.padding(end = 4.dp),
-                            fontSize = 16.sp,
-                            textAlign = TextAlign.Start
-                        )
+                        if (viewModel.fromChecklist == null) {
+                            val error = viewModel.itemErrorList.collectAsState(listOf())
+                            val color =
+                                (if (error.value.contains(item.uuid)) BaseColors.FireRed
+                                else BaseColors.White)
+                            val amountState =
+                                remember { mutableStateOf(TextFieldValue(item.amount.formatted)) }
+                            val interactionSource = remember { MutableInteractionSource() }
+                            BasicTextField(
+                                amountState.value,
+                                modifier = Modifier.padding(4.dp).width(60.dp)
+                                    .background(color.copy(alpha = .5f)),
+                                textStyle = TextStyle.Default.copy(
+                                    fontSize = 16.sp,
+                                    textAlign = TextAlign.Center,
+                                ),
+                                maxLines = 1,
+                                interactionSource = interactionSource,
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                onValueChange = {
+                                    if (it.text.length < 8) {
+                                        amountState.value = it
+                                        viewModel.changeItemAmount(item.uuid, it.text)
+                                    }
+                                },
+                            ) { innerTextField ->
+                                TextFieldDefaults.TextFieldDecorationBox(
+                                    value = amountState.value.text,
+                                    visualTransformation = VisualTransformation.None,
+                                    innerTextField = innerTextField,
+                                    singleLine = true,
+                                    enabled = true,
+                                    interactionSource = interactionSource,
+                                    contentPadding = PaddingValues(0.dp),
+                                )
+                            }
+                        }
+
+                        if (viewModel.fromChecklist != null) {
+                            Text(
+                                item.amount.formatted,
+                                modifier = Modifier.padding(end = 4.dp),
+                                fontSize = 16.sp,
+                                textAlign = TextAlign.Start
+                            )
+                        }
                     }
                 }
             }
