@@ -1,6 +1,7 @@
 package de.bitb.pantryplaner.ui.checklist
 
 import android.os.Bundle
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -20,6 +21,8 @@ import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
@@ -213,7 +216,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 ) {
                     items.forEach { (headerText, list) ->
                         if (headerText.isNotBlank()) {
-                            stickyGridHeader { Header(headerText) }
+                            stickyGridHeader { Header(headerText, list.first().color) }
                         }
                         items(list.size) { CheckListItem(list[it]) }
                     }
@@ -229,7 +232,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 ) {
                     items.forEach { (headerText, list) ->
                         if (headerText.isNotBlank()) {
-                            stickyHeader { Header(headerText) }
+                            stickyHeader { Header(headerText, list.first().color) }
                         }
                         items(list.size) { CheckListItem(list[it]) }
                     }
@@ -240,7 +243,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
 
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    private fun Header(category: String) {
+    private fun Header(category: String, color: Color) {
         var showEditDialog by remember { mutableStateOf(false) }
         Box(
             modifier = Modifier
@@ -249,25 +252,39 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
             contentAlignment = Alignment.Center
         ) {
             Card(
-                modifier = Modifier.combinedClickable(
+                border = BorderStroke(2.dp,color),
+                modifier = Modifier
+                    .combinedClickable(
                     onClick = {}, // required? Oo
                     onLongClick = { showEditDialog = true }
                 )
             ) {
                 Text(
                     category,
-                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+                    modifier = Modifier
+                        .padding(vertical = 8.dp, horizontal = 16.dp)
+                        .drawBehind {
+                        val strokeWidthPx = 1.dp.toPx()
+                        val verticalOffset = size.height - 2.sp.toPx()
+                        drawLine(
+                            color = color,
+                            strokeWidth = strokeWidthPx,
+                            start = Offset(0f, verticalOffset),
+                            end = Offset(size.width, verticalOffset)
+                        )
+                    },
                     textAlign = TextAlign.Center,
-                    textDecoration = TextDecoration.Underline
+//                    textDecoration = TextDecoration.Underline
                 )
             }
         }
 
         if (showEditDialog) {
             EditCategoryDialog(
+                color,
                 category,
-                onConfirm = {
-                    viewModel.editCategory(category, it)
+                onConfirm = { cat, col ->
+                    viewModel.editCategory(category, cat, col)
                     showEditDialog = false
                 },
                 onDismiss = { showEditDialog = false },
@@ -315,8 +332,8 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 if (showEditDialog) {
                     EditItemDialog(
                         item = item,
-                        onConfirm = { name, category, color ->
-                            viewModel.editItem(item, name, category, color)
+                        onConfirm = { name, category ->
+                            viewModel.editItem(item, name, category)
                             showEditDialog = false
                         },
                         onDismiss = { showEditDialog = false },
@@ -340,6 +357,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                     dismissContent = {
                         Card(
                             elevation = 4.dp,
+                            border = BorderStroke(2.dp,item.color),
                             modifier = Modifier
                                 .padding(vertical = 4.dp)
                                 .combinedClickable(
@@ -359,10 +377,10 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                                     modifier = Modifier
                                         .weight(.2f),
                                     onCheckedChange = { viewModel.checkItem(item) },
-                                    colors = CheckboxDefaults.colors(
-                                        checkedColor = item.color,
-                                        uncheckedColor = item.color
-                                    )
+//                                    colors = CheckboxDefaults.colors(
+//                                        checkedColor = item.color,
+//                                        uncheckedColor = item.color
+//                                    )
                                 )
                                 Column(
                                     modifier = Modifier

@@ -12,8 +12,9 @@ import de.bitb.pantryplaner.ui.base.composable.asResString
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -72,18 +73,18 @@ class ItemsViewModel @Inject constructor(
         }
     }
 
-    fun editItem(item: Item, name: String, category: String, color: Color) {
+    fun editItem(item: Item, name: String, category: String) {
         viewModelScope.launch {
-            when (val resp = itemUseCases.editItemUC(item, name, category, color)) {
+            when (val resp = itemUseCases.editItemUC(item, name, category)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
                 else -> showSnackbar("Item editiert".asResString()).also { updateWidgets() }
             }
         }
     }
 
-    fun editCategory(previousCategory: String, newCategory: String) {
+    fun editCategory(previousCategory: String, newCategory: String, color: Color) {
         viewModelScope.launch {
-            when (val resp = itemUseCases.editCategoryUC(previousCategory, newCategory)) {
+            when (val resp = itemUseCases.editCategoryUC(previousCategory, newCategory, color)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
                 else -> showSnackbar("Kategorie editiert".asResString()).also { updateWidgets() }
             }

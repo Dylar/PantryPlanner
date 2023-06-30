@@ -9,6 +9,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import de.bitb.pantryplaner.data.*
+import de.bitb.pantryplaner.data.model.CheckItem
 import de.bitb.pantryplaner.data.source.FirestoreCheckService
 import de.bitb.pantryplaner.data.source.FirestoreItemService
 import de.bitb.pantryplaner.data.source.PantryRemoteService
@@ -17,6 +18,8 @@ import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
 import de.bitb.pantryplaner.usecase.checklist.*
 import de.bitb.pantryplaner.usecase.item.*
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
 import javax.inject.Singleton
 
 @Module

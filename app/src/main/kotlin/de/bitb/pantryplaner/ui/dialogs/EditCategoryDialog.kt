@@ -11,16 +11,22 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
+import de.bitb.pantryplaner.data.model.Filter
+import de.bitb.pantryplaner.ui.base.composable.CircleRow
+import de.bitb.pantryplaner.ui.base.styles.BaseColors
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
 fun EditCategoryDialog(
+    color:Color,
     category: String,
-    onConfirm: (String) -> Unit,
+    onConfirm: (String, Color) -> Unit,
     onDismiss: () -> Unit
 ) {
     var categoryState by remember {
@@ -31,6 +37,7 @@ fun EditCategoryDialog(
             )
         )
     }
+    val colorState = remember { MutableStateFlow(Filter(color = color)) }
     val focusRequester = remember { FocusRequester() }
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -46,14 +53,15 @@ fun EditCategoryDialog(
                     value = categoryState,
                     onValueChange = { categoryState = it },
                     keyboardActions = KeyboardActions(
-                        onDone = { onConfirm(categoryState.text) }
+                        onDone = { onConfirm(categoryState.text, colorState.value.color) }
                     ),
                 )
+                CircleRow(selectedCircleIndex = colorState, selectableColors = BaseColors.SelectableColors)
             }
         },
         confirmButton = {
             Button(
-                onClick = { onConfirm(categoryState.text) },
+                onClick = { onConfirm(categoryState.text, colorState.value.color) },
                 content = { Text("EDIT") }
             )
         },

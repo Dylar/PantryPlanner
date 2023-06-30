@@ -66,18 +66,18 @@ class ChecklistViewModel @Inject constructor(
         }
     }
 
-    fun editItem(item: Item, name: String, category: String, color: Color) {
+    fun editItem(item: Item, name: String, category: String) {
         viewModelScope.launch {
-            when (val resp = itemUseCases.editItemUC(item, name, category, color)) {
+            when (val resp = itemUseCases.editItemUC(item, name, category)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
                 else -> showSnackbar("Item editiert".asResString()).also { updateWidgets() }
             }
         }
     }
 
-    fun editCategory(previousCategory: String, newCategory: String) {
+    fun editCategory(previousCategory: String, newCategory: String, color: Color) {
         viewModelScope.launch {
-            when (val resp = itemUseCases.editCategoryUC(previousCategory, newCategory)) {
+            when (val resp = itemUseCases.editCategoryUC(previousCategory, newCategory,color)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
                 else -> showSnackbar("Kategorie editiert".asResString()).also { updateWidgets() }
             }

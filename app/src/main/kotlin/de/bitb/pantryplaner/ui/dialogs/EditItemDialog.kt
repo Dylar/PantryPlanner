@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 @Composable
 fun EditItemDialog(
     item: Item,
-    onConfirm: (String, String, Color) -> Unit,
+    onConfirm: (String, String) -> Unit,
     onDismiss: () -> Unit
 ) {
     var name by remember {
@@ -38,7 +38,6 @@ fun EditItemDialog(
         )
     }
     var category by remember { mutableStateOf(item.category) }
-    val color = remember { MutableStateFlow(Filter(color = item.color)) }
     val focusRequester = remember { FocusRequester() }
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -54,7 +53,7 @@ fun EditItemDialog(
                     value = name,
                     onValueChange = { name = it },
                     keyboardActions = KeyboardActions(
-                        onDone = { onConfirm(name.text, category, color.value.color) }
+                        onDone = { onConfirm(name.text, category) }
                     ),
                 )
                 OutlinedTextField(
@@ -65,15 +64,14 @@ fun EditItemDialog(
                     value = category,
                     onValueChange = { category = it },
                     keyboardActions = KeyboardActions(
-                        onDone = { onConfirm(name.text, category, color.value.color) }
+                        onDone = { onConfirm(name.text, category) }
                     ),
                 )
-                CircleRow(selectedCircleIndex = color, selectableColors = SelectableColors)
             }
         },
         confirmButton = {
             Button(
-                onClick = { onConfirm(name.text, category, color.value.color) },
+                onClick = { onConfirm(name.text, category) },
                 content = { Text("EDIT") }
             )
         },

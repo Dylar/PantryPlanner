@@ -50,6 +50,7 @@ android {
     packagingOptions {
         resources {
             excludes += '/META-INF/*'
+            excludes += '/scripts/*'
         }
     }
     testOptions {
