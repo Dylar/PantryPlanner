@@ -1,4 +1,4 @@
-package de.bitb.pantryplaner.ui.base.composable
+package de.bitb.pantryplaner.ui.comps
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

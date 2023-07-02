@@ -11,17 +11,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
-import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
-import de.bitb.pantryplaner.ui.base.composable.CircleRow
-import de.bitb.pantryplaner.ui.base.styles.BaseColors.SelectableColors
-import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
 fun EditItemDialog(

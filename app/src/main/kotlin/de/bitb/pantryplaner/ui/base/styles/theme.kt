@@ -5,8 +5,9 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun PantryAppTheme(useDarkTheme: Boolean, content: @Composable () -> Unit) {
-    MaterialTheme(
-        colors = if (useDarkTheme) darkColorPalette else lightColorPalette,
+    MaterialTheme( // TODO make theme
+//        colors = if (useDarkTheme) darkColorPalette else lightColorPalette,
+        colors = darkColorPalette,
         typography = Typography,
         shapes = Shapes,
         content = content

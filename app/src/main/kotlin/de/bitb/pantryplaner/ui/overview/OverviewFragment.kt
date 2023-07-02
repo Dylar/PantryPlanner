@@ -18,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,7 +31,10 @@ import de.bitb.pantryplaner.ui.base.composable.*
 import de.bitb.pantryplaner.ui.base.naviOverviewToItems
 import de.bitb.pantryplaner.ui.base.naviToChecklist
 import de.bitb.pantryplaner.ui.base.naviToReleaseNotes
+import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.checklist.ChecklistFragment
+import de.bitb.pantryplaner.ui.comps.CategoryHeader
+import de.bitb.pantryplaner.ui.comps.DeleteItemBackground
 import de.bitb.pantryplaner.ui.dialogs.AddChecklistDialog
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 import de.bitb.pantryplaner.ui.dialogs.InfoDialog
@@ -170,6 +172,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
         innerPadding: PaddingValues,
         checklistsMap: Map<Boolean, List<Checklist>>
     ) {
+        val showItems = remember { mutableStateMapOf<String, Boolean>() }
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.padding(innerPadding)
@@ -184,10 +187,18 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
                     horizontalArrangement = Arrangement.Center,
                     contentPadding = PaddingValues(4.dp),
                 ) {
-                    // TODO liste über header einklappbar machen
                     checklistsMap.forEach { (isFinished, list) ->
-                        stickyGridHeader { Header(if (isFinished) "Erledigt" else "Checklist") }
-                        items(list.size) { CheckListItem(list[it]) }
+                        val headerText = if (isFinished) "Erledigt" else "Checklist"
+                        stickyGridHeader {
+                            CategoryHeader(
+                                headerText,
+                                if (isFinished) BaseColors.AdultBlue else BaseColors.BabyBlue,
+                                showItems,
+                            )
+                        }
+                        if (showItems[headerText] != false) {
+                            items(list.size) { CheckListItem(list[it]) }
+                        }
                     }
                 }
             } else {
@@ -199,31 +210,20 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     contentPadding = PaddingValues(4.dp),
                 ) {
-                    // TODO liste über header einklappbar machen
                     checklistsMap.forEach { (isFinished, list) ->
-                        stickyHeader { Header(if (isFinished) "Erledigt" else "Checklist") }
-                        items(list.size) { CheckListItem(list[it]) }
+                        val headerText = if (isFinished) "Erledigt" else "Checklist"
+                        stickyHeader {
+                            CategoryHeader(
+                                headerText,
+                                if (isFinished) BaseColors.AdultBlue else BaseColors.BabyBlue,
+                                showItems,
+                            )
+                        }
+                        if (showItems[headerText] != false) {
+                            items(list.size) { CheckListItem(list[it]) }
+                        }
                     }
                 }
-            }
-        }
-    }
-
-    @Composable
-    private fun Header(category: String) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 4.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Card {
-                Text(
-                    category,
-                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
-                    textAlign = TextAlign.Center,
-                    textDecoration = TextDecoration.Underline
-                )
             }
         }
     }
@@ -286,11 +286,8 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
                         .fillMaxSize()
                         .padding(vertical = 4.dp)
                         .clickable {
-                            if (checklist.finished) {
-                                showUnfinishDialog.value = true
-                            } else {
-                                naviToChecklist(checklist.uuid)
-                            }
+                            if (checklist.finished) showUnfinishDialog.value = true
+                            else naviToChecklist(checklist.uuid)
                         },
                 ) {
                     Box(

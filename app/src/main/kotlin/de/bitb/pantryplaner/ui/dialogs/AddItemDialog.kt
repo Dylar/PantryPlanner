@@ -16,7 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.data.model.Filter
-import de.bitb.pantryplaner.ui.base.composable.CircleRow
+import de.bitb.pantryplaner.ui.comps.CircleRow
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import kotlinx.coroutines.flow.MutableStateFlow
 

@@ -42,6 +42,8 @@ import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
 import de.bitb.pantryplaner.ui.base.composable.*
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
+import de.bitb.pantryplaner.ui.comps.CategoryHeader
+import de.bitb.pantryplaner.ui.comps.DeleteItemBackground
 import de.bitb.pantryplaner.ui.dialogs.*
 
 @AndroidEntryPoint
@@ -210,6 +212,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
     fun ItemList(innerPadding: PaddingValues, items: Map<String, List<Item>>) {
+        val showItems = remember { mutableStateMapOf<String, Boolean>() }
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.padding(innerPadding)
@@ -224,11 +227,19 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
                     horizontalArrangement = Arrangement.Center,
                     contentPadding = PaddingValues(4.dp),
                 ) {
-                    items.forEach { (headerText, list) ->
-                        if (headerText.isNotBlank()) {
-                            stickyGridHeader { Header(headerText, list.first().color) }
+                    items.forEach { (header, list) ->
+                        val headerText = header.ifBlank { "Keine" }
+                        stickyGridHeader {
+                            CategoryHeader(
+                                headerText,
+                                list.first().color,
+                                showItems,
+                                viewModel::editCategory,
+                            )
                         }
-                        items(list.size) { CheckListItem(list[it]) }
+                        if (showItems[headerText] != false) {
+                            items(list.size) { CheckListItem(list[it]) }
+                        }
                     }
                 }
             } else {
@@ -240,11 +251,19 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     contentPadding = PaddingValues(4.dp),
                 ) {
-                    items.forEach { (headerText, list) ->
-                        if (headerText.isNotBlank()) {
-                            stickyHeader { Header(headerText, list.first().color) }
+                    items.forEach { (header, list) ->
+                        val headerText = header.ifBlank { "Keine" }
+                        stickyHeader {
+                            CategoryHeader(
+                                headerText,
+                                list.first().color,
+                                showItems,
+                                viewModel::editCategory,
+                            )
                         }
-                        items(list.size) { CheckListItem(list[it]) }
+                        if (showItems[headerText] != false) {
+                            items(list.size) { CheckListItem(list[it]) }
+                        }
                     }
                 }
             }
