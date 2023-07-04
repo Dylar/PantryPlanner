@@ -101,7 +101,9 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
         }
 
         if (showAddDialog.value) {
+            val items by viewModel.itemList.collectAsState(null)
             AddItemDialog(
+                categorys = items?.data?.keys?.toList() ?: listOf(),
                 onConfirm = { name, category, color, close ->
                     viewModel.addItem(name, category, color)
                     if (close) {
@@ -281,7 +283,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
             contentAlignment = Alignment.Center
         ) {
             Card(
-                border = BorderStroke(2.dp,color),
+                border = BorderStroke(2.dp, color),
                 modifier = Modifier.combinedClickable(
                     onClick = {}, // required? Oo
                     onLongClick = { showEditDialog = true }
@@ -372,7 +374,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
             dismissContent = {
                 Card(
                     elevation = 4.dp,
-                    border = BorderStroke(2.dp,item.color),
+                    border = BorderStroke(2.dp, item.color),
                     modifier = Modifier
                         .padding(vertical = 4.dp)
                         .combinedClickable(
