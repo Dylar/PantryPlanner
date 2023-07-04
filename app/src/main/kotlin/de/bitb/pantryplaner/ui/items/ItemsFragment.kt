@@ -1,34 +1,18 @@
 package de.bitb.pantryplaner.ui.items
 
 import android.os.Bundle
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.GridOff
 import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material.icons.outlined.FilterList
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,15 +20,17 @@ import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Resource
-import de.bitb.pantryplaner.core.misc.formatted
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
-import de.bitb.pantryplaner.ui.base.composable.*
+import de.bitb.pantryplaner.ui.base.comps.*
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
-import de.bitb.pantryplaner.ui.comps.CategoryHeader
-import de.bitb.pantryplaner.ui.comps.DeleteItemBackground
-import de.bitb.pantryplaner.ui.dialogs.*
+import de.bitb.pantryplaner.ui.comps.AddSubRow
+import de.bitb.pantryplaner.ui.comps.SelectItemHeader
+import de.bitb.pantryplaner.ui.dialogs.AddItemDialog
+import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
+import de.bitb.pantryplaner.ui.dialogs.FilterDialog
+import de.bitb.pantryplaner.ui.dialogs.useEditItemDialog
 
 @AndroidEntryPoint
 class ItemsFragment : BaseFragment<ItemsViewModel>() {
@@ -53,7 +39,6 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
         const val LAYOUT_BUTTON_TAG = "ItemLayoutButton"
         const val FILTER_BUTTON_TAG = "ItemFilterButton"
         const val ADD_BUTTON_TAG = "ItemAddButton"
-        const val ADD_TO_BUTTON_TAG = "ItemAddToButton"
         const val LIST_TAG = "CheckList"
         const val GRID_TAG = "CheckGrid"
     }
@@ -89,7 +74,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
             scaffoldState = scaffoldState,
             topBar = { buildAppBar() },
             content = { buildContent(it) },
-            bottomBar = { buildBottomBar() },
+            floatingActionButton = { buildFab() }
         )
 
         if (showFilterDialog.value) {
@@ -120,7 +105,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
                 "Hinzufügen?",
                 "Möchten Sie alle markierten Items der Checklist hinzufügen?",
                 onConfirm = {
-                    viewModel.addToChecklist(viewModel.fromChecklist!!)
+                    viewModel.addToChecklist()
                     showAddToDialog.value = false
                 },
                 onDismiss = { showAddToDialog.value = false },
@@ -157,42 +142,34 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
     }
 
     @Composable
-    private fun buildBottomBar() {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 4.dp)
-                .background(Color.Transparent),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
+    private fun buildFab() {
+        Column(
+            horizontalAlignment = Alignment.End,
+            verticalArrangement = Arrangement.Center,
         ) {
-            if (viewModel.fromChecklist != null) {
-                Box(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .weight(2f)
-                        .background(Color.Transparent)
-                ) {
-                    Button(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 8.dp)
-                            .testTag(ADD_TO_BUTTON_TAG),
-                        onClick = { showAddToDialog.value = true },
-                        content = { Text("Checkliste hinzufügen") }
+            ExtendedFloatingActionButton(
+                text = { Text(text = "Neu") },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Rounded.Add,
+                        contentDescription = "New item FAB",
                     )
-                }
-            }
-            Box(
-                modifier = Modifier.padding(8.dp)
-                    .background(Color.Transparent)
-            ) {
-                FloatingActionButton(
-                    modifier = Modifier
-                        .padding(bottom = 8.dp)
-                        .testTag(ADD_BUTTON_TAG),
-                    onClick = { showAddDialog.value = true }
-                ) { Icon(Icons.Filled.Add, contentDescription = "Add Item") }
+                },
+                onClick = { showAddDialog.value = true },
+            )
+            if (viewModel.isSelectModus) {
+                Spacer(modifier = Modifier.height(8.dp))
+
+                ExtendedFloatingActionButton(
+                    text = { Text(text = "Hinzufügen") },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Rounded.Add,
+                            contentDescription = "Finish FAB",
+                        )
+                    },
+                    onClick = { showAddToDialog.value = true },
+                )
             }
         }
     }
@@ -207,272 +184,70 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
             }
             items == null -> LoadingIndicator()
             items?.data?.isEmpty() == true -> EmptyListComp(getString(R.string.no_items))
-            else -> ItemList(innerPadding, items!!.data!!)
+            else -> GridListLayout(
+                innerPadding,
+                showGridLayout,
+                items!!.data!!,
+                { it.color },
+                viewModel::editCategory
+            ) { ListItem(it) }
         }
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    fun ItemList(innerPadding: PaddingValues, items: Map<String, List<Item>>) {
-        val showItems = remember { mutableStateMapOf<String, Boolean>() }
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.padding(innerPadding)
-        ) {
-            if (showGridLayout.value) {
-                LazyVerticalGrid(
-                    GridCells.Fixed(2),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .testTag(GRID_TAG),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalArrangement = Arrangement.Center,
-                    contentPadding = PaddingValues(4.dp),
-                ) {
-                    items.forEach { (header, list) ->
-                        val headerText = header.ifBlank { "Keine" }
-                        stickyGridHeader {
-                            CategoryHeader(
-                                headerText,
-                                list.first().color,
-                                showItems,
-                                viewModel::editCategory,
-                            )
-                        }
-                        if (showItems[headerText] != false) {
-                            items(list.size) { CheckListItem(list[it]) }
-                        }
-                    }
-                }
+    fun ListItem(item: Item) {
+        val showEditDialog = remember { mutableStateOf(false) }
+        useEditItemDialog(showEditDialog, item, viewModel::editItem)
+
+        val showRemoveDialog = remember { mutableStateOf(false) }
+        DissmissItem(
+            item.name,
+            item.color,
+            showRemoveDialog,
+            onRemove = { viewModel.removeItem(item) },
+            onClick = { viewModel.checkItem(item.uuid) },
+            onLongClick = { showEditDialog.value = true },
+        )
+        {
+            if (viewModel.isSelectModus) {
+                val checkedItems = viewModel.checkedItems.collectAsState()
+                SelectItemHeader(
+                    item,
+                    checkedItems.value.contains(item.uuid),
+                    false,
+                    viewModel::checkItem
+                )
             } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .testTag(LIST_TAG),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    contentPadding = PaddingValues(4.dp),
-                ) {
-                    items.forEach { (header, list) ->
-                        val headerText = header.ifBlank { "Keine" }
-                        stickyHeader {
-                            CategoryHeader(
-                                headerText,
-                                list.first().color,
-                                showItems,
-                                viewModel::editCategory,
-                            )
-                        }
-                        if (showItems[headerText] != false) {
-                            items(list.size) { CheckListItem(list[it]) }
-                        }
-                    }
-                }
+                StockItem(item)
             }
         }
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    private fun Header(category: String, color: Color) {
-        var showEditDialog by remember { mutableStateOf(false) }
-        Box(
+    fun StockItem(item: Item) {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 4.dp),
-            contentAlignment = Alignment.Center
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.Center,
         ) {
-            Card(
-                border = BorderStroke(2.dp, color),
-                modifier = Modifier.combinedClickable(
-                    onClick = {}, // required? Oo
-                    onLongClick = { showEditDialog = true }
-                )
-            ) {
-                Text(
-                    category,
-                    modifier = Modifier
-                        .padding(vertical = 8.dp, horizontal = 16.dp)
-                        .drawBehind {
-                            val strokeWidthPx = 1.dp.toPx()
-                            val verticalOffset = size.height - 2.sp.toPx()
-                            drawLine(
-                                color = color,
-                                strokeWidth = strokeWidthPx,
-                                start = Offset(0f, verticalOffset),
-                                end = Offset(size.width, verticalOffset)
-                            )
-                        },
-                    textAlign = TextAlign.Center,
-//                    textDecoration = TextDecoration.Underline
-                )
-            }
-        }
+            Text(
+                item.name,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(BaseColors.LightGray.copy(alpha = .1f))
+                    .padding(horizontal = 12.dp, vertical = 4.dp),
+                fontSize = 16.sp,
+                textAlign = TextAlign.Start
+            )
 
-        if (showEditDialog) {
-            EditCategoryDialog(
-                color,
-                category,
-                onConfirm = { cat, col ->
-                    viewModel.editCategory(category, cat, col)
-                    showEditDialog = false
-                },
-                onDismiss = { showEditDialog = false },
+            val errors = viewModel.itemErrorList.collectAsState(listOf())
+            AddSubRow(
+                item.uuid,
+                item.amount,
+                errors,
+                viewModel::changeItemAmount,
             )
         }
-    }
-
-    @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
-    @Composable
-    fun CheckListItem(item: Item) {
-        var showRemoveDialog by remember { mutableStateOf(false) }
-        var showEditDialog by remember { mutableStateOf(false) }
-        val dismissState = rememberDismissState(
-            confirmStateChange = {
-                if (it == DismissValue.DismissedToEnd) {
-                    showRemoveDialog = true
-                    true
-                } else false
-            }
-        )
-
-        LaunchedEffect(dismissState.currentValue) {
-            if (dismissState.currentValue != DismissValue.Default) {
-                dismissState.reset()
-            }
-        }
-
-        if (showRemoveDialog) {
-            ConfirmDialog(
-                "Remove Item",
-                "Möchten Sie folgendes Item entfernen?\n${item.name}",
-                onConfirm = {
-                    viewModel.removeItem(item)
-                    showRemoveDialog = false
-                },
-                onDismiss = { showRemoveDialog = false },
-            )
-        }
-
-        if (showEditDialog) {
-            EditItemDialog(
-                item = item,
-                onConfirm = { name, category ->
-                    viewModel.editItem(item, name, category)
-                    showEditDialog = false
-                },
-                onDismiss = { showEditDialog = false },
-            )
-        }
-
-        SwipeToDismiss(
-            modifier = Modifier
-                .padding(2.dp),
-            state = dismissState,
-            directions = setOf(DismissDirection.StartToEnd),
-            background = { DeleteItemBackground() },
-            dismissContent = {
-                Card(
-                    elevation = 4.dp,
-                    border = BorderStroke(2.dp, item.color),
-                    modifier = Modifier
-                        .padding(vertical = 4.dp)
-                        .combinedClickable(
-                            onClick = { viewModel.checkItem(item.uuid) },
-                            onLongClick = { showEditDialog = true },
-                        ),
-                ) {
-                    val checkedItems = viewModel.checkedItems.collectAsState()
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(55.dp)
-                            .padding(horizontal = 4.dp),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        if (viewModel.fromChecklist != null) {
-                            Checkbox(
-                                checkedItems.value.contains(item.uuid),
-                                modifier = Modifier
-                                    .weight(.2f),
-                                onCheckedChange = { viewModel.checkItem(item.uuid) },
-                                colors = CheckboxDefaults.colors(
-                                    checkedColor = item.color,
-                                    uncheckedColor = item.color
-                                )
-                            )
-                        }
-                        Column(
-                            modifier = Modifier
-                                .padding(start = 2.dp)
-                                .weight(.7f),
-                        )
-                        {
-                            if (item.category.isNotBlank()) {
-                                Text(
-                                    item.category,
-                                    modifier = Modifier,
-                                    fontSize = 10.sp,
-                                    textAlign = TextAlign.Start
-                                )
-                            }
-                            Text(
-                                item.name,
-                                modifier = Modifier,
-                                fontSize = 16.sp,
-                                textAlign = TextAlign.Start
-                            )
-                        }
-                        if (viewModel.fromChecklist == null) {
-                            val error = viewModel.itemErrorList.collectAsState(listOf())
-                            val color =
-                                (if (error.value.contains(item.uuid)) BaseColors.FireRed
-                                else BaseColors.White)
-                            val amountState =
-                                remember { mutableStateOf(TextFieldValue(item.amount.formatted)) }
-                            val interactionSource = remember { MutableInteractionSource() }
-                            BasicTextField(
-                                amountState.value,
-                                modifier = Modifier.padding(4.dp).width(60.dp)
-                                    .background(color.copy(alpha = .5f)),
-                                textStyle = TextStyle.Default.copy(
-                                    fontSize = 16.sp,
-                                    textAlign = TextAlign.Center,
-                                ),
-                                maxLines = 1,
-                                interactionSource = interactionSource,
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                onValueChange = {
-                                    if (it.text.length < 8) {
-                                        amountState.value = it
-                                        viewModel.changeItemAmount(item.uuid, it.text)
-                                    }
-                                },
-                            ) { innerTextField ->
-                                TextFieldDefaults.TextFieldDecorationBox(
-                                    value = amountState.value.text,
-                                    visualTransformation = VisualTransformation.None,
-                                    innerTextField = innerTextField,
-                                    singleLine = true,
-                                    enabled = true,
-                                    interactionSource = interactionSource,
-                                    contentPadding = PaddingValues(0.dp),
-                                )
-                            }
-                        }
-
-                        if (viewModel.fromChecklist != null) {
-                            Text(
-                                item.amount.formatted,
-                                modifier = Modifier.padding(end = 4.dp),
-                                fontSize = 16.sp,
-                                textAlign = TextAlign.Start
-                            )
-                        }
-                    }
-                }
-            }
-        )
     }
 }

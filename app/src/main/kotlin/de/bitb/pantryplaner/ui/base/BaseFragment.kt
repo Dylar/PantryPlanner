@@ -13,7 +13,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
-import de.bitb.pantryplaner.ui.base.composable.ResString
+import de.bitb.pantryplaner.ui.base.comps.ResString
 import de.bitb.pantryplaner.ui.base.styles.PantryAppTheme
 import kotlinx.coroutines.launch
 

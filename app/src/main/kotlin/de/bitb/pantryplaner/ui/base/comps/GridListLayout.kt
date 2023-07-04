@@ -1,9 +1,11 @@
-package de.bitb.pantryplaner.ui.comps
+package de.bitb.pantryplaner.ui.base.comps
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -17,15 +19,101 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.dialogs.EditCategoryDialog
+import de.bitb.pantryplaner.ui.items.ItemsFragment
+
+fun LazyGridScope.stickyGridHeader(
+    content: @Composable LazyGridItemScope.() -> Unit
+) {
+    item(span = { GridItemSpan(this.maxLineSpan) }, content = content)
+}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CategoryHeader(
+fun <T> GridListLayout(
+    innerPadding: PaddingValues,
+    showGridLayout: MutableState<Boolean>,
+    items: Map<String, List<T>>,
+    headerColor: (T) -> Color,
+    editHeader: ((String, String, Color) -> Unit)? = null,
+    buildItem: @Composable (T) -> Unit,
+) {
+    val showItems = remember { mutableStateMapOf<String, Boolean>() }
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.padding(innerPadding)
+    ) {
+        if (showGridLayout.value) {
+            LazyVerticalGrid(
+                GridCells.Fixed(2),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .testTag(ItemsFragment.GRID_TAG),
+                verticalArrangement = Arrangement.Top,
+                horizontalArrangement = Arrangement.Center,
+                contentPadding = PaddingValues(
+                    top = 4.dp,
+                    bottom = 124.dp,
+                    start = 4.dp,
+                    end = 4.dp
+                ),
+            ) {
+                items.forEach { (header, list) ->
+                    val headerText = header.ifBlank { "Keine" }
+                    stickyGridHeader {
+                        GridListHeader(
+                            headerText,
+                            headerColor(list.first()),
+                            showItems,
+                            editHeader,
+                        )
+                    }
+                    if (showItems[headerText] != false) {
+                        items(list.size) { buildItem(list[it]) }
+                    }
+                }
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .testTag(ItemsFragment.LIST_TAG),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                contentPadding = PaddingValues(
+                    top = 4.dp,
+                    bottom = 124.dp,
+                    start = 4.dp,
+                    end = 4.dp
+                ),
+            ) {
+                items.forEach { (header, list) ->
+                    val headerText = header.ifBlank { "Keine" }
+                    stickyHeader {
+                        GridListHeader(
+                            headerText,
+                            headerColor(list.first()),
+                            showItems,
+                            editHeader,
+                        )
+                    }
+                    if (showItems[headerText] != false) {
+                        items(list.size) { buildItem(list[it]) }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun GridListHeader(
     category: String,
     color: Color,
     showItems: SnapshotStateMap<String, Boolean>,

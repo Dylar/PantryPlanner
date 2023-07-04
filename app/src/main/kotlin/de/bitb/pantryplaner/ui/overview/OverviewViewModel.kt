@@ -7,7 +7,7 @@ import de.bitb.pantryplaner.core.misc.castOnError
 import de.bitb.pantryplaner.data.CheckRepository
 import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.ui.base.BaseViewModel
-import de.bitb.pantryplaner.ui.base.composable.asResString
+import de.bitb.pantryplaner.ui.base.comps.asResString
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

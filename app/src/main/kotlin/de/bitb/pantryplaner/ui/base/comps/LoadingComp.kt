@@ -1,7 +1,8 @@
-package de.bitb.pantryplaner.ui.base.composable
+package de.bitb.pantryplaner.ui.base.comps
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
@@ -11,12 +12,12 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun LoadingIndicator(
-    modifier: Modifier = Modifier.fillMaxSize(),
+    modifier: Modifier = Modifier.fillMaxSize().padding(20.dp),
 ) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier,
     ) {
-        CircularProgressIndicator(modifier = Modifier.then(Modifier.size(64.dp)))
+        CircularProgressIndicator(modifier = Modifier.size(48.dp))
     }
 }

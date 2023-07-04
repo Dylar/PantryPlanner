@@ -1,23 +1,22 @@
 package de.bitb.pantryplaner.ui.overview
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.GridOff
 import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.FormatListBulleted
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,14 +26,11 @@ import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.ui.base.BaseFragment
-import de.bitb.pantryplaner.ui.base.composable.*
+import de.bitb.pantryplaner.ui.base.comps.*
 import de.bitb.pantryplaner.ui.base.naviOverviewToItems
 import de.bitb.pantryplaner.ui.base.naviToChecklist
 import de.bitb.pantryplaner.ui.base.naviToReleaseNotes
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
-import de.bitb.pantryplaner.ui.checklist.ChecklistFragment
-import de.bitb.pantryplaner.ui.comps.CategoryHeader
-import de.bitb.pantryplaner.ui.comps.DeleteItemBackground
 import de.bitb.pantryplaner.ui.dialogs.AddChecklistDialog
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 import de.bitb.pantryplaner.ui.dialogs.InfoDialog
@@ -57,7 +53,6 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
     private lateinit var showAddDialog: MutableState<Boolean>
     private lateinit var showUnfinishDialog: MutableState<Boolean>
 
-
     @Composable
     override fun ScreenContent() {
         showGridLayout = remember { mutableStateOf(true) }
@@ -69,7 +64,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
             scaffoldState = scaffoldState,
             topBar = { buildAppBar() },
             content = { buildContent(it) },
-            bottomBar = { buildBottomBar() },
+            floatingActionButton = { buildFab() },
         )
 
         if (showInfoDialog.value) {
@@ -116,39 +111,37 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
     }
 
     @Composable
-    private fun buildBottomBar() {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 4.dp)
-                .background(Color.Transparent),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
+    private fun buildFab() {
+        Column(
+            horizontalAlignment = Alignment.End,
+            verticalArrangement = Arrangement.Center,
         ) {
-            Box(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .weight(2f)
+            SmallFloatingActionButton(
+                onClick = { showAddDialog.value = true },
+                containerColor = MaterialTheme.colors.secondaryVariant,
+                shape = RoundedCornerShape(12.dp),
             ) {
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 8.dp)
-                        .testTag(ChecklistFragment.UNCHECK_BUTTON_TAG),
-                    onClick = ::naviOverviewToItems,
-                    content = { Text("Zum Bestand") }
+                Icon(
+                    imageVector = Icons.Rounded.Add,
+                    contentDescription = "add checklist FAB",
+                    tint = Color.Black,
                 )
             }
-            Box(
-                modifier = Modifier.padding(8.dp)
-            ) {
-                FloatingActionButton( // TODO open multi adding -> add template or checklist -> no everything is a checklist
-                    modifier = Modifier
-                        .padding(bottom = 8.dp)
-                        .testTag(ADD_BUTTON_TAG),
-                    onClick = { showAddDialog.value = true }
-                ) { Icon(Icons.Filled.Add, contentDescription = "Add Menu") }
-            }
+
+            //TODO add testTags
+// TODO open multi adding -> add template or checklist -> no everything is a checklist ... or more FABs
+            Spacer(modifier = Modifier.height(8.dp))
+
+            ExtendedFloatingActionButton(
+                text = { Text(text = "Zum Bestand") },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Rounded.FormatListBulleted,
+                        contentDescription = "To stock FAB",
+                    )
+                },
+                onClick = ::naviOverviewToItems,
+            )
         }
     }
 
@@ -162,150 +155,57 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
             }
             checklists == null -> LoadingIndicator()
             checklists?.data?.isEmpty() == true -> EmptyListComp(getString(R.string.no_checklists))
-            else -> Checklists(innerPadding, checklists!!.data!!)
+            else -> GridListLayout(
+                innerPadding,
+                showGridLayout,
+                checklists!!.data!!.mapKeys { if (it.key) "Erledigt" else "Checklist" },
+                { it.color },
+            ) { CheckListItem(it) }
         }
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
-    @Composable
-    fun Checklists(
-        innerPadding: PaddingValues,
-        checklistsMap: Map<Boolean, List<Checklist>>
-    ) {
-        val showItems = remember { mutableStateMapOf<String, Boolean>() }
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.padding(innerPadding)
-        ) {
-            if (showGridLayout.value) {
-                LazyVerticalGrid(
-                    GridCells.Fixed(2),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .testTag(GRID_TAG),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalArrangement = Arrangement.Center,
-                    contentPadding = PaddingValues(4.dp),
-                ) {
-                    checklistsMap.forEach { (isFinished, list) ->
-                        val headerText = if (isFinished) "Erledigt" else "Checklist"
-                        stickyGridHeader {
-                            CategoryHeader(
-                                headerText,
-                                if (isFinished) BaseColors.AdultBlue else BaseColors.BabyBlue,
-                                showItems,
-                            )
-                        }
-                        if (showItems[headerText] != false) {
-                            items(list.size) { CheckListItem(list[it]) }
-                        }
-                    }
-                }
-            } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .testTag(LIST_TAG),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    contentPadding = PaddingValues(4.dp),
-                ) {
-                    checklistsMap.forEach { (isFinished, list) ->
-                        val headerText = if (isFinished) "Erledigt" else "Checklist"
-                        stickyHeader {
-                            CategoryHeader(
-                                headerText,
-                                if (isFinished) BaseColors.AdultBlue else BaseColors.BabyBlue,
-                                showItems,
-                            )
-                        }
-                        if (showItems[headerText] != false) {
-                            items(list.size) { CheckListItem(list[it]) }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
     @Composable
     fun CheckListItem(checklist: Checklist) {
-        var showRemoveDialog by remember { mutableStateOf(false) }
-        val dismissState = rememberDismissState(
-            confirmStateChange = {
-                if (it == DismissValue.DismissedToEnd) {
-                    showRemoveDialog = true
-                    true
-                } else false
-            }
-        )
-
-        LaunchedEffect(dismissState.currentValue) {
-            if (dismissState.currentValue != DismissValue.Default) {
-                dismissState.reset()
-            }
-        }
-
-        if (showRemoveDialog) {
-            ConfirmDialog(
-                "Remove Checklist",
-                "Möchten Sie folgende Checklist entfernen?\n${checklist.name}",
-                onConfirm = {
-                    viewModel.removeChecklist(checklist)
-                    showRemoveDialog = false
-                },
-                onDismiss = { showRemoveDialog = false },
-            )
-        }
-
         if (showUnfinishDialog.value) {
             ConfirmDialog(
                 "Checklist öffnen?",
-                "Checkliste ist schon erledigt, möchtest Sie sie wieder öffnen und die Items aus deinem Bestand nehmen?",
-                onConfirm = {
-                    viewModel.unfinishChecklist(checklist)
-                    showUnfinishDialog.value = false
-                },
+                "Checkliste ist schon erledigt, möchtest Sie sie wieder öffnen und die Items aus dem Bestand entfernen?",
+                onConfirm = { showUnfinishDialog.value = false },
                 onDismiss = { showUnfinishDialog.value = false },
             )
         }
 
-        SwipeToDismiss(
-            modifier = Modifier
-                .height(60.dp)
-                .padding(2.dp),
-            state = dismissState,
-            directions = setOf(DismissDirection.StartToEnd),
-            background = { DeleteItemBackground() },
-            dismissContent = {
-                Card(
-                    //TODO show item count
-                    elevation = 4.dp,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(vertical = 4.dp)
-                        .clickable {
-                            if (checklist.finished) showUnfinishDialog.value = true
-                            else naviToChecklist(checklist.uuid)
-                        },
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .padding(horizontal = 8.dp)
-                            .weight(.7f),
-                        contentAlignment = Alignment.Center
-                    )
-                    {
-                        Text(
-                            checklist.name,
-                            modifier = Modifier,
-                            fontSize = 16.sp,
-                            textDecoration = if (checklist.finished) TextDecoration.LineThrough else TextDecoration.None
-                        )
-                    }
-                }
+        val showRemoveDialog = remember { mutableStateOf(false) }
+        DissmissItem(
+            checklist.name,
+            checklist.color,
+            showRemoveDialog,
+            onRemove = { viewModel.unfinishChecklist(checklist) },
+            onClick = {
+                if (checklist.finished) showUnfinishDialog.value = true
+                else naviToChecklist(checklist.uuid)
+            },
+        ) {
+            Row(
+                modifier = Modifier
+                    .defaultMinSize(minHeight = 48.dp)
+                    .padding(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            )
+            {
+                Text(
+                    checklist.name,
+                    modifier = Modifier.weight(1f),
+                    fontSize = 16.sp,
+                    textDecoration = if (checklist.finished) TextDecoration.LineThrough else TextDecoration.None
+                )
+                Text(
+                    checklist.progress,
+                    modifier = Modifier,
+                    fontSize = 16.sp,
+                )
             }
-        )
+        }
     }
 }

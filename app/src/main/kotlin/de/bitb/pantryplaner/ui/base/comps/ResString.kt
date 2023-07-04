@@ -1,4 +1,4 @@
-package de.bitb.pantryplaner.ui.base.composable
+package de.bitb.pantryplaner.ui.base.comps
 
 import android.app.Activity
 import androidx.annotation.StringRes

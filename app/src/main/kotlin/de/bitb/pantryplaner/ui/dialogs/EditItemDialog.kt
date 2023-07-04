@@ -19,6 +19,24 @@ import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.data.model.Item
 
 @Composable
+fun useEditItemDialog(
+    showEditDialog: MutableState<Boolean>,
+    item: Item,
+    onEdit: (Item, String, String) -> Unit
+) {
+    if (showEditDialog.value) {
+        EditItemDialog(
+            item = item,
+            onConfirm = { name, category ->
+                onEdit(item, name, category)
+                showEditDialog.value = false
+            },
+            onDismiss = { showEditDialog.value = false },
+        )
+    }
+}
+
+@Composable
 fun EditItemDialog(
     item: Item,
     onConfirm: (String, String) -> Unit,

@@ -1,4 +1,4 @@
-package de.bitb.pantryplaner.ui.base.composable
+package de.bitb.pantryplaner.ui.base.comps
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons

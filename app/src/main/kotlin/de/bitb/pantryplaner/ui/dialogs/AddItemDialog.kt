@@ -1,16 +1,12 @@
 package de.bitb.pantryplaner.ui.dialogs
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -20,8 +16,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.data.model.Filter
+import de.bitb.pantryplaner.ui.base.comps.CircleRow
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
-import de.bitb.pantryplaner.ui.comps.CircleRow
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.util.*
 

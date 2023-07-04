@@ -8,7 +8,7 @@ import de.bitb.pantryplaner.data.ItemRepository
 import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.BaseViewModel
-import de.bitb.pantryplaner.ui.base.composable.asResString
+import de.bitb.pantryplaner.ui.base.comps.asResString
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
@@ -27,16 +27,19 @@ class ItemsViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     val itemErrorList = MutableStateFlow<List<String>>(emptyList())
+    val checkedItems = MutableStateFlow(listOf<String>())
 
-    var fromChecklist: String? = null
+    var fromChecklistId: String? = null
     val filterBy = MutableStateFlow(Filter(BaseColors.UnselectedColor))
     val itemList: Flow<Resource<Map<String, List<Item>>>> = itemRepo.getItems(filterBy = filterBy)
 
-    val checkedItems = MutableStateFlow(listOf<String>())
+    val isSelectModus: Boolean
+        get() = fromChecklistId != null
+
     override fun isBackable(): Boolean = checkedItems.value.isEmpty()
 
     fun initItems(checkUuid: String?) {
-        fromChecklist = checkUuid
+        fromChecklistId = checkUuid
     }
 
     fun addItem(name: String, category: String, color: Color) {
@@ -62,7 +65,7 @@ class ItemsViewModel @Inject constructor(
     }
 
     fun checkItem(uuid: String) {
-        if (fromChecklist != null) {
+        if (isSelectModus) {
             checkedItems.update {
                 val items = it.toMutableList()
                 if (!items.remove(uuid)) {
@@ -91,12 +94,14 @@ class ItemsViewModel @Inject constructor(
         }
     }
 
-    fun addToChecklist(checklistId: String) {
-        viewModelScope.launch {
-            when (val resp =
-                checkUseCases.addItemsToChecklistUC(checklistId, checkedItems.value)) {
-                is Resource.Error -> showSnackbar(resp.message!!)
-                else -> navigateBack(null)
+    fun addToChecklist() {
+        if (isSelectModus) {
+            viewModelScope.launch {
+                when (val resp =
+                    checkUseCases.addItemsToChecklistUC(fromChecklistId!!, checkedItems.value)) {
+                    is Resource.Error -> showSnackbar(resp.message!!)
+                    else -> navigateBack(null)
+                }
             }
         }
     }

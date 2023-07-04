@@ -2,7 +2,6 @@ package de.bitb.pantryplaner.usecase.checklist
 
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.asResourceError
-import de.bitb.pantryplaner.core.misc.castOnError
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.CheckRepository
 import kotlinx.coroutines.flow.first

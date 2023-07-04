@@ -15,7 +15,7 @@ import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.ui.base.BaseFragment
-import de.bitb.pantryplaner.ui.base.composable.LoadingIndicator
+import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
 
 @AndroidEntryPoint
 class SplashFragment : BaseFragment<SplashViewModel>() {

@@ -4,8 +4,6 @@ import androidx.compose.ui.graphics.Color
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.ItemRepository
-import de.bitb.pantryplaner.data.model.Item
-import de.bitb.pantryplaner.ui.base.styles.BaseColors.FilterColors
 import kotlinx.coroutines.flow.first
 
 class UncheckAllItemsUC(

@@ -1,4 +1,4 @@
-package de.bitb.pantryplaner.ui.base.composable
+package de.bitb.pantryplaner.ui.base.comps
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable

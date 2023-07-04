@@ -1,7 +1,7 @@
 package de.bitb.pantryplaner.ui.base
 
 import androidx.lifecycle.ViewModel
-import de.bitb.pantryplaner.ui.base.composable.ResString
+import de.bitb.pantryplaner.ui.base.comps.ResString
 
 abstract class BaseViewModel : ViewModel() {
     lateinit var updateWidgets: () -> Unit

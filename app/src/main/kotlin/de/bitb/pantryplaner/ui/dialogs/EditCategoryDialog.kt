@@ -18,13 +18,13 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.data.model.Filter
-import de.bitb.pantryplaner.ui.comps.CircleRow
+import de.bitb.pantryplaner.ui.base.comps.CircleRow
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
 fun EditCategoryDialog(
-    color:Color,
+    color: Color,
     category: String,
     onConfirm: (String, Color) -> Unit,
     onDismiss: () -> Unit
@@ -56,7 +56,10 @@ fun EditCategoryDialog(
                         onDone = { onConfirm(categoryState.text, colorState.value.color) }
                     ),
                 )
-                CircleRow(selectedCircleIndex = colorState, selectableColors = BaseColors.SelectableColors)
+                CircleRow(
+                    selectedCircleIndex = colorState,
+                    selectableColors = BaseColors.SelectableColors
+                )
             }
         },
         confirmButton = {

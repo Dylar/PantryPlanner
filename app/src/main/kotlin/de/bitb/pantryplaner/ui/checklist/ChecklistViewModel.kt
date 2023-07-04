@@ -10,13 +10,14 @@ import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.BaseViewModel
-import de.bitb.pantryplaner.ui.base.composable.asResString
+import de.bitb.pantryplaner.ui.base.comps.asResString
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,13 +30,14 @@ class ChecklistViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     val itemErrorList = MutableStateFlow<List<String>>(emptyList())
+
     val filterBy = MutableStateFlow(Filter(BaseColors.UnselectedColor))
 
     lateinit var checkListId: String
     lateinit var checkList: Flow<Resource<Checklist>>
     lateinit var itemMap: Flow<Resource<Map<String, List<Item>>>>
 
-    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+    @OptIn(ExperimentalCoroutinesApi::class)
     fun initChecklist(uuid: String) {
         checkListId = uuid
         checkList = checkRepo.getCheckList(checkListId)
@@ -57,9 +59,9 @@ class ChecklistViewModel @Inject constructor(
         }
     }
 
-    fun checkItem(item: Item) {
+    fun checkItem(itemId: String) {
         viewModelScope.launch {
-            when (val resp = checkUseCases.checkItemUC(checkListId, item.uuid)) {
+            when (val resp = checkUseCases.checkItemUC(checkListId, itemId)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
                 else -> updateWidgets()
             }
@@ -77,7 +79,7 @@ class ChecklistViewModel @Inject constructor(
 
     fun editCategory(previousCategory: String, newCategory: String, color: Color) {
         viewModelScope.launch {
-            when (val resp = itemUseCases.editCategoryUC(previousCategory, newCategory,color)) {
+            when (val resp = itemUseCases.editCategoryUC(previousCategory, newCategory, color)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
                 else -> showSnackbar("Kategorie editiert".asResString()).also { updateWidgets() }
             }
