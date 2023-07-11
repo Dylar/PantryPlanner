@@ -1,6 +1,5 @@
 package de.bitb.pantryplaner.ui.overview
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -16,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,7 +28,6 @@ import de.bitb.pantryplaner.ui.base.comps.*
 import de.bitb.pantryplaner.ui.base.naviOverviewToItems
 import de.bitb.pantryplaner.ui.base.naviToChecklist
 import de.bitb.pantryplaner.ui.base.naviToReleaseNotes
-import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.dialogs.AddChecklistDialog
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 import de.bitb.pantryplaner.ui.dialogs.InfoDialog
@@ -42,21 +39,18 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
         const val INFO_BUTTON_TAG = "OverviewInfoButton"
         const val LAYOUT_BUTTON_TAG = "OverviewLayoutButton"
         const val ADD_BUTTON_TAG = "OverviewAddButton"
-        const val GRID_TAG = "OverviewGrid"
-        const val LIST_TAG = "OverviewList"
+        const val TO_ITEMS_BUTTON_TAG = "OverviewToItemsButton"
     }
 
     override val viewModel: OverviewViewModel by viewModels()
 
     private lateinit var showGridLayout: MutableState<Boolean>
-    private lateinit var showInfoDialog: MutableState<Boolean>
     private lateinit var showAddDialog: MutableState<Boolean>
     private lateinit var showUnfinishDialog: MutableState<Boolean>
 
     @Composable
     override fun ScreenContent() {
         showGridLayout = remember { mutableStateOf(true) }
-        showInfoDialog = remember { mutableStateOf(false) }
         showAddDialog = remember { mutableStateOf(false) }
         showUnfinishDialog = remember { mutableStateOf(false) }
 
@@ -66,10 +60,6 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
             content = { buildContent(it) },
             floatingActionButton = { buildFab() },
         )
-
-        if (showInfoDialog.value) {
-            InfoDialog(naviToReleaseNotes = ::naviToReleaseNotes) { showInfoDialog.value = false }
-        }
 
         if (showAddDialog.value) {
             AddChecklistDialog(
@@ -84,6 +74,11 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
 
     @Composable
     private fun buildAppBar() {
+        val showInfoDialog = remember { mutableStateOf(false) }
+        if (showInfoDialog.value) {
+            InfoDialog(naviToReleaseNotes = ::naviToReleaseNotes) { showInfoDialog.value = false }
+        }
+
         TopAppBar(
             modifier = Modifier.testTag(APPBAR_TAG),
             title = { Text(getString(R.string.overview_title)) },
@@ -117,6 +112,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
             verticalArrangement = Arrangement.Center,
         ) {
             SmallFloatingActionButton(
+                modifier = Modifier.testTag(ADD_BUTTON_TAG),
                 onClick = { showAddDialog.value = true },
                 containerColor = MaterialTheme.colors.secondaryVariant,
                 shape = RoundedCornerShape(12.dp),
@@ -133,6 +129,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
             Spacer(modifier = Modifier.height(8.dp))
 
             ExtendedFloatingActionButton(
+                modifier = Modifier.testTag(TO_ITEMS_BUTTON_TAG),
                 text = { Text(text = "Zum Bestand") },
                 icon = {
                     Icon(

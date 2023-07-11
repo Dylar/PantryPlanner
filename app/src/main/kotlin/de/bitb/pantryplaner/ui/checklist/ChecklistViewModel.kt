@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.castOnError
 import de.bitb.pantryplaner.data.CheckRepository
 import de.bitb.pantryplaner.data.ItemRepository
 import de.bitb.pantryplaner.data.model.Checklist
@@ -18,6 +19,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -43,8 +45,20 @@ class ChecklistViewModel @Inject constructor(
         checkList = checkRepo.getCheckList(checkListId)
         itemMap = checkList
             .flatMapLatest { resp ->
-                val ids = resp.data?.items ?: emptyList()
-                itemRepo.getItems(ids.map { it.uuid }, filterBy)
+                val checklist = resp.data!!
+                val ids = checklist.items.map { it.uuid }
+                itemRepo.getItems(ids, filterBy)
+                    .map { itemResp ->
+                        castOnError(itemResp) {
+                            // oh god
+                            val newMap = mutableMapOf<String, List<Item>>()
+                            itemResp.data?.forEach { lists ->
+                                newMap[lists.key] =
+                                    lists.value.sortedBy { item -> checklist.items.first { it.uuid == item.uuid }.checked }
+                            }
+                            Resource.Success(newMap)
+                        }
+                    }
             }
     }
 
