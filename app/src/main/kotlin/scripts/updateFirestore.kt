@@ -1,11 +1,8 @@
 package scripts
 
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.snapshots
 import de.bitb.pantryplaner.data.model.CheckItem
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
-import java.util.*
 
 suspend fun main() {
     val firestore = FirebaseFirestore.getInstance()

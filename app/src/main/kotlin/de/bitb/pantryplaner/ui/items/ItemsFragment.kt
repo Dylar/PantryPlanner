@@ -25,6 +25,7 @@ import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
 import de.bitb.pantryplaner.ui.base.TestTags
 import de.bitb.pantryplaner.ui.base.comps.*
+import de.bitb.pantryplaner.ui.base.highlightedText
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.comps.AddSubRow
 import de.bitb.pantryplaner.ui.comps.SelectItemHeader
@@ -239,6 +240,9 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
 
     @Composable
     private fun stockItem(item: Item) {
+        val filter = viewModel.filterBy.collectAsState(null)
+        val text = highlightedText(item.name, filter.value?.searchTerm ?: "")
+
         Column(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -246,7 +250,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
-                item.name,
+                text,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(BaseColors.LightGray.copy(alpha = .1f))

@@ -23,7 +23,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.ui.base.TestTags
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.dialogs.EditCategoryDialog
