@@ -23,25 +23,14 @@ import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Checklist
-import de.bitb.pantryplaner.ui.base.BaseFragment
+import de.bitb.pantryplaner.ui.base.*
 import de.bitb.pantryplaner.ui.base.comps.*
-import de.bitb.pantryplaner.ui.base.naviOverviewToItems
-import de.bitb.pantryplaner.ui.base.naviToChecklist
-import de.bitb.pantryplaner.ui.base.naviToReleaseNotes
 import de.bitb.pantryplaner.ui.dialogs.AddChecklistDialog
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 import de.bitb.pantryplaner.ui.dialogs.InfoDialog
 
 @AndroidEntryPoint
 class OverviewFragment : BaseFragment<OverviewViewModel>() {
-    companion object {
-        const val APPBAR_TAG = "OverviewAppbar"
-        const val INFO_BUTTON_TAG = "OverviewInfoButton"
-        const val LAYOUT_BUTTON_TAG = "OverviewLayoutButton"
-        const val ADD_BUTTON_TAG = "OverviewAddButton"
-        const val TO_ITEMS_BUTTON_TAG = "OverviewToItemsButton"
-    }
-
     override val viewModel: OverviewViewModel by viewModels()
 
     private lateinit var showGridLayout: MutableState<Boolean>
@@ -49,7 +38,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
     private lateinit var showUnfinishDialog: MutableState<Boolean>
 
     @Composable
-    override fun ScreenContent() {
+    override fun screenContent() {
         showGridLayout = remember { mutableStateOf(true) }
         showAddDialog = remember { mutableStateOf(false) }
         showUnfinishDialog = remember { mutableStateOf(false) }
@@ -80,12 +69,12 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
         }
 
         TopAppBar(
-            modifier = Modifier.testTag(APPBAR_TAG),
+            modifier = Modifier.testTag(TestTags.OverviewPage.AppBar.name),
             title = { Text(getString(R.string.overview_title)) },
             actions = {
                 IconButton(
                     onClick = { showInfoDialog.value = true },
-                    modifier = Modifier.testTag(INFO_BUTTON_TAG)
+                    modifier = Modifier.testTag(TestTags.OverviewPage.InfoButton.name)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Info,
@@ -94,7 +83,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
                 }
                 IconButton(
                     onClick = { showGridLayout.value = !showGridLayout.value },
-                    modifier = Modifier.testTag(LAYOUT_BUTTON_TAG)
+                    modifier = Modifier.testTag(TestTags.OverviewPage.LayoutButton.name)
                 ) {
                     Icon(
                         imageVector = if (showGridLayout.value) Icons.Default.GridOff else Icons.Default.GridOn,
@@ -112,7 +101,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
             verticalArrangement = Arrangement.Center,
         ) {
             SmallFloatingActionButton(
-                modifier = Modifier.testTag(ADD_BUTTON_TAG),
+                modifier = Modifier.testTag(TestTags.OverviewPage.AddButton.name),
                 onClick = { showAddDialog.value = true },
                 containerColor = MaterialTheme.colors.secondaryVariant,
                 shape = RoundedCornerShape(12.dp),
@@ -129,7 +118,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
             Spacer(modifier = Modifier.height(8.dp))
 
             ExtendedFloatingActionButton(
-                modifier = Modifier.testTag(TO_ITEMS_BUTTON_TAG),
+                modifier = Modifier.testTag(TestTags.OverviewPage.ToItemsButton.name),
                 text = { Text(text = "Zum Bestand") },
                 icon = {
                     Icon(
@@ -157,12 +146,12 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
                 showGridLayout,
                 checklists!!.data!!.mapKeys { if (it.key) "Erledigt" else "Checklist" },
                 { it.color },
-            ) { CheckListItem(it) }
+            ) { checkListItem(it) }
         }
     }
 
     @Composable
-    fun CheckListItem(checklist: Checklist) {
+    private fun checkListItem(checklist: Checklist) {
         if (showUnfinishDialog.value) {
             ConfirmDialog(
                 "Checklist öffnen?",
@@ -172,11 +161,9 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
             )
         }
 
-        val showRemoveDialog = remember { mutableStateOf(false) }
         DissmissItem(
             checklist.name,
             checklist.color,
-            showRemoveDialog,
             onRemove = { viewModel.unfinishChecklist(checklist) },
             onClick = {
                 if (checklist.finished) showUnfinishDialog.value = true

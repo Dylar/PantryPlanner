@@ -45,12 +45,12 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
             scaffoldState = rememberScaffoldState()
             PantryAppTheme(
                 useDarkTheme = isSystemInDarkTheme()
-            ) { ScreenContent() }
+            ) { screenContent() }
         }
     }
 
     @Composable
-    abstract fun ScreenContent()
+    abstract fun screenContent()
 
     protected fun showSnackBar(msg: ResString) {
         lifecycleScope.launch {

@@ -6,9 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,12 +20,12 @@ import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 fun DissmissItem(
     name: String,
     color: Color,
-    showRemoveDialog: MutableState<Boolean>,
     onRemove: () -> Unit,
     onClick: () -> Unit = {},
     onLongClick: () -> Unit = {},
     content: @Composable () -> Unit
 ) {
+    val showRemoveDialog = remember { mutableStateOf(false) }
     val dismissState = rememberDismissState(
         confirmStateChange = {
             if (it == DismissValue.DismissedToEnd) {

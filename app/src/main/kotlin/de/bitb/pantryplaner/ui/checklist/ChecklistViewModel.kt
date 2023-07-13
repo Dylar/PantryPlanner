@@ -12,17 +12,14 @@ import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.BaseViewModel
 import de.bitb.pantryplaner.ui.base.comps.asResString
-import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ChecklistViewModel @Inject constructor(
     private val itemRepo: ItemRepository,
@@ -33,13 +30,12 @@ class ChecklistViewModel @Inject constructor(
 
     val itemErrorList = MutableStateFlow<List<String>>(emptyList())
 
-    val filterBy = MutableStateFlow(Filter(BaseColors.UnselectedColor))
+    val filterBy = MutableStateFlow(Filter())
 
     lateinit var checkListId: String
     lateinit var checkList: Flow<Resource<Checklist>>
     lateinit var itemMap: Flow<Resource<Map<String, List<Item>>>>
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     fun initChecklist(uuid: String) {
         checkListId = uuid
         checkList = checkRepo.getCheckList(checkListId)
@@ -47,18 +43,21 @@ class ChecklistViewModel @Inject constructor(
             .flatMapLatest { resp ->
                 val checklist = resp.data!!
                 val ids = checklist.items.map { it.uuid }
-                itemRepo.getItems(ids, filterBy)
-                    .map { itemResp ->
-                        castOnError(itemResp) {
-                            // oh god
-                            val newMap = mutableMapOf<String, List<Item>>()
-                            itemResp.data?.forEach { lists ->
-                                newMap[lists.key] =
-                                    lists.value.sortedBy { item -> checklist.items.first { it.uuid == item.uuid }.checked }
+                filterBy.flatMapLatest { filter ->
+                    itemRepo.getItems(ids, filter)
+                        .map { itemResp ->
+                            castOnError(itemResp) {
+                                // oh god
+                                val newMap = mutableMapOf<String, List<Item>>()
+                                itemResp.data?.forEach { lists ->
+                                    newMap[lists.key] = lists.value.sortedBy { item ->
+                                        checklist.items.first { it.uuid == item.uuid }.checked
+                                    }
+                                }
+                                Resource.Success(newMap)
                             }
-                            Resource.Success(newMap)
                         }
-                    }
+                }
             }
     }
 

@@ -5,13 +5,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.GridOff
-import androidx.compose.material.icons.filled.GridOn
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -23,6 +23,7 @@ import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
+import de.bitb.pantryplaner.ui.base.TestTags
 import de.bitb.pantryplaner.ui.base.comps.*
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.comps.AddSubRow
@@ -34,21 +35,19 @@ import de.bitb.pantryplaner.ui.dialogs.useEditItemDialog
 
 @AndroidEntryPoint
 class ItemsFragment : BaseFragment<ItemsViewModel>() {
-    companion object {
-        const val APPBAR_TAG = "ItemAppbar"
-        const val LAYOUT_BUTTON_TAG = "ItemLayoutButton"
-        const val FILTER_BUTTON_TAG = "ItemFilterButton"
-        const val ADD_BUTTON_TAG = "ItemAddButton"
-        const val LIST_TAG = "CheckList"
-        const val GRID_TAG = "CheckGrid"
-    }
-
     override val viewModel: ItemsViewModel by viewModels()
 
     private lateinit var showGridLayout: MutableState<Boolean>
     private lateinit var showFilterDialog: MutableState<Boolean>
     private lateinit var showAddDialog: MutableState<Boolean>
     private lateinit var showAddToDialog: MutableState<Boolean>
+    private lateinit var showSearchBar: MutableState<Boolean>
+
+    private val searchButtonIcon: ImageVector
+        get() =
+            if (showSearchBar.value) Icons.Default.Cancel
+            else if (viewModel.filterBy.value.filterByTerm) Icons.Default.SavedSearch
+            else Icons.Default.Search
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,11 +55,12 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
     }
 
     @Composable
-    override fun ScreenContent() {
+    override fun screenContent() {
         showGridLayout = remember { mutableStateOf(true) }
         showFilterDialog = remember { mutableStateOf(false) }
         showAddDialog = remember { mutableStateOf(false) }
         showAddToDialog = remember { mutableStateOf(false) }
+        showSearchBar = remember { mutableStateOf(false) }
 
         onBack { onDismiss ->
             ConfirmDialog(
@@ -101,7 +101,6 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
 
         if (showAddToDialog.value) {
             ConfirmDialog(
-                // TODO select checklist dialog
                 "Hinzufügen?",
                 "Möchten Sie alle markierten Items der Checklist hinzufügen?",
                 onConfirm = {
@@ -116,26 +115,45 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
     @Composable
     private fun buildAppBar() {
         TopAppBar(
-            modifier = Modifier.testTag(APPBAR_TAG),
-            title = { Text(getString(R.string.items_title)) },
+            modifier = Modifier.testTag(TestTags.ItemsPage.AppBar.name),
+            title = {
+                if (showSearchBar.value) SearchBar(
+                    showSearchBar,
+                    viewModel.filterBy.value.searchTerm,
+                    viewModel::search,
+                )
+                else Text(getString(R.string.items_title))
+            },
             actions = {
                 IconButton(
-                    modifier = Modifier.testTag(LAYOUT_BUTTON_TAG),
-                    onClick = { showGridLayout.value = !showGridLayout.value },
+                    modifier = Modifier.testTag(TestTags.ItemsPage.SearchButton.name),
+                    onClick = { showSearchBar.value = !showSearchBar.value },
                 ) {
                     Icon(
-                        imageVector = if (showGridLayout.value) Icons.Default.GridOff else Icons.Default.GridOn,
-                        contentDescription = "Layout button"
+                        imageVector = searchButtonIcon,
+                        contentDescription = "Search button"
                     )
                 }
-                IconButton(
-                    modifier = Modifier.testTag(FILTER_BUTTON_TAG),
-                    onClick = { showFilterDialog.value = !showFilterDialog.value },
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.FilterList,
-                        contentDescription = "Filter button"
-                    )
+
+                if (!showSearchBar.value) {
+                    IconButton(
+                        modifier = Modifier.testTag(TestTags.ItemsPage.LayoutButton.name),
+                        onClick = { showGridLayout.value = !showGridLayout.value },
+                    ) {
+                        Icon(
+                            imageVector = if (showGridLayout.value) Icons.Default.GridOff else Icons.Default.GridOn,
+                            contentDescription = "Layout button"
+                        )
+                    }
+                    IconButton(
+                        modifier = Modifier.testTag(TestTags.ItemsPage.FilterButton.name),
+                        onClick = { showFilterDialog.value = !showFilterDialog.value },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.FilterList,
+                            contentDescription = "Filter button"
+                        )
+                    }
                 }
             }
         )
@@ -157,9 +175,8 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
                 },
                 onClick = { showAddDialog.value = true },
             )
-            if (viewModel.isSelectModus) {
+            if (viewModel.isSelectMode) {
                 Spacer(modifier = Modifier.height(8.dp))
-
                 ExtendedFloatingActionButton(
                     text = { Text(text = "Hinzufügen") },
                     icon = {
@@ -177,12 +194,13 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
     @Composable
     private fun buildContent(innerPadding: PaddingValues) {
         val items by viewModel.itemList.collectAsState(null)
+        val isSearching by viewModel.isSearching.collectAsState(false)
         when {
             items is Resource.Error -> {
                 showSnackBar("ERROR".asResString())
                 ErrorScreen(items!!.message!!.asString())
             }
-            items == null -> LoadingIndicator()
+            items == null || isSearching -> LoadingIndicator()
             items?.data?.isEmpty() == true -> EmptyListComp(getString(R.string.no_items))
             else -> GridListLayout(
                 innerPadding,
@@ -190,41 +208,37 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
                 items!!.data!!,
                 { it.color },
                 viewModel::editCategory
-            ) { ListItem(it) }
+            ) { listItem(it) }
         }
     }
 
     @Composable
-    fun ListItem(item: Item) {
+    private fun listItem(item: Item) {
         val showEditDialog = remember { mutableStateOf(false) }
         useEditItemDialog(showEditDialog, item, viewModel::editItem)
 
-        val showRemoveDialog = remember { mutableStateOf(false) }
         DissmissItem(
             item.name,
             item.color,
-            showRemoveDialog,
             onRemove = { viewModel.removeItem(item) },
             onClick = { viewModel.checkItem(item.uuid) },
             onLongClick = { showEditDialog.value = true },
-        )
-        {
-            if (viewModel.isSelectModus) {
+        ) {
+            if (viewModel.isSelectMode) {
                 val checkedItems = viewModel.checkedItems.collectAsState()
                 SelectItemHeader(
                     item,
                     checkedItems.value.contains(item.uuid),
-                    false,
-                    viewModel::checkItem
+                    checkItem = viewModel::checkItem
                 )
             } else {
-                StockItem(item)
+                stockItem(item)
             }
         }
     }
 
     @Composable
-    fun StockItem(item: Item) {
+    private fun stockItem(item: Item) {
         Column(
             modifier = Modifier
                 .fillMaxWidth(),

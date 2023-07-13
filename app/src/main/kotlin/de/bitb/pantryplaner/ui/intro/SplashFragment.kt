@@ -27,7 +27,7 @@ class SplashFragment : BaseFragment<SplashViewModel>() {
     }
 
     @Composable
-    override fun ScreenContent() {
+    override fun screenContent() {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,

@@ -8,11 +8,13 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import de.bitb.pantryplaner.data.model.Item
+import de.bitb.pantryplaner.ui.base.TestTags
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 
 @Composable
@@ -24,6 +26,7 @@ fun SelectItemHeader(
 ) {
     Row(
         modifier = Modifier
+            .testTag(TestTags.SelectItemHeader(item.name).name)
             .fillMaxWidth()
             .defaultMinSize(minHeight = 48.dp)
             .background(BaseColors.LightGray.copy(alpha = .1f)),

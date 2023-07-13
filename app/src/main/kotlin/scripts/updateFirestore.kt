@@ -1,8 +1,11 @@
 package scripts
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.snapshots
 import de.bitb.pantryplaner.data.model.CheckItem
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
+import java.util.*
 
 suspend fun main() {
     val firestore = FirebaseFirestore.getInstance()
@@ -16,5 +19,25 @@ suspend fun main() {
             }
         commit()
     }
+
+//    val fireData = FirebaseFirestore.getInstance()
+//    runBlocking {
+//        val collection = fireData.collection("stage/prod/items")
+//        fireData.batch().apply {
+//            collection
+//                .get().await().documents
+//                .forEach { snap ->
+//                    val ref = snap.reference
+//                    ref.snapshots().collect {
+//                        if (it.data != null) {
+//                            if (it.data!!["uuid"] == null) {
+//                                ref.update(mapOf("uuid" to UUID.randomUUID().toString()))
+//                            }
+//                        }
+//                    }
+//                }
+//            commit()
+//        }
+//    }
 
 }

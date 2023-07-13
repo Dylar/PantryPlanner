@@ -28,9 +28,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import de.bitb.pantryplaner.core.misc.formatted
+import de.bitb.pantryplaner.ui.base.TestTags
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import java.lang.Double.max
-
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -52,7 +52,7 @@ fun AddSubRow(
         val interactionSource = remember { MutableInteractionSource() }
 
         IconButton(
-            modifier = Modifier.testTag("minusButton"), // TODO set testTag
+            modifier = Modifier.testTag(TestTags.AddSubRow.MinusButton.name),
             onClick = {
                 val new = max(amount - 1, 0.0).formatted
                 amountState.value = TextFieldValue(new, TextRange(new.length))
@@ -94,7 +94,7 @@ fun AddSubRow(
         }
 
         IconButton(
-            modifier = Modifier.testTag("plusButton"), // TODO set testTag
+            modifier = Modifier.testTag(TestTags.AddSubRow.PlusButton.name),
             onClick = {
                 val new = (amount + 1).formatted
                 amountState.value = TextFieldValue(new, TextRange(new.length))

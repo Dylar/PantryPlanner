@@ -27,6 +27,7 @@ import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
+import de.bitb.pantryplaner.ui.base.TestTags
 import de.bitb.pantryplaner.ui.base.comps.*
 import de.bitb.pantryplaner.ui.base.naviChecklistToItems
 import de.bitb.pantryplaner.ui.comps.AddSubRow
@@ -37,12 +38,6 @@ import de.bitb.pantryplaner.ui.dialogs.useEditItemDialog
 
 @AndroidEntryPoint
 class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
-    companion object {
-        const val APPBAR_TAG = "CheckAppbar"
-        const val LAYOUT_BUTTON_TAG = "CheckLayoutButton"
-        const val FILTER_BUTTON_TAG = "CheckFilterButton"
-    }
-
     override val viewModel: ChecklistViewModel by viewModels()
 
     private lateinit var showGridLayout: MutableState<Boolean>
@@ -56,7 +51,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
     }
 
     @Composable
-    override fun ScreenContent() {
+    override fun screenContent() {
         showGridLayout = remember { mutableStateOf(true) }
         showFilterDialog = remember { mutableStateOf(false) }
         showFinishDialog = remember { mutableStateOf(false) }
@@ -93,7 +88,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
     private fun buildAppBar() {
         val checklist by viewModel.checkList.collectAsState(null)
         TopAppBar(
-            modifier = Modifier.testTag(APPBAR_TAG),
+            modifier = Modifier.testTag(TestTags.ChecklistPage.AppBar.name),
             title = {
                 Text(
                     checklist?.data?.name ?: getString(R.string.loading_text),
@@ -104,7 +99,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
             actions = {
                 IconButton(
                     onClick = { showGridLayout.value = !showGridLayout.value },
-                    modifier = Modifier.testTag(LAYOUT_BUTTON_TAG)
+                    modifier = Modifier.testTag(TestTags.ChecklistPage.LayoutButton.name)
                 ) {
                     Icon(
                         imageVector = if (showGridLayout.value) Icons.Default.GridOff else Icons.Default.GridOn,
@@ -113,7 +108,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 }
                 IconButton(
                     onClick = { showFilterDialog.value = !showFilterDialog.value },
-                    modifier = Modifier.testTag(FILTER_BUTTON_TAG)
+                    modifier = Modifier.testTag(TestTags.ChecklistPage.FilterButton.name)
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.FilterList,
@@ -141,9 +136,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                     tint = Color.Black,
                 )
             }
-
             Spacer(modifier = Modifier.height(8.dp))
-
             ExtendedFloatingActionButton(
                 text = { Text(text = "Erledigen") },
                 icon = {
@@ -173,12 +166,12 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 items!!.data!!,
                 { it.color },
                 viewModel::editCategory
-            ) { CheckListItem(it) }
+            ) { checkListItem(it) }
         }
     }
 
     @Composable
-    fun CheckListItem(item: Item) {
+    private fun checkListItem(item: Item) {
         val checkResp by viewModel.checkList.collectAsState(null)
         when {
             checkResp is Resource.Error -> ErrorScreen(checkResp!!.message!!.asString())
@@ -189,21 +182,18 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
             ) { LoadingIndicator() }
             else -> {
                 val checklist = checkResp!!.data!!
-                val checkItem = checklist.items.first { it.uuid == item.uuid }
+                val checkItem = checklist.items.firstOrNull { it.uuid == item.uuid } ?: return
 
                 val showEditDialog = remember { mutableStateOf(false) }
                 useEditItemDialog(showEditDialog, item, viewModel::editItem)
 
-                val showRemoveDialog = remember { mutableStateOf(false) }
                 DissmissItem(
                     item.name,
                     item.color,
-                    showRemoveDialog,
                     onRemove = { viewModel.removeItem(item) },
                     onClick = { viewModel.checkItem(item.uuid) },
                     onLongClick = { showEditDialog.value = true },
-                )
-                {
+                ) {
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.Start,

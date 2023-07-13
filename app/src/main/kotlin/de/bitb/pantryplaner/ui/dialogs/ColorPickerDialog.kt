@@ -12,18 +12,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
 fun FilterDialog(
-    color: MutableStateFlow<Filter>,
+    filter: MutableStateFlow<Filter>,
     selectableColors: List<Color> = FilterColors,
-    onConfirm: () -> Unit,
+    onConfirm: (Filter) -> Unit,
     onDismiss: () -> Unit
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Filter") },
-        text = { CircleRow(selectedCircleIndex = color, selectableColors = selectableColors) },
+        text = { CircleRow(selectedCircleIndex = filter, selectableColors = selectableColors) },
         confirmButton = {
             Button(
-                onClick = { onConfirm() },
+                onClick = { onConfirm(filter.value) },
                 content = { Text("OK") }
             )
         },

@@ -9,16 +9,16 @@ import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.BaseViewModel
 import de.bitb.pantryplaner.ui.base.comps.asResString
-import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ItemsViewModel @Inject constructor(
     itemRepo: ItemRepository,
@@ -26,14 +26,20 @@ class ItemsViewModel @Inject constructor(
     private val itemUseCases: ItemUseCases,
 ) : BaseViewModel() {
 
-    val itemErrorList = MutableStateFlow<List<String>>(emptyList())
-    val checkedItems = MutableStateFlow(listOf<String>())
+    private val _isSearching = MutableStateFlow(false)
+    val isSearching = _isSearching.asStateFlow()
 
     var fromChecklistId: String? = null
-    val filterBy = MutableStateFlow(Filter(BaseColors.UnselectedColor))
-    val itemList: Flow<Resource<Map<String, List<Item>>>> = itemRepo.getItems(filterBy = filterBy)
+    val filterBy = MutableStateFlow(Filter())
+    val itemList: Flow<Resource<Map<String, List<Item>>>> = filterBy
+        .debounce { if (_isSearching.value) 1000L else 0L }
+        .flatMapLatest { itemRepo.getItems(filterBy = it) }
+        .onEach { _isSearching.update { false } }
 
-    val isSelectModus: Boolean
+    val checkedItems = MutableStateFlow(listOf<String>())
+    val itemErrorList = MutableStateFlow<List<String>>(emptyList())
+
+    val isSelectMode: Boolean
         get() = fromChecklistId != null
 
     override fun isBackable(): Boolean = checkedItems.value.isEmpty()
@@ -65,7 +71,7 @@ class ItemsViewModel @Inject constructor(
     }
 
     fun checkItem(uuid: String) {
-        if (isSelectModus) {
+        if (isSelectMode) {
             checkedItems.update {
                 val items = it.toMutableList()
                 if (!items.remove(uuid)) {
@@ -95,7 +101,7 @@ class ItemsViewModel @Inject constructor(
     }
 
     fun addToChecklist() {
-        if (isSelectModus) {
+        if (isSelectMode) {
             viewModelScope.launch {
                 when (val resp =
                     checkUseCases.addItemsToChecklistUC(fromChecklistId!!, checkedItems.value)) {
@@ -120,5 +126,10 @@ class ItemsViewModel @Inject constructor(
                 itemErrorList.value = itemErrors
             }
         }
+    }
+
+    fun search(text: String) {
+        _isSearching.value = true
+        filterBy.value = filterBy.value.copy(searchTerm = text)
     }
 }

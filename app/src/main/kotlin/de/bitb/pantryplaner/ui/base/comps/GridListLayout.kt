@@ -23,11 +23,12 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import de.bitb.pantryplaner.core.misc.Logger
+import de.bitb.pantryplaner.ui.base.TestTags
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.dialogs.EditCategoryDialog
-import de.bitb.pantryplaner.ui.items.ItemsFragment
 
-fun LazyGridScope.stickyGridHeader(
+private fun LazyGridScope.stickyGridHeader(
     content: @Composable LazyGridItemScope.() -> Unit
 ) {
     item(span = { GridItemSpan(this.maxLineSpan) }, content = content)
@@ -48,20 +49,21 @@ fun <T> GridListLayout(
         contentAlignment = Alignment.Center,
         modifier = Modifier.padding(innerPadding)
     ) {
+        val contentPadding = PaddingValues(
+            top = 4.dp,
+            bottom = 124.dp,
+            start = 4.dp,
+            end = 4.dp,
+        )
         if (showGridLayout.value) {
             LazyVerticalGrid(
                 GridCells.Fixed(2),
                 modifier = Modifier
                     .fillMaxSize()
-                    .testTag(ItemsFragment.GRID_TAG),
+                    .testTag(TestTags.GridListLayout.Grid.name),
                 verticalArrangement = Arrangement.Top,
                 horizontalArrangement = Arrangement.Center,
-                contentPadding = PaddingValues(
-                    top = 4.dp,
-                    bottom = 124.dp,
-                    start = 4.dp,
-                    end = 4.dp
-                ),
+                contentPadding = contentPadding,
             ) {
                 items.forEach { (header, list) ->
                     val headerText = header.ifBlank { "Keine" }
@@ -82,15 +84,10 @@ fun <T> GridListLayout(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .testTag(ItemsFragment.LIST_TAG),
+                    .testTag(TestTags.GridListLayout.List.name),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally,
-                contentPadding = PaddingValues(
-                    top = 4.dp,
-                    bottom = 124.dp,
-                    start = 4.dp,
-                    end = 4.dp
-                ),
+                contentPadding = contentPadding,
             ) {
                 items.forEach { (header, list) ->
                     val headerText = header.ifBlank { "Keine" }
@@ -113,7 +110,7 @@ fun <T> GridListLayout(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun GridListHeader(
+private fun GridListHeader(
     category: String,
     color: Color,
     showItems: SnapshotStateMap<String, Boolean>,

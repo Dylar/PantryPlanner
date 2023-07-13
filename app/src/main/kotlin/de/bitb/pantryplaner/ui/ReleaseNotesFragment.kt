@@ -47,7 +47,7 @@ class ReleaseNotesFragment : BaseFragment<ReleaseNotesViewModel>() {
     }
 
     @Composable
-    override fun ScreenContent() {
+    override fun screenContent() {
         Scaffold(
             scaffoldState = scaffoldState,
             topBar = {
