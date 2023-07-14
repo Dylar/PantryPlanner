@@ -48,9 +48,9 @@ class ItemsViewModel @Inject constructor(
         fromChecklistId = checkUuid
     }
 
-    fun addItem(name: String, category: String, color: Color) {
+    fun addItem(name: String, category: String) {
         viewModelScope.launch {
-            val resp = itemUseCases.addItemUC(name, category, color)
+            val resp = itemUseCases.addItemUC(name, category)
             when {
                 resp is Resource.Error -> showSnackbar(resp.message!!)
                 resp.data == true -> showSnackbar("Item hinzugefügt: $name".asResString()).also { updateWidgets() }

@@ -65,8 +65,11 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
 
         if (showFilterDialog.value) {
             FilterDialog(
-                viewModel.filterBy,
-                onConfirm = { showFilterDialog.value = false },
+                viewModel.filterBy.value,
+                onConfirm = {
+                    viewModel.filterBy.value = it
+                    showFilterDialog.value = false
+                },
                 onDismiss = { showFilterDialog.value = false },
             )
         }
@@ -153,6 +156,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
     @Composable
     private fun buildContent(innerPadding: PaddingValues) {
         val items by viewModel.itemMap.collectAsState(null)
+        val categorys = items?.data?.keys?.toList() ?: listOf()
         when {
             items is Resource.Error -> {
                 showSnackBar("ERROR".asResString())
@@ -166,12 +170,12 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 items!!.data!!,
                 { it.color },
                 viewModel::editCategory
-            ) { checkListItem(it) }
+            ) { checkListItem(it, categorys) }
         }
     }
 
     @Composable
-    private fun checkListItem(item: Item) {
+    private fun checkListItem(item: Item, categorys: List<String>) {
         val checkResp by viewModel.checkList.collectAsState(null)
         when {
             checkResp is Resource.Error -> ErrorScreen(checkResp!!.message!!.asString())
@@ -185,7 +189,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 val checkItem = checklist.items.firstOrNull { it.uuid == item.uuid } ?: return
 
                 val showEditDialog = remember { mutableStateOf(false) }
-                useEditItemDialog(showEditDialog, item, viewModel::editItem)
+                useEditItemDialog(showEditDialog, item, categorys, viewModel::editItem)
 
                 DissmissItem(
                     item.name,

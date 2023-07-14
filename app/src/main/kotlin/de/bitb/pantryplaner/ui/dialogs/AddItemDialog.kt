@@ -9,27 +9,22 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
-import de.bitb.pantryplaner.data.model.Filter
-import de.bitb.pantryplaner.ui.base.comps.CircleRow
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
-import kotlinx.coroutines.flow.MutableStateFlow
 import java.util.*
 
 @Composable
 fun AddItemDialog(
     categorys: List<String>,
-    onConfirm: (String, String, Color, Boolean) -> Unit,
+    onConfirm: (String, String, Boolean) -> Unit,
     onDismiss: () -> Unit
 ) {
     var name by remember { mutableStateOf("") }
     val category = remember { mutableStateOf(TextFieldValue("")) }
-    val color = remember { MutableStateFlow(Filter(color = BaseColors.SelectableColors.first())) }
     val focusRequester = remember { FocusRequester() }
 
     AlertDialog(
@@ -47,24 +42,20 @@ fun AddItemDialog(
                     onValueChange = { name = it },
                     keyboardActions = KeyboardActions(
                         onDone = {
-                            onConfirm(name, category.value.text, color.value.color, false)
+                            onConfirm(name, category.value.text, false)
                             name = ""
                         }
                     ),
                 )
                 buildCategoryDropDown(category, categorys) { cat ->
-                    onConfirm(name, cat, color.value.color, false)
+                    onConfirm(name, cat, false)
                     name = ""
                 }
-                CircleRow(
-                    selectedCircleIndex = color,
-                    selectableColors = BaseColors.SelectableColors
-                )
             }
         },
         confirmButton = {
             Button(
-                onClick = { onConfirm(name, category.value.text, color.value.color, true) },
+                onClick = { onConfirm(name, category.value.text, true) },
                 content = { Text("ADD") }
             )
         },

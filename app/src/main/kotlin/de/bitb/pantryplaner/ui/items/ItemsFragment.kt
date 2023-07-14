@@ -80,8 +80,11 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
 
         if (showFilterDialog.value) {
             FilterDialog(
-                viewModel.filterBy,
-                onConfirm = { showFilterDialog.value = false },
+                viewModel.filterBy.value,
+                onConfirm = {
+                    viewModel.filterBy.value = it
+                    showFilterDialog.value = false
+                },
                 onDismiss = { showFilterDialog.value = false },
             )
         }
@@ -90,8 +93,8 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
             val items by viewModel.itemList.collectAsState(null)
             AddItemDialog(
                 categorys = items?.data?.keys?.toList() ?: listOf(),
-                onConfirm = { name, category, color, close ->
-                    viewModel.addItem(name, category, color)
+                onConfirm = { name, category, close ->
+                    viewModel.addItem(name, category)
                     if (close) {
                         showAddDialog.value = false
                     }
@@ -197,6 +200,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
     @Composable
     private fun buildContent(innerPadding: PaddingValues) {
         val items by viewModel.itemList.collectAsState(null)
+        val categorys = items?.data?.keys?.toList() ?: listOf()
         when {
             items is Resource.Error -> {
                 showSnackBar("ERROR".asResString())
@@ -210,14 +214,14 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
                 items!!.data!!,
                 { it.color },
                 viewModel::editCategory
-            ) { listItem(it) }
+            ) { listItem(it, categorys) }
         }
     }
 
     @Composable
-    private fun listItem(item: Item) {
+    private fun listItem(item: Item, categorys: List<String>) {
         val showEditDialog = remember { mutableStateOf(false) }
-        useEditItemDialog(showEditDialog, item, viewModel::editItem)
+        useEditItemDialog(showEditDialog, item, categorys, viewModel::editItem)
 
         DissmissItem(
             item.name,

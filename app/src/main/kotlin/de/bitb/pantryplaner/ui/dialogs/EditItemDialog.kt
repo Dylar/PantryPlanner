@@ -22,11 +22,13 @@ import de.bitb.pantryplaner.data.model.Item
 fun useEditItemDialog(
     showEditDialog: MutableState<Boolean>,
     item: Item,
+    categorys: List<String>,
     onEdit: (Item, String, String) -> Unit
 ) {
     if (showEditDialog.value) {
         EditItemDialog(
             item = item,
+            categorys = categorys,
             onConfirm = { name, category ->
                 onEdit(item, name, category)
                 showEditDialog.value = false
@@ -39,6 +41,7 @@ fun useEditItemDialog(
 @Composable
 fun EditItemDialog(
     item: Item,
+    categorys: List<String>,
     onConfirm: (String, String) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -50,7 +53,8 @@ fun EditItemDialog(
             )
         )
     }
-    var category by remember { mutableStateOf(item.category) }
+
+    val category = remember { mutableStateOf(TextFieldValue(item.category)) }
     val focusRequester = remember { FocusRequester() }
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -66,25 +70,15 @@ fun EditItemDialog(
                     value = name,
                     onValueChange = { name = it },
                     keyboardActions = KeyboardActions(
-                        onDone = { onConfirm(name.text, category) }
+                        onDone = { onConfirm(name.text, category.value.text) }
                     ),
                 )
-                OutlinedTextField(
-                    modifier = Modifier
-                        .padding(top = 32.dp, start = 16.dp, end = 16.dp),
-                    singleLine = true,
-                    label = { Text(stringResource(R.string.item_category)) },
-                    value = category,
-                    onValueChange = { category = it },
-                    keyboardActions = KeyboardActions(
-                        onDone = { onConfirm(name.text, category) }
-                    ),
-                )
+                buildCategoryDropDown(category, categorys) { cat -> onConfirm(name.text, cat) }
             }
         },
         confirmButton = {
             Button(
-                onClick = { onConfirm(name.text, category) },
+                onClick = { onConfirm(name.text, category.value.text) },
                 content = { Text("EDIT") }
             )
         },
