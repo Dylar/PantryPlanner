@@ -1,6 +1,8 @@
 package de.bitb.pantryplaner.ui.base.comps
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
@@ -19,12 +21,14 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.ui.base.TestTags
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchBar(
     showSearchBar: MutableState<Boolean>,
+    isSearching: Boolean,
     initialValue: String,
     onSearch: (String) -> Unit
 ) {
@@ -42,7 +46,10 @@ fun SearchBar(
             onSearch(it.text)
         },
         label = { Text("Suche") },
-        leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
+        leadingIcon = {
+            if (isSearching) LoadingIndicator(modifier = Modifier.width(24.dp).height(24.dp))
+            else Icon(Icons.Filled.Search, contentDescription = null)
+        },
         modifier = Modifier.testTag(TestTags.SearchBar.name)
             .fillMaxWidth()
             .focusRequester(focusRequester),

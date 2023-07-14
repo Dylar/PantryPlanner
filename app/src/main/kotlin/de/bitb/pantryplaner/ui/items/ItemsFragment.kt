@@ -118,8 +118,10 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
         TopAppBar(
             modifier = Modifier.testTag(TestTags.ItemsPage.AppBar.name),
             title = {
+                val isSearching by viewModel.isSearching.collectAsState(false)
                 if (showSearchBar.value) SearchBar(
                     showSearchBar,
+                    isSearching,
                     viewModel.filterBy.value.searchTerm,
                     viewModel::search,
                 )
@@ -195,13 +197,12 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
     @Composable
     private fun buildContent(innerPadding: PaddingValues) {
         val items by viewModel.itemList.collectAsState(null)
-        val isSearching by viewModel.isSearching.collectAsState(false)
         when {
             items is Resource.Error -> {
                 showSnackBar("ERROR".asResString())
                 ErrorScreen(items!!.message!!.asString())
             }
-            items == null || isSearching -> LoadingIndicator()
+            items == null -> LoadingIndicator()
             items?.data?.isEmpty() == true -> EmptyListComp(getString(R.string.no_items))
             else -> GridListLayout(
                 innerPadding,
