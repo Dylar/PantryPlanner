@@ -13,8 +13,10 @@ import de.bitb.pantryplaner.data.source.FirestoreCheckService
 import de.bitb.pantryplaner.data.source.FirestoreItemService
 import de.bitb.pantryplaner.data.source.PantryRemoteService
 import de.bitb.pantryplaner.data.source.RemoteService
+import de.bitb.pantryplaner.usecase.AlertUseCases
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
+import de.bitb.pantryplaner.usecase.alert.ItemAlertUC
 import de.bitb.pantryplaner.usecase.checklist.*
 import de.bitb.pantryplaner.usecase.item.*
 import javax.inject.Singleton
@@ -56,6 +58,14 @@ object AppModule {
     ): CheckRepository = CheckRepositoryImpl(remoteService)
 
     //USE CASES
+    @Provides
+    @Singleton
+    fun provideAlertUseCases(): AlertUseCases {
+        return AlertUseCases(
+            checkItems = ItemAlertUC(),
+        )
+    }
+
     @Provides
     @Singleton
     fun provideItemUseCases(

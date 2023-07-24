@@ -18,7 +18,7 @@ class UnfinishChecklistUC(
             }
 
             val checklist = getResp.data!!.first()
-            val saveChecklist = checklist.copy(finished = false)
+            val saveChecklist = checklist.copy(finishedAt = "")
             val saveResp = checkRepo.saveChecklist(saveChecklist)
             if (saveResp is Resource.Error) {
                 return@tryIt saveResp.castTo()

@@ -3,6 +3,8 @@ package de.bitb.pantryplaner.core.misc
 import android.content.Context
 import kotlinx.coroutines.delay
 import java.text.DecimalFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.system.measureTimeMillis
@@ -46,6 +48,14 @@ fun calculateMilliseconds(hours: Int, minutes: Int): Long {
     val totalMinutes = hours * 60 + minutes
     return totalMinutes * 60 * 1000L
 }
+
+fun parseDateString(date: String): LocalDateTime =
+    LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS"))
+
+fun formatDateString(date: LocalDateTime): String =
+    date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+
+fun formatDateNow():String = formatDateString(LocalDateTime.now())
 
 val Double.formatted: String
     get() {

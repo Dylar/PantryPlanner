@@ -2,6 +2,7 @@ package de.bitb.pantryplaner.data
 
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.castOnError
+import de.bitb.pantryplaner.core.misc.formatDateNow
 import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.data.source.RemoteService
 import kotlinx.coroutines.flow.Flow
@@ -39,12 +40,14 @@ class CheckRepositoryImpl(
         }
     }
 
-    override suspend fun addChecklist(check: Checklist): Resource<Boolean> =
-        remoteDB.addChecklist(check)
+    override suspend fun addChecklist(check: Checklist): Resource<Boolean> {
+        val now = formatDateNow()
+        return remoteDB.addChecklist(check.copy(createdAt = now, updatedAt = now))
+    }
 
     override suspend fun removeChecklist(check: Checklist): Resource<Boolean> =
         remoteDB.removeChecklist(check)
 
     override suspend fun saveChecklist(check: Checklist): Resource<Unit> =
-        remoteDB.saveChecklist(check)
+        remoteDB.saveChecklist(check.copy(updatedAt = formatDateNow()))
 }

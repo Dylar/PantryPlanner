@@ -3,7 +3,10 @@ package de.bitb.pantryplaner.data.model
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.google.firebase.firestore.Exclude
+import de.bitb.pantryplaner.core.misc.parseDateString
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.*
 
 data class Item(
@@ -12,11 +15,35 @@ data class Item(
     val category: String = "",
     var amount: Double = 0.0,
     val colorHex: Int = BaseColors.LightGray.toArgb(),
-    //TODO timestamp
+    val createdAt: String = "",
+    var updatedAt: String = "",
+    var bestUntil: Long = 1,
+    var remindAfter: Long = 1,
 ) {
     @get:Exclude
     val color: Color
         get() = Color(colorHex)
+
+    @get:Exclude
+    val createDate: LocalDateTime
+        get() = parseDateString(createdAt)
+
+    @get:Exclude
+    val updateDate: LocalDateTime
+        get() = parseDateString(updatedAt)
+
+    @get:Exclude
+    val bestUntilDate: LocalDate
+        get() = LocalDate.now().minusDays(bestUntil)
+
+    fun isBest(finishDay: LocalDate) : Boolean = amount != 0.0 && finishDay.isAfter(bestUntilDate)
+
+    @get:Exclude
+    val remindAfterDate: LocalDate
+        get() = LocalDate.now().minusDays(remindAfter)
+
+    fun remindIt(finishDay: LocalDate) : Boolean = amount == 0.0 && finishDay.isAfter(remindAfterDate)
+
 }
 
 data class CheckItem(

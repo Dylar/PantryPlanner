@@ -2,6 +2,7 @@ package de.bitb.pantryplaner.data
 
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.castOnError
+import de.bitb.pantryplaner.core.misc.formatDateNow
 import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.data.source.RemoteService
@@ -75,7 +76,12 @@ class ItemRepositoryImpl(
             }.first()
     }
 
-    override suspend fun addItem(item: Item) = remoteDB.addItem(item)
+    override suspend fun addItem(item: Item): Resource<Boolean> {
+        val now = formatDateNow()
+        return remoteDB.addItem(item.copy(createdAt = now, updatedAt = now))
+    }
+
     override suspend fun removeItem(item: Item): Resource<Boolean> = remoteDB.removeItem(item)
-    override suspend fun saveItems(items: List<Item>): Resource<Unit> = remoteDB.saveItems(items)
+    override suspend fun saveItems(items: List<Item>): Resource<Unit> =
+        remoteDB.saveItems(items.map { it.copy(updatedAt = formatDateNow()) })
 }

@@ -1,6 +1,8 @@
 package de.bitb.pantryplaner.usecase.checklist
 
 import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.asResourceError
+import de.bitb.pantryplaner.core.misc.formatDateNow
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.CheckRepository
 import de.bitb.pantryplaner.data.ItemRepository
@@ -18,7 +20,12 @@ class FinishChecklistUC(
             }
 
             val checklist = getResp.data!!.first()
-            val saveChecklist = checklist.copy(finished = true)
+
+            if (checklist.items.isEmpty()) {
+                return@tryIt "Liste enthält keine Items".asResourceError()
+            }
+
+            val saveChecklist = checklist.copy(finishedAt = formatDateNow())
             val saveResp = checkRepo.saveChecklist(saveChecklist)
             if (saveResp is Resource.Error) {
                 return@tryIt saveResp.castTo()

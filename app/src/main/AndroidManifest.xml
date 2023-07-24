@@ -25,6 +25,10 @@
             </intent-filter>
         </activity>
         <receiver
+            android:name=".core.AlarmReceiver"
+            android:enabled="true"
+            android:exported="false" />
+        <receiver
             android:name=".ui.checklist.WidgetReceiver"
             android:exported="true">
             <intent-filter>

@@ -1,4 +1,8 @@
 <resources>
+    <string name="notification_channel_id">PantryChannelId</string>
+    <string name="notification_channel_name">My App Notifications</string>
+    <string name="notification_channel_description">Notification Channel for My App</string>
+
     <string name="ok">OK</string>
     <string name="cancel">Abbrechen</string>
 
