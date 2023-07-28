@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.GridOff
 import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.ShoppingCartCheckout
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.FormatListBulleted
 import androidx.compose.material3.SmallFloatingActionButton
@@ -35,13 +36,11 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
 
     private lateinit var showGridLayout: MutableState<Boolean>
     private lateinit var showAddDialog: MutableState<Boolean>
-    private lateinit var showUnfinishDialog: MutableState<Boolean>
 
     @Composable
     override fun screenContent() {
         showGridLayout = remember { mutableStateOf(true) }
         showAddDialog = remember { mutableStateOf(false) }
-        showUnfinishDialog = remember { mutableStateOf(false) }
 
         Scaffold(
             scaffoldState = scaffoldState,
@@ -78,7 +77,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
                 ) {
                     Icon(
                         imageVector = Icons.Default.Info,
-                        contentDescription = "Info dialog"
+                        contentDescription = "Info dialog button"
                     )
                 }
                 IconButton(
@@ -141,30 +140,59 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
             }
             checklists == null -> LoadingIndicator()
             checklists?.data?.isEmpty() == true -> EmptyListComp(getString(R.string.no_checklists))
-            else -> GridListLayout(
-                innerPadding,
-                showGridLayout,
-                checklists!!.data!!.mapKeys { if (it.key) "Erledigt" else "Checklist" },
-                { it.color },
-            ) { checkListItem(it) }
+            else -> Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // TODO depending if needed
+                Button(
+                    onClick = ::naviToRefresh,
+//                    onClick = { viewModel.testUsecase}, TODO
+                    shape = MaterialTheme.shapes.medium,
+                    elevation = ButtonDefaults.elevation(8.dp),
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ShoppingCartCheckout,
+                            contentDescription = "Refresh button"
+                        )
+                        Text(text = "Bestand aktualisieren")
+                    }
+                }
+                GridListLayout(
+                    innerPadding,
+                    showGridLayout,
+                    checklists!!.data!!.mapKeys { if (it.key) "Erledigt" else "Checklist" },
+                    { it.color },
+                ) { _, item -> checkListItem(item) }
+            }
         }
     }
 
     @Composable
     private fun checkListItem(checklist: Checklist) {
+        val showUnfinishDialog = remember { mutableStateOf(false) }
         if (showUnfinishDialog.value) {
             ConfirmDialog(
                 "Checklist öffnen?",
                 "Checkliste ist schon erledigt, möchtest Sie sie wieder öffnen und die Items aus dem Bestand entfernen?",
-                onConfirm = { showUnfinishDialog.value = false },
+                onConfirm = {
+                    showUnfinishDialog.value = false
+                    viewModel.unfinishChecklist(checklist)
+                },
                 onDismiss = { showUnfinishDialog.value = false },
             )
         }
 
-        DissmissItem(
+        dissmissItem(
             checklist.name,
             checklist.color,
-            onRemove = { viewModel.unfinishChecklist(checklist) },
+            onSwipe = { viewModel.removeChecklist(checklist) },
             onClick = {
                 if (checklist.finished) showUnfinishDialog.value = true
                 else naviToChecklist(checklist.uuid)

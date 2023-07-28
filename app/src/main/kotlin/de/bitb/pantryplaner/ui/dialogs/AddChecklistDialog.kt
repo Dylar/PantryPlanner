@@ -16,7 +16,10 @@ import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
 
 @Composable
-fun AddChecklistDialog(onConfirm: (String) -> Unit, onDismiss: () -> Unit) {
+fun AddChecklistDialog(
+    onConfirm: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
     var name by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
 

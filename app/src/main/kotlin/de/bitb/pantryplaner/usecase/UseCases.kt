@@ -5,7 +5,7 @@ import de.bitb.pantryplaner.usecase.checklist.*
 import de.bitb.pantryplaner.usecase.item.*
 
 data class AlertUseCases(
-    val checkItems: ItemAlertUC,
+    val itemAlertUC: ItemAlertUC,
 )
 
 data class ItemUseCases(

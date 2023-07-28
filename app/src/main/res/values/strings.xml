@@ -5,6 +5,7 @@
 
     <string name="ok">OK</string>
     <string name="cancel">Abbrechen</string>
+    <string name="loading_text">Loading…</string>
 
     <string name="overview_title">Übersicht</string>
     <string name="no_checklists">Keine Listen vorhanden</string>
@@ -16,7 +17,7 @@
     <string name="item_name">Name</string>
     <string name="item_category">Kategorie</string>
 
-    <string name="loading_text">Loading…</string>
+    <string name="refresh_title">Aktualisieren</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris

@@ -20,7 +20,6 @@ class FinishChecklistUC(
             }
 
             val checklist = getResp.data!!.first()
-
             if (checklist.items.isEmpty()) {
                 return@tryIt "Liste enthält keine Items".asResourceError()
             }

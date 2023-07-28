@@ -18,6 +18,11 @@
             app:destination="@id/overviewFragment"
             app:popUpTo="@+id/nav_graph"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/overview_to_refresh"
+            app:destination="@id/refreshFragment"
+            app:popUpTo="@+id/overviewFragment"
+            app:popUpToInclusive="true"  />
     </fragment>
 
     <fragment
@@ -33,12 +38,15 @@
         <action
             android:id="@+id/overview_to_checklist"
             app:destination="@id/checklistFragment" />
+        <action
+            android:id="@+id/overview_to_refresh"
+            app:destination="@id/refreshFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/itemsFragment"
         android:name="de.bitb.pantryplaner.ui.items.ItemsFragment"
-        android:label="items"></fragment>
+        android:label="items" />
 
     <fragment
         android:id="@+id/checklistFragment"
@@ -48,4 +56,9 @@
             android:id="@+id/checklist_to_items"
             app:destination="@id/itemsFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/refreshFragment"
+        android:name="de.bitb.pantryplaner.ui.refresh.RefreshFragment"
+        android:label="refresh" />
 </navigation>

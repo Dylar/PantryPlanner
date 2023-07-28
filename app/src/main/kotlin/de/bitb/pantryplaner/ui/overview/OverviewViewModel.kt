@@ -57,9 +57,8 @@ class OverviewViewModel @Inject constructor(
 
     fun unfinishChecklist(check: Checklist) {
         viewModelScope.launch {
-            val resp = checkUseCases.unfinishChecklistUC(check.uuid)
-            when {
-                resp is Resource.Error -> showSnackbar(resp.message!!)
+            when (val resp = checkUseCases.unfinishChecklistUC(check.uuid)) {
+                is Resource.Error -> showSnackbar(resp.message!!)
                 else -> showSnackbar("Checkliste geöffnet: ${check.name}".asResString())
             }
         }

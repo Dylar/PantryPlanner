@@ -15,6 +15,7 @@ class ItemAlertUC(
         return tryIt(
             onError = { it.asResourceError(false) },
             onTry = {
+                //TODO load settings to disable
                 val getResp = checkRepo.getCheckLists().first()
                 if (getResp is Resource.Error) {
                     return@tryIt getResp.castTo(false)
@@ -31,7 +32,7 @@ class ItemAlertUC(
 
                         val finishDay = check.finishDate.toLocalDate()
                         itemResp.data!!
-                            .filter { it.isBest(finishDay) || it.remindIt(finishDay) }
+                            .filter { !it.isBest(finishDay) || it.remindIt(finishDay) }
                             .map { it.uuid }
                     }
                     .flatten()

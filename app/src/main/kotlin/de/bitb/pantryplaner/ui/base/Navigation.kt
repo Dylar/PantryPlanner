@@ -20,6 +20,10 @@ fun Fragment.naviToReleaseNotes() {
     NavHostFragment.findNavController(this).navigate(R.id.overview_to_releasenotes)
 }
 
+fun Fragment.naviToRefresh() {
+    NavHostFragment.findNavController(this).navigate(R.id.overview_to_refresh)
+}
+
 fun Fragment.naviOverviewToItems() {
     NavHostFragment.findNavController(this).navigate(R.id.overview_to_items)
 }

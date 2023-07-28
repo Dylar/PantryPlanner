@@ -3,6 +3,7 @@ package de.bitb.pantryplaner.core.misc
 import android.content.Context
 import kotlinx.coroutines.delay
 import java.text.DecimalFormat
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -49,13 +50,19 @@ fun calculateMilliseconds(hours: Int, minutes: Int): Long {
     return totalMinutes * 60 * 1000L
 }
 
-fun parseDateString(date: String): LocalDateTime =
-    LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS"))
+fun parseDateTimeString(date: String): LocalDateTime =
+    LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
 
-fun formatDateString(date: LocalDateTime): String =
+fun parseDateString(date: String): LocalDate =
+    LocalDate.parse(date, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+
+fun formatDateTimeString(date: LocalDateTime): String =
     date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
 
-fun formatDateNow():String = formatDateString(LocalDateTime.now())
+fun formatDateString(date: LocalDate): String =
+    date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+
+fun formatDateNow(): String = formatDateTimeString(LocalDateTime.now())
 
 val Double.formatted: String
     get() {
@@ -65,3 +72,14 @@ val Double.formatted: String
 
 fun readTextFromAsset(context: Context, fileName: String): String =
     context.assets.open(fileName).bufferedReader().use { it.readText() }.replace("\\n", "\n")
+
+fun filterLists(data: Map<String, List<Int>>): Map<String, List<Int>> {
+    val result = mutableMapOf<String, List<Int>>()
+
+    for ((key, list) in data) {
+        val filteredList = list.filter { num -> !data.values.flatten().contains(num) }
+        result[key] = filteredList
+    }
+
+    return result
+}

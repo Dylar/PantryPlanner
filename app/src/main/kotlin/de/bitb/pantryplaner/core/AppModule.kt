@@ -60,9 +60,12 @@ object AppModule {
     //USE CASES
     @Provides
     @Singleton
-    fun provideAlertUseCases(): AlertUseCases {
+    fun provideAlertUseCases(
+        checkRepo: CheckRepository,
+        itemRepo: ItemRepository,
+    ): AlertUseCases {
         return AlertUseCases(
-            checkItems = ItemAlertUC(),
+            itemAlertUC = ItemAlertUC(checkRepo, itemRepo),
         )
     }
 

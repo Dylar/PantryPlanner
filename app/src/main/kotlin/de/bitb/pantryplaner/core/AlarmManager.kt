@@ -55,7 +55,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         CoroutineScope(Dispatchers.IO).launch {
-            val showNotification = alertUseCases.checkItems()
+            val showNotification = alertUseCases.itemAlertUC()
             if (showNotification is Resource.Success && showNotification.data == true) {
                 NotifyManager.showNotification(context)
             }

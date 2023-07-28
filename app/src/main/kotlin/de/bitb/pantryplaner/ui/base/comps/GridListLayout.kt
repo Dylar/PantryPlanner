@@ -41,7 +41,7 @@ fun <T> GridListLayout(
     items: Map<String, List<T>>,
     headerColor: (T) -> Color,
     editHeader: ((String, String, Color) -> Unit)? = null,
-    buildItem: @Composable (T) -> Unit,
+    buildItem: @Composable (String, T) -> Unit,
 ) {
     val showItems = remember { mutableStateMapOf<String, Boolean>() }
     Box(
@@ -75,7 +75,7 @@ fun <T> GridListLayout(
                         )
                     }
                     if (showItems[headerText] != false) {
-                        items(list.size) { buildItem(list[it]) }
+                        items(list.size) { buildItem(header, list[it]) }
                     }
                 }
             }
@@ -99,7 +99,7 @@ fun <T> GridListLayout(
                         )
                     }
                     if (showItems[headerText] != false) {
-                        items(list.size) { buildItem(list[it]) }
+                        items(list.size) { buildItem(header, list[it]) }
                     }
                 }
             }

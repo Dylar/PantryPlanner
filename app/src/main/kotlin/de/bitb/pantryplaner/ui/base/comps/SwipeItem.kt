@@ -21,12 +21,56 @@ import androidx.compose.ui.unit.sp
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun DissmissItem(
+fun dissmissItem(
     name: String,
     color: Color,
-    onRemove: () -> Unit,
+    onSwipe: () -> Unit,
+    onClick: () -> Unit = {},
+    onLongClick: () -> Unit = {},
+    content: @Composable () -> Unit
+) {
+    swipeItem(
+        color,
+        "Entfernen?",
+        "Möchten Sie \"$name\" entfernen?",
+        "Entfernen",
+        onSwipe,
+        onClick,
+        onLongClick,
+        content,
+    )
+}
+
+@Composable
+fun clearItem(
+    name: String,
+    color: Color,
+    onSwipe: () -> Unit,
+    onClick: () -> Unit = {},
+    onLongClick: () -> Unit = {},
+    content: @Composable () -> Unit
+) {
+    swipeItem(
+        color,
+        "Zurücksetzen?",
+        "Möchten Sie die Anzahl in ihrem Bestand von \"$name\" auf 0 setzen?",
+        "Anzahl auf 0",
+        onSwipe,
+        onClick,
+        onLongClick,
+        content,
+    )
+}
+
+@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
+@Composable
+private fun swipeItem(
+    color: Color,
+    swipeConfirmTitle: String,
+    swipeConfirmMessage: String,
+    onSwipeText: String,
+    onSwipe: () -> Unit,
     onClick: () -> Unit = {},
     onLongClick: () -> Unit = {},
     content: @Composable () -> Unit
@@ -49,10 +93,10 @@ fun DissmissItem(
 
     if (showRemoveDialog.value) {
         ConfirmDialog(
-            "Entfernen?",
-            "Möchten Sie \"$name\" entfernen?",
+            swipeConfirmTitle,
+            swipeConfirmMessage,
             onConfirm = {
-                onRemove()
+                onSwipe()
                 showRemoveDialog.value = false
             },
             onDismiss = { showRemoveDialog.value = false },
@@ -63,13 +107,12 @@ fun DissmissItem(
         modifier = Modifier.padding(2.dp),
         state = dismissState,
         directions = setOf(DismissDirection.StartToEnd),
-        background = { DeleteItemBackground() },
+        background = { swipeBackground(onSwipeText) },
         dismissContent = {
             Card(
                 elevation = 4.dp,
                 border = BorderStroke(2.dp, color),
                 modifier = Modifier
-//                    .padding(vertical = 4.dp)
                     .fillMaxWidth()
                     .combinedClickable(
                         onClick = { onClick() },
@@ -81,11 +124,10 @@ fun DissmissItem(
 }
 
 @Composable
-fun DeleteItemBackground() {
+private fun swipeBackground(text: String) {
     Card(
         elevation = 4.dp,
         modifier = Modifier
-//            .fillMaxSize()
             .padding(vertical = 4.dp)
     ) {
         Box(
@@ -96,7 +138,7 @@ fun DeleteItemBackground() {
                 .padding(4.dp)
         ) {
             Text(
-                text = "Delete",
+                text = text,
                 fontSize = 20.sp,
                 color = BaseColors.White
             )

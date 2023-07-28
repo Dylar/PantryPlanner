@@ -188,7 +188,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
                     icon = {
                         Icon(
                             imageVector = Icons.Rounded.Add,
-                            contentDescription = "Finish FAB",
+                            contentDescription = "Add FAB",
                         )
                     },
                     onClick = { showAddToDialog.value = true },
@@ -214,7 +214,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
                 items!!.data!!,
                 { it.color },
                 viewModel::editCategory
-            ) { listItem(it, categorys) }
+            ) { _, item -> listItem(item, categorys) }
         }
     }
 
@@ -223,10 +223,10 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
         val showEditDialog = remember { mutableStateOf(false) }
         useEditItemDialog(showEditDialog, item, categorys, viewModel::editItem)
 
-        DissmissItem(
+        dissmissItem(
             item.name,
             item.color,
-            onRemove = { viewModel.removeItem(item) },
+            onSwipe = { viewModel.removeItem(item) },
             onClick = { viewModel.checkItem(item.uuid) },
             onLongClick = { showEditDialog.value = true },
         ) {

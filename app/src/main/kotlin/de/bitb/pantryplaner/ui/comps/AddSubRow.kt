@@ -12,12 +12,10 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
@@ -32,7 +30,6 @@ import de.bitb.pantryplaner.ui.base.TestTags
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import java.lang.Double.max
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AddSubRow(
     itemId: String,
@@ -41,6 +38,7 @@ fun AddSubRow(
     onChange: (String, String) -> Unit
 ) {
     Row(
+        modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -49,7 +47,6 @@ fun AddSubRow(
             else BaseColors.White
         val amountState =
             remember { mutableStateOf(TextFieldValue(amount.formatted)) }
-        val interactionSource = remember { MutableInteractionSource() }
 
         IconButton(
             modifier = Modifier.testTag(TestTags.AddSubRow.MinusButton.name),
@@ -64,34 +61,7 @@ fun AddSubRow(
                 contentDescription = "Minus button"
             )
         }
-        BasicTextField(
-            amountState.value,
-            modifier = Modifier.padding(2.dp).width(60.dp)
-                .background(color.copy(alpha = .5f)),
-            textStyle = TextStyle.Default.copy(
-                fontSize = 16.sp,
-                textAlign = TextAlign.Center,
-            ),
-            maxLines = 1,
-            interactionSource = interactionSource,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            onValueChange = {
-                if (it.text.length < 8) {
-                    amountState.value = it
-                    onChange(itemId, it.text)
-                }
-            },
-        ) { innerTextField ->
-            TextFieldDefaults.TextFieldDecorationBox(
-                value = amountState.value.text,
-                visualTransformation = VisualTransformation.None,
-                innerTextField = innerTextField,
-                singleLine = true,
-                enabled = true,
-                interactionSource = interactionSource,
-                contentPadding = PaddingValues(0.dp),
-            )
-        }
+        EditText(amountState, color) { onChange(itemId, it) }
 
         IconButton(
             modifier = Modifier.testTag(TestTags.AddSubRow.PlusButton.name),
@@ -106,5 +76,45 @@ fun AddSubRow(
                 contentDescription = "Plus button"
             )
         }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun EditText(
+    textState: MutableState<TextFieldValue>,
+    color: Color = BaseColors.White,
+    onChange: (String) -> Unit,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    BasicTextField(
+        textState.value,
+        modifier = Modifier
+            .padding(2.dp)
+            .width(60.dp)
+            .background(color.copy(alpha = .5f)),
+        textStyle = TextStyle.Default.copy(
+            fontSize = 16.sp,
+            textAlign = TextAlign.Center,
+        ),
+        maxLines = 1,
+        interactionSource = interactionSource,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        onValueChange = {
+            if (it.text.length < 8) {
+                textState.value = it
+                onChange(it.text)
+            }
+        },
+    ) { innerTextField ->
+        TextFieldDefaults.TextFieldDecorationBox(
+            value = textState.value.text,
+            visualTransformation = VisualTransformation.None,
+            innerTextField = innerTextField,
+            singleLine = true,
+            enabled = true,
+            interactionSource = interactionSource,
+            contentPadding = PaddingValues(0.dp),
+        )
     }
 }

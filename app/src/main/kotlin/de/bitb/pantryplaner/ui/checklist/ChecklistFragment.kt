@@ -170,7 +170,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 items!!.data!!,
                 { it.color },
                 viewModel::editCategory
-            ) { checkListItem(it, categorys) }
+            ) { _, item -> checkListItem(item, categorys) }
         }
     }
 
@@ -191,10 +191,10 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 val showEditDialog = remember { mutableStateOf(false) }
                 useEditItemDialog(showEditDialog, item, categorys, viewModel::editItem)
 
-                DissmissItem(
+                dissmissItem(
                     item.name,
                     item.color,
-                    onRemove = { viewModel.removeItem(item) },
+                    onSwipe = { viewModel.removeItem(item) },
                     onClick = { viewModel.checkItem(item.uuid) },
                     onLongClick = { showEditDialog.value = true },
                 ) {

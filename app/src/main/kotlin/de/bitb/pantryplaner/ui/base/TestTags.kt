@@ -27,6 +27,7 @@ sealed class TestTags {
         object AppBar : OverviewPage()
         object InfoButton : OverviewPage()
         object LayoutButton : OverviewPage()
+        object RefreshButton : OverviewPage()
         object AddButton : OverviewPage()
         object ToItemsButton : OverviewPage()
     }
@@ -44,4 +45,8 @@ sealed class TestTags {
         object FilterButton : ChecklistPage()
     }
 
+    sealed class RefreshPage : TestTags() {
+        object AppBar : RefreshPage()
+        object LayoutButton : RefreshPage()
+    }
 }
