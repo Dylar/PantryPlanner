@@ -1,6 +1,9 @@
 package de.bitb.pantryplaner.ui.refresh
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -33,28 +36,18 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
     override val viewModel: RefreshViewModel by viewModels()
 
     private lateinit var showGridLayout: MutableState<Boolean>
-    private lateinit var showAddToDialog: MutableState<Boolean>
 
     @Composable
     override fun screenContent() {
         showGridLayout = remember { mutableStateOf(true) }
-        showAddToDialog = remember { mutableStateOf(false) }
+
+        val items by viewModel.itemList.collectAsState(null)
         Scaffold(
             scaffoldState = scaffoldState,
             topBar = { buildAppBar() },
-            content = { buildContent(it) },
-            floatingActionButton = { buildFab() }
+            content = { buildContent(it, items) },
+            floatingActionButton = { buildFab(items) }
         )
-
-        if (showAddToDialog.value) {
-            AddChecklistDialog(
-                onConfirm = { name ->
-                    viewModel.addToNewChecklist(name)
-                    showAddToDialog.value = false
-                },
-                onDismiss = { showAddToDialog.value = false },
-            )
-        }
     }
 
     @Composable
@@ -77,82 +70,122 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
     }
 
     @Composable
-    private fun buildFab() {
-        Column(
-            horizontalAlignment = Alignment.End,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            ExtendedFloatingActionButton(
-                text = { Text(text = "Neue Liste anlegen") },
-                icon = {
-                    Icon(
-                        imageVector = Icons.Rounded.Add,
-                        contentDescription = "Add to list FAB",
+    private fun buildFab(items: Resource<Map<String, List<Item>>>?) {
+        if (items != null && items is Resource.Success) {
+            val hasReminderItems = items.data?.any { entry ->
+                entry.value.any { it.remindIt(parseDateString(entry.key)) }
+            }
+            if (hasReminderItems == true) {
+                val showAddToDialog = remember { mutableStateOf(false) }
+                Column(
+                    horizontalAlignment = Alignment.End,
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    ExtendedFloatingActionButton(
+                        text = { Text(text = "Neue Liste anlegen") },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Rounded.Add,
+                                contentDescription = "Add to list FAB",
+                            )
+                        },
+                        onClick = {
+                            val checkedItems = viewModel.checkedItems.value
+                            if (checkedItems.isNotEmpty()) showAddToDialog.value = true
+                            else showSnackBar("Wähle mindestens 1 Item".asResString())
+                        },
                     )
-                },
-                onClick = { showAddToDialog.value = true },
-            )
+                }
+
+                if (showAddToDialog.value) {
+                    AddChecklistDialog(
+                        onConfirm = { name ->
+                            viewModel.addToNewChecklist(name)
+                            showAddToDialog.value = false
+                        },
+                        onDismiss = { showAddToDialog.value = false },
+                    )
+                }
+            }
         }
     }
 
     @Composable
-    private fun buildContent(innerPadding: PaddingValues) {
-        val items by viewModel.itemList.collectAsState(null)
+    private fun buildContent(
+        innerPadding: PaddingValues,
+        items: Resource<Map<String, List<Item>>>?
+    ) {
         when {
             items is Resource.Error -> {
                 showSnackBar("ERROR".asResString())
-                ErrorScreen(items!!.message!!.asString())
+                ErrorScreen(items.message!!.asString())
             }
             items == null -> LoadingIndicator()
-            items?.data?.isEmpty() == true -> EmptyListComp(getString(R.string.no_items))
+            items.data?.isEmpty() == true -> EmptyListComp(getString(R.string.no_items))
             else -> GridListLayout(
                 innerPadding,
                 showGridLayout,
-                items!!.data!!,
+                items.data!!,
                 { it.color },
             ) { header, item -> listItem(header, item) }
         }
     }
 
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     private fun listItem(header: String, item: Item) {
         if (item.remindIt(parseDateString(header))) {
             val checkedItems = viewModel.checkedItems.collectAsState()
-            SelectItemHeader(
-                item,
-                checkedItems.value.contains(item.uuid),
-                checkItem = viewModel::checkItem
-            )
+            Box(modifier = Modifier.padding(2.dp)) {
+                Card(
+                    elevation = 4.dp,
+                    border = BorderStroke(2.dp, item.color),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .combinedClickable(onClick = { viewModel.checkItem(item.uuid) }),
+                ) {
+                    SelectItemHeader(
+                        item,
+                        checkedItems.value.contains(item.uuid),
+                        checkItem = viewModel::checkItem
+                    )
+                }
+            }
         } else {
+            val amount = remember { mutableStateOf(item.amount.formatted) }
             clearItem(
                 item.name,
                 item.color,
-                onSwipe = { viewModel.clearItemAmount(item.uuid) },
+                onSwipe = {
+                    amount.value = "0" // TODO needed?
+                    viewModel.clearItemAmount(item.uuid)
+                },
                 onClick = { viewModel.checkItem(item.uuid) },
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .defaultMinSize(minHeight = 48.dp)
-                        .padding(horizontal = 12.dp, vertical = 4.dp),
+                        .padding(horizontal = 8.dp, vertical = 4.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         item.name,
+                        modifier = Modifier.weight(1f),
                         fontSize = 16.sp,
                         textAlign = TextAlign.Start
                     )
                     Text(
-                        item.amount.formatted,
+                        text = amount.value,
                         modifier = Modifier
                             .width(50.dp)
+                            .padding(start = 4.dp)
                             .background(BaseColors.LightGray.copy(alpha = .1f)),
                         fontSize = 14.sp,
                         textAlign = TextAlign.Center
                     )
                 }
-
             }
         }
     }

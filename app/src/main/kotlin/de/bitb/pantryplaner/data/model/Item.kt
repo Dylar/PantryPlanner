@@ -36,14 +36,15 @@ data class Item(
     val bestUntilDate: LocalDate
         get() = LocalDate.now().minusDays(bestUntil)
 
-    fun isBest(finishDay: LocalDate): Boolean = amount != 0.0 && finishDay.isAfter(bestUntilDate)
+    fun isBest(finishDay: LocalDate): Boolean =
+        amount != 0.0 && finishDay.isAfter(bestUntilDate)
 
     @get:Exclude
     val remindAfterDate: LocalDate
         get() = LocalDate.now().minusDays(remindAfter)
 
     fun remindIt(finishDay: LocalDate): Boolean =
-        amount == 0.0 && finishDay.isAfter(remindAfterDate)
+        amount == 0.0 && finishDay.isBefore(remindAfterDate)
 
 }
 

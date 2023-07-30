@@ -10,20 +10,23 @@ import androidx.core.content.ContextCompat
 import de.bitb.pantryplaner.R
 
 object NotifyManager {
+
+    private const val NOTIFICATION_ID = 66642777
+    const val ACTION_REFRESH_PAGE = "de.bitb.pantryplaner.action.refresh"
+
     fun showNotification(context: Context) {
         val notificationManager =
-            ContextCompat.getSystemService(context, NotificationManager::class.java)
+            ContextCompat.getSystemService(context, NotificationManager::class.java)!!
 
         val channel = NotificationChannel(
             context.getString(R.string.notification_channel_id),
             context.getString(R.string.notification_channel_name),
             NotificationManager.IMPORTANCE_DEFAULT,
         ).apply { description = context.getString(R.string.notification_channel_description) }
-        notificationManager?.createNotificationChannel(channel)
-
+        notificationManager.createNotificationChannel(channel)
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-//            putExtra(KEY_BUDDY_UUID, msg.fromUuid)
+            action = ACTION_REFRESH_PAGE
         }
         val pendingIntent =
             PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
@@ -38,7 +41,7 @@ object NotifyManager {
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
 
-        notificationManager?.notify(66642777, builder.build())
+        notificationManager.notify(NOTIFICATION_ID, builder.build())
     }
 }
 

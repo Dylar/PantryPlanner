@@ -2,9 +2,7 @@ package de.bitb.pantryplaner.ui.refresh
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.bitb.pantryplaner.core.misc.Resource
-import de.bitb.pantryplaner.core.misc.formatDateString
-import de.bitb.pantryplaner.core.misc.formatDateTimeString
+import de.bitb.pantryplaner.core.misc.*
 import de.bitb.pantryplaner.data.CheckRepository
 import de.bitb.pantryplaner.data.ItemRepository
 import de.bitb.pantryplaner.data.model.Item
@@ -12,10 +10,7 @@ import de.bitb.pantryplaner.ui.base.BaseViewModel
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,32 +25,56 @@ class RefreshViewModel @Inject constructor(
     val checkedItems = MutableStateFlow(listOf<String>())
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val itemList: Flow<Resource<Map<String, List<Item>>>> =
-        checkRepo.getCheckLists()
-            .mapLatest { resp ->
-                if (resp is Resource.Error) {
-                    return@mapLatest resp.castTo(emptyMap())
-                }
-
-                val items = resp.data!!
-                    .filter { it.finished }
-                    .map { check ->
-                        val ids = check.items.map { it.uuid }
-                        val itemResp = itemRepo.getAllItems(ids)
-                        if (itemResp is Resource.Error) {
-                            return@mapLatest itemResp.castTo(emptyMap())
-                        }
-
-                        val finishDay = check.finishDate.toLocalDate()
-                        formatDateString(finishDay) to itemResp.data!!
-                            .filter { !it.isBest(finishDay) || it.remindIt(finishDay) }
+    val itemList: Flow<Resource<Map<String, List<Item>>>> = itemRepo.getItems()
+        .flatMapLatest { _ -> // just to update when amount changed
+            checkRepo.getCheckLists()
+                .mapLatest { resp ->
+                    if (resp is Resource.Error) {
+                        return@mapLatest resp.castTo(emptyMap())
                     }
-                    .groupBy { it.first }
-                    .mapValues { (_, pairs) -> pairs.flatMap { it.second } }
-                    .filter { it.value.isNotEmpty() }
 
-                Resource.Success(items)
-            }
+                    val allLists = resp.data!!
+                    val unfinishedItems = allLists
+                        .asSequence()
+                        .filter { !it.finished }
+                        .map { it.items }
+                        .flatten()
+                        .toSet()
+                        .map { it.uuid }
+                    allLists
+                        .filter { it.finished }
+                        .map { check ->
+                            val ids = check.items.map { it.uuid }
+                            val itemResp = itemRepo.getAllItems(ids)
+                            if (itemResp is Resource.Error) {
+                                return@mapLatest itemResp.castTo(emptyMap())
+                            }
+
+                            val finishDay = check.finishDate.toLocalDate()
+                            formatDateString(finishDay) to itemResp.data!!
+                                .filter {
+                                    Logger.printLog(
+                                        it.name,
+                                        "Amount: ${it.amount}",
+                                        "finished At: ${formatDateString(finishDay)}",
+                                        "Best until: ${formatDateString(it.bestUntilDate)}",
+                                        "Remind Date: ${formatDateString(it.remindAfterDate)}",
+                                        "Not best: ${!it.isBest(finishDay)}",
+                                        "Remind: ${it.remindIt(finishDay)}"
+                                    )
+                                    !unfinishedItems.contains(it.uuid) &&
+                                            (!it.isBest(finishDay) || it.remindIt(finishDay))
+                                }
+                        }
+                        .groupBy { it.first }
+                        .mapValues { (_, pairs) -> pairs.flatMap { it.second } }
+                        .toSortedMap(Comparator.reverseOrder())
+                        .removeDuplicatesFromLists()
+                        .filter { it.value.isNotEmpty() }
+                        .let { Resource.Success(it) }
+                }
+        }
+
 
     fun clearItemAmount(itemId: String) {
         viewModelScope.launch {

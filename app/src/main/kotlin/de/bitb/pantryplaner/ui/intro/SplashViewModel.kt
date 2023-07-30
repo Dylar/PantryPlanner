@@ -16,12 +16,17 @@ class SplashViewModel @Inject constructor(
     private val itemUseCases: ItemUseCases,
 ) : BaseViewModel() {
 
-    fun loadData() {
+    fun loadData(naviToRefresh: Boolean) {
         viewModelScope.launch {
             val userResp = atLeast(1000) { itemUseCases.loadDataUC() }
             when {
                 userResp is Resource.Error -> showSnackbar(userResp.message!!)
-                userResp.data == true -> navigate(R.id.splash_to_overview)
+                userResp.data == true -> {
+                    navigate(R.id.splash_to_overview)
+                    if (naviToRefresh) {
+                        navigate(R.id.overview_to_refresh)
+                    }
+                }
                 else -> showSnackbar("Daten konnten nicht geladen werden".asResString())
             }
         }

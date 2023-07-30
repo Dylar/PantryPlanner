@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import dagger.hilt.android.AndroidEntryPoint
+import de.bitb.pantryplaner.BuildConfig
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.usecase.AlertUseCases
 import kotlinx.coroutines.CoroutineScope
@@ -15,7 +16,7 @@ import java.util.*
 import javax.inject.Inject
 
 object AlertManager {
-    private const val ALARM_REQUEST_CODE = 66642777
+    private const val ALARM_REQUEST_CODE = 77723666
 
     fun setRepeatingAlarm(context: Context) {
         // Get the AlarmManager service
@@ -36,12 +37,14 @@ object AlertManager {
             PendingIntent.FLAG_UPDATE_CURRENT
         )
 
+        val repeatingInterval =
+            if (BuildConfig.FLAVOR == "DEV") AlarmManager.INTERVAL_FIFTEEN_MINUTES
+            else AlarmManager.INTERVAL_DAY
         // Set the repeating alarm using AlarmManager
         alarmManager.setRepeating(
             AlarmManager.RTC_WAKEUP,
             calendar.timeInMillis,
-            AlarmManager.INTERVAL_FIFTEEN_MINUTES,
-//            AlarmManager.INTERVAL_DAY, TODO
+            repeatingInterval,
             pendingIntent
         )
     }

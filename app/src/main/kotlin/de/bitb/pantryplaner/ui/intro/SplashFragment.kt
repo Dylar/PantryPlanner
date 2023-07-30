@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
+import de.bitb.pantryplaner.core.NotifyManager.ACTION_REFRESH_PAGE
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
 
@@ -23,7 +24,7 @@ class SplashFragment : BaseFragment<SplashViewModel>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.loadData()
+        viewModel.loadData(activity?.intent?.action == ACTION_REFRESH_PAGE)
     }
 
     @Composable

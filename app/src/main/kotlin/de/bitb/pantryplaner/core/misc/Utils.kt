@@ -73,13 +73,16 @@ val Double.formatted: String
 fun readTextFromAsset(context: Context, fileName: String): String =
     context.assets.open(fileName).bufferedReader().use { it.readText() }.replace("\\n", "\n")
 
-fun filterLists(data: Map<String, List<Int>>): Map<String, List<Int>> {
-    val result = mutableMapOf<String, List<Int>>()
-
-    for ((key, list) in data) {
-        val filteredList = list.filter { num -> !data.values.flatten().contains(num) }
-        result[key] = filteredList
+fun <K, V> Map<K, List<V>>.removeDuplicatesFromLists(): Map<K, List<V>> {
+    val uniqueEntrys = mutableSetOf<V>()
+    val map = mutableMapOf<K, List<V>>()
+    for ((key, list) in this) {
+        val newList = list.filter { item ->
+            val isNewEntry = !uniqueEntrys.contains(item)
+            if (isNewEntry) uniqueEntrys.add(item)
+            isNewEntry
+        }
+        map[key] = newList
     }
-
-    return result
+    return map
 }
