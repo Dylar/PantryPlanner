@@ -15,28 +15,28 @@ object NotifyManager {
     const val ACTION_REFRESH_PAGE = "de.bitb.pantryplaner.action.refresh"
 
     fun showNotification(context: Context) {
-        val notificationManager =
-            ContextCompat.getSystemService(context, NotificationManager::class.java)!!
-
         val channel = NotificationChannel(
             context.getString(R.string.notification_channel_id),
             context.getString(R.string.notification_channel_name),
             NotificationManager.IMPORTANCE_DEFAULT,
-        ).apply { description = context.getString(R.string.notification_channel_description) }
+        )
+        channel.description = context.getString(R.string.notification_channel_description)
+
+        val notificationManager =
+            ContextCompat.getSystemService(context, NotificationManager::class.java)!!
         notificationManager.createNotificationChannel(channel)
-        val intent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            action = ACTION_REFRESH_PAGE
-        }
+
+        val intent = Intent(context, MainActivity::class.java)
+        intent.action = ACTION_REFRESH_PAGE
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         val pendingIntent =
             PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-//        val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val builder =
             NotificationCompat.Builder(context, context.getString(R.string.notification_channel_id))
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("Noch alles frisch?")
-                .setContentText("Klick hier um zu gucken welche Items du verbrauchen solltest")
+                .setContentText("Klick hier um deinen Bestand zu aktualisieren")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)

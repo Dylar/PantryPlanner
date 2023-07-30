@@ -39,6 +39,7 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
 
     @Composable
     override fun screenContent() {
+        // TODO show tooltip and explain
         showGridLayout = remember { mutableStateOf(true) }
 
         val items by viewModel.itemList.collectAsState(null)
@@ -131,61 +132,67 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
         }
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     private fun listItem(header: String, item: Item) {
-        if (item.remindIt(parseDateString(header))) {
-            val checkedItems = viewModel.checkedItems.collectAsState()
-            Box(modifier = Modifier.padding(2.dp)) {
-                Card(
-                    elevation = 4.dp,
-                    border = BorderStroke(2.dp, item.color),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .combinedClickable(onClick = { viewModel.checkItem(item.uuid) }),
-                ) {
-                    SelectItemHeader(
-                        item,
-                        checkedItems.value.contains(item.uuid),
-                        checkItem = viewModel::checkItem
-                    )
-                }
-            }
+        if (item.isFresh(parseDateString(header))) {
+            RefreshItem(item)
         } else {
-            val amount = remember { mutableStateOf(item.amount.formatted) }
-            clearItem(
-                item.name,
-                item.color,
-                onSwipe = {
-                    amount.value = "0" // TODO needed?
-                    viewModel.clearItemAmount(item.uuid)
-                },
-                onClick = { viewModel.checkItem(item.uuid) },
+            RemindItem(item)
+        }
+    }
+
+    @Composable
+    private fun RefreshItem(item: Item) {
+        clearItem(
+            item.name,
+            item.color,
+            onSwipe = { viewModel.clearItemAmount(item.uuid) },
+            onClick = { viewModel.checkItem(item.uuid) },
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .defaultMinSize(minHeight = 48.dp)
+                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Row(
+                Text(
+                    item.name,
+                    modifier = Modifier.weight(1f),
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Start
+                )
+                Text(
+                    text = item.amount.formatted,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .defaultMinSize(minHeight = 48.dp)
-                        .padding(horizontal = 8.dp, vertical = 4.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        item.name,
-                        modifier = Modifier.weight(1f),
-                        fontSize = 16.sp,
-                        textAlign = TextAlign.Start
-                    )
-                    Text(
-                        text = amount.value,
-                        modifier = Modifier
-                            .width(50.dp)
-                            .padding(start = 4.dp)
-                            .background(BaseColors.LightGray.copy(alpha = .1f)),
-                        fontSize = 14.sp,
-                        textAlign = TextAlign.Center
-                    )
-                }
+                        .width(50.dp)
+                        .padding(start = 4.dp)
+                        .background(BaseColors.LightGray.copy(alpha = .1f)),
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+    }
+
+    @Composable
+    @OptIn(ExperimentalFoundationApi::class)
+    private fun RemindItem(item: Item) {
+        val checkedItems = viewModel.checkedItems.collectAsState()
+        Box(modifier = Modifier.padding(2.dp)) {
+            Card(
+                elevation = 4.dp,
+                border = BorderStroke(2.dp, item.color),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .combinedClickable(onClick = { viewModel.checkItem(item.uuid) }),
+            ) {
+                SelectItemHeader(
+                    item,
+                    checkedItems.value.contains(item.uuid),
+                    checkItem = viewModel::checkItem
+                )
             }
         }
     }

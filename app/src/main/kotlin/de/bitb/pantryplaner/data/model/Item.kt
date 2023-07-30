@@ -36,15 +36,15 @@ data class Item(
     val bestUntilDate: LocalDate
         get() = LocalDate.now().minusDays(bestUntil)
 
-    fun isBest(finishDay: LocalDate): Boolean =
-        amount != 0.0 && finishDay.isAfter(bestUntilDate)
+    fun isFresh(finishDay: LocalDate): Boolean = bestUntil == 0L ||
+            (amount != 0.0 && finishDay.isAfter(bestUntilDate))
 
     @get:Exclude
     val remindAfterDate: LocalDate
         get() = LocalDate.now().minusDays(remindAfter)
 
-    fun remindIt(finishDay: LocalDate): Boolean =
-        amount == 0.0 && finishDay.isBefore(remindAfterDate)
+    fun remindIt(finishDay: LocalDate): Boolean = remindAfter != 0L &&
+            amount == 0.0 && finishDay.isBefore(remindAfterDate)
 
 }
 
@@ -52,5 +52,5 @@ data class CheckItem(
     val uuid: String = "",
     var checked: Boolean = false,
     var amount: Double = 1.0,
-    //TODO timestamp
+    //TODO timestamp?
 )

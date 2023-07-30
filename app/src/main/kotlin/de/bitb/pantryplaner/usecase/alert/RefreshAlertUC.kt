@@ -7,7 +7,7 @@ import de.bitb.pantryplaner.data.CheckRepository
 import de.bitb.pantryplaner.data.ItemRepository
 import kotlinx.coroutines.flow.first
 
-class ItemAlertUC(
+class RefreshAlertUC(
     private val checkRepo: CheckRepository,
     private val itemRepo: ItemRepository,
 ) {
@@ -16,12 +16,21 @@ class ItemAlertUC(
             onError = { it.asResourceError(false) },
             onTry = {
                 //TODO load settings to disable
-                val getResp = checkRepo.getCheckLists().first()
-                if (getResp is Resource.Error) {
-                    return@tryIt getResp.castTo(false)
+                val resp = checkRepo.getCheckLists().first()
+                if (resp is Resource.Error) {
+                    return@tryIt resp.castTo(false)
                 }
 
-                val items = getResp.data!!
+                val allLists = resp.data!!
+                val unfinishedItems = allLists
+                    .asSequence()
+                    .filter { !it.finished }
+                    .map { it.items }
+                    .flatten()
+                    .toSet()
+                    .map { it.uuid }
+
+                allLists
                     .filter { it.finished }
                     .map { check ->
                         val ids = check.items.map { it.uuid }
@@ -32,13 +41,15 @@ class ItemAlertUC(
 
                         val finishDay = check.finishDate.toLocalDate()
                         itemResp.data!!
-                            .filter { !it.isBest(finishDay) || it.remindIt(finishDay) }
+                            .filter {
+                                !unfinishedItems.contains(it.uuid) &&
+                                        (!it.isFresh(finishDay) || it.remindIt(finishDay))
+                            }
                             .map { it.uuid }
                     }
                     .flatten()
                     .toSet()
-
-                Resource.Success(items.isNotEmpty())
+                    .let { Resource.Success(it.isNotEmpty()) }
             }
         )
     }

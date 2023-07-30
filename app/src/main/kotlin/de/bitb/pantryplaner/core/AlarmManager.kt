@@ -19,17 +19,13 @@ object AlertManager {
     private const val ALARM_REQUEST_CODE = 77723666
 
     fun setRepeatingAlarm(context: Context) {
-        // Get the AlarmManager service
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val isDev = BuildConfig.FLAVOR == "DEV"
 
-        // Create a calendar object with the desired alarm time
-        val calendar: Calendar = Calendar.getInstance().apply {
-            timeInMillis = System.currentTimeMillis()
-//            set(Calendar.HOUR_OF_DAY, 8) // Set the desired hour
-            set(Calendar.MINUTE, 1) // Set the desired minute
-        }
+        val calendar: Calendar = Calendar.getInstance()
+        calendar.timeInMillis = System.currentTimeMillis()
+        if (isDev) calendar.set(Calendar.MINUTE, 1)
+        else calendar.set(Calendar.HOUR_OF_DAY, 8)
 
-        // Create a PendingIntent with the intent
         val pendingIntent = PendingIntent.getBroadcast(
             context,
             ALARM_REQUEST_CODE,
@@ -38,9 +34,10 @@ object AlertManager {
         )
 
         val repeatingInterval =
-            if (BuildConfig.FLAVOR == "DEV") AlarmManager.INTERVAL_FIFTEEN_MINUTES
+            if (isDev) AlarmManager.INTERVAL_FIFTEEN_MINUTES
             else AlarmManager.INTERVAL_DAY
-        // Set the repeating alarm using AlarmManager
+
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         alarmManager.setRepeating(
             AlarmManager.RTC_WAKEUP,
             calendar.timeInMillis,
@@ -58,7 +55,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         CoroutineScope(Dispatchers.IO).launch {
-            val showNotification = alertUseCases.itemAlertUC()
+            val showNotification = alertUseCases.refreshAlertUC()
             if (showNotification is Resource.Success && showNotification.data == true) {
                 NotifyManager.showNotification(context)
             }

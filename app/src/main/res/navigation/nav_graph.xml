@@ -22,7 +22,7 @@
             android:id="@+id/overview_to_refresh"
             app:destination="@id/refreshFragment"
             app:popUpTo="@+id/overviewFragment"
-            app:popUpToInclusive="true"  />
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment

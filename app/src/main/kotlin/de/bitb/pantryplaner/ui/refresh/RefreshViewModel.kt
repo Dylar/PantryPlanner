@@ -2,7 +2,9 @@ package de.bitb.pantryplaner.ui.refresh
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.bitb.pantryplaner.core.misc.*
+import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.formatDateString
+import de.bitb.pantryplaner.core.misc.removeDuplicatesFromLists
 import de.bitb.pantryplaner.data.CheckRepository
 import de.bitb.pantryplaner.data.ItemRepository
 import de.bitb.pantryplaner.data.model.Item
@@ -53,17 +55,8 @@ class RefreshViewModel @Inject constructor(
                             val finishDay = check.finishDate.toLocalDate()
                             formatDateString(finishDay) to itemResp.data!!
                                 .filter {
-                                    Logger.printLog(
-                                        it.name,
-                                        "Amount: ${it.amount}",
-                                        "finished At: ${formatDateString(finishDay)}",
-                                        "Best until: ${formatDateString(it.bestUntilDate)}",
-                                        "Remind Date: ${formatDateString(it.remindAfterDate)}",
-                                        "Not best: ${!it.isBest(finishDay)}",
-                                        "Remind: ${it.remindIt(finishDay)}"
-                                    )
                                     !unfinishedItems.contains(it.uuid) &&
-                                            (!it.isBest(finishDay) || it.remindIt(finishDay))
+                                            (!it.isFresh(finishDay) || it.remindIt(finishDay))
                                 }
                         }
                         .groupBy { it.first }

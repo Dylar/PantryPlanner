@@ -16,7 +16,7 @@ import de.bitb.pantryplaner.data.source.RemoteService
 import de.bitb.pantryplaner.usecase.AlertUseCases
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
-import de.bitb.pantryplaner.usecase.alert.ItemAlertUC
+import de.bitb.pantryplaner.usecase.alert.RefreshAlertUC
 import de.bitb.pantryplaner.usecase.checklist.*
 import de.bitb.pantryplaner.usecase.item.*
 import javax.inject.Singleton
@@ -65,7 +65,7 @@ object AppModule {
         itemRepo: ItemRepository,
     ): AlertUseCases {
         return AlertUseCases(
-            itemAlertUC = ItemAlertUC(checkRepo, itemRepo),
+            refreshAlertUC = RefreshAlertUC(checkRepo, itemRepo),
         )
     }
 
