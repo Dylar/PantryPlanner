@@ -218,7 +218,11 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
     @Composable
     private fun listItem(item: Item, categorys: List<String>) {
         val showEditDialog = remember { mutableStateOf(false) }
-        useEditItemDialog(showEditDialog, item, categorys) { edited, _ -> viewModel.editItem(edited) }
+        useEditItemDialog(
+            showEditDialog,
+            item,
+            categorys
+        ) { edited, _ -> viewModel.editItem(edited) }
 
         dissmissItem(
             item.name,

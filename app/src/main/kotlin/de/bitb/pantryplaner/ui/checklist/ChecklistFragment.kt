@@ -190,7 +190,11 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 val checkItem = checklist.items.firstOrNull { it.uuid == item.uuid } ?: return
 
                 val showEditDialog = remember { mutableStateOf(false) }
-                useEditItemDialog(showEditDialog, item, categorys, viewModel::editItem)
+                useEditItemDialog(
+                    showEditDialog,
+                    item,
+                    categorys
+                ) { edited, _ -> viewModel.editItem(edited) }
 
                 dissmissItem(
                     item.name,
