@@ -30,6 +30,7 @@ import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
 import de.bitb.pantryplaner.ui.base.TestTags
 import de.bitb.pantryplaner.ui.base.comps.*
 import de.bitb.pantryplaner.ui.base.naviChecklistToItems
+import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.comps.AddSubRow
 import de.bitb.pantryplaner.ui.comps.SelectItemHeader
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
@@ -210,12 +211,13 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                             viewModel::checkItem
                         )
                         val errors = viewModel.itemErrorList.collectAsState(listOf())
+                        val color =
+                            if (errors.value.contains(item.uuid)) BaseColors.FireRed
+                            else BaseColors.White
                         AddSubRow(
-                            item.uuid,
                             checkItem.amount,
-                            errors,
-                            viewModel::changeItemAmount
-                        )
+                            color
+                        ) { viewModel.changeItemAmount(item.uuid, it) }
                     }
                 }
             }

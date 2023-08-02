@@ -3,16 +3,17 @@ package de.bitb.pantryplaner.ui.comps
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,46 +33,51 @@ import java.lang.Double.max
 
 @Composable
 fun AddSubRow(
-    itemId: String,
     amount: Double,
-    errors: State<List<String>>,
-    onChange: (String, String) -> Unit
+    editColor: Color = BaseColors.White,
+    backgroundColor: Color = Color.Transparent,
+    onChange: (String) -> Unit
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().background(backgroundColor),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        val color =
-            if (errors.value.contains(itemId)) BaseColors.FireRed
-            else BaseColors.White
         val amountState =
             remember { mutableStateOf(TextFieldValue(amount.formatted)) }
 
         IconButton(
-            modifier = Modifier.testTag(TestTags.AddSubRow.MinusButton.name),
+            modifier = Modifier
+                .testTag(TestTags.AddSubRow.MinusButton.name)
+                .size(48.dp),
             onClick = {
                 val new = max(amount - 1, 0.0).formatted
                 amountState.value = TextFieldValue(new, TextRange(new.length))
-                onChange(itemId, new)
+                onChange(new)
             },
         ) {
             Icon(
+                modifier = Modifier
+                    .background(Color.Red, shape = CircleShape),
                 imageVector = Icons.Default.Remove,
                 contentDescription = "Minus button"
             )
         }
-        EditText(amountState, color) { onChange(itemId, it) }
+        EditText(amountState, editColor) { onChange(it) }
 
         IconButton(
-            modifier = Modifier.testTag(TestTags.AddSubRow.PlusButton.name),
+            modifier = Modifier
+                .testTag(TestTags.AddSubRow.PlusButton.name)
+                .size(48.dp),
             onClick = {
                 val new = (amount + 1).formatted
                 amountState.value = TextFieldValue(new, TextRange(new.length))
-                onChange(itemId, new)
+                onChange(new)
             },
         ) {
             Icon(
+                modifier = Modifier
+                    .background(Color.Green, shape = CircleShape),
                 imageVector = Icons.Default.Add,
                 contentDescription = "Plus button"
             )

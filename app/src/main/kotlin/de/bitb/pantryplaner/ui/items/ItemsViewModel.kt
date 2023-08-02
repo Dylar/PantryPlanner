@@ -48,9 +48,10 @@ class ItemsViewModel @Inject constructor(
         fromChecklistId = checkUuid
     }
 
-    fun addItem(name: String, category: String) {
+    fun addItem(item: Item) {
+        val name = item.name
         viewModelScope.launch {
-            val resp = itemUseCases.addItemUC(name, category)
+            val resp = itemUseCases.addItemUC(name, item.category)
             when {
                 resp is Resource.Error -> showSnackbar(resp.message!!)
                 resp.data == true -> showSnackbar("Item hinzugefügt: $name".asResString()).also { updateWidgets() }
@@ -82,9 +83,9 @@ class ItemsViewModel @Inject constructor(
         }
     }
 
-    fun editItem(item: Item, name: String, category: String) {
+    fun editItem(item: Item) {
         viewModelScope.launch {
-            when (val resp = itemUseCases.editItemUC(item, name, category)) {
+            when (val resp = itemUseCases.editItemUC(item)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
                 else -> showSnackbar("Item editiert".asResString()).also { updateWidgets() }
             }

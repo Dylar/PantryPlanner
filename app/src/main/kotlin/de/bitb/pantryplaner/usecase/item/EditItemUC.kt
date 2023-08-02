@@ -13,11 +13,17 @@ import kotlinx.coroutines.flow.first
 class EditItemUC(
     private val itemRepo: ItemRepository,
 ) {
-    suspend operator fun invoke(itemId: String, amount: String): Resource<Unit> {
+    suspend operator fun invoke(
+        itemId: String,
+        amount: String,
+    ): Resource<Unit> {
         return tryIt {
             val item = itemRepo.getItem(itemId).first()
             castOnError(item) {
-                return@castOnError this(item.data!!, amount = amount)
+                return@castOnError this(
+                    item.data!!,
+                    amount = amount,
+                )
             }
         }
     }
@@ -28,6 +34,8 @@ class EditItemUC(
         category: String = item.category,
         color: Color = item.color,
         amount: String = item.amount.toString(),
+        freshUntil: Long = item.freshUntil,
+        remindAfter: Long = item.remindAfter,
     ): Resource<Unit> {
         return tryIt(
             onError = {
@@ -49,6 +57,8 @@ class EditItemUC(
                             category = category,
                             colorHex = color.toArgb(),
                             amount = amountDouble,
+                            freshUntil = freshUntil,
+                            remindAfter = remindAfter,
                         )
                     )
                 )

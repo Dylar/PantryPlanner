@@ -1,11 +1,15 @@
 package de.bitb.pantryplaner.ui.dialogs
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -14,22 +18,101 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
+import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
+import de.bitb.pantryplaner.ui.comps.AddSubRow
 import java.util.*
 
 @Composable
-fun AddItemDialog(
+fun useAddItemDialog(
+    showDialog: MutableState<Boolean>,
     categorys: List<String>,
-    onConfirm: (String, String, Boolean) -> Unit,
+    onEdit: (Item, Boolean) -> Unit
+) {
+    useDialog(
+        showDialog,
+        "Item erstellen", "Hinzufügen",
+        Item(), categorys,
+        onEdit
+    )
+}
+
+@Composable
+fun useEditItemDialog(
+    showDialog: MutableState<Boolean>,
+    item: Item,
+    categorys: List<String>,
+    onEdit: (Item, Boolean) -> Unit
+) {
+    useDialog(
+        showDialog,
+        "Item bearbeiten", "Speichern",
+        item, categorys
+    ) { edited, _ -> onEdit(edited, true) }
+}
+
+
+@Composable
+private fun useDialog(
+    showDialog: MutableState<Boolean>,
+    title: String,
+    confirmButton: String,
+    item: Item,
+    categorys: List<String>,
+    onConfirm: (Item, Boolean) -> Unit
+) {
+    if (showDialog.value) {
+        AddEditItemDialog(
+            title = title,
+            confirmButton = confirmButton,
+            item = item,
+            categorys = categorys,
+            onConfirm = { it, close ->
+                onConfirm(it, close)
+                showDialog.value = false
+            },
+            onDismiss = { showDialog.value = false },
+        )
+    }
+}
+
+@Composable
+private fun AddEditItemDialog(
+    title: String,
+    confirmButton: String,
+    item: Item,
+    categorys: List<String>,
+    onConfirm: (Item, Boolean) -> Unit,
     onDismiss: () -> Unit
 ) {
-    var name by remember { mutableStateOf("") }
-    val category = remember { mutableStateOf(TextFieldValue("")) }
+    var name by remember {
+        mutableStateOf(
+            TextFieldValue(
+                text = item.name,
+                selection = TextRange(item.name.length)
+            )
+        )
+    }
+
+    val category = remember { mutableStateOf(TextFieldValue(item.category)) }
+    val freshUntil = remember { mutableStateOf(item.freshUntil) }
+    val remindAfter = remember { mutableStateOf(item.remindAfter) }
     val focusRequester = remember { FocusRequester() }
+
+    fun copyItem() = item.copy(
+        name = name.text,
+        category = category.value.text,
+        freshUntil = freshUntil.value,
+        remindAfter = remindAfter.value,
+    )
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Add Item") },
+//        containerColor = darkColorPalette.background,
+//        iconContentColor = darkColorPalette.onSurface,
+//        titleContentColor = darkColorPalette.onSurface,
+//        textContentColor = darkColorPalette.onSurface,
+        title = { Text(title) },
         text = {
             Column {
                 OutlinedTextField(
@@ -42,27 +125,40 @@ fun AddItemDialog(
                     onValueChange = { name = it },
                     keyboardActions = KeyboardActions(
                         onDone = {
-                            onConfirm(name, category.value.text, false)
-                            name = ""
-                        }
+                            onConfirm(copyItem(), false)
+                            name = TextFieldValue()
+                        },
                     ),
                 )
                 buildCategoryDropDown(category, categorys) { cat ->
-                    onConfirm(name, cat, false)
-                    name = ""
+                    category.value = TextFieldValue(cat, selection = TextRange(cat.length))
+                }
+                OutlinedComp {
+                    Text("MHD", modifier = Modifier.padding(4.dp))
+                    AddSubRow(
+                        freshUntil.value.toDouble(),
+                        backgroundColor = BaseColors.LightGray
+                    ) { freshUntil.value = it.toLong() }
+                }
+                OutlinedComp {
+                    Text("Erinnerung", modifier = Modifier.padding(4.dp))
+                    AddSubRow(
+                        remindAfter.value.toDouble(),
+                        backgroundColor = BaseColors.LightGray
+                    ) { remindAfter.value = it.toLong() }
                 }
             }
         },
         confirmButton = {
             Button(
-                onClick = { onConfirm(name, category.value.text, true) },
-                content = { Text("ADD") }
+                onClick = { onConfirm(copyItem(), true) },
+                content = { Text(confirmButton) }
             )
         },
         dismissButton = {
             Button(
                 onClick = onDismiss,
-                content = { Text("CANCEL") }
+                content = { Text("Abbrechen") }
             )
         }
     )
@@ -71,9 +167,20 @@ fun AddItemDialog(
     }
 }
 
+@Composable
+private fun OutlinedComp(content: @Composable () -> Unit) {
+    Column(
+        modifier = Modifier
+            .padding(top = 16.dp, start = 16.dp, end = 16.dp)
+            .border(width = 2.dp, color = BaseColors.ZergPurple, shape = RoundedCornerShape(4.dp)),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.Start,
+    ) { content() }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun buildCategoryDropDown(
+private fun buildCategoryDropDown(
     category: MutableState<TextFieldValue>,
     categorys: List<String>,
     onConfirm: (String) -> Unit

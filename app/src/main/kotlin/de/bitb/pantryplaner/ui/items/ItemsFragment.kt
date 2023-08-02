@@ -29,9 +29,9 @@ import de.bitb.pantryplaner.ui.base.highlightedText
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.comps.AddSubRow
 import de.bitb.pantryplaner.ui.comps.SelectItemHeader
-import de.bitb.pantryplaner.ui.dialogs.AddItemDialog
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 import de.bitb.pantryplaner.ui.dialogs.FilterDialog
+import de.bitb.pantryplaner.ui.dialogs.useAddItemDialog
 import de.bitb.pantryplaner.ui.dialogs.useEditItemDialog
 
 @AndroidEntryPoint
@@ -89,18 +89,15 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
             )
         }
 
-        if (showAddDialog.value) {
-            val items by viewModel.itemList.collectAsState(null)
-            AddItemDialog(
-                categorys = items?.data?.keys?.toList() ?: listOf(),
-                onConfirm = { name, category, close ->
-                    viewModel.addItem(name, category)
-                    if (close) {
-                        showAddDialog.value = false
-                    }
-                },
-                onDismiss = { showAddDialog.value = false },
-            )
+        val items by viewModel.itemList.collectAsState(null)
+        useAddItemDialog(
+            showAddDialog,
+            items?.data?.keys?.toList() ?: listOf()
+        ) { item, close ->
+            viewModel.addItem(item)
+            if (close) {
+                showAddDialog.value = false
+            }
         }
 
         if (showAddToDialog.value) {
@@ -221,7 +218,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
     @Composable
     private fun listItem(item: Item, categorys: List<String>) {
         val showEditDialog = remember { mutableStateOf(false) }
-        useEditItemDialog(showEditDialog, item, categorys, viewModel::editItem)
+        useEditItemDialog(showEditDialog, item, categorys) { edited, _ -> viewModel.editItem(edited) }
 
         dissmissItem(
             item.name,
@@ -265,12 +262,13 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
             )
 
             val errors = viewModel.itemErrorList.collectAsState(listOf())
+            val color =
+                if (errors.value.contains(item.uuid)) BaseColors.FireRed
+                else BaseColors.White
             AddSubRow(
-                item.uuid,
                 item.amount,
-                errors,
-                viewModel::changeItemAmount,
-            )
+                color,
+            ) { viewModel.changeItemAmount(item.uuid, it) }
         }
     }
 }

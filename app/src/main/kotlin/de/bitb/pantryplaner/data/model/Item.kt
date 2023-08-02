@@ -17,8 +17,8 @@ data class Item(
     val colorHex: Int = BaseColors.LightGray.toArgb(),
     val createdAt: String = "",
     var updatedAt: String = "",
-    var bestUntil: Long = 1,
-    var remindAfter: Long = 2,
+    var freshUntil: Long = 0,
+    var remindAfter: Long = 0,
 ) {
     @get:Exclude
     val color: Color
@@ -33,11 +33,11 @@ data class Item(
         get() = parseDateTimeString(updatedAt)
 
     @get:Exclude
-    val bestUntilDate: LocalDate
-        get() = LocalDate.now().minusDays(bestUntil)
+    val freshUntilDate: LocalDate
+        get() = LocalDate.now().minusDays(freshUntil)
 
-    fun isFresh(finishDay: LocalDate): Boolean = bestUntil == 0L ||
-            (amount != 0.0 && finishDay.isAfter(bestUntilDate))
+    fun isFresh(finishDay: LocalDate): Boolean = freshUntil == 0L ||
+            (amount != 0.0 && finishDay.isAfter(freshUntilDate))
 
     @get:Exclude
     val remindAfterDate: LocalDate

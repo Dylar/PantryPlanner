@@ -84,9 +84,9 @@ class ChecklistViewModel @Inject constructor(
         }
     }
 
-    fun editItem(item: Item, name: String, category: String) {
+    fun editItem(item: Item) {
         viewModelScope.launch {
-            when (val resp = itemUseCases.editItemUC(item, name, category)) {
+            when (val resp = itemUseCases.editItemUC(item)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
                 else -> showSnackbar("Item editiert".asResString()).also { updateWidgets() }
             }
