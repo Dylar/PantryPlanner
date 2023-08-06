@@ -16,8 +16,12 @@ fun Activity.openAppSettings() {
     ).also(::startActivity)
 }
 
+fun Fragment.naviToSettings() {
+    NavHostFragment.findNavController(this).navigate(R.id.overview_to_settings)
+}
+
 fun Fragment.naviToReleaseNotes() {
-    NavHostFragment.findNavController(this).navigate(R.id.overview_to_releasenotes)
+    NavHostFragment.findNavController(this).navigate(R.id.settings_to_releasenotes)
 }
 
 fun Fragment.naviToRefresh() {

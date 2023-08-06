@@ -3,16 +3,27 @@ package de.bitb.pantryplaner.data.source
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.data.model.Item
+import de.bitb.pantryplaner.data.model.Settings
 import kotlinx.coroutines.flow.Flow
 
 // REMOTE
-interface RemoteService : UserRemoteDao, ItemRemoteDao, CheckRemoteDao
+interface RemoteService : UserRemoteDao, ItemRemoteDao, CheckRemoteDao, SettingsRemoteDao
 
-class PantryRemoteService(itemService: FirestoreItemService, checkService: FirestoreCheckService) :
+class PantryRemoteService(
+    settingsService: FirestoreSettingsService,
+    itemService: FirestoreItemService,
+    checkService: FirestoreCheckService
+) :
     RemoteService,
     UserRemoteDao by itemService,
     ItemRemoteDao by itemService,
-    CheckRemoteDao by checkService
+    CheckRemoteDao by checkService,
+    SettingsRemoteDao by settingsService
+
+interface SettingsRemoteDao {
+    fun getSettings(): Flow<Resource<Settings>>
+    suspend fun saveSettings(settings: Settings): Resource<Unit>
+}
 
 interface UserRemoteDao {
     suspend fun loginUser(): Resource<Boolean>

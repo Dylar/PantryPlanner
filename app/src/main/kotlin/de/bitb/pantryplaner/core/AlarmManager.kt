@@ -8,9 +8,12 @@ import android.content.Intent
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.BuildConfig
 import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.data.SettingsRepository
+import de.bitb.pantryplaner.data.model.Settings
 import de.bitb.pantryplaner.usecase.AlertUseCases
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -51,13 +54,19 @@ object AlertManager {
 class AlarmReceiver : BroadcastReceiver() {
 
     @Inject
+    lateinit var settingsRepo: SettingsRepository
+
+    @Inject
     lateinit var alertUseCases: AlertUseCases
 
     override fun onReceive(context: Context, intent: Intent) {
         CoroutineScope(Dispatchers.IO).launch {
-            val showNotification = alertUseCases.refreshAlertUC()
-            if (showNotification is Resource.Success && showNotification.data == true) {
-                NotifyManager.showNotification(context)
+            val settings = settingsRepo.getSettings().first()
+            if (settings is Resource.Success && settings.data?.refreshAlert == true) {
+                val showNotification = alertUseCases.refreshAlertUC()
+                if (showNotification is Resource.Success && showNotification.data == true) {
+                    NotifyManager.showNotification(context)
+                }
             }
         }
     }

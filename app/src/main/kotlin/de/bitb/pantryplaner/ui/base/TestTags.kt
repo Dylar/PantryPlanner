@@ -23,11 +23,15 @@ sealed class TestTags {
             get() = super.name + ".$id"
     }
 
+    sealed class SettingsPage : TestTags() {
+        object AppBar : SettingsPage()
+        object InfoButton : SettingsPage()
+    }
+
     sealed class OverviewPage : TestTags() {
         object AppBar : OverviewPage()
-        object InfoButton : OverviewPage()
+        object SettingsButton : OverviewPage()
         object LayoutButton : OverviewPage()
-        object RefreshButton : OverviewPage()
         object AddButton : OverviewPage()
         object ToItemsButton : OverviewPage()
     }

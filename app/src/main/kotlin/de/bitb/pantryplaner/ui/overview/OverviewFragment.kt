@@ -4,10 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.GridOff
-import androidx.compose.material.icons.filled.GridOn
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.ShoppingCartCheckout
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.FormatListBulleted
 import androidx.compose.material3.SmallFloatingActionButton
@@ -72,12 +69,12 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
             title = { Text(getString(R.string.overview_title)) },
             actions = {
                 IconButton(
-                    onClick = { showInfoDialog.value = true },
-                    modifier = Modifier.testTag(TestTags.OverviewPage.InfoButton.name)
+                    onClick = ::naviToSettings,
+                    modifier = Modifier.testTag(TestTags.OverviewPage.SettingsButton.name)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Info,
-                        contentDescription = "Info dialog button"
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Settings button"
                     )
                 }
                 IconButton(

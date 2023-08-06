@@ -36,8 +36,6 @@ private fun InfoContent() {
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(text = "VersionName: ${BuildConfig.VERSION_NAME}")
-        Text(text = "VersionCode: ${BuildConfig.VERSION_CODE}")
         Text(text = "Env: ${BuildConfig.FLAVOR}")
-        Text(text = "BuildType: ${BuildConfig.BUILD_TYPE}")
     }
 }

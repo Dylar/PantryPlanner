@@ -9,10 +9,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import de.bitb.pantryplaner.data.*
-import de.bitb.pantryplaner.data.source.FirestoreCheckService
-import de.bitb.pantryplaner.data.source.FirestoreItemService
-import de.bitb.pantryplaner.data.source.PantryRemoteService
-import de.bitb.pantryplaner.data.source.RemoteService
+import de.bitb.pantryplaner.data.source.*
 import de.bitb.pantryplaner.usecase.AlertUseCases
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
@@ -32,13 +29,20 @@ object AppModule {
         FirebaseApp.initializeApp(app)
         val fireData = FirebaseFirestore.getInstance()
         val fireAuth = FirebaseAuth.getInstance()
+        val settingsService = FirestoreSettingsService(fireData)
         val itemService = FirestoreItemService(fireData, fireAuth)
         val checkService = FirestoreCheckService(fireData)
 
-        return PantryRemoteService(itemService, checkService)
+        return PantryRemoteService(settingsService, itemService, checkService)
     }
 
     // REPO
+    @Provides
+    @Singleton
+    fun provideSettingsRepository(
+        remoteService: RemoteService,
+    ): SettingsRepository = SettingsRepositoryImpl(remoteService)
+
     @Provides
     @Singleton
     fun provideUserRepository(
