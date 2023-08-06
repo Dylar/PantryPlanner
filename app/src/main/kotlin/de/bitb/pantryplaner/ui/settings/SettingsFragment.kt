@@ -1,9 +1,12 @@
 package de.bitb.pantryplaner.ui.settings
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -12,8 +15,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Settings
-import de.bitb.pantryplaner.ui.base.*
-import de.bitb.pantryplaner.ui.base.comps.*
+import de.bitb.pantryplaner.ui.base.BaseFragment
+import de.bitb.pantryplaner.ui.base.TestTags
+import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
+import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
+import de.bitb.pantryplaner.ui.base.comps.asResString
+import de.bitb.pantryplaner.ui.base.naviToReleaseNotes
 import de.bitb.pantryplaner.ui.dialogs.InfoDialog
 
 data class PreferenceItem(val title: String, val subtitle: String)
@@ -44,7 +51,7 @@ class SettingsFragment : BaseFragment<SettingsViewModel>() {
             title = { Text(getString(R.string.overview_title)) },
             actions = {
                 IconButton(
-                        onClick = { showInfoDialog.value = true },
+                    onClick = { showInfoDialog.value = true },
                     modifier = Modifier.testTag(TestTags.SettingsPage.InfoButton.name)
                 ) {
                     Icon(

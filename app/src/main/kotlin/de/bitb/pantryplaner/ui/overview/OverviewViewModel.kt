@@ -46,11 +46,12 @@ class OverviewViewModel @Inject constructor(
 
     fun removeChecklist(check: Checklist) {
         viewModelScope.launch {
+            val name = check.name
             val resp = checkUseCases.removeChecklistUC(check)
             when {
                 resp is Resource.Error -> showSnackbar(resp.message!!)
-                resp.data == true -> showSnackbar("Checkliste entfernt: ${check.name}".asResString())
-                else -> showSnackbar("Checkliste nicht entfernt: ${check.name}".asResString())
+                resp.data == true -> showSnackbar("Checkliste entfernt: $name".asResString())
+                else -> showSnackbar("Checkliste nicht entfernt: $name".asResString())
             }
         }
     }

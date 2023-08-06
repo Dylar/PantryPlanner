@@ -2,6 +2,7 @@ package de.bitb.pantryplaner.usecase.checklist
 
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.asResourceError
+import de.bitb.pantryplaner.core.misc.capitalizeFirstCharacter
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.CheckRepository
 import de.bitb.pantryplaner.data.model.CheckItem
@@ -21,7 +22,7 @@ class AddChecklistUC(
                     return@tryIt "Name darf nicht leer sein".asResourceError()
                 }
                 val checkItems = items.map { CheckItem(it) }.toMutableList()
-                val check = Checklist(name = name, items = checkItems)
+                val check = Checklist(name = name.capitalizeFirstCharacter(), items = checkItems)
                 checkRepo.addChecklist(check)
             },
         )

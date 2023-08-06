@@ -9,7 +9,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.BuildConfig
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.SettingsRepository
-import de.bitb.pantryplaner.data.model.Settings
 import de.bitb.pantryplaner.usecase.AlertUseCases
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

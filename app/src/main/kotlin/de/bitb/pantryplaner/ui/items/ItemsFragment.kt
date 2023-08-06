@@ -250,8 +250,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
         val text = highlightedText(item.name, filter.value?.searchTerm ?: "")
 
         Column(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Center,
         ) {

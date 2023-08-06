@@ -73,6 +73,13 @@ val Double.formatted: String
 fun readTextFromAsset(context: Context, fileName: String): String =
     context.assets.open(fileName).bufferedReader().use { it.readText() }.replace("\\n", "\n")
 
+fun String.capitalizeFirstCharacter(): String {
+    if (isEmpty()) {
+        return this
+    }
+    return this[0].uppercaseChar() + this.substring(1)
+}
+
 fun <K, V> Map<K, List<V>>.removeDuplicatesFromLists(): Map<K, List<V>> {
     val uniqueEntrys = mutableSetOf<V>()
     val map = mutableMapOf<K, List<V>>()
