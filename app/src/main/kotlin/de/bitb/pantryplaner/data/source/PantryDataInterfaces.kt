@@ -10,12 +10,13 @@ import kotlinx.coroutines.flow.Flow
 interface RemoteService : UserRemoteDao, ItemRemoteDao, CheckRemoteDao, SettingsRemoteDao
 
 class PantryRemoteService(
-    settingsService: FirestoreSettingsService,
-    itemService: FirestoreItemService,
-    checkService: FirestoreCheckService
+    settingsService: FireSettingsService,
+    userService: FireUserService,
+    itemService: FireItemService,
+    checkService: FireCheckService
 ) :
     RemoteService,
-    UserRemoteDao by itemService,
+    UserRemoteDao by userService,
     ItemRemoteDao by itemService,
     CheckRemoteDao by checkService,
     SettingsRemoteDao by settingsService
@@ -27,6 +28,7 @@ interface SettingsRemoteDao {
 
 interface UserRemoteDao {
     suspend fun loginUser(): Resource<Boolean>
+    suspend fun isUserLoggedIn(): Resource<Boolean>
 }
 
 interface ItemRemoteDao {

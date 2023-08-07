@@ -12,26 +12,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 
-class FirestoreItemService(
+class FireItemService(
     private val firestore: FirebaseFirestore,
-    private val fireAuth: FirebaseAuth
-) : ItemRemoteDao, UserRemoteDao {
+) : ItemRemoteDao {
 
     private val itemCollection
         get() = firestore
             .collection("stage")
             .document(BuildConfig.FLAVOR)
             .collection("items")
-
-    override suspend fun loginUser(): Resource<Boolean> {
-        return tryIt(
-            onError = { Resource.Error(it, false) },
-            onTry = {
-                fireAuth.signInAnonymously().await()
-                Resource.Success(true)
-            },
-        )
-    }
 
     override fun getItems(ids: List<String>?): Flow<Resource<List<Item>>> {
         if (ids?.isEmpty() == true) {

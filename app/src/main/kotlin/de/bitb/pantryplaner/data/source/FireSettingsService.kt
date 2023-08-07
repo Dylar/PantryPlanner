@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 
-class FirestoreSettingsService(
+class FireSettingsService(
     private val firestore: FirebaseFirestore,
 ) : SettingsRemoteDao {
 

@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 
-class FirestoreCheckService(
+class FireCheckService(
     private val firestore: FirebaseFirestore,
 ) : CheckRemoteDao {
 

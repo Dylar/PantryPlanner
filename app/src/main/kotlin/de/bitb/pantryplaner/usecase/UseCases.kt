@@ -8,8 +8,11 @@ data class AlertUseCases(
     val refreshAlertUC: RefreshAlertUC,
 )
 
-data class ItemUseCases(
+data class UserUseCases(
     val loadDataUC: LoadDataUC,
+)
+
+data class ItemUseCases(
     val addItemUC: AddItemUC,
     val removeItemUC: RemoveItemUC,
     val editItemUC: EditItemUC,

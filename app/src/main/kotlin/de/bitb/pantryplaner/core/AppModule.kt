@@ -13,6 +13,7 @@ import de.bitb.pantryplaner.data.source.*
 import de.bitb.pantryplaner.usecase.AlertUseCases
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
+import de.bitb.pantryplaner.usecase.UserUseCases
 import de.bitb.pantryplaner.usecase.alert.RefreshAlertUC
 import de.bitb.pantryplaner.usecase.checklist.*
 import de.bitb.pantryplaner.usecase.item.*
@@ -29,11 +30,12 @@ object AppModule {
         FirebaseApp.initializeApp(app)
         val fireData = FirebaseFirestore.getInstance()
         val fireAuth = FirebaseAuth.getInstance()
-        val settingsService = FirestoreSettingsService(fireData)
-        val itemService = FirestoreItemService(fireData, fireAuth)
-        val checkService = FirestoreCheckService(fireData)
+        val settingsService = FireSettingsService(fireData)
+        val userService = FireUserService(fireData, fireAuth)
+        val itemService = FireItemService(fireData)
+        val checkService = FireCheckService(fireData)
 
-        return PantryRemoteService(settingsService, itemService, checkService)
+        return PantryRemoteService(settingsService, userService, itemService, checkService)
     }
 
     // REPO
@@ -64,6 +66,16 @@ object AppModule {
     //USE CASES
     @Provides
     @Singleton
+    fun provideUserUseCases(
+        userRepo: UserRepository,
+    ): UserUseCases {
+        return UserUseCases(
+            loadDataUC = LoadDataUC(userRepo),
+        )
+    }
+
+    @Provides
+    @Singleton
     fun provideAlertUseCases(
         checkRepo: CheckRepository,
         itemRepo: ItemRepository,
@@ -76,11 +88,9 @@ object AppModule {
     @Provides
     @Singleton
     fun provideItemUseCases(
-        userRepo: UserRepository,
         itemRepo: ItemRepository,
     ): ItemUseCases {
         return ItemUseCases(
-            loadDataUC = LoadDataUC(userRepo),
             addItemUC = AddItemUC(itemRepo),
             removeItemUC = RemoveItemUC(itemRepo),
             editItemUC = EditItemUC(itemRepo),
@@ -108,9 +118,3 @@ object AppModule {
     }
 
 }
-
-//@Module
-//@InstallIn(FragmentComponent::class)
-//object FragmentModule {
-//
-//}

@@ -3,35 +3,49 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
     app:startDestination="@id/splashFragment">
-
-    <fragment
-        android:id="@+id/settingsFragment"
-        android:name="de.bitb.pantryplaner.ui.settings.SettingsFragment"
-        android:label="settings">
-        <action
-            android:id="@+id/settings_to_releasenotes"
-            app:destination="@id/releaseNotesFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/releaseNotesFragment"
-        android:name="de.bitb.pantryplaner.ui.ReleaseNotesFragment"
-        android:label="releaseNotes" />
-
     <fragment
         android:id="@+id/splashFragment"
         android:name="de.bitb.pantryplaner.ui.intro.SplashFragment"
         android:label="splash">
+
+        <action
+            android:id="@+id/splash_to_login"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
+
         <action
             android:id="@+id/splash_to_overview"
             app:destination="@id/overviewFragment"
             app:popUpTo="@+id/nav_graph"
             app:popUpToInclusive="true" />
+
         <action
             android:id="@+id/overview_to_refresh"
             app:destination="@id/refreshFragment"
             app:popUpTo="@+id/overviewFragment"
             app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="de.bitb.pantryplaner.ui.intro.LoginFragment"
+        android:label="login">
+        <action
+            android:id="@+id/login_to_register"
+            app:destination="@id/registerFragment" />
+        <action
+            android:id="@+id/login_to_overview"
+            app:destination="@id/overviewFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="de.bitb.pantryplaner.ui.intro.RegisterFragment"
+        android:label="register">
+        <action
+            android:id="@+id/register_to_overview"
+            app:destination="@id/overviewFragment" />
     </fragment>
 
     <fragment
@@ -70,4 +84,18 @@
         android:id="@+id/refreshFragment"
         android:name="de.bitb.pantryplaner.ui.refresh.RefreshFragment"
         android:label="refresh" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="de.bitb.pantryplaner.ui.settings.SettingsFragment"
+        android:label="settings">
+        <action
+            android:id="@+id/settings_to_releasenotes"
+            app:destination="@id/releaseNotesFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/releaseNotesFragment"
+        android:name="de.bitb.pantryplaner.ui.ReleaseNotesFragment"
+        android:label="releaseNotes" />
 </navigation>
