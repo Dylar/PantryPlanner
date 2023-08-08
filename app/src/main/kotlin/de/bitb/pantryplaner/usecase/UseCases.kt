@@ -3,6 +3,9 @@ package de.bitb.pantryplaner.usecase
 import de.bitb.pantryplaner.usecase.alert.RefreshAlertUC
 import de.bitb.pantryplaner.usecase.checklist.*
 import de.bitb.pantryplaner.usecase.item.*
+import de.bitb.pantryplaner.usecase.user.LoginUC
+import de.bitb.pantryplaner.usecase.user.LogoutUC
+import de.bitb.pantryplaner.usecase.user.RegisterUC
 
 data class AlertUseCases(
     val refreshAlertUC: RefreshAlertUC,
@@ -10,6 +13,9 @@ data class AlertUseCases(
 
 data class UserUseCases(
     val loadDataUC: LoadDataUC,
+    val loginUC: LoginUC,
+    val logoutUC: LogoutUC,
+    val registerUC: RegisterUC,
 )
 
 data class ItemUseCases(

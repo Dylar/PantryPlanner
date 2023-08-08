@@ -28,6 +28,27 @@ sealed class TestTags {
         object InfoButton : SettingsPage()
     }
 
+    sealed class LoginPage : TestTags() {
+        object AppBar : LoginPage()
+        object InfoButton : LoginPage()
+        object EmailLabel : LoginPage()
+        object PWLabel : LoginPage()
+        object RegisterButton : LoginPage()
+        object LoginButton : LoginPage()
+        object ErrorLabel : LoginPage()
+    }
+
+    sealed class RegisterPage : TestTags() {
+        object AppBar : RegisterPage()
+        object EmailLabel : RegisterPage()
+        object FirstNameLabel : RegisterPage()
+        object LastNameLabel : RegisterPage()
+        object PW1Label : RegisterPage()
+        object PW2Label : RegisterPage()
+        object RegisterButton : RegisterPage()
+        object ErrorLabel : RegisterPage()
+    }
+
     sealed class OverviewPage : TestTags() {
         object AppBar : OverviewPage()
         object SettingsButton : OverviewPage()

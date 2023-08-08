@@ -32,6 +32,9 @@
         android:name="de.bitb.pantryplaner.ui.intro.LoginFragment"
         android:label="login">
         <action
+            android:id="@+id/login_to_releasenotes"
+            app:destination="@id/releaseNotesFragment" />
+        <action
             android:id="@+id/login_to_register"
             app:destination="@id/registerFragment" />
         <action

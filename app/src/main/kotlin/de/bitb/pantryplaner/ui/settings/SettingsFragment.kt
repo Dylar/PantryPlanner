@@ -20,7 +20,7 @@ import de.bitb.pantryplaner.ui.base.TestTags
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
 import de.bitb.pantryplaner.ui.base.comps.asResString
-import de.bitb.pantryplaner.ui.base.naviToReleaseNotes
+import de.bitb.pantryplaner.ui.base.naviSettingsToReleaseNotes
 import de.bitb.pantryplaner.ui.dialogs.InfoDialog
 
 data class PreferenceItem(val title: String, val subtitle: String)
@@ -43,7 +43,9 @@ class SettingsFragment : BaseFragment<SettingsViewModel>() {
     private fun buildAppBar() {
         val showInfoDialog = remember { mutableStateOf(false) }
         if (showInfoDialog.value) {
-            InfoDialog(naviToReleaseNotes = ::naviToReleaseNotes) { showInfoDialog.value = false }
+            InfoDialog(naviToReleaseNotes = ::naviSettingsToReleaseNotes) {
+                showInfoDialog.value = false
+            }
         }
 
         TopAppBar(

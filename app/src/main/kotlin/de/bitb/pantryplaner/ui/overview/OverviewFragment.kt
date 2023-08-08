@@ -28,7 +28,6 @@ import de.bitb.pantryplaner.ui.base.*
 import de.bitb.pantryplaner.ui.base.comps.*
 import de.bitb.pantryplaner.ui.dialogs.AddChecklistDialog
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
-import de.bitb.pantryplaner.ui.dialogs.InfoDialog
 
 @AndroidEntryPoint
 class OverviewFragment : BaseFragment<OverviewViewModel>() {
@@ -62,11 +61,6 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
 
     @Composable
     private fun buildAppBar() {
-        val showInfoDialog = remember { mutableStateOf(false) }
-        if (showInfoDialog.value) {
-            InfoDialog(naviToReleaseNotes = ::naviToReleaseNotes) { showInfoDialog.value = false }
-        }
-
         TopAppBar(
             modifier = Modifier.testTag(TestTags.OverviewPage.AppBar.name),
             title = { Text(getString(R.string.overview_title)) },

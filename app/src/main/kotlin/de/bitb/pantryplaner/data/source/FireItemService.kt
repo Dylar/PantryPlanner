@@ -1,6 +1,5 @@
 package de.bitb.pantryplaner.data.source
 
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.snapshots
 import de.bitb.pantryplaner.BuildConfig

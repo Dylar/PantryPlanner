@@ -18,7 +18,7 @@ class UserRepositoryImpl constructor(
     private val remoteDB: RemoteService,
 ) : UserRepository {
     override suspend fun isUserLoggedIn(): Resource<Boolean> {
-        return remoteDB.isUserLoggedIn();
+        return remoteDB.isUserLoggedIn()
     }
 
     override suspend fun registerUser(email: String, pw: String): Resource<Unit> {

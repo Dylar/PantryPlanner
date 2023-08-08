@@ -7,9 +7,6 @@
     <string name="cancel">Abbrechen</string>
     <string name="loading_text">Loading…</string>
 
-    <string name="not_logged_in">Nicht eingeloggt</string>
-    <string name="data_loaded">Daten geladen</string>
-
     <string name="settings_title">Einstellungen</string>
 
     <string name="overview_title">Übersicht</string>

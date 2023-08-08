@@ -17,6 +17,9 @@ import de.bitb.pantryplaner.usecase.UserUseCases
 import de.bitb.pantryplaner.usecase.alert.RefreshAlertUC
 import de.bitb.pantryplaner.usecase.checklist.*
 import de.bitb.pantryplaner.usecase.item.*
+import de.bitb.pantryplaner.usecase.user.LoginUC
+import de.bitb.pantryplaner.usecase.user.LogoutUC
+import de.bitb.pantryplaner.usecase.user.RegisterUC
 import javax.inject.Singleton
 
 @Module
@@ -71,6 +74,9 @@ object AppModule {
     ): UserUseCases {
         return UserUseCases(
             loadDataUC = LoadDataUC(userRepo),
+            loginUC = LoginUC(userRepo),
+            logoutUC = LogoutUC(userRepo),
+            registerUC = RegisterUC(userRepo),
         )
     }
 
