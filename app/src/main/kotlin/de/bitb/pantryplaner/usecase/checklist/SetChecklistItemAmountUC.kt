@@ -29,17 +29,14 @@ class SetChecklistItemAmountUC(
                 val amountDouble = amount.replace(",", ".").toDouble()
 
                 val getResp = checkRepo.getCheckList(checkId).first()
-                if (getResp is Resource.Error) {
-                    return@tryIt getResp.castTo(false)
-                }
+                if (getResp is Resource.Error) return@tryIt getResp.castTo(false)
 
                 val checklist = getResp.data!!
                 val item = checklist.items.first { it.uuid == itemId }
                 item.amount = amountDouble
                 val saveResp = checkRepo.saveChecklist(checklist)
-                if (saveResp is Resource.Error) {
-                    return@tryIt saveResp.castTo(false)
-                }
+                if (saveResp is Resource.Error) return@tryIt saveResp.castTo(false)
+
                 Resource.Success(true)
             },
         )

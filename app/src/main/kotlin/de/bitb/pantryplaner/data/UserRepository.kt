@@ -22,27 +22,35 @@ class UserRepositoryImpl constructor(
     }
 
     override suspend fun registerUser(email: String, pw: String): Resource<Unit> {
-        TODO("Not yet implemented")
+        return tryIt { remoteDB.registerUser(email, pw) }
     }
 
     override suspend fun loginUser(email: String, pw: String): Resource<User> {
         return tryIt {
-            val resp = remoteDB.loginUser()
+            val resp = remoteDB.loginUser(email, pw)
             if (resp is Resource.Error) resp.castTo()
             else Resource.Success()
         }
     }
 
     override suspend fun logoutUser(): Resource<Unit> {
-        TODO("Not yet implemented")
+        return tryIt { remoteDB.logoutUser() }
     }
 
     override suspend fun getUser(uuid: String): Resource<User> {
-        TODO("Not yet implemented")
+        return tryIt {
+            val resp = remoteDB.getUser(uuid)
+            if (resp is Resource.Error) resp.castTo()
+            else Resource.Success()
+        }
     }
 
     override suspend fun saveUser(user: User): Resource<User> {
-        TODO("Not yet implemented")
+        return tryIt {
+            val resp = remoteDB.saveUser(user)
+            if (resp is Resource.Error) resp.castTo()
+            else Resource.Success(user)
+        }
     }
 
 }

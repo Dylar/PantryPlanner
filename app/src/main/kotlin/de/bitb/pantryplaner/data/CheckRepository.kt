@@ -33,10 +33,8 @@ class CheckRepositoryImpl(
 
     override fun getCheckList(uuid: String): Flow<Resource<Checklist>> {
         return getCheckLists(listOf(uuid)).map {
-            if (it is Resource.Error) {
-                return@map it.castTo<Checklist>()
-            }
-            Resource.Success(it.data!!.first())
+            if (it is Resource.Error) it.castTo<Checklist>()
+            else Resource.Success(it.data!!.first())
         }
     }
 

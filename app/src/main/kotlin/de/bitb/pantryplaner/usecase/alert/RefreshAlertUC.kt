@@ -17,9 +17,7 @@ class RefreshAlertUC(
             onTry = {
                 //TODO load settings to disable
                 val resp = checkRepo.getCheckLists().first()
-                if (resp is Resource.Error) {
-                    return@tryIt resp.castTo(false)
-                }
+                if (resp is Resource.Error) return@tryIt resp.castTo(false)
 
                 val allLists = resp.data!!
                 val unfinishedItems = allLists
@@ -35,9 +33,7 @@ class RefreshAlertUC(
                     .map { check ->
                         val ids = check.items.map { it.uuid }
                         val itemResp = itemRepo.getAllItems(ids)
-                        if (itemResp is Resource.Error) {
-                            return@tryIt itemResp.castTo(false)
-                        }
+                        if (itemResp is Resource.Error) return@tryIt itemResp.castTo(false)
 
                         val finishDay = check.finishDate.toLocalDate()
                         itemResp.data!!

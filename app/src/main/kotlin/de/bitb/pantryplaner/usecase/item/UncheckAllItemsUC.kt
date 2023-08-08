@@ -13,9 +13,7 @@ class UncheckAllItemsUC(
     suspend operator fun invoke(color: Color): Resource<Unit> {
         return tryIt {
             val getItemsResp = itemRepo.getItems().first()
-            if (getItemsResp is Resource.Error) {
-                return@tryIt getItemsResp.castTo()
-            }
+            if (getItemsResp is Resource.Error) return@tryIt getItemsResp.castTo()
 
             val itemsMap = getItemsResp.data ?: mapOf()
             if (itemsMap.isEmpty()) {

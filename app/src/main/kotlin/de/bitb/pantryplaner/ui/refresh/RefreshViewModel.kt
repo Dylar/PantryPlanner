@@ -31,9 +31,7 @@ class RefreshViewModel @Inject constructor(
         .flatMapLatest { _ -> // just to update when amount changed
             checkRepo.getCheckLists()
                 .mapLatest { resp ->
-                    if (resp is Resource.Error) {
-                        return@mapLatest resp.castTo(emptyMap())
-                    }
+                    if (resp is Resource.Error) return@mapLatest resp.castTo(emptyMap())
 
                     val allLists = resp.data!!
                     val unfinishedItems = allLists
@@ -48,9 +46,9 @@ class RefreshViewModel @Inject constructor(
                         .map { check ->
                             val ids = check.items.map { it.uuid }
                             val itemResp = itemRepo.getAllItems(ids)
-                            if (itemResp is Resource.Error) {
-                                return@mapLatest itemResp.castTo(emptyMap())
-                            }
+                            if (itemResp is Resource.Error) return@mapLatest itemResp.castTo(
+                                emptyMap()
+                            )
 
                             val finishDay = check.finishDate.toLocalDate()
                             formatDateString(finishDay) to itemResp.data!!
@@ -72,9 +70,7 @@ class RefreshViewModel @Inject constructor(
     fun clearItemAmount(itemId: String) {
         viewModelScope.launch {
             val resp = itemUseCases.editItemUC(itemId, "0")
-            if (resp is Resource.Error) {
-                showSnackbar(resp.message!!)
-            }
+            if (resp is Resource.Error) showSnackbar(resp.message!!)
         }
     }
 

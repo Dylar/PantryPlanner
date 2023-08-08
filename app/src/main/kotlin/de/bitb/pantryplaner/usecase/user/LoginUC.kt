@@ -2,7 +2,6 @@ package de.bitb.pantryplaner.usecase.user
 
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Resource
-import de.bitb.pantryplaner.data.SettingsRepository
 import de.bitb.pantryplaner.data.UserRepository
 import de.bitb.pantryplaner.ui.base.comps.ResString
 import de.bitb.pantryplaner.ui.base.comps.asResString
@@ -40,9 +39,7 @@ class LoginUC(
         }
 
         val loginUserResp = userRepo.loginUser(email, pw)
-        if (loginUserResp is Resource.Error) {
-            return loginUserResp.asError()
-        }
+        if (loginUserResp is Resource.Error) return loginUserResp.asError()
 
         if (!loginUserResp.hasData) {
             return LoginResponse.UserNotFound.asError

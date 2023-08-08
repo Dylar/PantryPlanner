@@ -4,6 +4,7 @@ import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.data.model.Settings
+import de.bitb.pantryplaner.data.model.User
 import kotlinx.coroutines.flow.Flow
 
 // REMOTE
@@ -27,8 +28,12 @@ interface SettingsRemoteDao {
 }
 
 interface UserRemoteDao {
-    suspend fun loginUser(): Resource<Boolean>
     suspend fun isUserLoggedIn(): Resource<Boolean>
+    suspend fun registerUser(email: String, pw: String): Resource<Unit>
+    suspend fun loginUser(email: String, pw: String): Resource<Boolean>
+    suspend fun logoutUser(): Resource<Unit>
+    suspend fun getUser(uuid: String): Resource<User?>
+    suspend fun saveUser(user: User): Resource<Unit>
 }
 
 interface ItemRemoteDao {

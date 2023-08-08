@@ -18,9 +18,7 @@ class EditCategoryUC(
     ): Resource<Unit> {
         return tryIt {
             val itemsResp = itemRepo.getItems().first()
-            if (itemsResp is Resource.Error) {
-                return@tryIt itemsResp.castTo()
-            }
+            if (itemsResp is Resource.Error) return@tryIt itemsResp.castTo()
 
             val itemsMap = (itemsResp.data ?: mapOf())
             val itemsToEdit = itemsMap[previousCategory]?.map {

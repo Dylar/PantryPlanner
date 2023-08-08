@@ -15,9 +15,7 @@ class FinishChecklistUC(
     suspend operator fun invoke(checkId: String): Resource<Unit> {
         return tryIt {
             val getResp = checkRepo.getCheckLists(listOf(checkId)).first()
-            if (getResp is Resource.Error) {
-                return@tryIt getResp.castTo()
-            }
+            if (getResp is Resource.Error) return@tryIt getResp.castTo()
 
             val checklist = getResp.data!!.first()
             if (checklist.items.isEmpty()) {
@@ -26,15 +24,12 @@ class FinishChecklistUC(
 
             val saveChecklist = checklist.copy(finishedAt = formatDateNow())
             val saveResp = checkRepo.saveChecklist(saveChecklist)
-            if (saveResp is Resource.Error) {
-                return@tryIt saveResp.castTo()
-            }
+            if (saveResp is Resource.Error) return@tryIt saveResp.castTo()
 
             val itemsIds = checklist.items.map { it.uuid }
             val itemResp = itemRepo.getAllItems(itemsIds)
-            if (itemResp is Resource.Error) {
-                return@tryIt itemResp.castTo()
-            }
+            if (itemResp is Resource.Error) return@tryIt itemResp.castTo()
+
             val items = itemResp.data!!
             items.forEach { item ->
                 if (itemsIds.contains(item.uuid)) {
@@ -43,9 +38,7 @@ class FinishChecklistUC(
                 }
             }
             val saveItems = itemRepo.saveItems(items)
-            if (saveItems is Resource.Error) {
-                return@tryIt saveItems.castTo()
-            }
+            if (saveItems is Resource.Error) return@tryIt saveItems.castTo()
 
             Resource.Success()
         }

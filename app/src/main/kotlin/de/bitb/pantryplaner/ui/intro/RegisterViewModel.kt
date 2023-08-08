@@ -30,11 +30,8 @@ class RegisterViewModel @Inject constructor(
         error = null
         viewModelScope.launch {
             val result = userUseCases.registerUC(firstName, lastName, email, pw1, pw2)
-            if (result is Resource.Error) {
-                error = result.data
-            } else {
-                navigate(R.id.register_to_overview)
-            }
+            if (result is Resource.Error) error = result.data
+            else navigate(R.id.register_to_overview)
         }
     }
 }

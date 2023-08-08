@@ -19,9 +19,7 @@ class LoadDataUC(
     suspend operator fun invoke(): Resource<DataLoadResponse> {
         return tryIt {
             val resp = userRepo.isUserLoggedIn()
-            if (resp is Resource.Error) {
-                return@tryIt resp.castTo()
-            }
+            if (resp is Resource.Error) return@tryIt resp.castTo()
 
             Resource.Success(
                 if (resp.data == true) DataLoadResponse.DataLoaded
