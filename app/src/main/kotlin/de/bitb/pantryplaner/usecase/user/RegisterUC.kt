@@ -49,9 +49,6 @@ class RegisterUC(
             return isValid.asError
         }
 
-        val registerResp = userRepo.registerUser(email, pw1)
-        if (registerResp is Resource.Error) return RegisterResponse.ErrorThrown(registerResp).asError
-
         val user = User(
             firstName = firstName,
             lastName = lastName,
@@ -59,8 +56,8 @@ class RegisterUC(
             uuid = UUID.randomUUID().toString(),
         )
 
-        val saveUserResp = userRepo.saveUser(user)
-        if (saveUserResp is Resource.Error) return RegisterResponse.ErrorThrown(saveUserResp).asError
+        val registerResp = userRepo.registerUser(user, pw1)
+        if (registerResp is Resource.Error) return RegisterResponse.ErrorThrown(registerResp).asError
 
         return Resource.Success(RegisterResponse.Registered)
     }

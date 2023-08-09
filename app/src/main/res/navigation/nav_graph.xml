@@ -95,6 +95,12 @@
         <action
             android:id="@+id/settings_to_releasenotes"
             app:destination="@id/releaseNotesFragment" />
+
+        <action
+            android:id="@+id/settings_to_login"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment

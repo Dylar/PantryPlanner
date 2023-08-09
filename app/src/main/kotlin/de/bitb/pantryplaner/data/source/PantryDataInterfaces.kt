@@ -6,6 +6,7 @@ import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.data.model.Settings
 import de.bitb.pantryplaner.data.model.User
 import kotlinx.coroutines.flow.Flow
+import retrofit2.Response
 
 // REMOTE
 interface RemoteService : UserRemoteDao, ItemRemoteDao, CheckRemoteDao, SettingsRemoteDao
@@ -33,6 +34,7 @@ interface UserRemoteDao {
     suspend fun loginUser(email: String, pw: String): Resource<Boolean>
     suspend fun logoutUser(): Resource<Unit>
     suspend fun getUser(uuid: String): Resource<User?>
+    suspend fun getUserByEmail(email: String): Resource<User>
     suspend fun saveUser(user: User): Resource<Unit>
 }
 

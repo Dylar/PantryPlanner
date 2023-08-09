@@ -7,7 +7,7 @@ import de.bitb.pantryplaner.data.source.RemoteService
 
 interface UserRepository {
     suspend fun isUserLoggedIn(): Resource<Boolean>
-    suspend fun registerUser(email: String, pw: String): Resource<Unit>
+    suspend fun registerUser(user: User, pw: String): Resource<Unit>
     suspend fun loginUser(email: String, pw: String): Resource<User>
     suspend fun logoutUser(): Resource<Unit>
     suspend fun getUser(uuid: String): Resource<User>
@@ -21,15 +21,19 @@ class UserRepositoryImpl constructor(
         return remoteDB.isUserLoggedIn()
     }
 
-    override suspend fun registerUser(email: String, pw: String): Resource<Unit> {
-        return tryIt { remoteDB.registerUser(email, pw) }
+    override suspend fun registerUser(user: User, pw: String): Resource<Unit> {
+        return tryIt {
+            val resp = remoteDB.registerUser(user.email, pw)
+            if (resp is Resource.Error) return@tryIt resp.castTo()
+            else remoteDB.saveUser(user)
+        }
     }
 
     override suspend fun loginUser(email: String, pw: String): Resource<User> {
         return tryIt {
             val resp = remoteDB.loginUser(email, pw)
             if (resp is Resource.Error) resp.castTo()
-            else Resource.Success()
+            else remoteDB.getUserByEmail(email)
         }
     }
 

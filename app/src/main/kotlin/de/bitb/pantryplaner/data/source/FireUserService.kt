@@ -27,11 +27,13 @@ class FireUserService(
         }
     }
 
-    override suspend fun registerUser(email: String, pw: String): Resource<Unit> =
-        tryIt {
+    override suspend fun registerUser(email: String, pw: String): Resource<Unit> {
+        return tryIt {
             val authResult = fireAuth.createUserWithEmailAndPassword(email, pw).await()
-            if (authResult.user != null) Resource.Success() else "Not registered".asResourceError()
+            if (authResult.user != null) Resource.Success()
+            else "Not registered".asResourceError()
         }
+    }
 
     override suspend fun loginUser(email: String, pw: String): Resource<Boolean> {
         return tryIt {
@@ -51,6 +53,15 @@ class FireUserService(
         return tryIt {
             val snap = collection
                 .whereEqualTo("uuid", uuid)
+                .get().await()
+            Resource.Success(snap.toObjects(User::class.java).firstOrNull())
+        }
+    }
+
+    override suspend fun getUserByEmail(email: String): Resource<User> {
+        return tryIt {
+            val snap = collection
+                .whereEqualTo("email", email)
                 .get().await()
             Resource.Success(snap.toObjects(User::class.java).firstOrNull())
         }
