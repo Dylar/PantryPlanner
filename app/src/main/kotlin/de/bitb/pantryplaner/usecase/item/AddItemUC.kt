@@ -5,10 +5,12 @@ import de.bitb.pantryplaner.core.misc.asResourceError
 import de.bitb.pantryplaner.core.misc.capitalizeFirstCharacter
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.ItemRepository
+import de.bitb.pantryplaner.data.UserRepository
 import de.bitb.pantryplaner.data.model.Item
 
 class AddItemUC(
     private val itemRepo: ItemRepository,
+    private val userRepo: UserRepository,
 ) {
     suspend operator fun invoke(name: String, category: String): Resource<Boolean> {
         return tryIt(
@@ -17,7 +19,15 @@ class AddItemUC(
                 if (name.isBlank()) {
                     return@tryIt "Name darf nicht leer sein".asResourceError()
                 }
-                val item = Item(name = name.capitalizeFirstCharacter(), category = category)
+
+                val user = userRepo.getUser()
+                if (user is Resource.Error) return@tryIt user.castTo(false)
+
+                val item = Item(
+                    name = name.capitalizeFirstCharacter(),
+                    category = category,
+                    creator = user.data!!.uuid,
+                )
                 itemRepo.addItem(item)
             },
         )

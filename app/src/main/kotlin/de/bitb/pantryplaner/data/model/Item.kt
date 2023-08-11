@@ -19,6 +19,8 @@ data class Item(
     var updatedAt: String = "",
     var freshUntil: Long = 0,
     var remindAfter: Long = 0,
+    val creator: String = "",
+    val sharedWith: List<String> = listOf(),
 ) {
     @get:Exclude
     val color: Color

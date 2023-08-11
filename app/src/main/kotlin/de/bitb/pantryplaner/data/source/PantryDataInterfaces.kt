@@ -6,7 +6,11 @@ import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.data.model.Settings
 import de.bitb.pantryplaner.data.model.User
 import kotlinx.coroutines.flow.Flow
-import retrofit2.Response
+
+interface LocalDatabase {
+    fun setUser(uuid: String)
+    fun getUser(): String
+}
 
 // REMOTE
 interface RemoteService : UserRemoteDao, ItemRemoteDao, CheckRemoteDao, SettingsRemoteDao
@@ -33,21 +37,21 @@ interface UserRemoteDao {
     suspend fun registerUser(email: String, pw: String): Resource<Unit>
     suspend fun loginUser(email: String, pw: String): Resource<Boolean>
     suspend fun logoutUser(): Resource<Unit>
-    suspend fun getUser(uuid: String): Resource<User?>
+    suspend fun getUser(uuid: String): Flow<Resource<User>>
     suspend fun getUserByEmail(email: String): Resource<User>
     suspend fun saveUser(user: User): Resource<Unit>
 }
 
 interface ItemRemoteDao {
-    fun getItems(ids: List<String>?): Flow<Resource<List<Item>>>
+    fun getItems(userId: String, ids: List<String>?): Flow<Resource<List<Item>>>
     suspend fun addItem(item: Item): Resource<Boolean>
-    suspend fun removeItem(item: Item): Resource<Boolean>
-    suspend fun saveItems(items: List<Item>): Resource<Unit>
+    suspend fun removeItem(userId: String, item: Item): Resource<Boolean>
+    suspend fun saveItems(userId: String, items: List<Item>): Resource<Unit>
 }
 
 interface CheckRemoteDao {
-    fun getCheckLists(ids: List<String>?): Flow<Resource<List<Checklist>>>
+    fun getCheckLists(userId: String, ids: List<String>?): Flow<Resource<List<Checklist>>>
     suspend fun addChecklist(check: Checklist): Resource<Boolean>
-    suspend fun removeChecklist(check: Checklist): Resource<Boolean>
-    suspend fun saveChecklist(check: Checklist): Resource<Unit>
+    suspend fun removeChecklist(userId: String, check: Checklist): Resource<Boolean>
+    suspend fun saveChecklist(userId: String, check: Checklist): Resource<Unit>
 }

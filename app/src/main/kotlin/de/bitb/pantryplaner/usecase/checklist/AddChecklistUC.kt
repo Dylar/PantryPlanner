@@ -5,11 +5,13 @@ import de.bitb.pantryplaner.core.misc.asResourceError
 import de.bitb.pantryplaner.core.misc.capitalizeFirstCharacter
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.CheckRepository
+import de.bitb.pantryplaner.data.UserRepository
 import de.bitb.pantryplaner.data.model.CheckItem
 import de.bitb.pantryplaner.data.model.Checklist
 
 class AddChecklistUC(
     private val checkRepo: CheckRepository,
+    private val userRepo: UserRepository,
 ) {
     suspend operator fun invoke(
         name: String,
@@ -21,8 +23,16 @@ class AddChecklistUC(
                 if (name.isBlank()) {
                     return@tryIt "Name darf nicht leer sein".asResourceError()
                 }
+
+                val user = userRepo.getUser()
+                if (user is Resource.Error) return@tryIt user.castTo(false)
+
                 val checkItems = items.map { CheckItem(it) }.toMutableList()
-                val check = Checklist(name = name.capitalizeFirstCharacter(), items = checkItems)
+                val check = Checklist(
+                    name = name.capitalizeFirstCharacter(),
+                    items = checkItems,
+                    creator = user.data!!.uuid,
+                )
                 checkRepo.addChecklist(check)
             },
         )

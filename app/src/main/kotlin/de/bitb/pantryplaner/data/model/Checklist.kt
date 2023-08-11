@@ -14,6 +14,8 @@ data class Checklist(
     val finishedAt: String = "",
     val createdAt: String = "",
     val updatedAt: String = "",
+    val creator: String = "",
+    val sharedWith: List<String> = listOf(),
 ) {
     @get:Exclude
     val progress: String

@@ -1,6 +1,7 @@
 package de.bitb.pantryplaner.core
 
 import android.app.Application
+import android.content.Context
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -22,11 +23,20 @@ import de.bitb.pantryplaner.usecase.user.LogoutUC
 import de.bitb.pantryplaner.usecase.user.RegisterUC
 import javax.inject.Singleton
 
+const val PREF_NAME = "buddy_pref"
+
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
     // DATABASE
+    @Provides
+    @Singleton
+    fun provideLocalDatabase(app: Application): LocalDatabase {
+        val pref = app.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        return PreferenceDatabase(pref) // TODO make real DB
+    }
+
     @Provides
     @Singleton
     fun provideRemoteDatabase(app: Application): RemoteService {
@@ -52,19 +62,22 @@ object AppModule {
     @Singleton
     fun provideUserRepository(
         remoteService: RemoteService,
-    ): UserRepository = UserRepositoryImpl(remoteService)
+        localDatabase: LocalDatabase,
+    ): UserRepository = UserRepositoryImpl(remoteService, localDatabase)
 
     @Provides
     @Singleton
     fun provideItemRepository(
         remoteService: RemoteService,
-    ): ItemRepository = ItemRepositoryImpl(remoteService)
+        localDatabase: LocalDatabase,
+    ): ItemRepository = ItemRepositoryImpl(remoteService, localDatabase)
 
     @Provides
     @Singleton
     fun provideCheckRepository(
         remoteService: RemoteService,
-    ): CheckRepository = CheckRepositoryImpl(remoteService)
+        localDatabase: LocalDatabase,
+    ): CheckRepository = CheckRepositoryImpl(remoteService, localDatabase)
 
     //USE CASES
     @Provides
@@ -94,10 +107,11 @@ object AppModule {
     @Provides
     @Singleton
     fun provideItemUseCases(
+        userRepo: UserRepository,
         itemRepo: ItemRepository,
     ): ItemUseCases {
         return ItemUseCases(
-            addItemUC = AddItemUC(itemRepo),
+            addItemUC = AddItemUC(itemRepo, userRepo),
             removeItemUC = RemoveItemUC(itemRepo),
             editItemUC = EditItemUC(itemRepo),
             editCategoryUC = EditCategoryUC(itemRepo),
@@ -108,11 +122,12 @@ object AppModule {
     @Provides
     @Singleton
     fun provideCheckListUseCases(
+        userRepo: UserRepository,
         checkRepo: CheckRepository,
         itemRepo: ItemRepository,
     ): ChecklistUseCases {
         return ChecklistUseCases(
-            addChecklistUC = AddChecklistUC(checkRepo),
+            addChecklistUC = AddChecklistUC(checkRepo, userRepo),
             removeChecklistUC = RemoveChecklistUC(checkRepo),
             addItemsToChecklistUC = AddItemsToChecklistUC(checkRepo),
             removeItemsFromChecklistUC = RemoveItemsFromChecklistUC(checkRepo),
