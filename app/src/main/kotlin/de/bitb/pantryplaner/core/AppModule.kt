@@ -21,6 +21,7 @@ import de.bitb.pantryplaner.usecase.item.*
 import de.bitb.pantryplaner.usecase.user.LoginUC
 import de.bitb.pantryplaner.usecase.user.LogoutUC
 import de.bitb.pantryplaner.usecase.user.RegisterUC
+import de.bitb.pantryplaner.usecase.user.ScanUserUC
 import javax.inject.Singleton
 
 const val PREF_NAME = "buddy_pref"
@@ -90,6 +91,7 @@ object AppModule {
             loginUC = LoginUC(userRepo),
             logoutUC = LogoutUC(userRepo),
             registerUC = RegisterUC(userRepo),
+            scanUserUC = ScanUserUC(userRepo)
         )
     }
 

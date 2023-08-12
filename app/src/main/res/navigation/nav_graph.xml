@@ -95,7 +95,15 @@
         <action
             android:id="@+id/profile_to_settings"
             app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/profile_to_scan"
+            app:destination="@id/scanFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/scanFragment"
+        android:name="de.bitb.pantryplaner.ui.profile.ScanFragment"
+        android:label="scan" />
 
     <fragment
         android:id="@+id/settingsFragment"

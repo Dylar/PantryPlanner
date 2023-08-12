@@ -7,6 +7,7 @@ import androidmads.library.qrgenearator.QRGEncoder
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,6 +26,7 @@ import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.TestTags
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
+import de.bitb.pantryplaner.ui.base.naviToScan
 import de.bitb.pantryplaner.ui.base.naviToSettings
 
 @AndroidEntryPoint
@@ -38,6 +40,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
         Scaffold(
             scaffoldState = scaffoldState,
             topBar = { buildAppBar() },
+            floatingActionButton = { buildFab() },
             content = {
                 when {
                     user != null -> UserDetails(it, user!!)
@@ -45,6 +48,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
                 }
             },
         )
+
     }
 
     @Composable
@@ -64,6 +68,14 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
                 }
             },
         )
+    }
+
+    @Composable
+    private fun buildFab() {
+        FloatingActionButton(
+            modifier = Modifier.testTag(TestTags.ProfilePage.ScanButton.name),
+            onClick = ::naviToScan // TODO add via (email)dialog
+        ) { Icon(Icons.Filled.QrCodeScanner, contentDescription = "Scan Buddy") }
     }
 
     @Composable

@@ -24,6 +24,10 @@ fun Fragment.naviToProfile() {
     NavHostFragment.findNavController(this).navigate(R.id.overview_to_profile)
 }
 
+fun Fragment.naviToScan() {
+    NavHostFragment.findNavController(this).navigate(R.id.profile_to_scan)
+}
+
 fun Fragment.naviSettingsToReleaseNotes() {
     NavHostFragment.findNavController(this).navigate(R.id.settings_to_releasenotes)
 }

@@ -38,7 +38,7 @@ class LoginFragment : BaseFragment<LoginViewModel>() {
         Scaffold(
             scaffoldState = scaffoldState,
             topBar = { buildAppBar() },
-            floatingActionButton = { buildFAB() }
+            floatingActionButton = { buildFab() }
         ) { innerPadding -> buildContent(innerPadding) }
     }
 
@@ -61,7 +61,7 @@ class LoginFragment : BaseFragment<LoginViewModel>() {
     }
 
     @Composable
-    private fun buildFAB() {
+    private fun buildFab() {
         FloatingActionButton(
             modifier = Modifier
                 .padding(all = 32.dp)

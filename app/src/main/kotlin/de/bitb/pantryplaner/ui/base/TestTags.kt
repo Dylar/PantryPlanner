@@ -28,6 +28,12 @@ sealed class TestTags {
         object SettingsButton : ProfilePage()
         object QRInfo : ProfilePage()
         object QRLabel : ProfilePage()
+        object ScanButton : ProfilePage()
+    }
+
+    sealed class ScanPage : TestTags() {
+        object AppBar : ScanPage()
+        object ScanLabel : ScanPage()
     }
 
     sealed class SettingsPage : TestTags() {

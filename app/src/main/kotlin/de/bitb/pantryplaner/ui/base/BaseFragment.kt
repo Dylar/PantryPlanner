@@ -27,11 +27,8 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.navigate = { navController.navigate(it) }
-        viewModel.navigateBack = { id ->
-            navController.apply {
-                id?.let { popBackStack(id, false) } ?: popBackStack()
-            }
-        }
+        viewModel.navigateBack = { navController.popBackStack() }
+        viewModel.navigateBackTo = { id -> navController.popBackStack(id, false) }
         viewModel.showSnackbar = ::showSnackBar
         viewModel.updateWidgets = ::updateWidgets
     }
@@ -39,7 +36,7 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View = ComposeView(requireContext()).apply {
         setContent {
             scaffoldState = rememberScaffoldState()

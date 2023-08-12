@@ -108,7 +108,7 @@ class ChecklistViewModel @Inject constructor(
                 is Resource.Error -> showSnackbar(resp.message!!)
                 else -> {
                     showSnackbar("Erledigt".asResString())
-                    navigateBack(null)
+                    navigateBack()
                 }
             }
         }

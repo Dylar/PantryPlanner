@@ -89,7 +89,7 @@ class RefreshViewModel @Inject constructor(
             when (val resp =
                 checkUseCases.addChecklistUC(name, checkedItems.value)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
-                else -> navigateBack(null)
+                else -> navigateBack()
             }
         }
     }

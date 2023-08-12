@@ -35,7 +35,7 @@ class RegisterFragment : BaseFragment<RegisterViewModel>() {
         Scaffold(
             scaffoldState = scaffoldState,
             topBar = { buildAppbar() },
-            floatingActionButton = { buildFAB() }
+            floatingActionButton = { buildFab() }
         ) { innerPadding -> buildContent(innerPadding) }
     }
 
@@ -47,7 +47,7 @@ class RegisterFragment : BaseFragment<RegisterViewModel>() {
     }
 
     @Composable
-    private fun buildFAB() {
+    private fun buildFab() {
         FloatingActionButton(
             modifier = Modifier
                 .padding(all = 32.dp)
