@@ -4,14 +4,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.GridOff
-import androidx.compose.material.icons.filled.GridOn
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ShoppingCartCheckout
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.FormatListBulleted
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -66,12 +64,12 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
             title = { Text(getString(R.string.overview_title)) },
             actions = {
                 IconButton(
-                    onClick = ::naviToSettings,
-                    modifier = Modifier.testTag(TestTags.OverviewPage.SettingsButton.name)
+                    onClick = ::naviToProfile,
+                    modifier = Modifier.testTag(TestTags.OverviewPage.ProfileButton.name)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Settings,
-                        contentDescription = "Settings button"
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "profile button"
                     )
                 }
                 IconButton(
@@ -126,7 +124,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
 
     @Composable
     private fun buildContent(innerPadding: PaddingValues) {
-        val checklists by viewModel.checkList.collectAsState(null)
+        val checklists by viewModel.checkList.observeAsState(null)
         when {
             checklists is Resource.Error -> {
                 showSnackBar("ERROR".asResString())

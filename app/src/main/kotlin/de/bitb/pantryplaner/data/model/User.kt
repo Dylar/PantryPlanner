@@ -5,6 +5,7 @@ data class User(
     val email: String = "",
     val firstName: String = "",
     val lastName: String = "",
+    val connectedUser: MutableList<String> = mutableListOf(),
 ) {
     val fullName: String
         get() = "$firstName $lastName"

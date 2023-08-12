@@ -30,7 +30,7 @@ class ItemsViewModel @Inject constructor(
     val isSearching = _isSearching.asStateFlow()
 
     var fromChecklistId: String? = null
-    val filterBy = MutableStateFlow(Filter())
+    val filterBy = MutableStateFlow(Filter()) // TODO everything to liveData
     val itemList: Flow<Resource<Map<String, List<Item>>>> = filterBy
         .debounce { if (_isSearching.value) 1000L else 0L }
         .flatMapLatest { itemRepo.getItems(filterBy = it) }

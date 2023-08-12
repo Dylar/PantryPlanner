@@ -17,7 +17,11 @@ fun Activity.openAppSettings() {
 }
 
 fun Fragment.naviToSettings() {
-    NavHostFragment.findNavController(this).navigate(R.id.overview_to_settings)
+    NavHostFragment.findNavController(this).navigate(R.id.profile_to_settings)
+}
+
+fun Fragment.naviToProfile() {
+    NavHostFragment.findNavController(this).navigate(R.id.overview_to_profile)
 }
 
 fun Fragment.naviSettingsToReleaseNotes() {

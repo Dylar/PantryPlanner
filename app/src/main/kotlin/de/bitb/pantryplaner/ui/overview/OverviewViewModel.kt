@@ -1,5 +1,6 @@
 package de.bitb.pantryplaner.ui.overview
 
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.bitb.pantryplaner.core.misc.Resource
@@ -9,7 +10,6 @@ import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.ui.base.BaseViewModel
 import de.bitb.pantryplaner.ui.base.comps.asResString
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,18 +20,17 @@ class OverviewViewModel @Inject constructor(
     private val checkUseCases: ChecklistUseCases,
 ) : BaseViewModel() {
 
-    val checkList: Flow<Resource<Map<Boolean, List<Checklist>>>> =
-        checkRepo
-            .getCheckLists()
-            .map { resp ->
-                castOnError(resp) {
-                    val groupedItems = resp.data
-                        ?.groupBy { it.finished }
-                        ?.toSortedMap { a1, a2 -> a1.compareTo(a2) }
-                        ?: emptyMap()
-                    Resource.Success(groupedItems)
-                }
+    val checkList = checkRepo
+        .getCheckLists()
+        .map { resp ->
+            castOnError(resp) {
+                val groupedItems = resp.data
+                    ?.groupBy { it.finished }
+                    ?.toSortedMap { a1, a2 -> a1.compareTo(a2) }
+                    ?: emptyMap()
+                Resource.Success(groupedItems)
             }
+        }.asLiveData()
 
     fun addChecklist(name: String) {
         viewModelScope.launch {

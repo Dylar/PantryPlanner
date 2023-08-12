@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="profile_title">Profil</string>
+    <string name="profile_qr_info">Mit diesem QR-Code können Sie von anderen hinzugefügt werden</string>
+</resources>

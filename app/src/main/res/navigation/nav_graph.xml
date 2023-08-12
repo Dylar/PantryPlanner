@@ -56,8 +56,8 @@
         android:name="de.bitb.pantryplaner.ui.overview.OverviewFragment"
         android:label="overview">
         <action
-            android:id="@+id/overview_to_settings"
-            app:destination="@id/settingsFragment" />
+            android:id="@+id/overview_to_profile"
+            app:destination="@id/profileFragment" />
         <action
             android:id="@+id/overview_to_items"
             app:destination="@id/itemsFragment" />
@@ -87,6 +87,15 @@
         android:id="@+id/refreshFragment"
         android:name="de.bitb.pantryplaner.ui.refresh.RefreshFragment"
         android:label="refresh" />
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="de.bitb.pantryplaner.ui.profile.ProfileFragment"
+        android:label="profile">
+        <action
+            android:id="@+id/profile_to_settings"
+            app:destination="@id/settingsFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/settingsFragment"

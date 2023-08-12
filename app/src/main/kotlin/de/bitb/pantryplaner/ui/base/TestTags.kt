@@ -23,6 +23,13 @@ sealed class TestTags {
             get() = super.name + ".$id"
     }
 
+    sealed class ProfilePage : TestTags() {
+        object AppBar : ProfilePage()
+        object SettingsButton : ProfilePage()
+        object QRInfo : ProfilePage()
+        object QRLabel : ProfilePage()
+    }
+
     sealed class SettingsPage : TestTags() {
         object AppBar : SettingsPage()
         object InfoButton : SettingsPage()
@@ -51,7 +58,7 @@ sealed class TestTags {
 
     sealed class OverviewPage : TestTags() {
         object AppBar : OverviewPage()
-        object SettingsButton : OverviewPage()
+        object ProfileButton : OverviewPage()
         object LayoutButton : OverviewPage()
         object AddButton : OverviewPage()
         object ToItemsButton : OverviewPage()
