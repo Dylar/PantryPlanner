@@ -8,6 +8,7 @@ import de.bitb.pantryplaner.data.CheckRepository
 import de.bitb.pantryplaner.data.UserRepository
 import de.bitb.pantryplaner.data.model.CheckItem
 import de.bitb.pantryplaner.data.model.Checklist
+import kotlinx.coroutines.flow.first
 
 class AddChecklistUC(
     private val checkRepo: CheckRepository,
@@ -24,7 +25,7 @@ class AddChecklistUC(
                     return@tryIt "Name darf nicht leer sein".asResourceError()
                 }
 
-                val user = userRepo.getUser()
+                val user = userRepo.getUser().first()
                 if (user is Resource.Error) return@tryIt user.castTo(false)
 
                 val checkItems = items.map { CheckItem(it) }.toMutableList()

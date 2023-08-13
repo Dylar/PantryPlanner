@@ -5,15 +5,18 @@ import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.data.source.LocalDatabase
 import de.bitb.pantryplaner.data.source.RemoteService
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 
 interface UserRepository {
     suspend fun isUserLoggedIn(): Resource<Boolean>
     suspend fun registerUser(user: User, pw: String): Resource<Unit>
     suspend fun loginUser(email: String, pw: String): Resource<User>
     suspend fun logoutUser(): Resource<Unit>
-    suspend fun getUser(): Resource<User>
-    suspend fun getUser(uuid: String): Resource<User>
+    fun getUser(): Flow<Resource<User>>
+    fun getUser(uuid: String): Flow<Resource<User>>
+    fun getUser(uuids: List<String>): Flow<Resource<List<User>>>
     suspend fun saveUser(user: User): Resource<User>
 }
 
@@ -50,16 +53,24 @@ class UserRepositoryImpl constructor(
         return tryIt { remoteDB.logoutUser() }
     }
 
-    override suspend fun getUser(): Resource<User> {
-        return tryIt { getUser(localDB.getUser()) }
+    override fun getUser(): Flow<Resource<User>> {
+        return getUser(localDB.getUser())
     }
 
-    override suspend fun getUser(uuid: String): Resource<User> {
-        return tryIt {
-            val resp = remoteDB.getUser(uuid).first()
+    override fun getUser(uuid: String): Flow<Resource<User>> {
+        return getUser(listOf(uuid)).map { resp ->
             if (resp is Resource.Error) resp.castTo()
-            else Resource.Success(resp.data!!)
+            else Resource.Success(resp.data!!.first())
         }
+    }
+
+    override fun getUser(uuids: List<String>): Flow<Resource<List<User>>> {
+        return if (uuids.isEmpty()) MutableStateFlow(Resource.Success(emptyList()))
+        else remoteDB.getUser(uuids)
+            .map { resp ->
+                if (resp is Resource.Error) resp.castTo()
+                else Resource.Success(resp.data!!)
+            }
     }
 
     override suspend fun saveUser(user: User): Resource<User> {

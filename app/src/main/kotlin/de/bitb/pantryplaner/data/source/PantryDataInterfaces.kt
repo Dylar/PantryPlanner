@@ -19,7 +19,7 @@ class PantryRemoteService(
     settingsService: FireSettingsService,
     userService: FireUserService,
     itemService: FireItemService,
-    checkService: FireCheckService
+    checkService: FireCheckService,
 ) :
     RemoteService,
     UserRemoteDao by userService,
@@ -37,7 +37,7 @@ interface UserRemoteDao {
     suspend fun registerUser(email: String, pw: String): Resource<Unit>
     suspend fun loginUser(email: String, pw: String): Resource<Boolean>
     suspend fun logoutUser(): Resource<Unit>
-    suspend fun getUser(uuid: String): Flow<Resource<User>>
+    fun getUser(uuids: List<String>): Flow<Resource<List<User>>>
     suspend fun getUserByEmail(email: String): Resource<User>
     suspend fun saveUser(user: User): Resource<Unit>
 }

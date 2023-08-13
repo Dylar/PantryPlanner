@@ -53,14 +53,14 @@ class FireUserService(
         }
     }
 
-    override suspend fun getUser(uuid: String): Flow<Resource<User>> {
+    override fun getUser(uuids: List<String>): Flow<Resource<List<User>>> {
         return try {
             return collection
-                .whereEqualTo("uuid", uuid)
+                .whereIn("uuid", uuids)
                 .snapshots()
                 .map {
-                    val user = it.toObjects(User::class.java).firstOrNull()
-                        ?: return@map "Benutzer nicht gefunden: $uuid".asResourceError()
+                    val user = it.toObjects(User::class.java)
+                    if (user.isEmpty()) return@map "Benutzer nicht gefunden: $uuids".asResourceError()
                     Resource.Success(user)
                 }
         } catch (e: Exception) {

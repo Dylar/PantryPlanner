@@ -28,7 +28,7 @@ import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.dialogs.EditCategoryDialog
 
 private fun LazyGridScope.stickyGridHeader(
-    content: @Composable LazyGridItemScope.() -> Unit
+    content: @Composable LazyGridItemScope.() -> Unit,
 ) {
     item(span = { GridItemSpan(this.maxLineSpan) }, content = content)
 }
@@ -56,7 +56,7 @@ fun <T> GridListLayout(
         )
         if (showGridLayout.value) {
             LazyVerticalGrid(
-                GridCells.Fixed(2),
+                GridCells.Fixed(if (items.size == 1 && items.values.first().size == 1) 1 else 2),
                 modifier = Modifier
                     .fillMaxSize()
                     .testTag(TestTags.GridListLayout.Grid.name),

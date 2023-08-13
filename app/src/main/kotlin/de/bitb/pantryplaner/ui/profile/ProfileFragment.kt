@@ -4,7 +4,11 @@ import android.util.Log
 import android.widget.ImageView
 import androidmads.library.qrgenearator.QRGContents
 import androidmads.library.qrgenearator.QRGEncoder
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCodeScanner
@@ -16,18 +20,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.viewModels
 import com.google.zxing.WriterException
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
+import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.TestTags
+import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
+import de.bitb.pantryplaner.ui.base.comps.asResString
 import de.bitb.pantryplaner.ui.base.naviToScan
 import de.bitb.pantryplaner.ui.base.naviToSettings
+import de.bitb.pantryplaner.ui.base.styles.BaseColors
 
 @AndroidEntryPoint
 class ProfileFragment : BaseFragment<ProfileViewModel>() {
@@ -36,19 +46,25 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
 
     @Composable
     override fun screenContent() {
-        val user by viewModel.user.observeAsState(null)
         Scaffold(
             scaffoldState = scaffoldState,
             topBar = { buildAppBar() },
             floatingActionButton = { buildFab() },
-            content = {
-                when {
-                    user != null -> UserDetails(it, user!!)
-                    else -> LoadingIndicator()
-                }
-            },
+            content = { buildContent(it) },
         )
+    }
 
+    @Composable
+    private fun buildContent(paddingValues: PaddingValues) {
+        val user by viewModel.user.observeAsState(null)
+        when {
+            user is Resource.Error -> {
+                showSnackBar("ERROR".asResString())
+                ErrorScreen(user!!.message!!.asString())
+            }
+            user == null || !user!!.hasData -> LoadingIndicator()
+            else -> UserDetails(paddingValues, user!!.data!!)
+        }
     }
 
     @Composable
@@ -79,7 +95,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
     }
 
     @Composable
-    fun UserDetails(padding: PaddingValues, user: User) {
+    private fun UserDetails(padding: PaddingValues, user: User) {
         Box(
             contentAlignment = Alignment.TopCenter,
             modifier = Modifier
@@ -88,26 +104,31 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
         ) {
             Column(
                 modifier = Modifier.align(Alignment.TopCenter),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Box(
                     modifier = Modifier
-                        .padding(16.dp)
-                        .testTag(TestTags.ProfilePage.QRInfo.name),
-                    contentAlignment = Alignment.Center,
-                ) { Text(getString(R.string.profile_qr_info)) }
-                Box(
-                    modifier = Modifier
-                        .padding(16.dp)
                         .fillMaxWidth(),
                     contentAlignment = Alignment.Center,
                 ) { QrCodeImage(user.uuid) }
+                Box(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .testTag(TestTags.ProfilePage.QRInfo.name),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        getString(R.string.profile_qr_info),
+                        textAlign = TextAlign.Center,
+                    )
+                }
+                ConnectedUserList()
             }
         }
     }
 
     @Composable
-    fun QrCodeImage(uuid: String) {
+    private fun QrCodeImage(uuid: String) {
         val black = MaterialTheme.colors.background
         val white = MaterialTheme.colors.onBackground
         return AndroidView(
@@ -126,5 +147,48 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
                 }
             }
         )
+    }
+
+    @Composable
+    private fun ConnectedUserList() {
+        val connectedResp by viewModel.connectedUser.observeAsState()
+        when {
+            connectedResp is Resource.Error -> {
+                showSnackBar("ERROR".asResString())
+                ErrorScreen(connectedResp!!.message!!.asString())
+            }
+            connectedResp == null || !connectedResp!!.hasData -> LoadingIndicator()
+            else -> {
+                val connectedUser = (connectedResp as Resource<List<User>>).data!!
+                LazyVerticalGrid(
+                    GridCells.Fixed(if (connectedUser.size == 1) 1 else 2),
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalArrangement = Arrangement.Center,
+                    contentPadding = PaddingValues(horizontal = 20.dp),
+                ) { connectedUser.forEach { user -> items(connectedUser.size) { buildUser(user) } } }
+            }
+        }
+    }
+
+    @Composable
+    private fun buildUser(user: User) {
+        Box(modifier = Modifier.padding(2.dp)) {
+            Card(
+                elevation = 4.dp,
+                border = BorderStroke(2.dp, BaseColors.ZergPurple),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { }, // TODO make it clickable? or just dissmisable
+            ) {
+                Text(
+                    user.fullName,
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp, vertical = 4.dp),
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Start,
+                )
+            }
+        }
     }
 }
