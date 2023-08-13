@@ -27,7 +27,7 @@ import de.bitb.pantryplaner.ui.base.TestTags
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.dialogs.EditCategoryDialog
 
-private fun LazyGridScope.stickyGridHeader(
+fun LazyGridScope.stickyGridHeader(
     content: @Composable LazyGridItemScope.() -> Unit,
 ) {
     item(span = { GridItemSpan(this.maxLineSpan) }, content = content)
@@ -109,7 +109,7 @@ fun <T> GridListLayout(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun GridListHeader(
+fun GridListHeader(
     category: String,
     color: Color,
     showItems: SnapshotStateMap<String, Boolean>,

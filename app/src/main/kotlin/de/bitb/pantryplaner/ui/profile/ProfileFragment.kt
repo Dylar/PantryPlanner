@@ -4,8 +4,6 @@ import android.util.Log
 import android.widget.ImageView
 import androidmads.library.qrgenearator.QRGContents
 import androidmads.library.qrgenearator.QRGEncoder
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -18,6 +16,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
@@ -32,9 +32,7 @@ import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.TestTags
-import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
-import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
-import de.bitb.pantryplaner.ui.base.comps.asResString
+import de.bitb.pantryplaner.ui.base.comps.*
 import de.bitb.pantryplaner.ui.base.naviToScan
 import de.bitb.pantryplaner.ui.base.naviToSettings
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
@@ -119,6 +117,17 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
                 ) {
                     Text(
                         getString(R.string.profile_qr_info),
+                        modifier = Modifier
+                            .drawBehind {
+                                val strokeWidthPx = 1.dp.toPx()
+                                val verticalOffset = size.height - 2.sp.toPx()
+                                drawLine(
+                                    color = BaseColors.ZergPurple,
+                                    strokeWidth = strokeWidthPx,
+                                    start = Offset(0f, verticalOffset),
+                                    end = Offset(size.width, verticalOffset)
+                                )
+                            },
                         textAlign = TextAlign.Center,
                     )
                 }
@@ -166,25 +175,51 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
                     verticalArrangement = Arrangement.Top,
                     horizontalArrangement = Arrangement.Center,
                     contentPadding = PaddingValues(horizontal = 20.dp),
-                ) { connectedUser.forEach { user -> items(connectedUser.size) { buildUser(user) } } }
+                ) {
+                    if (connectedUser.isNotEmpty()) {
+                        stickyGridHeader {
+                            Box(
+                                modifier = Modifier.fillMaxWidth(),
+                                contentAlignment = Alignment.CenterStart,
+                            ) {
+                                Text(
+                                    "Verbundene Benutzer",
+                                    modifier = Modifier
+                                        .drawBehind {
+                                            val strokeWidthPx = 1.dp.toPx()
+                                            val verticalOffset = size.height - 2.sp.toPx()
+                                            drawLine(
+                                                color = BaseColors.ZergPurple,
+                                                strokeWidth = strokeWidthPx,
+                                                start = Offset(0f, verticalOffset),
+                                                end = Offset(size.width, verticalOffset)
+                                            )
+                                        },
+                                    textAlign = TextAlign.Center,
+                                )
+                            }
+                        }
+                    }
+                    connectedUser.forEach { user -> items(connectedUser.size) { buildUser(user) } }
+                }
             }
         }
     }
 
     @Composable
     private fun buildUser(user: User) {
-        Box(modifier = Modifier.padding(2.dp)) {
-            Card(
-                elevation = 4.dp,
-                border = BorderStroke(2.dp, BaseColors.ZergPurple),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { }, // TODO make it clickable? or just dissmisable
+        dissmissItem(
+            user.fullName,
+            BaseColors.ZergPurple,
+            onSwipe = { viewModel.disconnectUser(user) },
+        ) {
+            Box(
+                modifier = Modifier.defaultMinSize(minHeight = 48.dp),
+                contentAlignment = Alignment.CenterStart
             ) {
                 Text(
                     user.fullName,
-                    modifier = Modifier
-                        .padding(horizontal = 12.dp, vertical = 4.dp),
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
                     fontSize = 16.sp,
                     textAlign = TextAlign.Start,
                 )
