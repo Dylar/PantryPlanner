@@ -30,7 +30,7 @@ class FireCheckService(
 
     override fun getCheckLists(
         userId: String,
-        ids: List<String>?
+        ids: List<String>?,
     ): Flow<Resource<List<Checklist>>> {
         return try {
             if (ids?.isEmpty() == true) {

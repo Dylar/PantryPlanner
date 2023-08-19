@@ -18,25 +18,22 @@ class LoginViewModel @Inject constructor(
     private val userUseCases: UserUseCases,
 ) : BaseViewModel() {
 
-    var isLoading by mutableStateOf(false)
-    var error by mutableStateOf<LoginResponse?>(null)
-
     var email by mutableStateOf("")
     var pw by mutableStateOf("")
 
+    var isLoading by mutableStateOf(false)
+    var error by mutableStateOf<LoginResponse?>(null)
+
     fun login() {
+        error = null
         if (isLoading) {
             return
         }
-        error = null
         isLoading = true
         viewModelScope.launch {
             val result = userUseCases.loginUC(email, pw)
-            if (result is Resource.Success) {
-                navigate(R.id.login_to_overview)
-            } else {
-                error = result.data
-            }
+            if (result is Resource.Success) navigate(R.id.login_to_overview)
+            else error = result.data
             isLoading = false
         }
     }

@@ -30,7 +30,7 @@ fun SearchBar(
     showSearchBar: MutableState<Boolean>,
     isSearching: Boolean,
     initialValue: String,
-    onSearch: (String) -> Unit
+    onSearch: (String) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current

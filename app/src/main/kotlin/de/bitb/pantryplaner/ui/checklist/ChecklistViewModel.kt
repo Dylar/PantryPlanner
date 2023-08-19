@@ -1,12 +1,17 @@
 package de.bitb.pantryplaner.ui.checklist
 
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.castOnError
 import de.bitb.pantryplaner.data.CheckRepository
 import de.bitb.pantryplaner.data.ItemRepository
+import de.bitb.pantryplaner.data.UserDataExt
+import de.bitb.pantryplaner.data.UserRepository
 import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
@@ -15,7 +20,6 @@ import de.bitb.pantryplaner.ui.base.comps.asResString
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
@@ -25,25 +29,26 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ChecklistViewModel @Inject constructor(
+    override val userRepo: UserRepository,
     private val itemRepo: ItemRepository,
     private val checkRepo: CheckRepository,
     private val checkUseCases: ChecklistUseCases,
     private val itemUseCases: ItemUseCases,
-) : BaseViewModel() {
+) : BaseViewModel(), UserDataExt {
 
     val itemErrorList = MutableStateFlow<List<String>>(emptyList())
 
     val filterBy = MutableStateFlow(Filter())
 
     lateinit var checkListId: String
-    lateinit var checkList: Flow<Resource<Checklist>>
-    lateinit var itemMap: Flow<Resource<Map<String, List<Item>>>>
+    lateinit var checkList: LiveData<Resource<Checklist>>
+    lateinit var itemMap: LiveData<Resource<Map<String, List<Item>>>>
 
     fun initChecklist(uuid: String) {
         checkListId = uuid
-        checkList = checkRepo.getCheckList(checkListId)
+        checkList = checkRepo.getCheckList(checkListId).asLiveData()
         itemMap = checkList
-            .flatMapLatest { resp ->
+            .switchMap { resp ->
                 val checklist = resp.data!!
                 val ids = checklist.items.map { it.uuid }
                 filterBy.flatMapLatest { filter ->
@@ -57,10 +62,10 @@ class ChecklistViewModel @Inject constructor(
                                         checklist.items.first { it.uuid == item.uuid }.checked
                                     }
                                 }
-                                Resource.Success(newMap)
+                                Resource.Success(newMap.toMap())
                             }
                         }
-                }
+                }.asLiveData()
             }
     }
 

@@ -9,7 +9,7 @@ sealed class ResString {
     data class DynamicString(val value: String) : ResString()
     class ResourceString(
         @StringRes val id: Int,
-        val args: Array<Any> = emptyArray()
+        val args: Array<Any> = emptyArray(),
     ) : ResString()
 
     @Composable

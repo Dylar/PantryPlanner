@@ -1,10 +1,14 @@
 package de.bitb.pantryplaner.ui.items
 
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.ItemRepository
+import de.bitb.pantryplaner.data.UserDataExt
+import de.bitb.pantryplaner.data.UserRepository
 import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.BaseViewModel
@@ -22,19 +26,22 @@ import javax.inject.Inject
 @HiltViewModel
 class ItemsViewModel @Inject constructor(
     itemRepo: ItemRepository,
+    override val userRepo: UserRepository,
     private val checkUseCases: ChecklistUseCases,
     private val itemUseCases: ItemUseCases,
-) : BaseViewModel() {
+) : BaseViewModel(), UserDataExt {
 
     private val _isSearching = MutableStateFlow(false)
     val isSearching = _isSearching.asStateFlow()
 
     var fromChecklistId: String? = null
-    val filterBy = MutableStateFlow(Filter()) // TODO everything to liveData
-    val itemList: Flow<Resource<Map<String, List<Item>>>> = filterBy
+
+    val filterBy = MutableStateFlow(Filter())
+    val itemList: LiveData<Resource<Map<String, List<Item>>>> = filterBy
         .debounce { if (_isSearching.value) 1000L else 0L }
         .flatMapLatest { itemRepo.getItems(filterBy = it) }
         .onEach { _isSearching.update { false } }
+        .asLiveData()
 
     val checkedItems = MutableStateFlow(listOf<String>())
     val itemErrorList = MutableStateFlow<List<String>>(emptyList())

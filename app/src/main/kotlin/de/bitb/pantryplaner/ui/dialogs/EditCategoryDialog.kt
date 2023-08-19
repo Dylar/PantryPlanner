@@ -25,7 +25,7 @@ fun EditCategoryDialog(
     color: Color,
     category: String,
     onConfirm: (String, Color) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     var categoryState by remember {
         mutableStateOf(
@@ -44,7 +44,7 @@ fun EditCategoryDialog(
             Column {
                 OutlinedTextField(
                     modifier = Modifier
-                        .padding(top = 32.dp, start = 16.dp, end = 16.dp)
+                        .padding(vertical = 16.dp)
                         .focusRequester(focusRequester),
                     singleLine = true,
                     label = { Text(stringResource(R.string.item_category)) },
@@ -63,13 +63,13 @@ fun EditCategoryDialog(
         confirmButton = {
             Button(
                 onClick = { onConfirm(categoryState.text, colorState.value) },
-                content = { Text("EDIT") }
+                content = { Text("BEARBEITEN") }
             )
         },
         dismissButton = {
             Button(
                 onClick = onDismiss,
-                content = { Text("CANCEL") }
+                content = { Text("ABBRECHEN") }
             )
         }
     )

@@ -68,14 +68,8 @@ class LoginFragment : BaseFragment<LoginViewModel>() {
                 .testTag(TestTags.LoginPage.LoginButton.name),
             onClick = { viewModel.login() },
         ) {
-            if (viewModel.isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(24.dp),
-                    color = MaterialTheme.colors.onSurface
-                )
-            } else {
-                Icon(Icons.Default.ArrowForward, contentDescription = "Login")
-            }
+            if (viewModel.isLoading) CircularProgressIndicator(modifier = Modifier.size(24.dp))
+            else Icon(Icons.Default.ArrowForward, contentDescription = "Login")
         }
     }
 
@@ -91,7 +85,7 @@ class LoginFragment : BaseFragment<LoginViewModel>() {
             OutlinedTextField(
                 isError = viewModel.error is LoginResponse.EmailError,
                 modifier = Modifier
-                    .padding(top = 32.dp, start = 16.dp, end = 16.dp)
+                    .padding(vertical = 16.dp)
                     .testTag(TestTags.LoginPage.EmailLabel.name),
                 value = viewModel.email,
                 onValueChange = { viewModel.email = it },

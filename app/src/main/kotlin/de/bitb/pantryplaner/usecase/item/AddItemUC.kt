@@ -8,7 +8,6 @@ import de.bitb.pantryplaner.data.ItemRepository
 import de.bitb.pantryplaner.data.UserRepository
 import de.bitb.pantryplaner.data.model.Item
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 
 class AddItemUC(
     private val itemRepo: ItemRepository,

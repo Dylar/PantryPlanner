@@ -98,7 +98,7 @@ data class LogData(
     val params: String,
     val stack: String,
     val timeStamp: String = LocalDateTime.now()
-        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
 )
 
 private fun appClass(): (StackTraceElement) -> Boolean = { it.className.contains(PACKAGE_NAME) }

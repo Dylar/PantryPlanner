@@ -41,7 +41,7 @@ class ItemRepositoryImpl(
 
     override fun getItems(
         ids: List<String>?,
-        filterBy: Filter?
+        filterBy: Filter?,
     ): Flow<Resource<Map<String, List<Item>>>> {
         return remoteDB
             .getItems(localDB.getUser(), ids)

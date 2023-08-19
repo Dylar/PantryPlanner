@@ -14,6 +14,7 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -90,7 +91,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
 
     @Composable
     private fun buildAppBar() {
-        val checklist by viewModel.checkList.collectAsState(null)
+        val checklist by viewModel.checkList.observeAsState(null)
         TopAppBar(
             modifier = Modifier.testTag(TestTags.ChecklistPage.AppBar.name),
             title = {
@@ -156,7 +157,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
 
     @Composable
     private fun buildContent(innerPadding: PaddingValues) {
-        val items by viewModel.itemMap.collectAsState(null)
+        val items by viewModel.itemMap.observeAsState(null)
         val categorys = items?.data?.keys?.toList() ?: listOf()
         when {
             items is Resource.Error -> {
@@ -177,10 +178,12 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
 
     @Composable
     private fun checkListItem(item: Item, categorys: List<String>) {
-        val checkResp by viewModel.checkList.collectAsState(null)
+        val checkResp by viewModel.checkList.observeAsState(null)
+        val users by viewModel.getConnectedUsers().observeAsState(null)
         when {
             checkResp is Resource.Error -> ErrorScreen(checkResp!!.message!!.asString())
-            checkResp?.data == null -> Card(
+            users is Resource.Error -> ErrorScreen(users!!.message!!.asString())
+            checkResp?.data == null || users?.data == null -> Card(
                 elevation = 4.dp,
                 border = BorderStroke(2.dp, item.color),
                 modifier = Modifier.padding(vertical = 4.dp),
@@ -193,7 +196,8 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 useEditItemDialog(
                     showEditDialog,
                     item,
-                    categorys
+                    categorys,
+                    users!!.data!!,
                 ) { edited, _ -> viewModel.editItem(edited) }
 
                 dissmissItem(

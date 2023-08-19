@@ -6,6 +6,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.castOnError
 import de.bitb.pantryplaner.data.CheckRepository
+import de.bitb.pantryplaner.data.UserDataExt
+import de.bitb.pantryplaner.data.UserRepository
 import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.ui.base.BaseViewModel
 import de.bitb.pantryplaner.ui.base.comps.asResString
@@ -17,8 +19,9 @@ import javax.inject.Inject
 @HiltViewModel
 class OverviewViewModel @Inject constructor(
     checkRepo: CheckRepository,
+    override val userRepo: UserRepository,
     private val checkUseCases: ChecklistUseCases,
-) : BaseViewModel() {
+) : BaseViewModel(), UserDataExt {
 
     val checkList = checkRepo
         .getCheckLists()
@@ -32,9 +35,9 @@ class OverviewViewModel @Inject constructor(
             }
         }.asLiveData()
 
-    fun addChecklist(name: String) {
+    fun addChecklist(name: String, sharedWith: List<String>) {
         viewModelScope.launch {
-            val resp = checkUseCases.addChecklistUC(name)
+            val resp = checkUseCases.addChecklistUC(name, sharedWith = sharedWith)
             when {
                 resp is Resource.Error -> showSnackbar(resp.message!!)
                 resp.data == true -> showSnackbar("Checklist hinzugefügt: $name".asResString())
@@ -63,4 +66,5 @@ class OverviewViewModel @Inject constructor(
             }
         }
     }
+
 }

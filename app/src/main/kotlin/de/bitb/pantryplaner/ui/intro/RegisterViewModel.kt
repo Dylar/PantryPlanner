@@ -24,14 +24,20 @@ class RegisterViewModel @Inject constructor(
     var pw1 by mutableStateOf("")
     var pw2 by mutableStateOf("")
 
+    var isLoading by mutableStateOf(false)
     var error by mutableStateOf<RegisterResponse?>(null)
 
     fun register() {
         error = null
+        if (isLoading) {
+            return
+        }
+        isLoading = true
         viewModelScope.launch {
             val result = userUseCases.registerUC(firstName, lastName, email, pw1, pw2)
             if (result is Resource.Error) error = result.data
             else navigate(R.id.register_to_overview)
+            isLoading = false
         }
     }
 }

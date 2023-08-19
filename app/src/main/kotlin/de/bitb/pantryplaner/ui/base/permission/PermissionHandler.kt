@@ -3,7 +3,7 @@ package de.bitb.pantryplaner.ui.base.permission
 import androidx.compose.runtime.mutableStateListOf
 
 class PermissionHandlerImpl(
-    override val visiblePermissionDialogQueue: MutableList<String> = mutableStateListOf()
+    override val visiblePermissionDialogQueue: MutableList<String> = mutableStateListOf(),
 ) : PermissionHandler
 
 interface PermissionHandler {
@@ -15,7 +15,7 @@ interface PermissionHandler {
 
     fun onPermissionResult(
         permission: String,
-        isGranted: Boolean
+        isGranted: Boolean,
     ) {
         if (!isGranted && !visiblePermissionDialogQueue.contains(permission)) {
             visiblePermissionDialogQueue.add(permission)

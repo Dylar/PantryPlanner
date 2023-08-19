@@ -21,7 +21,7 @@ fun ConfirmDialog(
         text = {
             Text(
                 msg,
-                modifier = Modifier.padding(top = 32.dp, start = 16.dp, end = 16.dp),
+                modifier = Modifier.padding(vertical = 16.dp),
             )
         },
         confirmButton = {
@@ -33,7 +33,7 @@ fun ConfirmDialog(
         dismissButton = {
             Button(
                 onClick = onDismiss,
-                content = { Text("CANCEL") }
+                content = { Text("ABBRECHEN") }
             )
         }
     )

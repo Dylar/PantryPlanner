@@ -53,7 +53,10 @@ class RegisterFragment : BaseFragment<RegisterViewModel>() {
                 .padding(all = 32.dp)
                 .testTag(TestTags.RegisterPage.RegisterButton.name),
             onClick = { viewModel.register() }
-        ) { Icon(Icons.Default.ArrowForward, contentDescription = "Register") }
+        ) {
+            if (viewModel.isLoading) CircularProgressIndicator(modifier = Modifier.size(24.dp))
+            else Icon(Icons.Default.ArrowForward, contentDescription = "Register")
+        }
     }
 
     @Composable
@@ -71,7 +74,7 @@ class RegisterFragment : BaseFragment<RegisterViewModel>() {
                 isError = viewModel.error == RegisterResponse.FirstNameEmpty,
                 singleLine = true,
                 modifier = Modifier
-                    .padding(top = 32.dp, start = 16.dp, end = 16.dp)
+                    .padding(vertical = 16.dp)
                     .testTag(TestTags.RegisterPage.FirstNameLabel.name),
                 value = viewModel.firstName,
                 onValueChange = { viewModel.firstName = it },

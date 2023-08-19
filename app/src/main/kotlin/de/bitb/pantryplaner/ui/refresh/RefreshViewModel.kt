@@ -7,6 +7,8 @@ import de.bitb.pantryplaner.core.misc.formatDateString
 import de.bitb.pantryplaner.core.misc.removeDuplicatesFromLists
 import de.bitb.pantryplaner.data.CheckRepository
 import de.bitb.pantryplaner.data.ItemRepository
+import de.bitb.pantryplaner.data.UserDataExt
+import de.bitb.pantryplaner.data.UserRepository
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.BaseViewModel
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
@@ -20,9 +22,10 @@ import javax.inject.Inject
 class RefreshViewModel @Inject constructor(
     itemRepo: ItemRepository,
     checkRepo: CheckRepository,
+    override val userRepo: UserRepository,
     private val checkUseCases: ChecklistUseCases,
     private val itemUseCases: ItemUseCases,
-) : BaseViewModel() {
+) : BaseViewModel(), UserDataExt {
 
     val checkedItems = MutableStateFlow(listOf<String>())
 
@@ -84,10 +87,10 @@ class RefreshViewModel @Inject constructor(
         }
     }
 
-    fun addToNewChecklist(name: String) {
+    fun addToNewChecklist(name: String, sharedWith: List<String>) {
         viewModelScope.launch {
             when (val resp =
-                checkUseCases.addChecklistUC(name, checkedItems.value)) {
+                checkUseCases.addChecklistUC(name, checkedItems.value, sharedWith)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
                 else -> navigateBack()
             }

@@ -4,7 +4,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.GridOff
+import androidx.compose.material.icons.filled.GridOn
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.ShoppingCartCheckout
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.FormatListBulleted
 import androidx.compose.material3.SmallFloatingActionButton
@@ -15,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.viewModels
@@ -26,6 +30,12 @@ import de.bitb.pantryplaner.ui.base.*
 import de.bitb.pantryplaner.ui.base.comps.*
 import de.bitb.pantryplaner.ui.dialogs.AddChecklistDialog
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
+
+@Preview(showBackground = true)
+@Composable
+private fun PreferenceCategoryPreview() {
+    OverviewFragment()
+}
 
 @AndroidEntryPoint
 class OverviewFragment : BaseFragment<OverviewViewModel>() {
@@ -47,13 +57,17 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
         )
 
         if (showAddDialog.value) {
-            AddChecklistDialog(
-                onConfirm = { name ->
-                    viewModel.addChecklist(name)
-                    showAddDialog.value = false
-                },
-                onDismiss = { showAddDialog.value = false },
-            )
+            val users = viewModel.getConnectedUsers().observeAsState()
+            if (users.value is Resource.Success) {
+                AddChecklistDialog(
+                    users.value!!.data!!,
+                    onConfirm = { name, sharedWith ->
+                        viewModel.addChecklist(name, sharedWith)
+                        showAddDialog.value = false
+                    },
+                    onDismiss = { showAddDialog.value = false },
+                )
+            }
         }
     }
 

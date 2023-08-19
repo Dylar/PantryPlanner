@@ -1,7 +1,6 @@
 package de.bitb.pantryplaner.usecase.user
 
 import de.bitb.pantryplaner.core.misc.Resource
-import de.bitb.pantryplaner.core.misc.asResourceError
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.UserRepository
 import de.bitb.pantryplaner.data.model.User

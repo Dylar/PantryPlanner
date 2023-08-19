@@ -25,9 +25,8 @@ class FireSettingsService(
             .snapshots()
             .map {
                 tryIt {
-                    Resource.Success(
-                        it.toObjects(Settings::class.java).firstOrNull() ?: Settings()
-                    )
+                    val obj = it.toObjects(Settings::class.java).firstOrNull() ?: Settings()
+                    Resource.Success(obj)
                 }
             }
     }

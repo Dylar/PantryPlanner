@@ -28,7 +28,7 @@ fun dissmissItem(
     onSwipe: () -> Unit,
     onClick: () -> Unit = {},
     onLongClick: () -> Unit = {},
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     swipeItem(
         color,
@@ -49,7 +49,7 @@ fun clearItem(
     onSwipe: () -> Unit,
     onClick: () -> Unit = {},
     onLongClick: () -> Unit = {},
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     swipeItem(
         color,
@@ -73,7 +73,7 @@ private fun swipeItem(
     onSwipe: () -> Unit,
     onClick: () -> Unit = {},
     onLongClick: () -> Unit = {},
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val showRemoveDialog = remember { mutableStateOf(false) }
     val dismissState = rememberDismissState(

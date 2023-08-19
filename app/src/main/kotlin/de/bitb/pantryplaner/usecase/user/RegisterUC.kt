@@ -67,7 +67,7 @@ class RegisterUC(
         lastName: String,
         email: String,
         pw1: String,
-        pw2: String
+        pw2: String,
     ): RegisterResponse? {
         if (firstName.isBlank()) {
             return RegisterResponse.FirstNameEmpty

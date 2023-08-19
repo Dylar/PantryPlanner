@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -21,6 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Item
+import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
 import de.bitb.pantryplaner.ui.base.TestTags
@@ -71,10 +73,12 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
                 onDismiss = { onDismiss() },
             )
         }
+
+        val users by viewModel.getConnectedUsers().observeAsState(null)
         Scaffold(
             scaffoldState = scaffoldState,
             topBar = { buildAppBar() },
-            content = { buildContent(it) },
+            content = { buildContent(it, users) },
             floatingActionButton = { buildFab() }
         )
 
@@ -89,10 +93,11 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
             )
         }
 
-        val items by viewModel.itemList.collectAsState(null)
+        val items by viewModel.itemList.observeAsState(null)
         useAddItemDialog(
             showAddDialog,
-            items?.data?.keys?.toList() ?: listOf()
+            items?.data?.keys?.toList() ?: listOf(),
+            users?.data ?: listOf(),
         ) { item, close ->
             viewModel.addItem(item)
             if (close) {
@@ -195,15 +200,19 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
     }
 
     @Composable
-    private fun buildContent(innerPadding: PaddingValues) {
-        val items by viewModel.itemList.collectAsState(null)
+    private fun buildContent(innerPadding: PaddingValues, users: Resource<List<User>>?) {
+        val items by viewModel.itemList.observeAsState(null)
         val categorys = items?.data?.keys?.toList() ?: listOf()
         when {
             items is Resource.Error -> {
                 showSnackBar("ERROR".asResString())
                 ErrorScreen(items!!.message!!.asString())
             }
-            items == null -> LoadingIndicator()
+            users is Resource.Error -> {
+                showSnackBar("ERROR".asResString())
+                ErrorScreen(users.message!!.asString())
+            }
+            items?.data == null || users?.data == null -> LoadingIndicator()
             items?.data?.isEmpty() == true -> EmptyListComp(getString(R.string.no_items))
             else -> GridListLayout(
                 innerPadding,
@@ -211,17 +220,18 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
                 items!!.data!!,
                 { it.color },
                 viewModel::editCategory
-            ) { _, item -> listItem(item, categorys) }
+            ) { _, item -> listItem(item, categorys, users.data) }
         }
     }
 
     @Composable
-    private fun listItem(item: Item, categorys: List<String>) {
+    private fun listItem(item: Item, categorys: List<String>, users: List<User>) {
         val showEditDialog = remember { mutableStateOf(false) }
         useEditItemDialog(
             showEditDialog,
             item,
-            categorys
+            categorys,
+            users,
         ) { edited, _ -> viewModel.editItem(edited) }
 
         dissmissItem(

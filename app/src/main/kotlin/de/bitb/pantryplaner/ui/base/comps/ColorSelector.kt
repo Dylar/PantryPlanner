@@ -20,7 +20,7 @@ import de.bitb.pantryplaner.ui.base.styles.BaseColors
 @Composable
 fun CircleRow(
     selectedCircle: MutableState<Color>,
-    selectableColors: List<Color>
+    selectableColors: List<Color>,
 ) {
     Row(
         modifier = Modifier.padding(vertical = 8.dp).fillMaxWidth(),

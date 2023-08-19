@@ -16,7 +16,8 @@ class AddChecklistUC(
 ) {
     suspend operator fun invoke(
         name: String,
-        items: List<String> = emptyList()
+        items: List<String> = emptyList(),
+        sharedWith: List<String> = emptyList(),
     ): Resource<Boolean> {
         return tryIt(
             onError = { Resource.Error(it, false) },
@@ -33,6 +34,7 @@ class AddChecklistUC(
                     name = name.capitalizeFirstCharacter(),
                     items = checkItems,
                     creator = user.data!!.uuid,
+                    sharedWith = sharedWith,
                 )
                 checkRepo.addChecklist(check)
             },

@@ -14,7 +14,7 @@ class EditCategoryUC(
     suspend operator fun invoke(
         previousCategory: String,
         newCategory: String,
-        color: Color
+        color: Color,
     ): Resource<Unit> {
         return tryIt {
             val itemsResp = itemRepo.getItems().first()

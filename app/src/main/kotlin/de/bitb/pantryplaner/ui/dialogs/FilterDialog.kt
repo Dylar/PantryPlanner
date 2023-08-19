@@ -16,7 +16,7 @@ fun FilterDialog(
     filter: Filter,
     selectableColors: List<Color> = FilterColors,
     onConfirm: (Filter) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     val color = remember { mutableStateOf(filter.color) }
     AlertDialog(
@@ -32,7 +32,7 @@ fun FilterDialog(
         dismissButton = {
             Button(
                 onClick = onDismiss,
-                content = { Text("CANCEL") }
+                content = { Text("ABBRECHEN") }
             )
         }
     )

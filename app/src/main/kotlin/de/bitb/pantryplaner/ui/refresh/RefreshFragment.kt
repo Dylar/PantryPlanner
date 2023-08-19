@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.GridOff
 import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -99,13 +100,17 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
                 }
 
                 if (showAddToDialog.value) {
-                    AddChecklistDialog(
-                        onConfirm = { name ->
-                            viewModel.addToNewChecklist(name)
-                            showAddToDialog.value = false
-                        },
-                        onDismiss = { showAddToDialog.value = false },
-                    )
+                    val users = viewModel.getConnectedUsers().observeAsState()
+                    if (users.value is Resource.Success) {
+                        AddChecklistDialog(
+                            users.value!!.data!!,
+                            onConfirm = { name, sharedWith ->
+                                viewModel.addToNewChecklist(name, sharedWith)
+                                showAddToDialog.value = false
+                            },
+                            onDismiss = { showAddToDialog.value = false },
+                        )
+                    }
                 }
             }
         }
@@ -114,7 +119,7 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
     @Composable
     private fun buildContent(
         innerPadding: PaddingValues,
-        items: Resource<Map<String, List<Item>>>?
+        items: Resource<Map<String, List<Item>>>?,
     ) {
         when {
             items is Resource.Error -> {

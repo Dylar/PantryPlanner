@@ -31,7 +31,7 @@ class LoginUC(
 ) {
     suspend operator fun invoke(
         email: String,
-        pw: String
+        pw: String,
     ): Resource<LoginResponse> {
         val isValid = isValid(email, pw)
         if (isValid != null) {

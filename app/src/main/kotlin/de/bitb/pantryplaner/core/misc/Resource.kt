@@ -43,7 +43,7 @@ suspend fun <T> tryIt(
 
 suspend fun <T, E> castOnError(
     resp: Resource<E>,
-    func: suspend () -> Resource<T>
+    func: suspend () -> Resource<T>,
 ): Resource<T> =
     if (resp is Resource.Error) resp.castTo()
     else tryIt { func() }

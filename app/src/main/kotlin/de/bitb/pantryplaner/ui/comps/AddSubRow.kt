@@ -39,7 +39,7 @@ fun AddSubRow(
     amount: Double,
     editColor: Color = BaseColors.White,
     backgroundColor: Color = Color.Transparent,
-    onChange: (String) -> Unit
+    onChange: (String) -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth().background(backgroundColor),

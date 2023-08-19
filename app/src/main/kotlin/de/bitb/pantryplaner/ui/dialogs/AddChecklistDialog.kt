@@ -1,5 +1,6 @@
 package de.bitb.pantryplaner.ui.dialogs
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
@@ -8,50 +9,59 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
+import de.bitb.pantryplaner.data.model.User
+import de.bitb.pantryplaner.ui.base.comps.buildUserDropDown
 
 @Composable
 fun AddChecklistDialog(
-    onConfirm: (String) -> Unit,
-    onDismiss: () -> Unit
+    users: List<User>,
+    onConfirm: (String, List<String>) -> Unit,
+    onDismiss: () -> Unit,
 ) {
     var name by remember { mutableStateOf("") }
+    val selectedUser = remember { mutableStateOf(emptyList<User>()) }
     val focusRequester = remember { FocusRequester() }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Add Checklist") },
+        title = { Text("Checklist anlegen") },
         text = {
-            Column {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
                 OutlinedTextField(
                     modifier = Modifier
-                        .padding(top = 32.dp, start = 16.dp, end = 16.dp)
+                        .padding(horizontal = 4.dp)
                         .focusRequester(focusRequester),
                     singleLine = true,
                     label = { Text(stringResource(R.string.item_name)) },
                     value = name,
                     onValueChange = { name = it },
                     keyboardActions = KeyboardActions(
-                        onDone = { onConfirm(name) }
+                        onDone = { onConfirm(name, selectedUser.value.map { it.uuid }) }
                     ),
                 )
+                buildUserDropDown("Checkliste wird nicht geteilt", users, selectedUser)
             }
         },
         confirmButton = {
             Button(
-                onClick = { onConfirm(name) },
-                content = { Text("ADD") }
+                onClick = { onConfirm(name, selectedUser.value.map { it.uuid }) },
+                content = { Text("ANLEGEN") }
             )
         },
         dismissButton = {
             Button(
                 onClick = onDismiss,
-                content = { Text("CANCEL") }
+                content = { Text("ABBRECHEN") }
             )
         }
     )
