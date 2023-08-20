@@ -88,7 +88,7 @@ object AppModule {
             loginUC = LoginUC(userRepo),
             logoutUC = LogoutUC(userRepo),
             registerUC = RegisterUC(userRepo),
-            scanUserUC = ScanUserUC(userRepo),
+            connectUserUC = ConnectUserUC(userRepo),
             disconnectUserUC = DisconnectUserUC(userRepo)
         )
     }
@@ -111,8 +111,8 @@ object AppModule {
         itemRepo: ItemRepository,
     ): ItemUseCases {
         return ItemUseCases(
-            addItemUC = AddItemUC(itemRepo, userRepo),
-            removeItemUC = RemoveItemUC(itemRepo),
+            createItemUC = CreateItemUC(userRepo, itemRepo),
+            deleteItemUC = DeleteItemUC(userRepo, itemRepo),
             editItemUC = EditItemUC(itemRepo),
             editCategoryUC = EditCategoryUC(itemRepo),
             uncheckAllItemsUC = UncheckAllItemsUC(itemRepo),
@@ -127,8 +127,8 @@ object AppModule {
         itemRepo: ItemRepository,
     ): ChecklistUseCases {
         return ChecklistUseCases(
-            addChecklistUC = AddChecklistUC(checkRepo, userRepo),
-            removeChecklistUC = RemoveChecklistUC(checkRepo),
+            createChecklistUC = CreateChecklistUC(userRepo, checkRepo),
+            deleteChecklistUC = DeleteChecklistUC(userRepo, checkRepo),
             addItemsUC = AddItemsUC(checkRepo),
             removeItemsUC = RemoveItemsUC(checkRepo),
             checkItemUC = CheckItemUC(checkRepo),

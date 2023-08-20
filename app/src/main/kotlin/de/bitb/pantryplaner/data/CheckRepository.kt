@@ -16,7 +16,7 @@ interface CheckRepository {
     fun getCheckLists(uuids: List<String>? = null): Flow<Resource<List<Checklist>>>
     fun getCheckList(uuid: String): Flow<Resource<Checklist>>
     suspend fun addChecklist(check: Checklist): Resource<Boolean>
-    suspend fun removeChecklist(check: Checklist): Resource<Boolean>
+    suspend fun deleteChecklist(check: Checklist): Resource<Boolean>
     suspend fun saveChecklist(check: Checklist): Resource<Unit>
 }
 
@@ -56,8 +56,8 @@ class CheckRepositoryImpl(
         return remoteDB.addChecklist(check.copy(creator = user, createdAt = now, updatedAt = now))
     }
 
-    override suspend fun removeChecklist(check: Checklist): Resource<Boolean> =
-        remoteDB.removeChecklist(localDB.getUser(), check)
+    override suspend fun deleteChecklist(check: Checklist): Resource<Boolean> =
+        remoteDB.deleteChecklist(localDB.getUser(), check)
 
     override suspend fun saveChecklist(check: Checklist): Resource<Unit> =
         remoteDB.saveChecklist(localDB.getUser(), check.copy(updatedAt = formatDateNow()))

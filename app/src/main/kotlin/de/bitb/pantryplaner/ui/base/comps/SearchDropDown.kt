@@ -38,24 +38,27 @@ fun buildUserDropDown(
     emptyText: String,
     users: List<User>,
     selectedUser: MutableState<List<User>>,
+    canChange: Boolean = true,
     onSelect: (List<User>) -> Unit = {},
 ) {
-    SearchDropDown(
-        "Mit Benutzer teilen",
-        clearOnSelection = true,
-        options = users.filter { !selectedUser.value.contains(it) }.map { it.fullName },
-    ) { selection ->
-        val user = users.firstOrNull { it.fullName == selection }
-        if (user != null) {
-            val list = selectedUser.value.toMutableList()
-            if (!list.remove(user)) {
-                list.add(user)
+    if (canChange) {
+        SearchDropDown(
+            "Mit Benutzer teilen",
+            clearOnSelection = true,
+            options = users.filter { !selectedUser.value.contains(it) }.map { it.fullName },
+        ) { selection ->
+            val user = users.firstOrNull { it.fullName == selection }
+            if (user != null) {
+                val list = selectedUser.value.toMutableList()
+                if (!list.remove(user)) {
+                    list.add(user)
+                }
+                selectedUser.value = list
+                onSelect(list)
             }
-            selectedUser.value = list
-            onSelect(list)
         }
     }
-    ConnectedUser(emptyText, selectedUser, onSelect)
+    ConnectedUser(emptyText, selectedUser, canChange, onSelect)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -146,6 +149,7 @@ private fun SearchDropDown(
 private fun ConnectedUser(
     emptyText: String,
     selectedUser: MutableState<List<User>>,
+    canChange: Boolean,
     onSelect: (List<User>) -> Unit,
 ) {
     Card(
@@ -179,10 +183,12 @@ private fun ConnectedUser(
                                 modifier = Modifier
                                     .background(BaseColors.LightGray)
                                     .clickable {
-                                        val list = selectedUser.value.toMutableList()
-                                        list.remove(it)
-                                        selectedUser.value = list
-                                        onSelect(list)
+                                        if (canChange) {
+                                            val list = selectedUser.value.toMutableList()
+                                            list.remove(it)
+                                            selectedUser.value = list
+                                            onSelect(list)
+                                        }
                                     },
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.Center
@@ -192,11 +198,13 @@ private fun ConnectedUser(
                                     modifier = Modifier.padding(4.dp),
                                     textAlign = TextAlign.Center
                                 )
-                                Icon(
-                                    modifier = Modifier.size(24.dp).padding(2.dp),
-                                    imageVector = Icons.Default.Cancel,
-                                    contentDescription = "Cancel button"
-                                )
+                                if (canChange) {
+                                    Icon(
+                                        modifier = Modifier.size(24.dp).padding(2.dp),
+                                        imageVector = Icons.Default.Cancel,
+                                        contentDescription = "Cancel button"
+                                    )
+                                }
                             }
                         }
                     }

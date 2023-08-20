@@ -16,7 +16,7 @@ class ScanViewModel @Inject constructor(
 
     fun onScan(scanText: String) {
         viewModelScope.launch {
-            val res = useCases.scanUserUC(scanText)
+            val res = useCases.connectUserUC(scanText)
             if (res is Resource.Error) showSnackbar(res.message!!)
             else {
                 showSnackbar("Benutzer hinzugefügt".asResString())

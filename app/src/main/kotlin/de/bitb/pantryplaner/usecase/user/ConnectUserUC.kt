@@ -6,7 +6,7 @@ import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.UserRepository
 import kotlinx.coroutines.flow.first
 
-class ScanUserUC(
+class ConnectUserUC(
     private val userRepo: UserRepository,
 ) {
     suspend operator fun invoke(uuid: String): Resource<Unit> {

@@ -1,16 +1,11 @@
 package de.bitb.pantryplaner.data.source
 
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.snapshots
 import de.bitb.pantryplaner.BuildConfig
 import de.bitb.pantryplaner.core.misc.Resource
-import de.bitb.pantryplaner.core.misc.asResourceError
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.model.Item
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 
 class FireItemService(
@@ -28,30 +23,11 @@ class FireItemService(
     private fun sharedCollection(id: String) =
         itemCollection.whereArrayContains("sharedWith", id)
 
-    override fun getItems(userId: String, ids: List<String>?): Flow<Resource<List<Item>>> {
-        return try {
-            if (ids?.isEmpty() == true) {
-                return MutableStateFlow(Resource.Success(emptyList()))
-            }
-
-            val ownerQuery =
-                if (ids == null) ownerCollection(userId)
-                else ownerCollection(userId).whereIn("uuid", ids)
-
-            val sharedQuery =
-                if (ids == null) sharedCollection(userId)
-                else sharedCollection(userId).whereIn("uuid", ids)
-
-            val ownerFlow = ownerQuery.snapshots()
-                .map { it.toObjects(Item::class.java) }
-            val sharedFlow = sharedQuery.snapshots()
-                .map { it.toObjects(Item::class.java) }
-            ownerFlow.combine(sharedFlow) { owner, shared ->
-                Resource.Success(listOf(*owner.toTypedArray(), *shared.toTypedArray()))
-            }
-        } catch (e: Exception) {
-            MutableStateFlow(e.asResourceError(emptyList()))
-        }
+    override fun getItems(
+        userId: String,
+        ids: List<String>?,
+    ): Flow<Resource<List<Item>>> {
+        return getOwnedOrShared(userId, ids, ::ownerCollection, ::sharedCollection)
     }
 
     override suspend fun saveItems(userId: String, items: List<Item>): Resource<Unit> {
@@ -86,7 +62,7 @@ class FireItemService(
         }
     }
 
-    override suspend fun removeItem(userId: String, item: Item): Resource<Boolean> {
+    override suspend fun deleteItem(userId: String, item: Item): Resource<Boolean> {
         return tryIt {
             val itemCollection = ownerCollection(userId)
             val querySnapshot = itemCollection

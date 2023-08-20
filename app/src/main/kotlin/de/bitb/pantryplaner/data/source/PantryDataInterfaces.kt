@@ -45,13 +45,13 @@ interface UserRemoteDao {
 interface ItemRemoteDao {
     fun getItems(userId: String, ids: List<String>?): Flow<Resource<List<Item>>>
     suspend fun addItem(item: Item): Resource<Boolean>
-    suspend fun removeItem(userId: String, item: Item): Resource<Boolean>
+    suspend fun deleteItem(userId: String, item: Item): Resource<Boolean>
     suspend fun saveItems(userId: String, items: List<Item>): Resource<Unit>
 }
 
 interface CheckRemoteDao {
     fun getCheckLists(userId: String, ids: List<String>?): Flow<Resource<List<Checklist>>>
     suspend fun addChecklist(check: Checklist): Resource<Boolean>
-    suspend fun removeChecklist(userId: String, check: Checklist): Resource<Boolean>
+    suspend fun deleteChecklist(userId: String, check: Checklist): Resource<Boolean>
     suspend fun saveChecklist(userId: String, check: Checklist): Resource<Unit>
 }

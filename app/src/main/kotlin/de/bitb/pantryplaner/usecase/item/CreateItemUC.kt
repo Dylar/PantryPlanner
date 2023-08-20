@@ -1,24 +1,19 @@
-package de.bitb.pantryplaner.usecase.checklist
+package de.bitb.pantryplaner.usecase.item
 
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.asResourceError
 import de.bitb.pantryplaner.core.misc.capitalizeFirstCharacter
 import de.bitb.pantryplaner.core.misc.tryIt
-import de.bitb.pantryplaner.data.CheckRepository
+import de.bitb.pantryplaner.data.ItemRepository
 import de.bitb.pantryplaner.data.UserRepository
-import de.bitb.pantryplaner.data.model.CheckItem
-import de.bitb.pantryplaner.data.model.Checklist
+import de.bitb.pantryplaner.data.model.Item
 import kotlinx.coroutines.flow.first
 
-class AddChecklistUC(
-    private val checkRepo: CheckRepository,
+class CreateItemUC(
     private val userRepo: UserRepository,
+    private val itemRepo: ItemRepository,
 ) {
-    suspend operator fun invoke(
-        name: String,
-        items: List<String> = emptyList(),
-        sharedWith: List<String> = emptyList(),
-    ): Resource<Boolean> {
+    suspend operator fun invoke(name: String, category: String): Resource<Boolean> {
         return tryIt(
             onError = { Resource.Error(it, false) },
             onTry = {
@@ -29,14 +24,12 @@ class AddChecklistUC(
                 val user = userRepo.getUser().first()
                 if (user is Resource.Error) return@tryIt user.castTo(false)
 
-                val checkItems = items.map { CheckItem(it) }.toMutableList()
-                val check = Checklist(
+                val item = Item(
                     name = name.capitalizeFirstCharacter(),
-                    items = checkItems,
+                    category = category,
                     creator = user.data!!.uuid,
-                    sharedWith = sharedWith,
                 )
-                checkRepo.addChecklist(check)
+                itemRepo.addItem(item)
             },
         )
     }

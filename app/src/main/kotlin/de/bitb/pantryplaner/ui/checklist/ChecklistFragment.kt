@@ -158,26 +158,29 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
 
     @Composable
     private fun buildContent(innerPadding: PaddingValues) {
+        val isCreator by viewModel.isCreator.observeAsState(null)
         val allUsersResp by viewModel.getConnectedUsers().observeAsState(null)
-        val usersResp by viewModel.sharedToUser.observeAsState(null)
+        val sharedUserResp by viewModel.sharedToUser.observeAsState(null)
         val items by viewModel.itemMap.observeAsState(null)
         val categorys = items?.data?.keys?.toList() ?: listOf()
         when {
+            isCreator is Resource.Error -> ErrorScreen(isCreator!!.message!!.asString())
             items is Resource.Error -> ErrorScreen(items!!.message!!.asString())
-            usersResp is Resource.Error -> ErrorScreen(usersResp!!.message!!.asString())
-            allUsersResp is Resource.Error -> ErrorScreen(usersResp!!.message!!.asString())
-            items == null || usersResp?.data == null || allUsersResp?.data == null -> LoadingIndicator()
+            sharedUserResp is Resource.Error -> ErrorScreen(sharedUserResp!!.message!!.asString())
+            allUsersResp is Resource.Error -> ErrorScreen(allUsersResp!!.message!!.asString())
+            items == null || sharedUserResp?.data == null || allUsersResp?.data == null || isCreator?.data == null -> LoadingIndicator()
             items?.data?.isEmpty() == true -> EmptyListComp(getString(R.string.no_items))
             else -> Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
             ) {
                 val allUsers = allUsersResp!!.data!!
-                val selectedUser = remember { mutableStateOf(usersResp!!.data!!) }
+                val selectedUser = remember { mutableStateOf(sharedUserResp!!.data!!) }
                 buildUserDropDown(
                     "Checkliste wird nicht geteilt",
                     allUsers,
                     selectedUser,
+                    canChange = isCreator?.data == true
                 ) {
                     viewModel.setSharedWith(it)
                 }
