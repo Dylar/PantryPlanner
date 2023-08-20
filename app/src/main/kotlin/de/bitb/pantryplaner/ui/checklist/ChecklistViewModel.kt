@@ -1,10 +1,7 @@
 package de.bitb.pantryplaner.ui.checklist
 
 import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.switchMap
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.castOnError
@@ -15,6 +12,7 @@ import de.bitb.pantryplaner.data.UserRepository
 import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
+import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseViewModel
 import de.bitb.pantryplaner.ui.base.comps.asResString
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
@@ -37,12 +35,12 @@ class ChecklistViewModel @Inject constructor(
 ) : BaseViewModel(), UserDataExt {
 
     val itemErrorList = MutableStateFlow<List<String>>(emptyList())
-
     val filterBy = MutableStateFlow(Filter())
 
     lateinit var checkListId: String
     lateinit var checkList: LiveData<Resource<Checklist>>
     lateinit var itemMap: LiveData<Resource<Map<String, List<Item>>>>
+    lateinit var sharedToUser: LiveData<Resource<List<User>>>
 
     fun initChecklist(uuid: String) {
         checkListId = uuid
@@ -67,11 +65,18 @@ class ChecklistViewModel @Inject constructor(
                         }
                 }.asLiveData()
             }
+        sharedToUser = checkList
+            .switchMap { resp ->
+                if (resp is Resource.Error) {
+                    return@switchMap MutableLiveData(resp.castTo())
+                }
+                userRepo.getUser(resp.data!!.sharedWith).asLiveData()
+            }
     }
 
     fun removeItem(item: Item) {
         viewModelScope.launch {
-            val resp = checkUseCases.removeItemsFromChecklistUC(checkListId, listOf(item.uuid))
+            val resp = checkUseCases.removeItemsUC(checkListId, listOf(item.uuid))
             when {
                 resp is Resource.Error -> showSnackbar(resp.message!!)
                 resp.data == true -> showSnackbar("Item entfernt: ${item.name}".asResString()).also { updateWidgets() }
@@ -131,6 +136,15 @@ class ChecklistViewModel @Inject constructor(
                 val errors = itemErrorList.value.toMutableList()
                 errors.add(itemId)
                 itemErrorList.value = itemErrors
+            }
+        }
+    }
+
+    fun setSharedWith(users: List<User>) {
+        viewModelScope.launch {
+            when (val resp = checkUseCases.setSharedWithUC(checkListId, users)) {
+                is Resource.Error -> showSnackbar(resp.message!!)
+                else -> updateWidgets()
             }
         }
     }

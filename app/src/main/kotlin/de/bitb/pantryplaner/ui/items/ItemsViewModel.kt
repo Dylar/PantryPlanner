@@ -112,7 +112,7 @@ class ItemsViewModel @Inject constructor(
         if (isSelectMode) {
             viewModelScope.launch {
                 when (val resp =
-                    checkUseCases.addItemsToChecklistUC(fromChecklistId!!, checkedItems.value)) {
+                    checkUseCases.addItemsUC(fromChecklistId!!, checkedItems.value)) {
                     is Resource.Error -> showSnackbar(resp.message!!)
                     else -> navigateBack()
                 }

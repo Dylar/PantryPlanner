@@ -29,10 +29,11 @@ data class ItemUseCases(
 data class ChecklistUseCases(
     val addChecklistUC: AddChecklistUC,
     val removeChecklistUC: RemoveChecklistUC,
-    val addItemsToChecklistUC: AddItemsToChecklistUC,
-    val removeItemsFromChecklistUC: RemoveItemsFromChecklistUC,
+    val addItemsUC: AddItemsUC,
+    val removeItemsUC: RemoveItemsUC,
     val checkItemUC: CheckItemUC,
     val finishChecklistUC: FinishChecklistUC,
     val unfinishChecklistUC: UnfinishChecklistUC,
-    val setItemAmountUC: SetChecklistItemAmountUC,
+    val setItemAmountUC: SetItemAmountUC,
+    val setSharedWithUC: SetSharedWithUC,
 )

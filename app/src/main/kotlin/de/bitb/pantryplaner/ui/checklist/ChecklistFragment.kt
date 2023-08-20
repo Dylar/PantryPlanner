@@ -26,6 +26,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Item
+import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
 import de.bitb.pantryplaner.ui.base.TestTags
@@ -157,33 +158,50 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
 
     @Composable
     private fun buildContent(innerPadding: PaddingValues) {
+        val allUsersResp by viewModel.getConnectedUsers().observeAsState(null)
+        val usersResp by viewModel.sharedToUser.observeAsState(null)
         val items by viewModel.itemMap.observeAsState(null)
         val categorys = items?.data?.keys?.toList() ?: listOf()
         when {
-            items is Resource.Error -> {
-                showSnackBar("ERROR".asResString())
-                ErrorScreen(items!!.message!!.asString())
-            }
-            items == null -> LoadingIndicator()
+            items is Resource.Error -> ErrorScreen(items!!.message!!.asString())
+            usersResp is Resource.Error -> ErrorScreen(usersResp!!.message!!.asString())
+            allUsersResp is Resource.Error -> ErrorScreen(usersResp!!.message!!.asString())
+            items == null || usersResp?.data == null || allUsersResp?.data == null -> LoadingIndicator()
             items?.data?.isEmpty() == true -> EmptyListComp(getString(R.string.no_items))
-            else -> GridListLayout(
-                innerPadding,
-                showGridLayout,
-                items!!.data!!,
-                { it.color },
-                viewModel::editCategory
-            ) { _, item -> checkListItem(item, categorys) }
+            else -> Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.Center,
+            ) {
+                val allUsers = allUsersResp!!.data!!
+                val selectedUser = remember { mutableStateOf(usersResp!!.data!!) }
+                buildUserDropDown(
+                    "Checkliste wird nicht geteilt",
+                    allUsers,
+                    selectedUser,
+                ) {
+                    viewModel.setSharedWith(it)
+                }
+                if (items?.data?.isEmpty() == true) {
+                    EmptyListComp(getString(R.string.no_items))
+                } else {
+                    GridListLayout(
+                        innerPadding,
+                        showGridLayout,
+                        items!!.data!!,
+                        { it.color },
+                        viewModel::editCategory
+                    ) { _, item -> checkListItem(item, categorys, allUsers) }
+                }
+            }
         }
     }
 
     @Composable
-    private fun checkListItem(item: Item, categorys: List<String>) {
+    private fun checkListItem(item: Item, categorys: List<String>, users: List<User>) {
         val checkResp by viewModel.checkList.observeAsState(null)
-        val users by viewModel.getConnectedUsers().observeAsState(null)
         when {
             checkResp is Resource.Error -> ErrorScreen(checkResp!!.message!!.asString())
-            users is Resource.Error -> ErrorScreen(users!!.message!!.asString())
-            checkResp?.data == null || users?.data == null -> Card(
+            checkResp?.data == null -> Card(
                 elevation = 4.dp,
                 border = BorderStroke(2.dp, item.color),
                 modifier = Modifier.padding(vertical = 4.dp),
@@ -197,7 +215,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                     showEditDialog,
                     item,
                     categorys,
-                    users!!.data!!,
+                    users,
                 ) { edited, _ -> viewModel.editItem(edited) }
 
                 dissmissItem(

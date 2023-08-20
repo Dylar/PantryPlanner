@@ -129,12 +129,13 @@ object AppModule {
         return ChecklistUseCases(
             addChecklistUC = AddChecklistUC(checkRepo, userRepo),
             removeChecklistUC = RemoveChecklistUC(checkRepo),
-            addItemsToChecklistUC = AddItemsToChecklistUC(checkRepo),
-            removeItemsFromChecklistUC = RemoveItemsFromChecklistUC(checkRepo),
+            addItemsUC = AddItemsUC(checkRepo),
+            removeItemsUC = RemoveItemsUC(checkRepo),
             checkItemUC = CheckItemUC(checkRepo),
             finishChecklistUC = FinishChecklistUC(checkRepo, itemRepo),
             unfinishChecklistUC = UnfinishChecklistUC(checkRepo, itemRepo),
-            setItemAmountUC = SetChecklistItemAmountUC(checkRepo)
+            setItemAmountUC = SetItemAmountUC(checkRepo),
+            setSharedWithUC = SetSharedWithUC(checkRepo),
         )
     }
 

@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 
-interface UserRepository {
+interface UserRepository { //TODO remove repo interface
     suspend fun isUserLoggedIn(): Resource<Boolean>
     suspend fun registerUser(user: User, pw: String): Resource<Unit>
     suspend fun loginUser(email: String, pw: String): Resource<User>
@@ -31,8 +31,10 @@ class UserRepositoryImpl constructor(
     override suspend fun registerUser(user: User, pw: String): Resource<Unit> {
         return tryIt {
             val resp = remoteDB.registerUser(user.email, pw)
-            if (resp is Resource.Error) resp
-            else remoteDB.saveUser(user)
+            if (resp is Resource.Error) return@tryIt resp
+
+            localDB.setUser(user.uuid)
+            remoteDB.saveUser(user)
         }
     }
 
@@ -50,7 +52,13 @@ class UserRepositoryImpl constructor(
     }
 
     override suspend fun logoutUser(): Resource<Unit> {
-        return tryIt { remoteDB.logoutUser() }
+        return tryIt {
+            val resp = remoteDB.logoutUser()
+            if (resp is Resource.Error) return@tryIt resp
+
+            localDB.setUser("")
+            resp
+        }
     }
 
     override fun getUser(): Flow<Resource<User>> {

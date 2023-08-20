@@ -34,10 +34,11 @@ fun buildCategoryDropDown(category: MutableState<TextFieldValue>, categorys: Lis
 }
 
 @Composable
-fun ColumnScope.buildUserDropDown(
+fun buildUserDropDown(
     emptyText: String,
     users: List<User>,
     selectedUser: MutableState<List<User>>,
+    onSelect: (List<User>) -> Unit = {},
 ) {
     SearchDropDown(
         "Mit Benutzer teilen",
@@ -51,9 +52,10 @@ fun ColumnScope.buildUserDropDown(
                 list.add(user)
             }
             selectedUser.value = list
+            onSelect(list)
         }
     }
-    ConnectedUser(emptyText, selectedUser)
+    ConnectedUser(emptyText, selectedUser, onSelect)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,16 +73,14 @@ private fun SearchDropDown(
     }
     var expanded by remember { mutableStateOf(false) }
     ExposedDropdownMenuBox(
-        modifier = Modifier.padding(4.dp),
+        modifier = Modifier.padding(4.dp).fillMaxWidth(),
         expanded = expanded,
         onExpandedChange = { expanded = !expanded }
     ) {
         TextField(
             value = selectedState,
             onValueChange = { selectedState = it },
-            modifier = Modifier
-                .menuAnchor()
-                .padding(horizontal = 4.dp),
+            modifier = Modifier.fillMaxWidth().menuAnchor(),
             label = { Text(hint) },
             colors = ExposedDropdownMenuDefaults.textFieldColors(),
             singleLine = true,
@@ -90,7 +90,7 @@ private fun SearchDropDown(
 
         ExposedDropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
         ) {
             val addText = "\"${selectedState.text}\" wird neu angelegt"
             val input = selectedState.text.lowercase(Locale.ROOT)
@@ -102,7 +102,10 @@ private fun SearchDropDown(
                 .sortedBy { !it.lowercase(Locale.ROOT).startsWith(input) }
                 .toMutableList()
 
-            if (addUnknownOption && input.isNotBlank() && cats.none { it.lowercase(Locale.ROOT) == input }) {
+            if (addUnknownOption &&
+                input.isNotBlank() &&
+                cats.none { it.lowercase(Locale.ROOT) == input }
+            ) {
                 cats.add(0, addText)
             }
 
@@ -140,7 +143,11 @@ private fun SearchDropDown(
 }
 
 @Composable
-private fun ConnectedUser(emptyText: String, selectedUser: MutableState<List<User>>) {
+private fun ConnectedUser(
+    emptyText: String,
+    selectedUser: MutableState<List<User>>,
+    onSelect: (List<User>) -> Unit,
+) {
     Card(
         modifier = Modifier
             .defaultMinSize(minHeight = 32.dp)
@@ -149,7 +156,10 @@ private fun ConnectedUser(emptyText: String, selectedUser: MutableState<List<Use
         colors = CardDefaults.cardColors(containerColor = BaseColors.DarkGray.copy(alpha = .4f)),
     ) {
         LazyRow(
-            modifier = Modifier.padding(4.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(4.dp)
+                .defaultMinSize(minHeight = 32.dp),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -158,16 +168,13 @@ private fun ConnectedUser(emptyText: String, selectedUser: MutableState<List<Use
                     Text(
                         emptyText,
                         modifier = Modifier.defaultMinSize(24.dp),
+                        color = BaseColors.LightGray,
                     )
                 }
             } else {
                 item(selectedUser.value.size) {
                     selectedUser.value.forEach {
-                        Card(
-                            modifier = Modifier
-                                .defaultMinSize(minHeight = 24.dp)
-                                .padding(horizontal = 4.dp)
-                        ) {
+                        Card(modifier = Modifier.defaultMinSize(minHeight = 24.dp)) {
                             Row(
                                 modifier = Modifier
                                     .background(BaseColors.LightGray)
@@ -175,6 +182,7 @@ private fun ConnectedUser(emptyText: String, selectedUser: MutableState<List<Use
                                         val list = selectedUser.value.toMutableList()
                                         list.remove(it)
                                         selectedUser.value = list
+                                        onSelect(list)
                                     },
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.Center
@@ -187,7 +195,7 @@ private fun ConnectedUser(emptyText: String, selectedUser: MutableState<List<Use
                                 Icon(
                                     modifier = Modifier.size(24.dp).padding(2.dp),
                                     imageVector = Icons.Default.Cancel,
-                                    contentDescription = "Layout button"
+                                    contentDescription = "Cancel button"
                                 )
                             }
                         }
