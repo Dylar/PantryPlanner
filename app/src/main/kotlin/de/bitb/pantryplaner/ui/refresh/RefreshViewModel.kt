@@ -90,7 +90,7 @@ class RefreshViewModel @Inject constructor(
     fun addToNewChecklist(name: String, sharedWith: List<String>) {
         viewModelScope.launch {
             when (val resp =
-                checkUseCases.addChecklistUC(name, checkedItems.value, sharedWith)) {
+                checkUseCases.createChecklistUC(name, checkedItems.value, sharedWith)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
                 else -> navigateBack()
             }

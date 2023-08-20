@@ -58,7 +58,7 @@ class ItemsViewModel @Inject constructor(
     fun addItem(item: Item) {
         val name = item.name
         viewModelScope.launch {
-            val resp = itemUseCases.addItemUC(name, item.category)
+            val resp = itemUseCases.createItemUC(name, item.category)
             when {
                 resp is Resource.Error -> showSnackbar(resp.message!!)
                 resp.data == true -> showSnackbar("Item hinzugefügt: $name".asResString()).also { updateWidgets() }
@@ -69,7 +69,7 @@ class ItemsViewModel @Inject constructor(
 
     fun removeItem(item: Item) {
         viewModelScope.launch {
-            val resp = itemUseCases.removeItemUC(item)
+            val resp = itemUseCases.deleteItemUC(item)
             when {
                 resp is Resource.Error -> showSnackbar(resp.message!!)
                 resp.data == true -> showSnackbar("Item entfernt: ${item.name}".asResString()).also { updateWidgets() }

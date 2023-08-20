@@ -37,7 +37,7 @@ class OverviewViewModel @Inject constructor(
 
     fun addChecklist(name: String, sharedWith: List<String>) {
         viewModelScope.launch {
-            val resp = checkUseCases.addChecklistUC(name, sharedWith = sharedWith)
+            val resp = checkUseCases.createChecklistUC(name, sharedWith = sharedWith)
             when {
                 resp is Resource.Error -> showSnackbar(resp.message!!)
                 resp.data == true -> showSnackbar("Checklist hinzugefügt: $name".asResString())
@@ -49,7 +49,7 @@ class OverviewViewModel @Inject constructor(
     fun removeChecklist(check: Checklist) {
         viewModelScope.launch {
             val name = check.name
-            val resp = checkUseCases.removeChecklistUC(check)
+            val resp = checkUseCases.deleteChecklistUC(check)
             when {
                 resp is Resource.Error -> showSnackbar(resp.message!!)
                 resp.data == true -> showSnackbar("Checkliste entfernt: $name".asResString())

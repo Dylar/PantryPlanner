@@ -14,26 +14,26 @@ data class UserUseCases(
     val loginUC: LoginUC,
     val logoutUC: LogoutUC,
     val registerUC: RegisterUC,
-    val scanUserUC: ScanUserUC,
+    val connectUserUC: ConnectUserUC,
     val disconnectUserUC: DisconnectUserUC,
 )
 
 data class ItemUseCases(
-    val addItemUC: AddItemUC,
-    val removeItemUC: RemoveItemUC,
+    val createItemUC: CreateItemUC,
+    val deleteItemUC: DeleteItemUC,
     val editItemUC: EditItemUC,
     val editCategoryUC: EditCategoryUC,
     val uncheckAllItemsUC: UncheckAllItemsUC,
 )
 
 data class ChecklistUseCases(
-    val addChecklistUC: AddChecklistUC,
-    val removeChecklistUC: RemoveChecklistUC,
+    val createChecklistUC: CreateChecklistUC,
+    val deleteChecklistUC: DeleteChecklistUC,
     val addItemsUC: AddItemsUC,
     val removeItemsUC: RemoveItemsUC,
     val checkItemUC: CheckItemUC,
     val finishChecklistUC: FinishChecklistUC,
     val unfinishChecklistUC: UnfinishChecklistUC,
-    val setItemAmountUC: SetItemAmountUC,
+    val setItemAmountUC: SetItemAmountUC, //TODO make one single edit UC
     val setSharedWithUC: SetSharedWithUC,
 )

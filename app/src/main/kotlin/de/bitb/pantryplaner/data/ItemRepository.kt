@@ -21,7 +21,7 @@ interface ItemRepository {
     suspend fun getAllItems(ids: List<String>?): Resource<List<Item>>
 
     suspend fun addItem(item: Item): Resource<Boolean>
-    suspend fun removeItem(item: Item): Resource<Boolean>
+    suspend fun deleteItem(item: Item): Resource<Boolean>
     suspend fun saveItems(items: List<Item>): Resource<Unit>
 }
 
@@ -84,8 +84,8 @@ class ItemRepositoryImpl(
         return remoteDB.addItem(item.copy(creator = user, createdAt = now, updatedAt = now))
     }
 
-    override suspend fun removeItem(item: Item): Resource<Boolean> =
-        remoteDB.removeItem(localDB.getUser(), item)
+    override suspend fun deleteItem(item: Item): Resource<Boolean> =
+        remoteDB.deleteItem(localDB.getUser(), item)
 
     override suspend fun saveItems(items: List<Item>): Resource<Unit> =
         remoteDB.saveItems(localDB.getUser(), items.map { it.copy(updatedAt = formatDateNow()) })

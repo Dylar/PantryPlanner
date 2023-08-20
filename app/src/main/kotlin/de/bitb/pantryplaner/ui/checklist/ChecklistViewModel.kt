@@ -37,6 +37,7 @@ class ChecklistViewModel @Inject constructor(
     val itemErrorList = MutableStateFlow<List<String>>(emptyList())
     val filterBy = MutableStateFlow(Filter())
 
+    lateinit var isCreator: LiveData<Resource<Boolean>>
     lateinit var checkListId: String
     lateinit var checkList: LiveData<Resource<Checklist>>
     lateinit var itemMap: LiveData<Resource<Map<String, List<Item>>>>
@@ -67,11 +68,20 @@ class ChecklistViewModel @Inject constructor(
             }
         sharedToUser = checkList
             .switchMap { resp ->
-                if (resp is Resource.Error) {
-                    return@switchMap MutableLiveData(resp.castTo())
-                }
+                if (resp is Resource.Error) return@switchMap MutableLiveData(resp.castTo())
                 userRepo.getUser(resp.data!!.sharedWith).asLiveData()
             }
+        isCreator = checkList.switchMap { checkResp ->
+            if (checkResp is Resource.Error) {
+                return@switchMap MutableLiveData(checkResp.castTo())
+            }
+            userRepo.getUser().flatMapLatest { userResp ->
+                if (userResp is Resource.Error) return@flatMapLatest MutableStateFlow(userResp.castTo())
+                val user = userResp.data!!
+                val result = Resource.Success(user.uuid == checkResp.data!!.creator)
+                return@flatMapLatest MutableStateFlow(result)
+            }.asLiveData()
+        }
     }
 
     fun removeItem(item: Item) {
