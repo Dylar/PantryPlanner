@@ -49,13 +49,13 @@ class ItemRepositoryImpl(
                 castOnError(resp) {
                     val items = resp.data
                     items?.sortedBy { it.name }
-                    items?.sortedBy { it.category }
+                    items?.sortedBy { it.category } //TODO sort?
                     val groupedItems = items
                         ?.filter {
                             filterBy == null ||
                                     (!filterBy.filterByTerm && !filterBy.filterByColor) ||
-                                    (filterBy.filterByTerm && it.name.contains(filterBy.searchTerm)) ||
-                                    (filterBy.filterByColor && it.color == filterBy.color)
+                                    (filterBy.filterByTerm && it.name.contains(filterBy.searchTerm))
+//                                    (filterBy.filterByColor && it.color == filterBy.color) // TODO ?
                         }
                         ?.groupBy { it.category }
                         ?.toSortedMap { a1, a2 -> a1.compareTo(a2) }
@@ -71,7 +71,7 @@ class ItemRepositoryImpl(
             .map { resp ->
                 castOnError(resp) {
                     val items = resp.data
-                    items?.sortedBy { it.name }
+                    items?.sortedBy { it.name } //TODO sort?
                     items?.sortedBy { it.category }
                     Resource.Success(items)
                 }
@@ -81,12 +81,12 @@ class ItemRepositoryImpl(
     override suspend fun addItem(item: Item): Resource<Boolean> {
         val now = formatDateNow()
         val user = localDB.getUser()
-        return remoteDB.addItem(item.copy(creator = user, createdAt = now, updatedAt = now))
+        return remoteDB.addItem(item.copy(creator = user, createdAt = now))
     }
 
     override suspend fun deleteItem(item: Item): Resource<Boolean> =
         remoteDB.deleteItem(localDB.getUser(), item)
 
     override suspend fun saveItems(items: List<Item>): Resource<Unit> =
-        remoteDB.saveItems(localDB.getUser(), items.map { it.copy(updatedAt = formatDateNow()) })
+        remoteDB.saveItems(localDB.getUser(), items)
 }

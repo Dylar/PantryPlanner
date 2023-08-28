@@ -28,11 +28,10 @@ inline fun <reified T> getOwnedOrShared(
             if (ids == null) sharedCollection(userId)
             else sharedCollection(userId).whereIn("uuid", ids)
 
-        val ownerFlow = ownerQuery.snapshots()
-            .map { it.toObjects(T::class.java) }
-        val sharedFlow = sharedQuery.snapshots()
-            .map { it.toObjects(T::class.java) }
-        ownerFlow.combine(sharedFlow) { owner, shared ->
+        combine(
+            ownerQuery.snapshots().map { it.toObjects(T::class.java) },
+            sharedQuery.snapshots().map { it.toObjects(T::class.java) }
+        ) { owner, shared ->
             Resource.Success(listOf(*owner.toTypedArray(), *shared.toTypedArray()))
         }
     } catch (e: Exception) {

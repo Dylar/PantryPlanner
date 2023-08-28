@@ -6,10 +6,14 @@ import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.capitalizeFirstCharacter
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.ItemRepository
+import de.bitb.pantryplaner.data.StockRepository
+import de.bitb.pantryplaner.data.model.Item
+import de.bitb.pantryplaner.data.model.StockItem
 import kotlinx.coroutines.flow.first
 
 class EditCategoryUC(
     private val itemRepo: ItemRepository,
+    private val stockRepo: StockRepository,
 ) {
     suspend operator fun invoke(
         previousCategory: String,
@@ -20,15 +24,32 @@ class EditCategoryUC(
             val itemsResp = itemRepo.getItems().first()
             if (itemsResp is Resource.Error) return@tryIt itemsResp.castTo()
 
-            val itemsMap = (itemsResp.data ?: mapOf())
-            val itemsToEdit = itemsMap[previousCategory]?.map {
-                it.copy(
-                    category = newCategory.capitalizeFirstCharacter(),
-                    colorHex = color.toArgb()
-                )
+            val stockResp = stockRepo.getStockItems().first()
+            if (stockResp is Resource.Error) return@tryIt stockResp.castTo()
+
+            val itemsMap = itemsResp.data ?: mapOf()
+            val stockItems = stockResp.data ?: mapOf()
+
+            val itemsToEdit = mutableListOf<Item>()
+            val stockItemsToEdit = mutableListOf<StockItem>()
+
+            val previousCat = itemsMap[previousCategory]
+            previousCat?.forEach {
+                itemsToEdit.add(it.copy(category = newCategory.capitalizeFirstCharacter()))
+                stockItemsToEdit.add(stockItems[it.uuid]!!.copy(colorHex = color.toArgb()))
             }
-            if (itemsToEdit?.isEmpty() != false) Resource.Success()
-            else itemRepo.saveItems(itemsToEdit)
+
+            if (itemsToEdit.isNotEmpty()) {
+                val saveResp = itemRepo.saveItems(itemsToEdit)
+                if (saveResp is Resource.Error) return@tryIt saveResp
+            }
+
+            if (stockItemsToEdit.isNotEmpty()) {
+                val saveResp = stockRepo.saveItems(stockItemsToEdit)
+                if (saveResp is Resource.Error) return@tryIt saveResp
+            }
+
+            Resource.Success()
         }
     }
 }

@@ -12,23 +12,34 @@ import java.util.*
 data class Item(
     val uuid: String = UUID.randomUUID().toString(),
     val name: String = "",
-    val category: String = "",
-    var amount: Double = 0.0,
-    val colorHex: Int = BaseColors.LightGray.toArgb(),
+    val category: String = "", // TODO category as obj
+    val creator: String = "",
     val createdAt: String = "",
+    val sharedWith: List<String> = listOf(),
+) {
+    @get:Exclude
+    val createDate: LocalDateTime
+        get() = parseDateTimeString(createdAt)
+}
+
+data class CheckItem(
+    val uuid: String = "",
+    var checked: Boolean = false,
+    var amount: Double = 1.0,
+    //TODO timestamp?
+)
+
+data class StockItem(
+    val uuid: String = "",
+    var amount: Double = 1.0,
+    val colorHex: Int = BaseColors.LightGray.toArgb(),
     var updatedAt: String = "",
     var freshUntil: Long = 0,
     var remindAfter: Long = 0,
-    val creator: String = "",
-    val sharedWith: List<String> = listOf(),
 ) {
     @get:Exclude
     val color: Color
         get() = Color(colorHex)
-
-    @get:Exclude
-    val createDate: LocalDateTime
-        get() = parseDateTimeString(createdAt)
 
     @get:Exclude
     val updateDate: LocalDateTime
@@ -48,11 +59,5 @@ data class Item(
     fun remindIt(finishDay: LocalDate): Boolean = remindAfter != 0L &&
             amount == 0.0 && finishDay.isBefore(remindAfterDate)
 
+    fun isAlertable(finishDay: LocalDate): Boolean = (!isFresh(finishDay) || remindIt(finishDay))
 }
-
-data class CheckItem(
-    val uuid: String = "",
-    var checked: Boolean = false,
-    var amount: Double = 1.0,
-    //TODO timestamp?
-)

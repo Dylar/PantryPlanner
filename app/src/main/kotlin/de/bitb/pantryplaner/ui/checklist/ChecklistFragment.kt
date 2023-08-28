@@ -1,7 +1,6 @@
 package de.bitb.pantryplaner.ui.checklist
 
 import android.os.Bundle
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -25,7 +24,9 @@ import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.data.model.Item
+import de.bitb.pantryplaner.data.model.StockItem
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
@@ -59,10 +60,11 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
         showFilterDialog = remember { mutableStateOf(false) }
         showFinishDialog = remember { mutableStateOf(false) }
 
+        val checkModel by viewModel.checkModel.observeAsState(null)
         Scaffold(
             scaffoldState = scaffoldState,
-            topBar = { buildAppBar() },
-            content = { buildContent(it) },
+            topBar = { buildAppBar(checkModel) },
+            content = { buildContent(it, checkModel) },
             floatingActionButton = { buildFab() },
         )
 
@@ -91,13 +93,12 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
     }
 
     @Composable
-    private fun buildAppBar() {
-        val checklist by viewModel.checkList.observeAsState(null)
+    private fun buildAppBar(checkModel: Resource<CheckModel>?) {
         TopAppBar(
             modifier = Modifier.testTag(TestTags.ChecklistPage.AppBar.name),
             title = {
                 Text(
-                    checklist?.data?.name ?: getString(R.string.loading_text),
+                    checkModel?.data?.checklist?.name ?: getString(R.string.loading_text),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -157,98 +158,96 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
     }
 
     @Composable
-    private fun buildContent(innerPadding: PaddingValues) {
-        val isCreator by viewModel.isCreator.observeAsState(null)
-        val allUsersResp by viewModel.getConnectedUsers().observeAsState(null)
-        val sharedUserResp by viewModel.sharedToUser.observeAsState(null)
-        val items by viewModel.itemMap.observeAsState(null)
-        val categorys = items?.data?.keys?.toList() ?: listOf()
+    private fun buildContent(innerPadding: PaddingValues, checkModel: Resource<CheckModel>?) {
         when {
-            isCreator is Resource.Error -> ErrorScreen(isCreator!!.message!!.asString())
-            items is Resource.Error -> ErrorScreen(items!!.message!!.asString())
-            sharedUserResp is Resource.Error -> ErrorScreen(sharedUserResp!!.message!!.asString())
-            allUsersResp is Resource.Error -> ErrorScreen(allUsersResp!!.message!!.asString())
-            items == null || sharedUserResp?.data == null || allUsersResp?.data == null || isCreator?.data == null -> LoadingIndicator()
-            items?.data?.isEmpty() == true -> EmptyListComp(getString(R.string.no_items))
+            checkModel?.data?.isLoading != false -> LoadingIndicator()
+            checkModel is Resource.Error -> ErrorScreen(checkModel.message!!.asString())
             else -> Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
             ) {
-                val allUsers = allUsersResp!!.data!!
-                val selectedUser = remember { mutableStateOf(sharedUserResp!!.data!!) }
+                val model = checkModel.data
+                val items = model.items!!
+                val categorys = items.keys.toList()
+                val allUsers = model.allUser!!
+                val selectedUser = remember { mutableStateOf(model.sharedUser!!) }
                 buildUserDropDown(
                     "Checkliste wird nicht geteilt",
                     allUsers,
                     selectedUser,
-                    canChange = isCreator?.data == true
+                    canChange = model.isCreator == true
                 ) {
                     viewModel.setSharedWith(it)
                 }
-                if (items?.data?.isEmpty() == true) {
+                if (items.isEmpty()) {
                     EmptyListComp(getString(R.string.no_items))
                 } else {
                     GridListLayout(
                         innerPadding,
                         showGridLayout,
-                        items!!.data!!,
-                        { it.color },
+                        items,
+                        { BaseColors.LightGray }, // TODO color?
                         viewModel::editCategory
-                    ) { _, item -> checkListItem(item, categorys, allUsers) }
+                    ) { _, item ->
+                        checkListItem(
+                            model.checklist!!,
+                            categorys,
+                            allUsers,
+                            item,
+                            model.stockItems!![item.uuid]!!,
+                        )
+                    }
                 }
             }
         }
     }
 
     @Composable
-    private fun checkListItem(item: Item, categorys: List<String>, users: List<User>) {
-        val checkResp by viewModel.checkList.observeAsState(null)
-        when {
-            checkResp is Resource.Error -> ErrorScreen(checkResp!!.message!!.asString())
-            checkResp?.data == null -> Card(
-                elevation = 4.dp,
-                border = BorderStroke(2.dp, item.color),
-                modifier = Modifier.padding(vertical = 4.dp),
-            ) { LoadingIndicator() }
-            else -> {
-                val checklist = checkResp!!.data!!
-                val checkItem = checklist.items.firstOrNull { it.uuid == item.uuid } ?: return
+    private fun checkListItem(
+        checklist: Checklist,
+        categorys: List<String>,
+        users: List<User>,
+        item: Item,
+        stockItem: StockItem,
+    ) {
+        val checkItem = checklist.items.firstOrNull { it.uuid == item.uuid } ?: return
 
-                val showEditDialog = remember { mutableStateOf(false) }
-                useEditItemDialog(
-                    showEditDialog,
+        val showEditDialog = remember { mutableStateOf(false) }
+        useEditItemDialog(
+            showEditDialog,
+            stockItem,
+            item,
+            categorys,
+            users,
+        ) { si, i, _ -> viewModel.editItem(si, i) }
+
+        dissmissItem(
+            item.name,
+            stockItem.color,
+            onSwipe = { viewModel.removeItem(item) },
+            onClick = { viewModel.checkItem(item.uuid) },
+            onLongClick = { showEditDialog.value = true },
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                SelectItemHeader(
+                    stockItem,
                     item,
-                    categorys,
-                    users,
-                ) { edited, _ -> viewModel.editItem(edited) }
-
-                dissmissItem(
-                    item.name,
-                    item.color,
-                    onSwipe = { viewModel.removeItem(item) },
-                    onClick = { viewModel.checkItem(item.uuid) },
-                    onLongClick = { showEditDialog.value = true },
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.Start,
-                        verticalArrangement = Arrangement.Center,
-                    ) {
-                        SelectItemHeader(
-                            item,
-                            checkItem.checked,
-                            true,
-                            viewModel::checkItem
-                        )
-                        val errors = viewModel.itemErrorList.collectAsState(listOf())
-                        val color =
-                            if (errors.value.contains(item.uuid)) BaseColors.FireRed
-                            else BaseColors.White
-                        AddSubRow(
-                            checkItem.amount,
-                            color
-                        ) { viewModel.changeItemAmount(item.uuid, it) }
-                    }
-                }
+                    checkItem.checked,
+                    true,
+                    viewModel::checkItem
+                )
+                val errors = viewModel.itemErrorList.collectAsState(listOf())
+                val color =
+                    if (errors.value.contains(item.uuid)) BaseColors.FireRed
+                    else BaseColors.White
+                AddSubRow(
+                    checkItem.amount,
+                    color
+                ) { viewModel.changeItemAmount(item.uuid, it) }
             }
         }
     }

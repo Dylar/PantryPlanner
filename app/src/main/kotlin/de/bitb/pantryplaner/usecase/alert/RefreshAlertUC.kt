@@ -4,22 +4,30 @@ import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.asResourceError
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.CheckRepository
-import de.bitb.pantryplaner.data.ItemRepository
+import de.bitb.pantryplaner.data.SettingsRepository
+import de.bitb.pantryplaner.data.StockRepository
 import kotlinx.coroutines.flow.first
 
 class RefreshAlertUC(
+    private val settingsRepo: SettingsRepository,
     private val checkRepo: CheckRepository,
-    private val itemRepo: ItemRepository,
+    private val stockRepo: StockRepository,
 ) {
     suspend operator fun invoke(): Resource<Boolean> {
         return tryIt(
             onError = { it.asResourceError(false) },
             onTry = {
-                //TODO load settings to disable
-                val resp = checkRepo.getCheckLists().first()
-                if (resp is Resource.Error) return@tryIt resp.castTo(false)
+                val settings = settingsRepo.getSettings().first()
+                if (settings is Resource.Error) return@tryIt settings.castTo(false)
+                if (settings.data?.refreshAlert != true) return@tryIt Resource.Success(false)
 
-                val allLists = resp.data!!
+                val checkResp = checkRepo.getCheckLists().first()
+                if (checkResp is Resource.Error) return@tryIt checkResp.castTo(false)
+
+                val stockResp = stockRepo.getStockItems().first()
+                if (stockResp is Resource.Error) return@tryIt stockResp.castTo(false)
+
+                val allLists = checkResp.data!!
                 val unfinishedItems = allLists
                     .asSequence()
                     .filter { !it.finished }
@@ -31,15 +39,12 @@ class RefreshAlertUC(
                 allLists
                     .filter { it.finished }
                     .map { check ->
-                        val ids = check.items.map { it.uuid }
-                        val itemResp = itemRepo.getAllItems(ids)
-                        if (itemResp is Resource.Error) return@tryIt itemResp.castTo(false)
-
                         val finishDay = check.finishDate.toLocalDate()
-                        itemResp.data!!
-                            .filter {
-                                !unfinishedItems.contains(it.uuid) &&
-                                        (!it.isFresh(finishDay) || it.remindIt(finishDay))
+                        val stockItems = stockResp.data!!
+                        stockItems.values
+                            .filter { stockItem ->
+                                !unfinishedItems.contains(stockItem.uuid) &&
+                                        stockItem.isAlertable(finishDay)
                             }
                             .map { it.uuid }
                     }

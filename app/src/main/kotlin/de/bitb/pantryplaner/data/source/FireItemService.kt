@@ -12,16 +12,16 @@ class FireItemService(
     private val firestore: FirebaseFirestore,
 ) : ItemRemoteDao {
 
-    private val itemCollection = firestore
+    private val collection = firestore
         .collection("stage")
         .document(BuildConfig.FLAVOR)
         .collection("items")
 
     private fun ownerCollection(id: String) =
-        itemCollection.whereEqualTo("creator", id)
+        collection.whereEqualTo("creator", id)
 
     private fun sharedCollection(id: String) =
-        itemCollection.whereArrayContains("sharedWith", id)
+        collection.whereArrayContains("sharedWith", id)
 
     override fun getItems(
         userId: String,
@@ -49,12 +49,12 @@ class FireItemService(
 
     override suspend fun addItem(item: Item): Resource<Boolean> {
         return tryIt {
-            val querySnapshot = itemCollection
+            val querySnapshot = collection
                 .whereEqualTo("uuid", item.uuid)
                 .get().await()
 
             if (querySnapshot.isEmpty) {
-                itemCollection.add(item).await()
+                collection.add(item).await()
                 Resource.Success(true)
             } else {
                 Resource.Success(false)

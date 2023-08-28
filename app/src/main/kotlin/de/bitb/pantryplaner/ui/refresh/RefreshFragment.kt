@@ -25,6 +25,7 @@ import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.formatted
 import de.bitb.pantryplaner.core.misc.parseDateString
 import de.bitb.pantryplaner.data.model.Item
+import de.bitb.pantryplaner.data.model.StockItem
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.TestTags
 import de.bitb.pantryplaner.ui.base.comps.*
@@ -43,12 +44,12 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
         // TODO show tooltip and explain
         showGridLayout = remember { mutableStateOf(true) }
 
-        val items by viewModel.itemList.collectAsState(null)
+        val model by viewModel.refreshModel.observeAsState(null)
         Scaffold(
             scaffoldState = scaffoldState,
             topBar = { buildAppBar() },
-            content = { buildContent(it, items) },
-            floatingActionButton = { buildFab(items) }
+            content = { buildContent(it, model) },
+            floatingActionButton = { buildFab(model) }
         )
     }
 
@@ -72,45 +73,53 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
     }
 
     @Composable
-    private fun buildFab(items: Resource<Map<String, List<Item>>>?) {
-        if (items != null && items is Resource.Success) {
-            val hasReminderItems = items.data?.any { entry ->
-                entry.value.any { it.remindIt(parseDateString(entry.key)) }
-            }
-            if (hasReminderItems == true) {
-                val showAddToDialog = remember { mutableStateOf(false) }
-                Column(
-                    horizontalAlignment = Alignment.End,
-                    verticalArrangement = Arrangement.Center,
-                ) {
-                    ExtendedFloatingActionButton(
-                        text = { Text(text = "Neue Liste anlegen") },
-                        icon = {
-                            Icon(
-                                imageVector = Icons.Rounded.Add,
-                                contentDescription = "Add to list FAB",
-                            )
-                        },
-                        onClick = {
-                            val checkedItems = viewModel.checkedItems.value
-                            if (checkedItems.isNotEmpty()) showAddToDialog.value = true
-                            else showSnackBar("Wähle mindestens 1 Item".asResString())
-                        },
-                    )
-                }
+    private fun buildFab(modelResp: Resource<RefreshModel>?) {
+        val model = modelResp?.data
+        if (modelResp == null ||
+            modelResp is Resource.Error ||
+            !modelResp.hasData ||
+            model?.isLoading != false
+        ) return
 
-                if (showAddToDialog.value) {
-                    val users = viewModel.getConnectedUsers().observeAsState()
-                    if (users.value is Resource.Success) {
-                        AddChecklistDialog(
-                            users.value!!.data!!,
-                            onConfirm = { name, sharedWith ->
-                                viewModel.addToNewChecklist(name, sharedWith)
-                                showAddToDialog.value = false
-                            },
-                            onDismiss = { showAddToDialog.value = false },
+        val items = model.items!!
+        val stockItems = model.stockItem!!
+
+        val hasReminderItems = items.any { entry ->
+            entry.value.any { stockItems[it.uuid]!!.remindIt(parseDateString(entry.key)) }
+        }
+        if (hasReminderItems) {
+            val showAddToDialog = remember { mutableStateOf(false) }
+            Column(
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                ExtendedFloatingActionButton(
+                    text = { Text(text = "Neue Liste anlegen") },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Rounded.Add,
+                            contentDescription = "Add to list FAB",
                         )
-                    }
+                    },
+                    onClick = {
+                        val checkedItems = viewModel.checkedItems.value
+                        if (checkedItems.isNotEmpty()) showAddToDialog.value = true
+                        else showSnackBar("Wähle mindestens 1 Item".asResString())
+                    },
+                )
+            }
+
+            if (showAddToDialog.value) {
+                val users = viewModel.getConnectedUsers().observeAsState()
+                if (users.value is Resource.Success) {
+                    AddChecklistDialog(
+                        users.value!!.data!!,
+                        onConfirm = { name, sharedWith ->
+                            viewModel.addToNewChecklist(name, sharedWith)
+                            showAddToDialog.value = false
+                        },
+                        onDismiss = { showAddToDialog.value = false },
+                    )
                 }
             }
         }
@@ -119,38 +128,38 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
     @Composable
     private fun buildContent(
         innerPadding: PaddingValues,
-        items: Resource<Map<String, List<Item>>>?,
+        modelResp: Resource<RefreshModel>?,
     ) {
         when {
-            items is Resource.Error -> {
-                showSnackBar("ERROR".asResString())
-                ErrorScreen(items.message!!.asString())
+            modelResp?.data?.isLoading != false -> LoadingIndicator()
+            modelResp is Resource.Error -> ErrorScreen(modelResp.message!!.asString())
+            modelResp.data.items?.isEmpty() == true -> EmptyListComp(getString(R.string.no_items))
+            else -> {
+                val model = modelResp.data
+                GridListLayout(
+                    innerPadding,
+                    showGridLayout,
+                    model.items!!,
+                    { BaseColors.LightGray }, //TODO color?
+                ) { header, item -> listItem(header, model.stockItem!![item.uuid]!!, item) }
             }
-            items == null -> LoadingIndicator()
-            items.data?.isEmpty() == true -> EmptyListComp(getString(R.string.no_items))
-            else -> GridListLayout(
-                innerPadding,
-                showGridLayout,
-                items.data!!,
-                { it.color },
-            ) { header, item -> listItem(header, item) }
         }
     }
 
     @Composable
-    private fun listItem(header: String, item: Item) {
-        if (item.isFresh(parseDateString(header))) {
-            RefreshItem(item)
+    private fun listItem(header: String, stockItem: StockItem, item: Item) {
+        if (stockItem.isFresh(parseDateString(header))) {
+            RefreshItem(stockItem, item)
         } else {
-            RemindItem(item)
+            RemindItem(stockItem, item)
         }
     }
 
     @Composable
-    private fun RefreshItem(item: Item) {
+    private fun RefreshItem(stockItem: StockItem, item: Item) {
         clearItem(
             item.name,
-            item.color,
+            stockItem.color,
             onSwipe = { viewModel.clearItemAmount(item.uuid) },
             onClick = { viewModel.checkItem(item.uuid) },
         ) {
@@ -169,7 +178,7 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
                     textAlign = TextAlign.Start
                 )
                 Text(
-                    text = item.amount.formatted,
+                    text = stockItem.amount.formatted,
                     modifier = Modifier
                         .width(50.dp)
                         .padding(start = 4.dp)
@@ -183,17 +192,18 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
 
     @Composable
     @OptIn(ExperimentalFoundationApi::class)
-    private fun RemindItem(item: Item) {
+    private fun RemindItem(stockItem: StockItem, item: Item) {
         val checkedItems = viewModel.checkedItems.collectAsState()
         Box(modifier = Modifier.padding(2.dp)) {
             Card(
                 elevation = 4.dp,
-                border = BorderStroke(2.dp, item.color),
+                border = BorderStroke(2.dp, stockItem.color),
                 modifier = Modifier
                     .fillMaxWidth()
                     .combinedClickable(onClick = { viewModel.checkItem(item.uuid) }),
             ) {
                 SelectItemHeader(
+                    stockItem,
                     item,
                     checkedItems.value.contains(item.uuid),
                     checkItem = viewModel::checkItem

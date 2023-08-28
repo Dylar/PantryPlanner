@@ -26,9 +26,7 @@ class LoginViewModel @Inject constructor(
 
     fun login() {
         error = null
-        if (isLoading) {
-            return
-        }
+        if (isLoading) return
         isLoading = true
         viewModelScope.launch {
             val result = userUseCases.loginUC(email, pw)

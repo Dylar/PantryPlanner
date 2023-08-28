@@ -1,10 +1,7 @@
 package de.bitb.pantryplaner.data.source
 
 import de.bitb.pantryplaner.core.misc.Resource
-import de.bitb.pantryplaner.data.model.Checklist
-import de.bitb.pantryplaner.data.model.Item
-import de.bitb.pantryplaner.data.model.Settings
-import de.bitb.pantryplaner.data.model.User
+import de.bitb.pantryplaner.data.model.*
 import kotlinx.coroutines.flow.Flow
 
 interface LocalDatabase {
@@ -13,18 +10,21 @@ interface LocalDatabase {
 }
 
 // REMOTE
-interface RemoteService : UserRemoteDao, ItemRemoteDao, CheckRemoteDao, SettingsRemoteDao
+interface RemoteService : UserRemoteDao, ItemRemoteDao, CheckRemoteDao, StockItemRemoteDao,
+    SettingsRemoteDao
 
 class PantryRemoteService(
     settingsService: FireSettingsService,
     userService: FireUserService,
     itemService: FireItemService,
     checkService: FireCheckService,
+    stockItemService: FireStockService,
 ) :
     RemoteService,
     UserRemoteDao by userService,
     ItemRemoteDao by itemService,
     CheckRemoteDao by checkService,
+    StockItemRemoteDao by stockItemService,
     SettingsRemoteDao by settingsService
 
 interface SettingsRemoteDao {
@@ -54,4 +54,11 @@ interface CheckRemoteDao {
     suspend fun addChecklist(check: Checklist): Resource<Boolean>
     suspend fun deleteChecklist(userId: String, check: Checklist): Resource<Boolean>
     suspend fun saveChecklist(userId: String, check: Checklist): Resource<Unit>
+}
+
+interface StockItemRemoteDao {
+    fun getStock(userId: String): Flow<Resource<Stock>>
+    suspend fun addStockItem(userId: String, item: StockItem): Resource<Boolean>
+    suspend fun deleteStockItem(userId: String, item: StockItem): Resource<Boolean>
+    suspend fun saveStockItems(userId: String, items: List<StockItem>): Resource<Unit>
 }

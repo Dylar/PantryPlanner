@@ -3,8 +3,10 @@ package de.bitb.pantryplaner.core.misc
 import androidx.annotation.StringRes
 import de.bitb.pantryplaner.core.misc.Logger.logCrashlytics
 import de.bitb.pantryplaner.ui.base.comps.ResString
+import kotlinx.coroutines.flow.MutableStateFlow
 
 sealed class Resource<T>(val data: T? = null, val message: ResString? = null) {
+
     class Success<T>(data: T?) : Resource<T>(data) {
         constructor() : this(null)
     }
@@ -21,6 +23,8 @@ sealed class Resource<T>(val data: T? = null, val message: ResString? = null) {
             return Error(message!!, data)
         }
     }
+
+    fun <E> asFlow() = MutableStateFlow(this)
 
     val hasData: Boolean
         get() = data != null

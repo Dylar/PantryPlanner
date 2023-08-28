@@ -22,6 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Item
+import de.bitb.pantryplaner.data.model.StockItem
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
@@ -74,11 +75,10 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
             )
         }
 
-        val users by viewModel.getConnectedUsers().observeAsState(null)
         Scaffold(
             scaffoldState = scaffoldState,
             topBar = { buildAppBar() },
-            content = { buildContent(it, users) },
+            content = { buildContent(it) },
             floatingActionButton = { buildFab() }
         )
 
@@ -91,18 +91,6 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
                 },
                 onDismiss = { showFilterDialog.value = false },
             )
-        }
-
-        val items by viewModel.itemList.observeAsState(null)
-        useAddItemDialog(
-            showAddDialog,
-            items?.data?.keys?.toList() ?: listOf(),
-            users?.data ?: listOf(),
-        ) { item, close ->
-            viewModel.addItem(item)
-            if (close) {
-                showAddDialog.value = false
-            }
         }
 
         if (showAddToDialog.value) {
@@ -200,62 +188,78 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
     }
 
     @Composable
-    private fun buildContent(innerPadding: PaddingValues, users: Resource<List<User>>?) {
-        val items by viewModel.itemList.observeAsState(null)
-        val categorys = items?.data?.keys?.toList() ?: listOf()
+    private fun buildContent(innerPadding: PaddingValues) {
+        val stockModel by viewModel.stockModel.observeAsState()
         when {
-            items is Resource.Error -> {
-                showSnackBar("ERROR".asResString())
-                ErrorScreen(items!!.message!!.asString())
+            stockModel?.data?.isLoading != false -> LoadingIndicator()
+            stockModel is Resource.Error -> ErrorScreen(stockModel!!.message!!.asString())
+            stockModel?.data?.stockItem?.isEmpty() == true -> EmptyListComp(getString(R.string.no_items))
+            else -> {
+                val model = stockModel!!.data!!
+                val stockItems = model.stockItem!!
+                val items = model.items
+                val categorys = items?.keys?.toList() ?: listOf()
+                val users = model.connectedUser ?: listOf()
+                useAddItemDialog(
+                    showAddDialog,
+                    categorys,
+                    users,
+                ) { stockItem, item, close ->
+                    viewModel.addItem(stockItem, item)
+                    if (close) {
+                        showAddDialog.value = false
+                    }
+                }
+                GridListLayout(
+                    innerPadding,
+                    showGridLayout,
+                    items!!,
+                    { stockItems.values.first().color }, //TODO color?
+                    viewModel::editCategory
+                ) { _, item -> listItem(stockItems[item.uuid]!!, item, categorys, users) }
             }
-            users is Resource.Error -> {
-                showSnackBar("ERROR".asResString())
-                ErrorScreen(users.message!!.asString())
-            }
-            items?.data == null || users?.data == null -> LoadingIndicator()
-            items?.data?.isEmpty() == true -> EmptyListComp(getString(R.string.no_items))
-            else -> GridListLayout(
-                innerPadding,
-                showGridLayout,
-                items!!.data!!,
-                { it.color },
-                viewModel::editCategory
-            ) { _, item -> listItem(item, categorys, users.data) }
         }
     }
 
     @Composable
-    private fun listItem(item: Item, categorys: List<String>, users: List<User>) {
+    private fun listItem(
+        stockItem: StockItem,
+        item: Item,
+        categorys: List<String>,
+        users: List<User>,
+    ) {
         val showEditDialog = remember { mutableStateOf(false) }
         useEditItemDialog(
             showEditDialog,
+            stockItem,
             item,
             categorys,
             users,
-        ) { edited, _ -> viewModel.editItem(edited) }
+        ) { si, i, _ -> viewModel.editItem(si, i) }
 
         dissmissItem(
             item.name,
-            item.color,
-            onSwipe = { viewModel.removeItem(item) },
+            stockItem.color,
+            onSwipe = { viewModel.deleteItem(item) },
             onClick = { viewModel.checkItem(item.uuid) },
             onLongClick = { showEditDialog.value = true },
         ) {
             if (viewModel.isSelectMode) {
                 val checkedItems = viewModel.checkedItems.collectAsState()
                 SelectItemHeader(
+                    stockItem,
                     item,
                     checkedItems.value.contains(item.uuid),
                     checkItem = viewModel::checkItem
                 )
             } else {
-                stockItem(item)
+                stockItem(item, stockItem)
             }
         }
     }
 
     @Composable
-    private fun stockItem(item: Item) {
+    private fun stockItem(item: Item, stockItem: StockItem) {
         val filter = viewModel.filterBy.collectAsState(null)
         val text = highlightedText(item.name, filter.value?.searchTerm ?: "")
 
@@ -279,7 +283,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
                 if (errors.value.contains(item.uuid)) BaseColors.FireRed
                 else BaseColors.White
             AddSubRow(
-                item.amount,
+                stockItem.amount,
                 color,
             ) { viewModel.changeItemAmount(item.uuid, it) }
         }

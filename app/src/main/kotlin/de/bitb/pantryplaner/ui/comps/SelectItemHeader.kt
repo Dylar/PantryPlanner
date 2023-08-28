@@ -14,11 +14,13 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import de.bitb.pantryplaner.data.model.Item
+import de.bitb.pantryplaner.data.model.StockItem
 import de.bitb.pantryplaner.ui.base.TestTags
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 
 @Composable
 fun SelectItemHeader(
+    stockItem: StockItem,
     item: Item,
     isChecked: Boolean,
     strikeChecked: Boolean = false,
@@ -40,8 +42,8 @@ fun SelectItemHeader(
                 .padding(horizontal = 4.dp, vertical = 4.dp),
             onCheckedChange = { checkItem(item.uuid) },
             colors = CheckboxDefaults.colors(
-                checkedColor = item.color,
-                uncheckedColor = item.color
+                checkedColor = stockItem.color,
+                uncheckedColor = stockItem.color
             )
         )
         Text(

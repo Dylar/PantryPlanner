@@ -29,9 +29,7 @@ class RegisterViewModel @Inject constructor(
 
     fun register() {
         error = null
-        if (isLoading) {
-            return
-        }
+        if (isLoading) return
         isLoading = true
         viewModelScope.launch {
             val result = userUseCases.registerUC(firstName, lastName, email, pw1, pw2)

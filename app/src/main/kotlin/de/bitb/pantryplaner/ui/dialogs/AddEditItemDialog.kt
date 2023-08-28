@@ -21,6 +21,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.data.model.Item
+import de.bitb.pantryplaner.data.model.StockItem
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.comps.buildCategoryDropDown
 import de.bitb.pantryplaner.ui.base.comps.buildUserDropDown
@@ -32,11 +33,12 @@ fun useAddItemDialog(
     showDialog: MutableState<Boolean>,
     categorys: List<String>,
     users: List<User>,
-    onEdit: (Item, Boolean) -> Unit,
+    onEdit: (StockItem, Item, Boolean) -> Unit,
 ) {
     useDialog(
         showDialog,
         "Item erstellen", "Hinzufügen",
+        StockItem(),
         Item(),
         categorys,
         users,
@@ -47,18 +49,20 @@ fun useAddItemDialog(
 @Composable
 fun useEditItemDialog(
     showDialog: MutableState<Boolean>,
+    stockItem: StockItem,
     item: Item,
     categorys: List<String>,
     users: List<User>,
-    onEdit: (Item, Boolean) -> Unit,
+    onEdit: (StockItem, Item, Boolean) -> Unit,
 ) {
     useDialog(
         showDialog,
         "Item bearbeiten", "Speichern",
+        stockItem,
         item,
         categorys,
         users,
-    ) { edited, _ -> onEdit(edited, true) }
+    ) { si, i, _ -> onEdit(si, i, true) }
 }
 
 
@@ -67,20 +71,22 @@ private fun useDialog(
     showDialog: MutableState<Boolean>,
     title: String,
     confirmButton: String,
+    stockItem: StockItem,
     item: Item,
     categorys: List<String>,
     users: List<User>,
-    onConfirm: (Item, Boolean) -> Unit,
+    onConfirm: (StockItem, Item, Boolean) -> Unit,
 ) {
     if (showDialog.value) {
         AddEditItemDialog(
             title = title,
             confirmButton = confirmButton,
+            stockItem = stockItem,
             item = item,
             categorys = categorys,
             users = users,
-            onConfirm = { it, close ->
-                onConfirm(it, close)
+            onConfirm = { si, i, close ->
+                onConfirm(si, i, close)
                 showDialog.value = false
             },
             onDismiss = { showDialog.value = false },
@@ -92,10 +98,11 @@ private fun useDialog(
 private fun AddEditItemDialog(
     title: String,
     confirmButton: String,
+    stockItem: StockItem,
     item: Item,
     categorys: List<String>,
     users: List<User>,
-    onConfirm: (Item, Boolean) -> Unit,
+    onConfirm: (StockItem, Item, Boolean) -> Unit,
     onDismiss: () -> Unit,
 ) {
     var name by remember {
@@ -109,13 +116,16 @@ private fun AddEditItemDialog(
 
     val category = remember { mutableStateOf(TextFieldValue(item.category)) }
     val selectedUser = remember { mutableStateOf(emptyList<User>()) }
-    val freshUntil = remember { mutableStateOf(item.freshUntil) }
-    val remindAfter = remember { mutableStateOf(item.remindAfter) }
+    val freshUntil = remember { mutableStateOf(stockItem.freshUntil) }
+    val remindAfter = remember { mutableStateOf(stockItem.remindAfter) }
     val focusRequester = remember { FocusRequester() }
 
     fun copyItem() = item.copy(
         name = name.text,
         category = category.value.text,
+    )
+
+    fun copyStockItem() = stockItem.copy(
         freshUntil = freshUntil.value,
         remindAfter = remindAfter.value,
     )
@@ -139,7 +149,7 @@ private fun AddEditItemDialog(
                     onValueChange = { name = it },
                     keyboardActions = KeyboardActions(
                         onDone = {
-                            onConfirm(copyItem(), false)
+                            onConfirm(copyStockItem(), copyItem(), false)
                             name = TextFieldValue()
                         },
                     ),
@@ -164,7 +174,7 @@ private fun AddEditItemDialog(
         },
         confirmButton = {
             Button(
-                onClick = { onConfirm(copyItem(), true) },
+                onClick = { onConfirm(copyStockItem(), copyItem(), true) },
                 content = { Text(confirmButton) }
             )
         },

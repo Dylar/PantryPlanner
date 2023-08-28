@@ -12,7 +12,6 @@ sealed class DataLoadResponse(val message: ResString) {
     object DataLoaded : DataLoadResponse(R.string.data_loaded.asResString())
 }
 
-
 class LoadDataUC(
     private val userRepo: UserRepository,
 ) {

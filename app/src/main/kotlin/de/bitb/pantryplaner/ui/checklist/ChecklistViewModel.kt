@@ -1,33 +1,42 @@
 package de.bitb.pantryplaner.ui.checklist
 
 import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.castOnError
-import de.bitb.pantryplaner.data.CheckRepository
-import de.bitb.pantryplaner.data.ItemRepository
-import de.bitb.pantryplaner.data.UserDataExt
-import de.bitb.pantryplaner.data.UserRepository
-import de.bitb.pantryplaner.data.model.Checklist
-import de.bitb.pantryplaner.data.model.Filter
-import de.bitb.pantryplaner.data.model.Item
-import de.bitb.pantryplaner.data.model.User
+import de.bitb.pantryplaner.data.*
+import de.bitb.pantryplaner.data.model.*
 import de.bitb.pantryplaner.ui.base.BaseViewModel
 import de.bitb.pantryplaner.ui.base.comps.asResString
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.collections.set
+
+data class CheckModel(
+    val isCreator: Boolean?,
+    val checklist: Checklist?,
+    val items: Map<String, List<Item>>?,
+    val stockItems: Map<String, StockItem>?,
+    val allUser: List<User>?,
+    val sharedUser: List<User>?,
+) {
+    val isLoading: Boolean
+        get() = isCreator == null || checklist == null || items == null || allUser == null || sharedUser == null
+}
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ChecklistViewModel @Inject constructor(
     override val userRepo: UserRepository,
+    private val stockRepo: StockRepository,
     private val itemRepo: ItemRepository,
     private val checkRepo: CheckRepository,
     private val checkUseCases: ChecklistUseCases,
@@ -37,24 +46,22 @@ class ChecklistViewModel @Inject constructor(
     val itemErrorList = MutableStateFlow<List<String>>(emptyList())
     val filterBy = MutableStateFlow(Filter())
 
-    lateinit var isCreator: LiveData<Resource<Boolean>>
+    lateinit var checkModel: LiveData<Resource<CheckModel>>
+
     lateinit var checkListId: String
-    lateinit var checkList: LiveData<Resource<Checklist>>
-    lateinit var itemMap: LiveData<Resource<Map<String, List<Item>>>>
-    lateinit var sharedToUser: LiveData<Resource<List<User>>>
 
     fun initChecklist(uuid: String) {
         checkListId = uuid
-        checkList = checkRepo.getCheckList(checkListId).asLiveData()
-        itemMap = checkList
-            .switchMap { resp ->
-                val checklist = resp.data!!
+        checkModel = checkRepo.getCheckList(checkListId)
+            .flatMapLatest { checkResp ->
+                if (checkResp is Resource.Error) return@flatMapLatest MutableStateFlow(checkResp.castTo())
+                val checklist = checkResp.data!!
                 val ids = checklist.items.map { it.uuid }
-                filterBy.flatMapLatest { filter ->
+                val itemsFlow = filterBy.flatMapLatest { filter ->
                     itemRepo.getItems(ids, filter)
                         .map { itemResp ->
                             castOnError(itemResp) {
-                                // oh god
+                                // oh god - sort each list ....
                                 val newMap = mutableMapOf<String, List<Item>>()
                                 itemResp.data?.forEach { lists ->
                                     newMap[lists.key] = lists.value.sortedBy { item ->
@@ -64,24 +71,39 @@ class ChecklistViewModel @Inject constructor(
                                 Resource.Success(newMap.toMap())
                             }
                         }
-                }.asLiveData()
-            }
-        sharedToUser = checkList
-            .switchMap { resp ->
-                if (resp is Resource.Error) return@switchMap MutableLiveData(resp.castTo())
-                userRepo.getUser(resp.data!!.sharedWith).asLiveData()
-            }
-        isCreator = checkList.switchMap { checkResp ->
-            if (checkResp is Resource.Error) {
-                return@switchMap MutableLiveData(checkResp.castTo())
-            }
-            userRepo.getUser().flatMapLatest { userResp ->
-                if (userResp is Resource.Error) return@flatMapLatest MutableStateFlow(userResp.castTo())
-                val user = userResp.data!!
-                val result = Resource.Success(user.uuid == checkResp.data!!.creator)
-                return@flatMapLatest MutableStateFlow(result)
+                }
+                val isCreatorFlow: Flow<Resource<Boolean>> = userRepo.getUser()
+                    .flatMapLatest { userResp ->
+                        if (userResp is Resource.Error) MutableStateFlow(userResp.castTo())
+                        else Resource.Success(userResp.data!!.uuid == checklist.creator)
+                            .asFlow<Boolean>()
+                    }
+                combine(
+                    isCreatorFlow,
+                    getConnectedUsers().asFlow(),
+                    userRepo.getUser(checklist.sharedWith),
+                    itemsFlow,
+                    stockRepo.getStockItems()
+                ) { isCreator, allUsers, users, items, stockItems ->
+                    when {
+                        isCreator is Resource.Error -> return@combine isCreator.castTo()
+                        allUsers is Resource.Error -> return@combine allUsers.castTo()
+                        users is Resource.Error -> return@combine users.castTo()
+                        items is Resource.Error -> return@combine items.castTo()
+                        stockItems is Resource.Error -> return@combine stockItems.castTo()
+                        else -> Resource.Success(
+                            CheckModel(
+                                isCreator.data!!,
+                                checklist,
+                                items.data!!,
+                                stockItems.data!!,
+                                allUsers.data!!,
+                                users.data!!,
+                            ),
+                        )
+                    }
+                }
             }.asLiveData()
-        }
     }
 
     fun removeItem(item: Item) {
@@ -104,9 +126,9 @@ class ChecklistViewModel @Inject constructor(
         }
     }
 
-    fun editItem(item: Item) {
+    fun editItem(stockItem: StockItem, item: Item) {
         viewModelScope.launch {
-            when (val resp = itemUseCases.editItemUC(item)) {
+            when (val resp = itemUseCases.editItemUC(stockItem, item)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
                 else -> showSnackbar("Item editiert".asResString()).also { updateWidgets() }
             }

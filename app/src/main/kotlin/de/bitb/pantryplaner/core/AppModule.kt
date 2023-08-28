@@ -45,8 +45,15 @@ object AppModule {
         val userService = FireUserService(fireData, fireAuth)
         val itemService = FireItemService(fireData)
         val checkService = FireCheckService(fireData)
+        val stockItemService = FireStockService(fireData)
 
-        return PantryRemoteService(settingsService, userService, itemService, checkService)
+        return PantryRemoteService(
+            settingsService,
+            userService,
+            itemService,
+            checkService,
+            stockItemService,
+        )
     }
 
     // REPO
@@ -77,6 +84,13 @@ object AppModule {
         localDatabase: LocalDatabase,
     ): CheckRepository = CheckRepositoryImpl(remoteService, localDatabase)
 
+    @Provides
+    @Singleton
+    fun provideStockRepository(
+        remoteService: RemoteService,
+        localDatabase: LocalDatabase,
+    ): StockRepository = StockRepository(remoteService, localDatabase)
+
     //USE CASES
     @Provides
     @Singleton
@@ -96,11 +110,12 @@ object AppModule {
     @Provides
     @Singleton
     fun provideAlertUseCases(
+        settingsRepo: SettingsRepository,
         checkRepo: CheckRepository,
-        itemRepo: ItemRepository,
+        stockRepo: StockRepository,
     ): AlertUseCases {
         return AlertUseCases(
-            refreshAlertUC = RefreshAlertUC(checkRepo, itemRepo),
+            refreshAlertUC = RefreshAlertUC(settingsRepo, checkRepo, stockRepo),
         )
     }
 
@@ -109,12 +124,13 @@ object AppModule {
     fun provideItemUseCases(
         userRepo: UserRepository,
         itemRepo: ItemRepository,
+        stockRepo: StockRepository,
     ): ItemUseCases {
         return ItemUseCases(
             createItemUC = CreateItemUC(userRepo, itemRepo),
             deleteItemUC = DeleteItemUC(userRepo, itemRepo),
-            editItemUC = EditItemUC(itemRepo),
-            editCategoryUC = EditCategoryUC(itemRepo),
+            editItemUC = EditItemUC(itemRepo, stockRepo),
+            editCategoryUC = EditCategoryUC(itemRepo, stockRepo),
             uncheckAllItemsUC = UncheckAllItemsUC(itemRepo),
         )
     }
@@ -122,9 +138,10 @@ object AppModule {
     @Provides
     @Singleton
     fun provideCheckListUseCases(
+        localDB: LocalDatabase,
         userRepo: UserRepository,
         checkRepo: CheckRepository,
-        itemRepo: ItemRepository,
+        stockRepo: StockRepository,
     ): ChecklistUseCases {
         return ChecklistUseCases(
             createChecklistUC = CreateChecklistUC(userRepo, checkRepo),
@@ -132,8 +149,8 @@ object AppModule {
             addItemsUC = AddItemsUC(checkRepo),
             removeItemsUC = RemoveItemsUC(checkRepo),
             checkItemUC = CheckItemUC(checkRepo),
-            finishChecklistUC = FinishChecklistUC(checkRepo, itemRepo),
-            unfinishChecklistUC = UnfinishChecklistUC(checkRepo, itemRepo),
+            finishChecklistUC = FinishChecklistUC(localDB, checkRepo, stockRepo),
+            unfinishChecklistUC = UnfinishChecklistUC(localDB, checkRepo, stockRepo),
             setItemAmountUC = SetItemAmountUC(checkRepo),
             setSharedWithUC = SetSharedWithUC(checkRepo),
         )
