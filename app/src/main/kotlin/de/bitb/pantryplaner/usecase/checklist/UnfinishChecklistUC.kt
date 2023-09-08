@@ -33,7 +33,9 @@ class UnfinishChecklistUC(
 
             val stockItems = stockResp.data!!
             checklist.items.forEach { checkItem ->
-                stockItems[checkItem.uuid]!!.amount -= checkItem.amount
+                if(checkItem.checked) {
+                    stockItems[checkItem.uuid]!!.amount -= checkItem.amount
+                }
             }
 
             stockRepo.saveItems(stockItems.values.toList())
