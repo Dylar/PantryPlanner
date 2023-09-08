@@ -41,10 +41,10 @@ class RefreshViewModel @Inject constructor(
 
     val refreshModel: LiveData<Resource<RefreshModel>> =
         combine(
-            itemRepo.getItems(), // just to update when amount changed (TODO do we need this after stock model?)
+//            itemRepo.getItems(), // just to update when amount changed (TODO do we need this after stock model?)
             checkRepo.getCheckLists(),
             stockRepo.getStockItems(),
-        ) { _, checkResp, stockResp ->
+        ) { checkResp, stockResp ->
             if (checkResp is Resource.Error) return@combine checkResp.castTo()
             if (stockResp is Resource.Error) return@combine stockResp.castTo()
 

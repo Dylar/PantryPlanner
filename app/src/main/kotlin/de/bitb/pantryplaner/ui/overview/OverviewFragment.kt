@@ -154,7 +154,6 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
                 // TODO depending if needed
                 Button(
                     onClick = ::naviToRefresh,
-//                    onClick = { viewModel.testUsecase}, TODO
                     shape = MaterialTheme.shapes.medium,
                     elevation = ButtonDefaults.elevation(8.dp),
                     modifier = Modifier.padding(8.dp)

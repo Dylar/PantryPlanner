@@ -66,7 +66,7 @@ class FireStockService(
     }
 
     override suspend fun deleteStockItem(userId: String, item: StockItem): Resource<Boolean> {
-        return tryIt { // TODO look at me
+        return tryIt {
             val querySnapshot = stockQuery(userId).get().await()
             val stockExists = querySnapshot.isEmpty
             val stock =

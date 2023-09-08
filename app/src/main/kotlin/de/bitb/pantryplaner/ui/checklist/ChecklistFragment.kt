@@ -182,11 +182,12 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 if (items.isEmpty()) {
                     EmptyListComp(getString(R.string.no_items))
                 } else {
+                    val stockItems = model.stockItems!!
                     GridListLayout(
                         innerPadding,
                         showGridLayout,
                         items,
-                        { BaseColors.LightGray }, // TODO color?
+                        { stockItems.values.first().color }, // TODO color?
                         viewModel::editCategory
                     ) { _, item ->
                         checkListItem(
@@ -194,7 +195,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                             categorys,
                             allUsers,
                             item,
-                            model.stockItems!![item.uuid]!!,
+                            stockItems[item.uuid]!!,
                         )
                     }
                 }

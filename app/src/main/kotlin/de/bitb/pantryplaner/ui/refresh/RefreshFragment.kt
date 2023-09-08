@@ -41,7 +41,7 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
 
     @Composable
     override fun screenContent() {
-        // TODO show tooltip and explain
+        // TODO show tooltip/tour and explain
         showGridLayout = remember { mutableStateOf(true) }
 
         val model by viewModel.refreshModel.observeAsState(null)
@@ -136,12 +136,13 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
             modelResp.data.items?.isEmpty() == true -> EmptyListComp(getString(R.string.no_items))
             else -> {
                 val model = modelResp.data
+                val stockItem = model.stockItem!!
                 GridListLayout(
                     innerPadding,
                     showGridLayout,
                     model.items!!,
-                    { BaseColors.LightGray }, //TODO color?
-                ) { header, item -> listItem(header, model.stockItem!![item.uuid]!!, item) }
+                    { stockItem.values.first().color }, //TODO color?
+                ) { header, item -> listItem(header, stockItem[item.uuid]!!, item) }
             }
         }
     }
