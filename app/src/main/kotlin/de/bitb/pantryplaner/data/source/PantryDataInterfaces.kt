@@ -60,5 +60,5 @@ interface StockItemRemoteDao {
     fun getStock(userId: String): Flow<Resource<Stock>>
     suspend fun addStockItem(userId: String, item: StockItem): Resource<Boolean>
     suspend fun deleteStockItem(userId: String, item: StockItem): Resource<Boolean>
-    suspend fun saveStockItems(userId: String, items: List<StockItem>): Resource<Unit>
+    suspend fun saveStock(userId: String, stock: Stock): Resource<Unit>
 }

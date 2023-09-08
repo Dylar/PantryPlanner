@@ -43,6 +43,7 @@ suspend fun <T> tryIt(
     e.printStackTrace()
     logCrashlytics(e)
     onError(e) ?: e.asResourceError()
+    throw e
 }
 
 suspend fun <T, E> castOnError(

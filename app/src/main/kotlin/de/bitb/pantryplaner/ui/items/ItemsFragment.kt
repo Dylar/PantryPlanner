@@ -193,7 +193,6 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
         when {
             stockModel?.data?.isLoading != false -> LoadingIndicator()
             stockModel is Resource.Error -> ErrorScreen(stockModel!!.message!!.asString())
-            stockModel?.data?.stockItem?.isEmpty() == true -> EmptyListComp(getString(R.string.no_items))
             else -> {
                 val model = stockModel!!.data!!
                 val stockItems = model.stockItem!!
@@ -205,18 +204,28 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
                     categorys,
                     users,
                 ) { stockItem, item, close ->
-                    viewModel.addItem(stockItem, item)
-                    if (close) {
-                        showAddDialog.value = false
+                    viewModel.addItem(item, stockItem)
+                    if (close) showAddDialog.value = false
+                }
+
+                if (stockItems.isEmpty()) {
+                    EmptyListComp(getString(R.string.no_items))
+                } else {
+                    GridListLayout(
+                        innerPadding,
+                        showGridLayout,
+                        items!!,
+                        { stockItems.values.first().color }, //TODO color?
+                        viewModel::editCategory
+                    ) { _, item ->
+                        listItem(
+                            stockItems[item.uuid] ?: item.toStockItem(),
+                            item,
+                            categorys,
+                            users,
+                        )
                     }
                 }
-                GridListLayout(
-                    innerPadding,
-                    showGridLayout,
-                    items!!,
-                    { stockItems.values.first().color }, //TODO color?
-                    viewModel::editCategory
-                ) { _, item -> listItem(stockItems[item.uuid]!!, item, categorys, users) }
             }
         }
     }
@@ -240,7 +249,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
         dissmissItem(
             item.name,
             stockItem.color,
-            onSwipe = { viewModel.deleteItem(item) },
+            onSwipe = { viewModel.deleteItem(item, stockItem) },
             onClick = { viewModel.checkItem(item.uuid) },
             onLongClick = { showEditDialog.value = true },
         ) {

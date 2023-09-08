@@ -51,59 +51,63 @@ class ChecklistViewModel @Inject constructor(
     lateinit var checkListId: String
 
     fun initChecklist(uuid: String) {
-        checkListId = uuid
-        checkModel = checkRepo.getCheckList(checkListId)
-            .flatMapLatest { checkResp ->
-                if (checkResp is Resource.Error) return@flatMapLatest MutableStateFlow(checkResp.castTo())
-                val checklist = checkResp.data!!
-                val ids = checklist.items.map { it.uuid }
-                val itemsFlow = filterBy.flatMapLatest { filter ->
-                    itemRepo.getItems(ids, filter)
-                        .map { itemResp ->
-                            castOnError(itemResp) {
-                                // oh god - sort each list ....
-                                val newMap = mutableMapOf<String, List<Item>>()
-                                itemResp.data?.forEach { lists ->
-                                    newMap[lists.key] = lists.value.sortedBy { item ->
-                                        checklist.items.first { it.uuid == item.uuid }.checked
+        try {
+            checkListId = uuid
+            checkModel = checkRepo.getCheckList(checkListId)
+                .flatMapLatest { checkResp ->
+                    if (checkResp is Resource.Error) return@flatMapLatest MutableStateFlow(checkResp.castTo())
+                    val checklist = checkResp.data!!
+                    val ids = checklist.items.map { it.uuid }
+                    val itemsFlow = filterBy.flatMapLatest { filter ->
+                        itemRepo.getItems(ids, filter)
+                            .map { itemResp ->
+                                castOnError(itemResp) {
+                                    // oh god - sort each list ....
+                                    val newMap = mutableMapOf<String, List<Item>>()
+                                    itemResp.data?.forEach { lists ->
+                                        newMap[lists.key] = lists.value.sortedBy { item ->
+                                            checklist.items.first { it.uuid == item.uuid }.checked
+                                        }
                                     }
+                                    Resource.Success(newMap.toMap())
                                 }
-                                Resource.Success(newMap.toMap())
                             }
+                    }
+                    val isCreatorFlow: Flow<Resource<Boolean>> = userRepo.getUser()
+                        .flatMapLatest { userResp ->
+                            if (userResp is Resource.Error) MutableStateFlow(userResp.castTo())
+                            else Resource.Success(userResp.data!!.uuid == checklist.creator)
+                                .asFlow<Boolean>()
                         }
-                }
-                val isCreatorFlow: Flow<Resource<Boolean>> = userRepo.getUser()
-                    .flatMapLatest { userResp ->
-                        if (userResp is Resource.Error) MutableStateFlow(userResp.castTo())
-                        else Resource.Success(userResp.data!!.uuid == checklist.creator)
-                            .asFlow<Boolean>()
+                    combine(
+                        isCreatorFlow,
+                        getConnectedUsers().asFlow(),
+                        userRepo.getUser(checklist.sharedWith),
+                        itemsFlow,
+                        stockRepo.getStockItems()
+                    ) { isCreator, allUsers, users, items, stockItems ->
+                        when {
+                            isCreator is Resource.Error -> return@combine isCreator.castTo()
+                            allUsers is Resource.Error -> return@combine allUsers.castTo()
+                            users is Resource.Error -> return@combine users.castTo()
+                            items is Resource.Error -> return@combine items.castTo()
+                            stockItems is Resource.Error -> return@combine stockItems.castTo()
+                            else -> Resource.Success(
+                                CheckModel(
+                                    isCreator.data!!,
+                                    checklist,
+                                    items.data!!,
+                                    stockItems.data!!,
+                                    allUsers.data!!,
+                                    users.data!!,
+                                ),
+                            )
+                        }
                     }
-                combine(
-                    isCreatorFlow,
-                    getConnectedUsers().asFlow(),
-                    userRepo.getUser(checklist.sharedWith),
-                    itemsFlow,
-                    stockRepo.getStockItems()
-                ) { isCreator, allUsers, users, items, stockItems ->
-                    when {
-                        isCreator is Resource.Error -> return@combine isCreator.castTo()
-                        allUsers is Resource.Error -> return@combine allUsers.castTo()
-                        users is Resource.Error -> return@combine users.castTo()
-                        items is Resource.Error -> return@combine items.castTo()
-                        stockItems is Resource.Error -> return@combine stockItems.castTo()
-                        else -> Resource.Success(
-                            CheckModel(
-                                isCreator.data!!,
-                                checklist,
-                                items.data!!,
-                                stockItems.data!!,
-                                allUsers.data!!,
-                                users.data!!,
-                            ),
-                        )
-                    }
-                }
-            }.asLiveData()
+                }.asLiveData()
+        }catch (e:Exception){
+            print(e.toString());
+        }
     }
 
     fun removeItem(item: Item) {

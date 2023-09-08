@@ -35,11 +35,12 @@ fun useAddItemDialog(
     users: List<User>,
     onEdit: (StockItem, Item, Boolean) -> Unit,
 ) {
+    val item = Item()
     useDialog(
         showDialog,
         "Item erstellen", "Hinzufügen",
-        StockItem(),
-        Item(),
+        item.toStockItem(),
+        item,
         categorys,
         users,
         onEdit

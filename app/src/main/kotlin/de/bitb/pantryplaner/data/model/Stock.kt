@@ -4,7 +4,7 @@ import java.util.*
 
 data class Stock(
     val uuid: String = UUID.randomUUID().toString(),
-    val items: MutableList<StockItem>,
-    val sharedWith: List<String>,
+    val items: MutableList<StockItem> = mutableListOf(),
+    val sharedWith: List<String> = emptyList(),
     // TODO add location to get multi stocks
 )

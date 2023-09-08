@@ -19,6 +19,7 @@ import de.bitb.pantryplaner.ui.base.BaseViewModel
 import de.bitb.pantryplaner.ui.base.comps.asResString
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
+import de.bitb.pantryplaner.usecase.StockUseCases
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -42,6 +43,7 @@ class ItemsViewModel @Inject constructor(
     override val userRepo: UserRepository,
     private val checkUseCases: ChecklistUseCases,
     private val itemUseCases: ItemUseCases,
+    private val stockUseCases: StockUseCases,
 ) : BaseViewModel(), UserDataExt {
     private var fromChecklistId: String? = null
 
@@ -51,21 +53,22 @@ class ItemsViewModel @Inject constructor(
     val filterBy = MutableStateFlow(Filter())
     val stockModel: LiveData<Resource<StockModel>> = filterBy
         .debounce { if (_isSearching.value) 1000L else 0L }
-        .flatMapLatest {
+        .flatMapLatest { itemRepo.getItems(filterBy = it) }
+        .flatMapLatest { itemsResp ->
+            if (itemsResp is Resource.Error) return@flatMapLatest MutableStateFlow(itemsResp.castTo())
+            val items = itemsResp.data!!.values.flatten().toSet()
             combine(
-                stockRepo.getStockItems(),
-                itemRepo.getItems(filterBy = it),
+                stockRepo.getStockItems(items = items.map { it.uuid }.toList()),
                 getConnectedUsers().asFlow(),
-            ) { stockItems, items, users ->
+            ) { stockItems, users ->
                 when {
-                    items is Resource.Error -> items.castTo()
                     stockItems is Resource.Error -> stockItems.castTo()
                     users is Resource.Error -> users.castTo()
                     else -> Resource.Success(
                         StockModel(
-                            stockItems.data ?: emptyMap(),
-                            items.data ?: emptyMap(),
-                            users.data ?: emptyList(),
+                            stockItems.data,
+                            itemsResp.data,
+                            users.data,
                         ),
                     )
                 }
@@ -86,24 +89,28 @@ class ItemsViewModel @Inject constructor(
         fromChecklistId = checkUuid
     }
 
-    fun addItem(stockItem: StockItem, item: Item) {
+    fun addItem(item: Item, stockItem: StockItem) {
         val name = item.name
         viewModelScope.launch {
-            val resp = itemUseCases.createItemUC(name, item.category)
-            when {
-                resp is Resource.Error -> showSnackbar(resp.message!!)
-                resp.data == true -> showSnackbar("Item hinzugefügt: $name".asResString()).also { updateWidgets() }
+            val addStockResp = stockUseCases.addStockItemUC(stockItem)
+            val createItemResp = itemUseCases.createItemUC(item)
+            when { //TODO guess we need to split item frag :D
+                createItemResp is Resource.Error -> showSnackbar(createItemResp.message!!)
+                addStockResp is Resource.Error -> showSnackbar(addStockResp.message!!)
+                createItemResp.data == true -> showSnackbar("Item hinzugefügt: $name".asResString()).also { updateWidgets() }
                 else -> showSnackbar("Item gibt es schon: $name".asResString())
             }
         }
     }
 
-    fun deleteItem(item: Item) {
+    fun deleteItem(item: Item, stockItem: StockItem) {
         viewModelScope.launch {
-            val resp = itemUseCases.deleteItemUC(item)
-            when {
-                resp is Resource.Error -> showSnackbar(resp.message!!)
-                resp.data == true -> showSnackbar("Item entfernt: ${item.name}".asResString()).also { updateWidgets() }
+            val deleteItemResp = itemUseCases.deleteItemUC(item)
+            val deleteStockResp = stockUseCases.deleteStockItemUC(stockItem)
+            when { //TODO guess we need to split item frag :D
+                deleteItemResp is Resource.Error -> showSnackbar(deleteItemResp.message!!)
+                deleteStockResp is Resource.Error -> showSnackbar(deleteStockResp.message!!)
+                deleteItemResp.data == true -> showSnackbar("Item entfernt: ${item.name}".asResString()).also { updateWidgets() }
                 else -> showSnackbar("Item nicht entfernt: ${item.name}".asResString())
             }
         }

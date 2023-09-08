@@ -28,21 +28,18 @@ class FireStockService(
     ): Flow<Resource<Stock>> {
         return stockQuery(userId)
             .snapshots()
-            .map { Resource.Success(it.toObjects(Stock::class.java).first()) }
+            .map {
+                val stock = it.toObjects(Stock::class.java).firstOrNull()
+                    ?: Stock(sharedWith = listOf(userId))
+                Resource.Success(stock)
+            }
     }
 
-    override suspend fun saveStockItems(userId: String, items: List<StockItem>): Resource<Unit> {
+    override suspend fun saveStock(userId: String, stock: Stock): Resource<Unit> {
         return tryIt {
-            firestore.batch().apply {
-                stockQuery(userId)
-                    .whereIn("uuid", items.map { it.uuid })
-                    .get().await().documents
-                    .forEach { snap ->
-                        val uuid = snap.data?.get("uuid") ?: ""
-                        set(snap.reference, items.first { it.uuid == uuid })
-                    }
-                commit()
-            }
+            val query = stockQuery(userId).get().await()
+            if (query.isEmpty) stockCollection.add(stock)
+            else query.documents.first().reference.set(stock)
             Resource.Success()
         }
     }
@@ -61,7 +58,7 @@ class FireStockService(
                 if (stockExists) {
                     stockCollection.add(stock)
                 } else {
-                    stockQuery(userId).get().await().documents.first().reference.set(stock)
+                    querySnapshot.documents.first().reference.set(stock)
                 }
             }
             Resource.Success(contains)
@@ -83,7 +80,7 @@ class FireStockService(
                 if (stockExists) {
                     stockCollection.add(stock)
                 } else {
-                    stockQuery(userId).get().await().documents.first().reference.set(stock)
+                    querySnapshot.documents.first().reference.set(stock)
                 }
             }
             Resource.Success(contains)

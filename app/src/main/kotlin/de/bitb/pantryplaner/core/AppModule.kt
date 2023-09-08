@@ -11,13 +11,12 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import de.bitb.pantryplaner.data.*
 import de.bitb.pantryplaner.data.source.*
-import de.bitb.pantryplaner.usecase.AlertUseCases
-import de.bitb.pantryplaner.usecase.ChecklistUseCases
-import de.bitb.pantryplaner.usecase.ItemUseCases
-import de.bitb.pantryplaner.usecase.UserUseCases
+import de.bitb.pantryplaner.usecase.*
 import de.bitb.pantryplaner.usecase.alert.RefreshAlertUC
 import de.bitb.pantryplaner.usecase.checklist.*
 import de.bitb.pantryplaner.usecase.item.*
+import de.bitb.pantryplaner.usecase.stock.AddStockItemUC
+import de.bitb.pantryplaner.usecase.stock.DeleteStockItemUC
 import de.bitb.pantryplaner.usecase.user.*
 import javax.inject.Singleton
 
@@ -132,6 +131,17 @@ object AppModule {
             editItemUC = EditItemUC(itemRepo, stockRepo),
             editCategoryUC = EditCategoryUC(itemRepo, stockRepo),
             uncheckAllItemsUC = UncheckAllItemsUC(itemRepo),
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideStockUseCases(
+        stockRepo: StockRepository,
+    ): StockUseCases {
+        return StockUseCases(
+            addStockItemUC = AddStockItemUC(stockRepo),
+            deleteStockItemUC = DeleteStockItemUC(stockRepo),
         )
     }
 

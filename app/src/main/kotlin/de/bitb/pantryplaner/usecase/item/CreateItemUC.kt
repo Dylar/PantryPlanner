@@ -13,23 +13,24 @@ class CreateItemUC(
     private val userRepo: UserRepository,
     private val itemRepo: ItemRepository,
 ) {
-    suspend operator fun invoke(name: String, category: String): Resource<Boolean> {
+    suspend operator fun invoke(item: Item): Resource<Boolean> {
         return tryIt(
             onError = { Resource.Error(it, false) },
             onTry = {
-                if (name.isBlank()) {
+                if (item.name.isBlank()) {
                     return@tryIt "Name darf nicht leer sein".asResourceError()
                 }
 
                 val user = userRepo.getUser().first()
                 if (user is Resource.Error) return@tryIt user.castTo(false)
 
-                val item = Item(
-                    name = name.capitalizeFirstCharacter(),
-                    category = category,
-                    creator = user.data!!.uuid,
+                itemRepo.addItem(
+                    item.copy(
+                        name = item.name.capitalizeFirstCharacter(),
+                        category = item.category,
+                        creator = user.data!!.uuid,
+                    ),
                 )
-                itemRepo.addItem(item)
             },
         )
     }

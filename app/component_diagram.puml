@@ -1,0 +1,96 @@
+@startuml
+
+package "Architecture" {
+
+  [View]
+  [ViewModel]
+  [UseCase]
+  [Repository]
+  [IDatabase]
+  [Database]
+  [IService]
+  [Service]
+  [ISyncer]
+  [Syncer]
+
+  [View] -down-> [ViewModel] : Interacts with
+  [ViewModel] -up-> [View] : Notify
+  [ViewModel] -down-> [UseCase] : Executes Actions
+  [ViewModel] -down-> [Repository] : Stream Data
+  [UseCase] -right-> [Repository] : Utilizes
+  [Repository] -down-> [IDatabase] : Fetch/Store Local Data
+  [Repository] -down-> [IService] : Store Remote Data
+  [IDatabase] <.down. [Database] : Implements
+  [IService] <.down. [Service] : Implements
+  [ISyncer] <.down. [Syncer] : Implements
+  [ISyncer] -left-> [IDatabase] : Store Data
+  [ISyncer] -right-> [IService] : Sync Data
+
+  note top of View
+    For each component
+    there will be a specific instance of these
+    components like:
+    - LoginView
+    - LoginViewModel
+    - LoginUseCase
+    - UserRepository
+    ... and so on.
+  end note
+
+  note right of View
+    **View**
+    - Represents the UI of an application.
+    - Responsible for rendering data to the user.
+    - Captures user inputs and actions.
+    - Communicates with ViewModel to reflect data changes.
+  end note
+
+  note right of ViewModel
+    **ViewModel**
+    - Acts as a mediator between the View and the underlying logic.
+    - Manages and transforms data for the View.
+    - Processes user actions, invoking corresponding UseCases.
+    - Observes and reacts to data changes, updating the View accordingly.
+  end note
+
+  note left of UseCase
+    **UseCase**
+    - Encapsulates specific business rules and actions.
+    - Provides a clear and focused purpose, representing individual tasks.
+    - Communicates with repositories to access or mutate data.
+    - Can be invoked by ViewModel or other system triggers.
+  end note
+
+  note right of Repository
+    **Repository**
+    - Acts as a clean API for data access to the rest of the application.
+    - Provides unified access, regardless of data origin (local vs. remote).
+  end note
+
+  note bottom of Database
+    **Database**
+    - Provides a local persistent storage mechanism.
+    - Ensures data is safely stored and retrieved.
+    - Implements operations defined by the IDatabase interface.
+    - Hides database technology or ORM specifics.
+  end note
+
+  note bottom of Service
+    **Service**
+    - Represents remote data operations.
+    - Encapsulates API calls, serialization, and other remote tasks.
+    - Implements operations defined by the IService interface.
+    - Hides service technology specifics.
+  end note
+
+  note bottom of Syncer
+    **Syncer**
+    - Responsible for ensuring data consistency between local and remote sources.
+    - Observes changes in one source and reflects them in the other.
+    - Handles potential conflicts and synchronization logic.
+    - Can work on a schedule, in response to specific triggers or syncing constantly.
+  end note
+
+}
+
+@enduml

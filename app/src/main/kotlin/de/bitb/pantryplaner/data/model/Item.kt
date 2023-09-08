@@ -20,6 +20,8 @@ data class Item(
     @get:Exclude
     val createDate: LocalDateTime
         get() = parseDateTimeString(createdAt)
+
+    fun toStockItem() : StockItem = StockItem(uuid)
 }
 
 data class CheckItem(

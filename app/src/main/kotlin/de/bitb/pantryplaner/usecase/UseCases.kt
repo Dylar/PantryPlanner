@@ -3,6 +3,8 @@ package de.bitb.pantryplaner.usecase
 import de.bitb.pantryplaner.usecase.alert.RefreshAlertUC
 import de.bitb.pantryplaner.usecase.checklist.*
 import de.bitb.pantryplaner.usecase.item.*
+import de.bitb.pantryplaner.usecase.stock.AddStockItemUC
+import de.bitb.pantryplaner.usecase.stock.DeleteStockItemUC
 import de.bitb.pantryplaner.usecase.user.*
 
 data class AlertUseCases(
@@ -24,6 +26,11 @@ data class ItemUseCases(
     val editItemUC: EditItemUC,
     val editCategoryUC: EditCategoryUC,
     val uncheckAllItemsUC: UncheckAllItemsUC,
+)
+
+data class StockUseCases(
+    val addStockItemUC: AddStockItemUC,
+    val deleteStockItemUC: DeleteStockItemUC,
 )
 
 data class ChecklistUseCases(
