@@ -33,10 +33,11 @@ class EditCategoryUC(
             val itemsToEdit = mutableListOf<Item>()
             val stockItemsToEdit = mutableListOf<StockItem>()
 
-            val previousCat = itemsMap[previousCategory]
-            previousCat?.forEach {
+            itemsMap[previousCategory]?.forEach {
                 itemsToEdit.add(it.copy(category = newCategory.capitalizeFirstCharacter()))
-                stockItemsToEdit.add(stockItems[it.uuid]!!.copy(colorHex = color.toArgb()))
+                stockItems[it.uuid]?.let { stockItem ->
+                    stockItemsToEdit.add(stockItem.copy(colorHex = color.toArgb()))
+                }
             }
 
             if (itemsToEdit.isNotEmpty()) {
