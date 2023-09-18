@@ -6,6 +6,7 @@ sealed class TestTags {
             .substringBefore("@")
             .substringAfterLast(".")
             .replace("$", ".")
+            .replace("TestTags.", "")
 
     object SearchBar : TestTags()
     sealed class GridListLayout : TestTags() {

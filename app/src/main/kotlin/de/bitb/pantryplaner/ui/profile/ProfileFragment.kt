@@ -56,10 +56,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
     private fun buildContent(paddingValues: PaddingValues) {
         val user by viewModel.user.observeAsState(null)
         when {
-            user is Resource.Error -> {
-                showSnackBar("ERROR".asResString())
-                ErrorScreen(user!!.message!!.asString())
-            }
+            user is Resource.Error -> ErrorScreen(user!!.message!!.asString())
             user == null || !user!!.hasData -> LoadingIndicator()
             else -> UserDetails(paddingValues, user!!.data!!)
         }
@@ -162,10 +159,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
     private fun ConnectedUserList() {
         val connectedResp by viewModel.connectedUser.observeAsState()
         when {
-            connectedResp is Resource.Error -> {
-                showSnackBar("ERROR".asResString())
-                ErrorScreen(connectedResp!!.message!!.asString())
-            }
+            connectedResp is Resource.Error -> ErrorScreen(connectedResp!!.message!!.asString())
             connectedResp == null || !connectedResp!!.hasData -> LoadingIndicator()
             else -> {
                 val connectedUser = (connectedResp as Resource<List<User>>).data!!

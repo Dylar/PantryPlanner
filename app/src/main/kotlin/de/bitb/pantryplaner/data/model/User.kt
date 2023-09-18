@@ -1,9 +1,10 @@
 package de.bitb.pantryplaner.data.model
 
 import com.google.firebase.firestore.Exclude
+import java.util.UUID
 
 data class User(
-    val uuid: String = "",
+    val uuid: String = UUID.randomUUID().toString(),
     val email: String = "",
     val firstName: String = "",
     val lastName: String = "",

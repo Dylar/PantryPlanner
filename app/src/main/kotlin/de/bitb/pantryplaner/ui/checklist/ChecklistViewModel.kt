@@ -11,6 +11,7 @@ import de.bitb.pantryplaner.core.misc.castOnError
 import de.bitb.pantryplaner.data.*
 import de.bitb.pantryplaner.data.model.*
 import de.bitb.pantryplaner.ui.base.BaseViewModel
+import de.bitb.pantryplaner.ui.base.comps.ResString
 import de.bitb.pantryplaner.ui.base.comps.asResString
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases

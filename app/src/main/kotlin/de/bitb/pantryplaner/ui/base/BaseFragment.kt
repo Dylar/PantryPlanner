@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
+import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.ui.base.comps.ResString
 import de.bitb.pantryplaner.ui.base.styles.PantryAppTheme
 import kotlinx.coroutines.launch
@@ -26,10 +27,9 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.navigate = { navController.navigate(it) }
+        viewModel.navigate = { navController.navigate(it) } //TODO dont use callbacks
         viewModel.navigateBack = { navController.popBackStack() }
         viewModel.navigateBackTo = { id -> navController.popBackStack(id, false) }
-        viewModel.showSnackbar = ::showSnackBar
         viewModel.updateWidgets = ::updateWidgets
     }
 
@@ -37,24 +37,44 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View = ComposeView(requireContext()).apply {
-        setContent {
-            scaffoldState = rememberScaffoldState()
-            PantryAppTheme(
-                useDarkTheme = isSystemInDarkTheme()
-            ) { screenContent() }
+    ): View {
+        Logger.justPrint("onCreateView 1")
+        return ComposeView(requireContext()).apply {
+            setContent {
+                Logger.justPrint("onCreateView 2")
+                scaffoldState = rememberScaffoldState()
+                PantryAppTheme(
+                    useDarkTheme = isSystemInDarkTheme()
+                ) { screenContent() }
+            }
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        Logger.justPrint("onViewCreated")
+        observeSnackBarEvent()
     }
 
     @Composable
     abstract fun screenContent()
 
-    protected fun showSnackBar(msg: ResString) {
+    private fun observeSnackBarEvent() {
+        viewModel.snackbarMessage.observe(viewLifecycleOwner) { message ->
+            Logger.justPrint("show Snackbar")
+            message?.let { showSnackBar(it) }
+        }
+    }
+
+    fun showSnackBar(msg: ResString) {
         lifecycleScope.launch {
-            scaffoldState.snackbarHostState.showSnackbar(
-                message = msg.asString(resources::getString),
+            Logger.justPrint("show Snackbar: ${msg.asString(resources::getString)}")
+            if (::scaffoldState.isInitialized)
+                scaffoldState.snackbarHostState.showSnackbar(
+                    message = msg.asString(resources::getString),
 //                    actionLabel = "Do something"
-            )
+                )
+            viewModel.clearSnackBar()
         }
     }
 

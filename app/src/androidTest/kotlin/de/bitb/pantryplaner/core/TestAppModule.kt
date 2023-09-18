@@ -8,8 +8,10 @@ import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
 import de.bitb.pantryplaner.data.*
 import de.bitb.pantryplaner.data.source.LocalDatabase
+import de.bitb.pantryplaner.data.source.PantryRemoteService
 import de.bitb.pantryplaner.data.source.PreferenceDatabase
 import de.bitb.pantryplaner.data.source.RemoteService
+import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.usecase.*
 import de.bitb.pantryplaner.usecase.alert.RefreshAlertUC
 import de.bitb.pantryplaner.usecase.checklist.*
@@ -26,13 +28,10 @@ import javax.inject.Singleton
     replaces = [AppModule::class],
 )
 object TestAppModule {
-//    @Provides
-//    @Singleton
-//    fun provideScenario(): ActivityScenarioHolder = ActivityScenarioHolder()
-//
-//    @Provides
-//    @Singleton
-//    fun provideComposeRule(): ComposeRuleHolder = ComposeRuleHolder()
+    // TESTING
+    @Provides
+    @Singleton
+    fun provideScenarioData(): ScenarioData = ScenarioData()
 
     // DATABASE
     @Provides
@@ -44,7 +43,7 @@ object TestAppModule {
 
     @Provides
     @Singleton
-    fun provideRemoteDatabase(): RemoteService = mockk()
+    fun provideRemoteDatabase(): RemoteService = mockk<PantryRemoteService>(relaxed = true)
 
     // REPO
     @Provides

@@ -1,6 +1,9 @@
 package de.bitb.pantryplaner.ui.intro
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -22,9 +25,10 @@ import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
 class SplashFragment : BaseFragment<SplashViewModel>() {
     override val viewModel: SplashViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel.loadData(activity?.intent?.action == ACTION_REFRESH_PAGE)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val naviToRefresh = activity?.intent?.action == ACTION_REFRESH_PAGE
+        viewModel.loadData(naviToRefresh)
     }
 
     @Composable
@@ -38,9 +42,16 @@ class SplashFragment : BaseFragment<SplashViewModel>() {
                 painterResource(R.drawable.ic_launcher),
                 contentDescription = "",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.width(220.dp).height(220.dp).clip(shape = CircleShape)
+                modifier = Modifier
+                    .width(220.dp)
+                    .height(220.dp)
+                    .clip(shape = CircleShape)
             )
-            LoadingIndicator(modifier = Modifier.height(100.dp).padding(top = 16.dp))
+            LoadingIndicator(
+                modifier = Modifier
+                    .height(100.dp)
+                    .padding(top = 16.dp)
+            )
         }
     }
 

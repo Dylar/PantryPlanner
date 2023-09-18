@@ -12,6 +12,9 @@ import de.bitb.pantryplaner.usecase.item.DataLoadResponse
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+//TODO just for now
+var SPLASH_TIMER = 1000L
+
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     private val itemUseCases: UserUseCases,
@@ -19,7 +22,7 @@ class SplashViewModel @Inject constructor(
 
     fun loadData(naviToRefresh: Boolean) {
         viewModelScope.launch {
-            val userResp = atLeast(1000) { itemUseCases.loadDataUC() }
+            val userResp = atLeast(SPLASH_TIMER) { itemUseCases.loadDataUC() }
             when {
                 userResp is Resource.Error -> showSnackbar(userResp.message!!)
                 userResp.data is DataLoadResponse.DataLoaded -> {

@@ -140,10 +140,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
     private fun buildContent(innerPadding: PaddingValues) {
         val checklists by viewModel.checkList.observeAsState(null)
         when {
-            checklists is Resource.Error -> {
-                showSnackBar("ERROR".asResString())
-                ErrorScreen(checklists!!.message!!.asString())
-            }
+            checklists is Resource.Error -> ErrorScreen(checklists!!.message!!.asString())
             checklists == null -> LoadingIndicator()
             checklists?.data?.isEmpty() == true -> EmptyListComp(getString(R.string.no_checklists))
             else -> Column(

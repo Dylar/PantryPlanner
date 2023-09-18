@@ -68,10 +68,7 @@ class SettingsFragment : BaseFragment<SettingsViewModel>() {
     private fun buildContent(innerPadding: PaddingValues) {
         val settings by viewModel.settings.collectAsState(null)
         when (settings) {
-            is Resource.Error -> {
-                showSnackBar("ERROR".asResString())
-                ErrorScreen(settings!!.message!!.asString())
-            }
+            is Resource.Error -> ErrorScreen(settings!!.message!!.asString())
             null -> LoadingIndicator()
             else -> SettingsPage(innerPadding, settings!!.data!!)
         }
@@ -108,7 +105,9 @@ class SettingsFragment : BaseFragment<SettingsViewModel>() {
                 onChange = { viewModel.saveSettings(settings.copy(refreshAlert = it)) },
             )
             Button(
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
                 onClick = { showLogoutDialog.value = true },
                 content = { Text("Abmelden") }
             )

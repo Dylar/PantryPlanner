@@ -10,7 +10,7 @@ plugins {
 }
 
 android {
-
+    namespace 'de.bitb.pantryplaner'
     defaultConfig {
         compileSdk 34
         applicationId "de.bitb.pantryplaner"
@@ -19,7 +19,9 @@ android {
         versionCode 1
         versionName "0.0"
 
-        testInstrumentationRunner "de.bitb.pantryplaner.core.GherkinsRunner"
+        testApplicationId "de.bitb.pantryplaner.test"
+        testInstrumentationRunner "de.bitb.pantryplaner.test.GherkinsRunner"
+//        testInstrumentationRunnerArguments clearPackageData: 'true'
         vectorDrawables {
             useSupportLibrary true
         }
@@ -35,12 +37,10 @@ android {
 //    sourceSets.androidTest.java.srcDirs += ["src/sharedTest/kotlin/"]
 //    sourceSets.test.java.srcDirs += ["src/sharedTest/kotlin/"]
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = 17
+    kotlin {
+        jvmToolchain {
+            languageVersion.set(JavaLanguageVersion.of("17"))
+        }
     }
     buildFeatures {
         compose true
@@ -83,7 +83,6 @@ android {
             resValue "string", "app_name", "PantryPlaner"
         }
     }
-    namespace 'de.bitb.pantryplaner'
     lint {
         disable 'ComposableNaming'
     }
@@ -157,46 +156,48 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
     // Gherkins
-    androidTestImplementation "io.cucumber:cucumber-core:6.9.1"
-    androidTestImplementation "io.cucumber:cucumber-java:6.9.1"
-    androidTestImplementation "io.cucumber:cucumber-junit:6.9.1"
-    androidTestImplementation "io.cucumber:cucumber-jvm:6.9.1"
+//    androidTestImplementation "io.cucumber:cucumber-core:4.8.1"
+    androidTestImplementation "io.cucumber:cucumber-java:4.8.1"
+    androidTestImplementation 'io.cucumber:cucumber-junit:4.8.1'
+//    androidTestImplementation "io.cucumber:cucumber-jvm:4.8.1"
     androidTestImplementation 'io.cucumber:cucumber-android:4.10.0'
     androidTestImplementation "io.cucumber:cucumber-android-hilt:4.10.0"
 //    androidTestImplementation 'io.cucumber:cucumber-picocontainer:6.9.1'
-
-    // unit tests
-    testImplementation "androidx.test:core:1.5.0"
-    testImplementation "junit:junit:4.13.2"
-    testImplementation "androidx.arch.core:core-testing:2.2.0"
-    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1'
-    testImplementation 'com.google.truth:truth:1.1.4'
-    testImplementation 'com.squareup.okhttp3:mockwebserver:5.0.0-alpha.11'
-    testImplementation 'io.mockk:mockk:1.13.5'
-
-    // Instrumentation tests
+//
+//    // unit tests
+//    testImplementation "androidx.test:core:1.5.0"
+//    testImplementation "junit:junit:4.13.2"
+//    testImplementation "androidx.arch.core:core-testing:2.2.0"
+//    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1'
+//    testImplementation 'com.google.truth:truth:1.1.4'
+//    testImplementation 'com.squareup.okhttp3:mockwebserver:5.0.0-alpha.11'
+//    testImplementation 'io.mockk:mockk:1.13.5'
+//
+//    // Instrumentation tests
     androidTestImplementation "junit:junit:4.13.2"
-    androidTestImplementation 'io.mockk:mockk-android:1.13.5'
-    androidTestImplementation 'io.mockk:mockk-agent-jvm:1.13.5'
+    androidTestImplementation 'io.mockk:mockk-android:1.13.3'
+    androidTestImplementation 'io.mockk:mockk-agent-jvm:1.13.3'
     androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1'
+
     androidTestImplementation 'com.google.dagger:hilt-android-testing:2.46.1'
     kaptAndroidTest 'com.google.dagger:hilt-android-compiler:2.46.1'
+
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:1.5.1"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:1.5.1"
+    androidTestImplementation "androidx.compose.ui:ui-test-manifest:1.5.1"
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test:runner:1.5.2'
     androidTestImplementation 'androidx.test:core-ktx:1.5.0'
-    androidTestImplementation "androidx.arch.core:core-testing:2.2.0"
-    androidTestImplementation 'androidx.fragment:fragment-testing:1.7.0-alpha01'
-    androidTestImplementation 'androidx.fragment:fragment-ktx:1.6.0-alpha08'
-    androidTestImplementation 'com.google.truth:truth:1.1.4'
-    androidTestImplementation 'com.squareup.okhttp3:mockwebserver:5.0.0-alpha.11'
-
-    androidTestImplementation "androidx.navigation:navigation-testing:2.7.2"
+//    androidTestImplementation "androidx.arch.core:core-testing:2.2.0"
+//    androidTestImplementation 'androidx.fragment:fragment-testing:1.7.0-alpha01'
+//    androidTestImplementation 'androidx.fragment:fragment-ktx:1.6.0-alpha08'
+//    androidTestImplementation 'com.google.truth:truth:1.1.4'
+//    androidTestImplementation 'com.squareup.okhttp3:mockwebserver:5.0.0-alpha.11'
+//
+//    androidTestImplementation "androidx.navigation:navigation-testing:2.7.2"
     debugImplementation "androidx.compose.ui:ui-tooling:1.5.1"
-
-    // fixing android security policy .... o.O
-    implementation 'com.github.ChickenHook:RestrictionBypass:2.2'
+//
+//    // fixing android security policy .... o.O
+//    implementation 'com.github.ChickenHook:RestrictionBypass:2.2'
 }
 
 apply plugin: 'com.google.gms.google-services'
