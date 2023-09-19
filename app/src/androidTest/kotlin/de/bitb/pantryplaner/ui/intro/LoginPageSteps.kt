@@ -15,23 +15,17 @@ class LoginPageSteps(
     val scenarioData: ScenarioData,
 ) : ComposeTestRule by scenarioData.composeRule {
 
-    @Then("Login page rendered")
+    @Then("LoginPage rendered")
     fun renderLoginPage() = assertLoginPageRendered()
 
     @When("I login with email {string} and password {string}")
     fun loginUser(email: String, password: String) {
-        onNodeWithTag(TestTags.LoginPage.EmailLabel.name).performTextInput(email)
-        onNodeWithTag(TestTags.LoginPage.PWLabel.name).performTextInput(password)
-        onNodeWithTag(TestTags.LoginPage.LoginButton.name).performClick()
-        waitForIdle()
-        onNodeWithTag(TestTags.OverviewPage.AppBar.name).assertIsDisplayed()
-        scenarioData.saveUser(email, password)
+        loginUserWith(email, password)
     }
 
-    @When("Login default user")
-    fun loginDefaultUser() {
-        val defaultUser = buildUser()
-        loginUser(defaultUser.email, defaultPW)
+    @When("Login default User")
+    fun loginDefaultUserStep() {
+        loginDefaultUser()
     }
 }
 
@@ -43,4 +37,16 @@ fun ComposeTestRule.assertLoginPageRendered() {
     onNodeWithTag(TestTags.LoginPage.RegisterButton.name).assertIsDisplayed()
     onNodeWithTag(TestTags.LoginPage.LoginButton.name).assertIsDisplayed()
     onNodeWithTag(TestTags.LoginPage.ErrorLabel.name).assertDoesNotExist()
+}
+
+fun ComposeTestRule.loginUserWith(email: String, password: String) {
+    onNodeWithTag(TestTags.LoginPage.EmailLabel.name).performTextInput(email)
+    onNodeWithTag(TestTags.LoginPage.PWLabel.name).performTextInput(password)
+    onNodeWithTag(TestTags.LoginPage.LoginButton.name).performClick()
+    waitForIdle()
+}
+
+fun ComposeTestRule.loginDefaultUser() {
+    val defaultUser = buildUser()
+    loginUserWith(defaultUser.email, defaultPW)
 }

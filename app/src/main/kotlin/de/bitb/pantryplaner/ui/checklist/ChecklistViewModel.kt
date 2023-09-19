@@ -118,7 +118,7 @@ class ChecklistViewModel @Inject constructor(
                     }
                 }.asLiveData()
         } catch (e: Exception) {
-            print(e.toString());
+            print(e.toString())
         }
     }
 

@@ -53,9 +53,11 @@ fun SearchBar(
         },
         label = { Text("Suche") },
         leadingIcon = {
-            if (isSearching) LoadingIndicator(modifier = Modifier
-                .width(24.dp)
-                .height(24.dp))
+            if (isSearching) LoadingIndicator(
+                modifier = Modifier
+                    .width(24.dp)
+                    .height(24.dp)
+            )
             else Icon(Icons.Filled.Search, contentDescription = null)
         },
         modifier = Modifier

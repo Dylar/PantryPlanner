@@ -20,7 +20,7 @@ interface UserRepository { //TODO remove repo interface
     suspend fun saveUser(user: User): Resource<User>
 }
 
-class UserRepositoryImpl constructor(
+class UserRepositoryImpl(
     private val remoteDB: RemoteService,
     private val localDB: LocalDatabase,
 ) : UserRepository {
