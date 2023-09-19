@@ -23,7 +23,9 @@ fun CircleRow(
     selectableColors: List<Color>,
 ) {
     Row(
-        modifier = Modifier.padding(vertical = 8.dp).fillMaxWidth(),
+        modifier = Modifier
+            .padding(vertical = 8.dp)
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
         for (color in selectableColors) {

@@ -8,15 +8,26 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.castOnError
-import de.bitb.pantryplaner.data.*
-import de.bitb.pantryplaner.data.model.*
+import de.bitb.pantryplaner.data.CheckRepository
+import de.bitb.pantryplaner.data.ItemRepository
+import de.bitb.pantryplaner.data.StockRepository
+import de.bitb.pantryplaner.data.UserDataExt
+import de.bitb.pantryplaner.data.UserRepository
+import de.bitb.pantryplaner.data.model.Checklist
+import de.bitb.pantryplaner.data.model.Filter
+import de.bitb.pantryplaner.data.model.Item
+import de.bitb.pantryplaner.data.model.StockItem
+import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseViewModel
-import de.bitb.pantryplaner.ui.base.comps.ResString
 import de.bitb.pantryplaner.ui.base.comps.asResString
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.collections.set
@@ -106,7 +117,7 @@ class ChecklistViewModel @Inject constructor(
                         }
                     }
                 }.asLiveData()
-        }catch (e:Exception){
+        } catch (e: Exception) {
             print(e.toString());
         }
     }

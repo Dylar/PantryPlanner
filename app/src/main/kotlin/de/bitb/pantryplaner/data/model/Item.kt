@@ -7,7 +7,7 @@ import de.bitb.pantryplaner.core.misc.parseDateTimeString
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 data class Item(
     val uuid: String = UUID.randomUUID().toString(),
@@ -21,7 +21,7 @@ data class Item(
     val createDate: LocalDateTime
         get() = parseDateTimeString(createdAt)
 
-    fun toStockItem() : StockItem = StockItem(uuid)
+    fun toStockItem(): StockItem = StockItem(uuid)
 }
 
 data class CheckItem(

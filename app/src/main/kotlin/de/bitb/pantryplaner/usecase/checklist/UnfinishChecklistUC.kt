@@ -33,7 +33,7 @@ class UnfinishChecklistUC(
 
             val stockItems = stockResp.data!!
             checklist.items.forEach { checkItem ->
-                if(checkItem.checked) {
+                if (checkItem.checked) {
                     stockItems[checkItem.uuid]!!.amount -= checkItem.amount
                 }
             }

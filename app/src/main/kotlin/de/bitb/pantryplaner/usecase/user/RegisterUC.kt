@@ -6,7 +6,7 @@ import de.bitb.pantryplaner.data.UserRepository
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.comps.ResString
 import de.bitb.pantryplaner.ui.base.comps.asResString
-import java.util.*
+import java.util.UUID
 
 sealed class RegisterResponse(val message: ResString) {
     object Registered : RegisterResponse(R.string.ok.asResString())

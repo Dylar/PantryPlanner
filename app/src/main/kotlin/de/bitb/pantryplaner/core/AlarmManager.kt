@@ -12,7 +12,7 @@ import de.bitb.pantryplaner.usecase.AlertUseCases
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Calendar
 import javax.inject.Inject
 
 object AlertManager {

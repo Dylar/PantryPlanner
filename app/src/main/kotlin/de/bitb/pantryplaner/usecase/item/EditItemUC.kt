@@ -53,27 +53,32 @@ class EditItemUC(
                             Resource.Success()
                         } else "Not a number error".asResourceError()
                     }
+
                     else -> Resource.Error(it)
                 }
             },
             onTry = {
                 val amountDouble = amount.replace(",", ".").toDouble()
-                val resp = itemRepo.saveItems(listOf(
-                    item.copy(
-                        name = name.capitalizeFirstCharacter(),
-                        category = category,
+                val resp = itemRepo.saveItems(
+                    listOf(
+                        item.copy(
+                            name = name.capitalizeFirstCharacter(),
+                            category = category,
+                        )
                     )
-                ))
+                )
                 if (resp is Resource.Error) return@tryIt resp
 
-                stockRepo.saveItems(listOf(
-                    stockItem.copy(
-                        colorHex = color.toArgb(),
-                        amount = amountDouble,
-                        freshUntil = freshUntil,
-                        remindAfter = remindAfter,
+                stockRepo.saveItems(
+                    listOf(
+                        stockItem.copy(
+                            colorHex = color.toArgb(),
+                            amount = amountDouble,
+                            freshUntil = freshUntil,
+                            remindAfter = remindAfter,
+                        )
                     )
-                ))
+                )
             },
         )
     }

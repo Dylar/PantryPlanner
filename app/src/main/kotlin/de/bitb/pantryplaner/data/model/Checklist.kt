@@ -5,7 +5,7 @@ import com.google.firebase.firestore.Exclude
 import de.bitb.pantryplaner.core.misc.parseDateTimeString
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 data class Checklist(
     val uuid: String = UUID.randomUUID().toString(),

@@ -31,9 +31,11 @@ class SplashViewModel @Inject constructor(
                         navigate(R.id.overview_to_refresh)
                     }
                 }
+
                 userResp.data is DataLoadResponse.NotLoggedIn -> {
                     navigate(R.id.splash_to_login)
                 }
+
                 else -> showSnackbar("Daten konnten nicht geladen werden".asResString())
             }
         }

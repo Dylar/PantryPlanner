@@ -10,7 +10,13 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -47,10 +53,13 @@ fun SearchBar(
         },
         label = { Text("Suche") },
         leadingIcon = {
-            if (isSearching) LoadingIndicator(modifier = Modifier.width(24.dp).height(24.dp))
+            if (isSearching) LoadingIndicator(modifier = Modifier
+                .width(24.dp)
+                .height(24.dp))
             else Icon(Icons.Filled.Search, contentDescription = null)
         },
-        modifier = Modifier.testTag(TestTags.SearchBar.name)
+        modifier = Modifier
+            .testTag(TestTags.SearchBar.name)
             .fillMaxWidth()
             .focusRequester(focusRequester),
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),

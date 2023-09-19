@@ -1,15 +1,14 @@
 package de.bitb.pantryplaner.test
 
+//import io.cucumber.android.hilt.HiltObjectFactory
 import android.app.Application
 import android.content.Context
 import android.content.Intent
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.launchActivity
 import dagger.hilt.android.testing.HiltTestApplication
 import de.bitb.pantryplaner.core.MainActivity
-//import io.cucumber.android.hilt.HiltObjectFactory
 import io.cucumber.android.runner.CucumberAndroidJUnitRunner
 import io.cucumber.java.After
 import io.cucumber.junit.CucumberOptions

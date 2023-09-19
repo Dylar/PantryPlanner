@@ -2,13 +2,31 @@ package de.bitb.pantryplaner.ui.base.comps
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -19,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
-import java.util.*
+import java.util.Locale
 
 @Composable
 fun buildCategoryDropDown(category: MutableState<TextFieldValue>, categorys: List<String>) {
@@ -76,14 +94,18 @@ private fun SearchDropDown(
     }
     var expanded by remember { mutableStateOf(false) }
     ExposedDropdownMenuBox(
-        modifier = Modifier.padding(4.dp).fillMaxWidth(),
+        modifier = Modifier
+            .padding(4.dp)
+            .fillMaxWidth(),
         expanded = expanded,
         onExpandedChange = { expanded = !expanded }
     ) {
         TextField(
             value = selectedState,
             onValueChange = { selectedState = it },
-            modifier = Modifier.fillMaxWidth().menuAnchor(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor(),
             label = { Text(hint) },
             colors = ExposedDropdownMenuDefaults.textFieldColors(),
             singleLine = true,
@@ -200,7 +222,9 @@ private fun ConnectedUser(
                                 )
                                 if (canChange) {
                                     Icon(
-                                        modifier = Modifier.size(24.dp).padding(2.dp),
+                                        modifier = Modifier
+                                            .size(24.dp)
+                                            .padding(2.dp),
                                         imageVector = Icons.Default.Cancel,
                                         contentDescription = "Cancel button"
                                     )

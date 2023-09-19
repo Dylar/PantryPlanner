@@ -1,7 +1,12 @@
 package de.bitb.pantryplaner.data.source
 
 import de.bitb.pantryplaner.core.misc.Resource
-import de.bitb.pantryplaner.data.model.*
+import de.bitb.pantryplaner.data.model.Checklist
+import de.bitb.pantryplaner.data.model.Item
+import de.bitb.pantryplaner.data.model.Settings
+import de.bitb.pantryplaner.data.model.Stock
+import de.bitb.pantryplaner.data.model.StockItem
+import de.bitb.pantryplaner.data.model.User
 import kotlinx.coroutines.flow.Flow
 
 interface LocalDatabase {

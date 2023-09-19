@@ -16,7 +16,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import com.budiyev.android.codescanner.*
+import com.budiyev.android.codescanner.AutoFocusMode
+import com.budiyev.android.codescanner.CodeScanner
+import com.budiyev.android.codescanner.CodeScannerView
+import com.budiyev.android.codescanner.DecodeCallback
+import com.budiyev.android.codescanner.ErrorCallback
+import com.budiyev.android.codescanner.ScanMode
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.ui.base.BaseFragment
@@ -78,7 +83,9 @@ class ScanFragment : BaseFragment<ScanViewModel>(), PermissionHandler by Permiss
     fun ScannerPreview(innerPadding: PaddingValues) {
         var codeScanner: CodeScanner? = null
         AndroidView(
-            modifier = Modifier.padding(innerPadding).testTag(TestTags.ScanPage.ScanLabel.name),
+            modifier = Modifier
+                .padding(innerPadding)
+                .testTag(TestTags.ScanPage.ScanLabel.name),
             factory = { context ->
                 CodeScannerView(context).apply {
                     isMaskVisible = true

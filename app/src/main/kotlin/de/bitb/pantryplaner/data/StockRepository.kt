@@ -49,8 +49,10 @@ class StockRepository(
             val stock = stockResp.data!!
             val resultMap = stock.items.associateBy { it.uuid }.toMutableMap()
             updatedItems.forEach { item -> resultMap[item.uuid] = item }
-            remoteDB.saveStock(localDB.getUser(),
-                stock.copy(items = resultMap.values.toMutableList()))
+            remoteDB.saveStock(
+                localDB.getUser(),
+                stock.copy(items = resultMap.values.toMutableList())
+            )
         }
     }
 }

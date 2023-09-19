@@ -22,6 +22,7 @@ class SetItemAmountUC(
                             Resource.Success()
                         } else "Not a number error".asResourceError()
                     }
+
                     else -> Resource.Error(it, false)
                 }
             },

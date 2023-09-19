@@ -17,7 +17,7 @@ class OverviewPageSteps(
 
 }
 
-fun ComposeTestRule.assertOverviewPageRendered(){
+fun ComposeTestRule.assertOverviewPageRendered() {
     onNodeWithTag(TestTags.OverviewPage.AppBar.name).assertIsDisplayed()
     onNodeWithTag(TestTags.OverviewPage.ProfileButton.name).assertIsDisplayed()
     onNodeWithTag(TestTags.OverviewPage.LayoutButton.name).assertIsDisplayed()

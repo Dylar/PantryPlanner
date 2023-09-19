@@ -1,7 +1,13 @@
 package de.bitb.pantryplaner.ui.comps
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Checkbox
 import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.Text
@@ -37,7 +43,9 @@ fun SelectItemHeader(
     ) {
         Checkbox(
             isChecked,
-            modifier = Modifier.height(20.dp).width(20.dp)
+            modifier = Modifier
+                .height(20.dp)
+                .width(20.dp)
                 .weight(.2f)
                 .padding(horizontal = 4.dp, vertical = 4.dp),
             onCheckedChange = { checkItem(item.uuid) },
