@@ -19,7 +19,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,10 +26,12 @@ import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Settings
 import de.bitb.pantryplaner.ui.base.BaseFragment
-import de.bitb.pantryplaner.ui.base.TestTags
+import de.bitb.pantryplaner.ui.base.testTags.TestTag
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
 import de.bitb.pantryplaner.ui.base.naviSettingsToReleaseNotes
+import de.bitb.pantryplaner.ui.base.testTags.SettingsPageTag
+import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 import de.bitb.pantryplaner.ui.dialogs.InfoDialog
 
@@ -60,12 +61,12 @@ class SettingsFragment : BaseFragment<SettingsViewModel>() {
         }
 
         TopAppBar(
-            modifier = Modifier.testTag(TestTags.SettingsPage.AppBar.name),
+            modifier = Modifier.testTag(SettingsPageTag.AppBar),
             title = { Text(getString(R.string.overview_title)) },
             actions = {
                 IconButton(
                     onClick = { showInfoDialog.value = true },
-                    modifier = Modifier.testTag(TestTags.SettingsPage.InfoButton.name)
+                    modifier = Modifier.testTag(SettingsPageTag.InfoButton)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Info,

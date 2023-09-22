@@ -1,10 +1,12 @@
 package de.bitb.pantryplaner.ui.settings
 
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
-import de.bitb.pantryplaner.ui.base.TestTags
+import de.bitb.pantryplaner.ui.base.testTags.SettingsPageTag
+import de.bitb.pantryplaner.ui.base.testTags.TestTag
 import io.cucumber.java.en.Then
 
 @HiltAndroidTest
@@ -20,6 +22,6 @@ class SettingsPageSteps(
 }
 
 fun ComposeTestRule.assertSettingsPageRendered() {
-    onNodeWithTag(TestTags.SettingsPage.AppBar.name).assertIsDisplayed()
-    onNodeWithTag(TestTags.SettingsPage.InfoButton.name).assertIsDisplayed()
+    onNodeWithTag(SettingsPageTag.AppBar).assertIsDisplayed()
+    onNodeWithTag(SettingsPageTag.InfoButton).assertIsDisplayed()
 }

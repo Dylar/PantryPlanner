@@ -1,10 +1,13 @@
 package de.bitb.pantryplaner.ui.overview
 
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.compose.ui.test.performClick
 import dagger.hilt.android.testing.HiltAndroidTest
+import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
-import de.bitb.pantryplaner.ui.base.TestTags
+import de.bitb.pantryplaner.ui.base.testTags.OverviewPageTag
+import de.bitb.pantryplaner.ui.base.testTags.TestTag
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 
@@ -23,14 +26,14 @@ class OverviewPageSteps(
 }
 
 fun ComposeTestRule.assertOverviewPageRendered() {
-    onNodeWithTag(TestTags.OverviewPage.AppBar.name).assertIsDisplayed()
-    onNodeWithTag(TestTags.OverviewPage.ProfileButton.name).assertIsDisplayed()
-    onNodeWithTag(TestTags.OverviewPage.LayoutButton.name).assertIsDisplayed()
-    onNodeWithTag(TestTags.OverviewPage.AddButton.name).assertIsDisplayed()
-    onNodeWithTag(TestTags.OverviewPage.ToItemsButton.name).assertIsDisplayed()
+    onNodeWithTag(OverviewPageTag.AppBar).assertIsDisplayed()
+    onNodeWithTag(OverviewPageTag.ProfileButton).assertIsDisplayed()
+    onNodeWithTag(OverviewPageTag.LayoutButton).assertIsDisplayed()
+    onNodeWithTag(OverviewPageTag.AddButton).assertIsDisplayed()
+    onNodeWithTag(OverviewPageTag.ToItemsButton).assertIsDisplayed()
 }
 
 fun ComposeTestRule.tapOnProfileButton() {
-    onNodeWithTag(TestTags.OverviewPage.ProfileButton.name).performClick()
+    onNodeWithTag(OverviewPageTag.ProfileButton).performClick()
     waitForIdle()
 }

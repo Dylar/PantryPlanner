@@ -26,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
@@ -36,8 +35,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import de.bitb.pantryplaner.core.misc.formatted
-import de.bitb.pantryplaner.ui.base.TestTags
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
+import de.bitb.pantryplaner.ui.base.testTags.AddSubRowTag
+import de.bitb.pantryplaner.ui.base.testTags.testTag
 import java.lang.Double.max
 
 @Composable
@@ -59,7 +59,7 @@ fun AddSubRow(
 
         IconButton(
             modifier = Modifier
-                .testTag(TestTags.AddSubRow.MinusButton.name)
+                .testTag(AddSubRowTag.MinusButton)
                 .size(48.dp),
             onClick = {
                 val new = max(amount - 1, 0.0).formatted
@@ -78,7 +78,7 @@ fun AddSubRow(
 
         IconButton(
             modifier = Modifier
-                .testTag(TestTags.AddSubRow.PlusButton.name)
+                .testTag(AddSubRowTag.PlusButton)
                 .size(48.dp),
             onClick = {
                 val new = (amount + 1).formatted

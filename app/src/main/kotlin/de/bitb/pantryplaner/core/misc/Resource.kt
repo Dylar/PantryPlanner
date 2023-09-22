@@ -35,6 +35,7 @@ fun <T> String.asResourceError(): Resource.Error<T> = Resource.Error(this)
 fun <T> Throwable.asResourceError(data: T? = null): Resource.Error<T> = Resource.Error(this, data)
 
 suspend fun <T> tryIt(
+    errorValue: T? = null,
     onError: suspend (Exception) -> Resource<T>? = { _ -> null },
     onTry: suspend () -> Resource<T>,
 ): Resource<T> = try {
@@ -42,8 +43,8 @@ suspend fun <T> tryIt(
 } catch (e: Exception) {
     e.printStackTrace()
     logCrashlytics(e)
-    onError(e) ?: e.asResourceError()
-    throw e
+    onError(e) ?: e.asResourceError(errorValue)
+//    throw e
 }
 
 suspend fun <T, E> castOnError(

@@ -40,7 +40,7 @@ class FireUserService(
     }
 
     override suspend fun loginUser(email: String, pw: String): Resource<Boolean> {
-        return tryIt {
+        return tryIt(false) {
             val authResult = fireAuth.signInWithEmailAndPassword(email, pw).await()
             Resource.Success(authResult.user != null)
         }

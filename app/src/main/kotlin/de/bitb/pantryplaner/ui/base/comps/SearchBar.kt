@@ -23,12 +23,12 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import de.bitb.pantryplaner.ui.base.TestTags
+import de.bitb.pantryplaner.ui.base.testTags.SearchBarTag
+import de.bitb.pantryplaner.ui.base.testTags.testTag
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -61,7 +61,7 @@ fun SearchBar(
             else Icon(Icons.Filled.Search, contentDescription = null)
         },
         modifier = Modifier
-            .testTag(TestTags.SearchBar.name)
+            .testTag(SearchBarTag)
             .fillMaxWidth()
             .focusRequester(focusRequester),
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),

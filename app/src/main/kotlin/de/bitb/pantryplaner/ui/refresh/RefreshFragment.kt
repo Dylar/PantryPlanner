@@ -33,7 +33,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,7 +45,7 @@ import de.bitb.pantryplaner.core.misc.parseDateString
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.data.model.StockItem
 import de.bitb.pantryplaner.ui.base.BaseFragment
-import de.bitb.pantryplaner.ui.base.TestTags
+import de.bitb.pantryplaner.ui.base.testTags.TestTag
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.GridListLayout
@@ -54,6 +53,8 @@ import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
 import de.bitb.pantryplaner.ui.base.comps.asResString
 import de.bitb.pantryplaner.ui.base.comps.clearItem
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
+import de.bitb.pantryplaner.ui.base.testTags.RefreshPageTag
+import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.comps.SelectItemHeader
 import de.bitb.pantryplaner.ui.dialogs.AddChecklistDialog
 
@@ -80,11 +81,11 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
     @Composable
     private fun buildAppBar() {
         TopAppBar(
-            modifier = Modifier.testTag(TestTags.RefreshPage.AppBar.name),
+            modifier = Modifier.testTag(RefreshPageTag.AppBar),
             title = { Text(getString(R.string.refresh_title)) },
             actions = {
                 IconButton(
-                    modifier = Modifier.testTag(TestTags.RefreshPage.LayoutButton.name),
+                    modifier = Modifier.testTag(RefreshPageTag.LayoutButton),
                     onClick = { showGridLayout.value = !showGridLayout.value },
                 ) {
                     Icon(

@@ -1,12 +1,16 @@
 package de.bitb.pantryplaner.ui.intro
 
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import dagger.hilt.android.testing.HiltAndroidTest
+import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.test.buildUser
 import de.bitb.pantryplaner.test.defaultPW
-import de.bitb.pantryplaner.ui.base.TestTags
+import de.bitb.pantryplaner.ui.base.testTags.LoginPageTag
+import de.bitb.pantryplaner.ui.base.testTags.TestTag
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 
@@ -30,19 +34,19 @@ class LoginPageSteps(
 }
 
 fun ComposeTestRule.assertLoginPageRendered() {
-    onNodeWithTag(TestTags.LoginPage.AppBar.name).assertIsDisplayed()
-    onNodeWithTag(TestTags.LoginPage.InfoButton.name).assertIsDisplayed()
-    onNodeWithTag(TestTags.LoginPage.EmailLabel.name).assertIsDisplayed()
-    onNodeWithTag(TestTags.LoginPage.PWLabel.name).assertIsDisplayed()
-    onNodeWithTag(TestTags.LoginPage.RegisterButton.name).assertIsDisplayed()
-    onNodeWithTag(TestTags.LoginPage.LoginButton.name).assertIsDisplayed()
-    onNodeWithTag(TestTags.LoginPage.ErrorLabel.name).assertDoesNotExist()
+    onNodeWithTag(LoginPageTag.AppBar).assertIsDisplayed()
+    onNodeWithTag(LoginPageTag.InfoButton).assertIsDisplayed()
+    onNodeWithTag(LoginPageTag.EmailLabel).assertIsDisplayed()
+    onNodeWithTag(LoginPageTag.PWLabel).assertIsDisplayed()
+    onNodeWithTag(LoginPageTag.RegisterButton).assertIsDisplayed()
+    onNodeWithTag(LoginPageTag.LoginButton).assertIsDisplayed()
+    onNodeWithTag(LoginPageTag.ErrorLabel).assertDoesNotExist()
 }
 
 fun ComposeTestRule.loginUserWith(email: String, password: String) {
-    onNodeWithTag(TestTags.LoginPage.EmailLabel.name).performTextInput(email)
-    onNodeWithTag(TestTags.LoginPage.PWLabel.name).performTextInput(password)
-    onNodeWithTag(TestTags.LoginPage.LoginButton.name).performClick()
+    onNodeWithTag(LoginPageTag.EmailLabel).performTextInput(email)
+    onNodeWithTag(LoginPageTag.PWLabel).performTextInput(password)
+    onNodeWithTag(LoginPageTag.LoginButton).performClick()
     waitForIdle()
 }
 

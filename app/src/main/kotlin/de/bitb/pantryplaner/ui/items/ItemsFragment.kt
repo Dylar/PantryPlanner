@@ -33,7 +33,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,7 +45,6 @@ import de.bitb.pantryplaner.data.model.StockItem
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
-import de.bitb.pantryplaner.ui.base.TestTags
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.GridListLayout
@@ -56,6 +54,8 @@ import de.bitb.pantryplaner.ui.base.comps.dissmissItem
 import de.bitb.pantryplaner.ui.base.comps.onBack
 import de.bitb.pantryplaner.ui.base.highlightedText
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
+import de.bitb.pantryplaner.ui.base.testTags.ItemsPageTag
+import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.comps.AddSubRow
 import de.bitb.pantryplaner.ui.comps.SelectItemHeader
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
@@ -135,7 +135,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
     @Composable
     private fun buildAppBar() {
         TopAppBar(
-            modifier = Modifier.testTag(TestTags.ItemsPage.AppBar.name),
+            modifier = Modifier.testTag(ItemsPageTag.AppBar),
             title = {
                 val isSearching by viewModel.isSearching.collectAsState(false)
                 if (showSearchBar.value) SearchBar(
@@ -148,7 +148,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
             },
             actions = {
                 IconButton(
-                    modifier = Modifier.testTag(TestTags.ItemsPage.SearchButton.name),
+                    modifier = Modifier.testTag(ItemsPageTag.SearchButton),
                     onClick = { showSearchBar.value = !showSearchBar.value },
                 ) {
                     Icon(
@@ -159,7 +159,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
 
                 if (!showSearchBar.value) {
                     IconButton(
-                        modifier = Modifier.testTag(TestTags.ItemsPage.LayoutButton.name),
+                        modifier = Modifier.testTag(ItemsPageTag.LayoutButton),
                         onClick = { showGridLayout.value = !showGridLayout.value },
                     ) {
                         Icon(
@@ -168,7 +168,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
                         )
                     }
                     IconButton(
-                        modifier = Modifier.testTag(TestTags.ItemsPage.FilterButton.name),
+                        modifier = Modifier.testTag(ItemsPageTag.FilterButton),
                         onClick = { showFilterDialog.value = !showFilterDialog.value },
                     ) {
                         Icon(

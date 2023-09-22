@@ -11,7 +11,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.viewModels
@@ -25,13 +24,14 @@ import com.budiyev.android.codescanner.ScanMode
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.ui.base.BaseFragment
-import de.bitb.pantryplaner.ui.base.TestTags
 import de.bitb.pantryplaner.ui.base.comps.LifecycleComp
 import de.bitb.pantryplaner.ui.base.openAppSettings
 import de.bitb.pantryplaner.ui.base.permission.CameraPermissionTextProvider
 import de.bitb.pantryplaner.ui.base.permission.PermissionDialog
 import de.bitb.pantryplaner.ui.base.permission.PermissionHandler
 import de.bitb.pantryplaner.ui.base.permission.PermissionHandlerImpl
+import de.bitb.pantryplaner.ui.base.testTags.ScanPageTag
+import de.bitb.pantryplaner.ui.base.testTags.testTag
 
 @AndroidEntryPoint
 class ScanFragment : BaseFragment<ScanViewModel>(), PermissionHandler by PermissionHandlerImpl() {
@@ -54,7 +54,7 @@ class ScanFragment : BaseFragment<ScanViewModel>(), PermissionHandler by Permiss
             scaffoldState = scaffoldState,
             topBar = {
                 TopAppBar(
-                    modifier = Modifier.testTag(TestTags.ScanPage.AppBar.name),
+                    modifier = Modifier.testTag(ScanPageTag.AppBar),
                     title = { Text(stringResource(R.string.scan_title)) }
                 )
             },
@@ -85,7 +85,7 @@ class ScanFragment : BaseFragment<ScanViewModel>(), PermissionHandler by Permiss
         AndroidView(
             modifier = Modifier
                 .padding(innerPadding)
-                .testTag(TestTags.ScanPage.ScanLabel.name),
+                .testTag(ScanPageTag.ScanLabel),
             factory = { context ->
                 CodeScannerView(context).apply {
                     isMaskVisible = true

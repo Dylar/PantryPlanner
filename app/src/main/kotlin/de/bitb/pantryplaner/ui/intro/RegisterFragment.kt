@@ -29,7 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -38,8 +37,9 @@ import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.ui.base.BaseFragment
-import de.bitb.pantryplaner.ui.base.TestTags
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
+import de.bitb.pantryplaner.ui.base.testTags.RegisterPageTag
+import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.usecase.user.RegisterResponse
 
 @AndroidEntryPoint
@@ -59,7 +59,7 @@ class RegisterFragment : BaseFragment<RegisterViewModel>() {
     @Composable
     private fun buildAppbar() {
         TopAppBar(
-            modifier = Modifier.testTag(TestTags.RegisterPage.AppBar.name),
+            modifier = Modifier.testTag(RegisterPageTag.AppBar),
             title = { Text(getString(R.string.register_title)) })
     }
 
@@ -68,7 +68,7 @@ class RegisterFragment : BaseFragment<RegisterViewModel>() {
         FloatingActionButton(
             modifier = Modifier
                 .padding(all = 32.dp)
-                .testTag(TestTags.RegisterPage.RegisterButton.name),
+                .testTag(RegisterPageTag.RegisterButton),
             onClick = { viewModel.register() }
         ) {
             if (viewModel.isLoading) CircularProgressIndicator(modifier = Modifier.size(24.dp))
@@ -92,7 +92,7 @@ class RegisterFragment : BaseFragment<RegisterViewModel>() {
                 singleLine = true,
                 modifier = Modifier
                     .padding(vertical = 16.dp)
-                    .testTag(TestTags.RegisterPage.FirstNameLabel.name),
+                    .testTag(RegisterPageTag.FirstNameLabel),
                 value = viewModel.firstName,
                 onValueChange = { viewModel.firstName = it },
                 label = { Text(getString(R.string.first_name)) },
@@ -102,7 +102,7 @@ class RegisterFragment : BaseFragment<RegisterViewModel>() {
                 singleLine = true,
                 modifier = Modifier
                     .padding(top = 16.dp, start = 16.dp, end = 16.dp)
-                    .testTag(TestTags.RegisterPage.LastNameLabel.name),
+                    .testTag(RegisterPageTag.LastNameLabel),
                 value = viewModel.lastName,
                 onValueChange = { viewModel.lastName = it },
                 label = { Text(getString(R.string.last_name)) }
@@ -112,7 +112,7 @@ class RegisterFragment : BaseFragment<RegisterViewModel>() {
                 singleLine = true,
                 modifier = Modifier
                     .padding(top = 16.dp, start = 16.dp, end = 16.dp)
-                    .testTag(TestTags.RegisterPage.EmailLabel.name),
+                    .testTag(RegisterPageTag.EmailLabel),
                 value = viewModel.email,
                 onValueChange = { viewModel.email = it },
                 label = { Text(getString(R.string.email)) }
@@ -122,7 +122,7 @@ class RegisterFragment : BaseFragment<RegisterViewModel>() {
                 singleLine = true,
                 modifier = Modifier
                     .padding(top = 16.dp, start = 16.dp, end = 16.dp)
-                    .testTag(TestTags.RegisterPage.PW1Label.name),
+                    .testTag(RegisterPageTag.PW1Label),
                 value = viewModel.pw1,
                 onValueChange = { viewModel.pw1 = it },
                 label = { Text(getString(R.string.pw1_label)) },
@@ -144,7 +144,7 @@ class RegisterFragment : BaseFragment<RegisterViewModel>() {
                 singleLine = true,
                 modifier = Modifier
                     .padding(top = 16.dp, start = 16.dp, end = 16.dp)
-                    .testTag(TestTags.RegisterPage.PW2Label.name),
+                    .testTag(RegisterPageTag.PW2Label),
                 value = viewModel.pw2,
                 onValueChange = { viewModel.pw2 = it },
                 label = { Text(getString(R.string.pw2_label)) },
@@ -166,7 +166,7 @@ class RegisterFragment : BaseFragment<RegisterViewModel>() {
                 Box(
                     modifier = Modifier
                         .padding(16.dp)
-                        .testTag(TestTags.RegisterPage.ErrorLabel.name),
+                        .testTag(RegisterPageTag.ErrorLabel),
                     contentAlignment = Alignment.TopCenter,
                 ) { Text(it.message.asString(), color = BaseColors.FireRed) }
             }

@@ -6,5 +6,5 @@ Feature: Profile locations management
     When  Tap NewLocationButton on ProfilePage
     Then  NewLocationDialog is displayed
     And   Input "Home" as Location name
-    And   Tap CreateLocationButton on ProfilePage
+    And   Tap on CreateLocationButton
     Then  Location with name "Home" should be shown on ProfilePage

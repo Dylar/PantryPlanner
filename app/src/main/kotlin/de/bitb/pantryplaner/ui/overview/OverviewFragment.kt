@@ -36,7 +36,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -47,7 +46,6 @@ import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.ui.base.BaseFragment
-import de.bitb.pantryplaner.ui.base.TestTags
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.GridListLayout
@@ -57,6 +55,8 @@ import de.bitb.pantryplaner.ui.base.naviOverviewToItems
 import de.bitb.pantryplaner.ui.base.naviToChecklist
 import de.bitb.pantryplaner.ui.base.naviToProfile
 import de.bitb.pantryplaner.ui.base.naviToRefresh
+import de.bitb.pantryplaner.ui.base.testTags.OverviewPageTag
+import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.dialogs.AddChecklistDialog
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 
@@ -103,12 +103,12 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
     @Composable
     private fun buildAppBar() {
         TopAppBar(
-            modifier = Modifier.testTag(TestTags.OverviewPage.AppBar.name),
+            modifier = Modifier.testTag(OverviewPageTag.AppBar),
             title = { Text(getString(R.string.overview_title)) },
             actions = {
                 IconButton(
                     onClick = ::naviToProfile,
-                    modifier = Modifier.testTag(TestTags.OverviewPage.ProfileButton.name)
+                    modifier = Modifier.testTag(OverviewPageTag.ProfileButton)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Person,
@@ -117,7 +117,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
                 }
                 IconButton(
                     onClick = { showGridLayout.value = !showGridLayout.value },
-                    modifier = Modifier.testTag(TestTags.OverviewPage.LayoutButton.name)
+                    modifier = Modifier.testTag(OverviewPageTag.LayoutButton)
                 ) {
                     Icon(
                         imageVector = if (showGridLayout.value) Icons.Default.GridOff else Icons.Default.GridOn,
@@ -135,7 +135,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
             verticalArrangement = Arrangement.Center,
         ) {
             SmallFloatingActionButton(
-                modifier = Modifier.testTag(TestTags.OverviewPage.AddButton.name),
+                modifier = Modifier.testTag(OverviewPageTag.AddButton),
                 onClick = { showAddDialog.value = true },
                 containerColor = MaterialTheme.colors.secondaryVariant,
                 shape = RoundedCornerShape(12.dp),
@@ -152,7 +152,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
             Spacer(modifier = Modifier.height(8.dp))
 
             ExtendedFloatingActionButton(
-                modifier = Modifier.testTag(TestTags.OverviewPage.ToItemsButton.name),
+                modifier = Modifier.testTag(OverviewPageTag.ToItemsButton),
                 text = { Text(text = "Zum Bestand") },
                 icon = {
                     Icon(

@@ -1,12 +1,12 @@
 package de.bitb.pantryplaner.ui.profile
 
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
-import cucumber.api.PendingException
+import androidx.compose.ui.test.performClick
 import dagger.hilt.android.testing.HiltAndroidTest
+import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
-import de.bitb.pantryplaner.ui.base.TestTags
-import io.cucumber.java.en.And
+import de.bitb.pantryplaner.ui.base.testTags.ProfilePageTag
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 
@@ -27,44 +27,28 @@ class ProfilePageSteps(
 
     @When("Tap NewLocationButton on ProfilePage")
     fun tapNewLocationButtonOnProfilePage() {
-        // Write code here that turns the phrase above into concrete actions
-        throw PendingException()
-    }
-
-    @Then("NewLocationDialog is displayed")
-    fun newLocationDialogIsDisplayed() {
-        // Write code here that turns the phrase above into concrete actions
-        throw PendingException()
-    }
-
-    @And("Input {string} as Location name")
-    fun inputAsLocationName(input: String) {
-        // Write code here that turns the phrase above into concrete actions
-        throw PendingException()
-    }
-
-    @And("Tap CreateLocationButton on ProfilePage")
-    fun tapCreateLocationButtonOnProfilePage() {
-        // Write code here that turns the phrase above into concrete actions
-        throw PendingException()
+        onNodeWithTag(ProfilePageTag.NewLocationButton).performClick()
+        waitForIdle()
     }
 
     @Then("Location with name {string} should be shown on ProfilePage")
     fun locationWithNameShouldBeShownOnProfilePage(name: String) {
-        // Write code here that turns the phrase above into concrete actions
-        throw PendingException()
+        onNodeWithTag(ProfilePageTag.LocationItem(name)).assertIsDisplayed()
+        waitForIdle()
     }
 }
 
 fun ComposeTestRule.assertProfilePageRendered() {
-    onNodeWithTag(TestTags.ProfilePage.AppBar.name).assertIsDisplayed()
-    onNodeWithTag(TestTags.ProfilePage.SettingsButton.name).assertIsDisplayed()
-    onNodeWithTag(TestTags.ProfilePage.QRInfo.name).assertIsDisplayed()
-    onNodeWithTag(TestTags.ProfilePage.QRLabel.name).assertIsDisplayed()
-    onNodeWithTag(TestTags.ProfilePage.ScanButton.name).assertIsDisplayed()
+    onNodeWithTag(ProfilePageTag.AppBar).assertIsDisplayed()
+    onNodeWithTag(ProfilePageTag.SettingsButton).assertIsDisplayed()
+    onNodeWithTag(ProfilePageTag.QRInfo).assertIsDisplayed()
+    onNodeWithTag(ProfilePageTag.QRLabel).assertIsDisplayed()
+    onNodeWithTag(ProfilePageTag.NewLocationButton).assertIsDisplayed()
+    onNodeWithTag(ProfilePageTag.ScanButton).assertIsDisplayed()
 }
 
 fun ComposeTestRule.tapOnSettingsButton() {
-    onNodeWithTag(TestTags.ProfilePage.SettingsButton.name).performClick()
+    onNodeWithTag(ProfilePageTag.SettingsButton).performClick()
     waitForIdle()
 }
+

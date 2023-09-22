@@ -36,12 +36,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import de.bitb.pantryplaner.ui.base.TestTags
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
+import de.bitb.pantryplaner.ui.base.testTags.GridLayoutTag
+import de.bitb.pantryplaner.ui.base.testTags.ListLayoutTag
+import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.dialogs.EditCategoryDialog
 
 fun LazyGridScope.stickyGridHeader(
@@ -76,7 +77,7 @@ fun <T> GridListLayout(
                 GridCells.Fixed(if (items.size == 1 && items.values.first().size == 1) 1 else 2),
                 modifier = Modifier
                     .fillMaxSize()
-                    .testTag(TestTags.GridListLayout.Grid.name),
+                    .testTag(GridLayoutTag),
                 verticalArrangement = Arrangement.Top,
                 horizontalArrangement = Arrangement.Center,
                 contentPadding = contentPadding,
@@ -100,7 +101,7 @@ fun <T> GridListLayout(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .testTag(TestTags.GridListLayout.List.name),
+                    .testTag(ListLayoutTag),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 contentPadding = contentPadding,

@@ -32,7 +32,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.viewModels
@@ -45,7 +44,6 @@ import de.bitb.pantryplaner.data.model.StockItem
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
-import de.bitb.pantryplaner.ui.base.TestTags
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.GridListLayout
@@ -54,6 +52,8 @@ import de.bitb.pantryplaner.ui.base.comps.buildUserDropDown
 import de.bitb.pantryplaner.ui.base.comps.dissmissItem
 import de.bitb.pantryplaner.ui.base.naviChecklistToItems
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
+import de.bitb.pantryplaner.ui.base.testTags.ChecklistPageTag
+import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.comps.AddSubRow
 import de.bitb.pantryplaner.ui.comps.SelectItemHeader
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
@@ -115,7 +115,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
     @Composable
     private fun buildAppBar(checkModel: Resource<CheckModel>?) {
         TopAppBar(
-            modifier = Modifier.testTag(TestTags.ChecklistPage.AppBar.name),
+            modifier = Modifier.testTag(ChecklistPageTag.AppBar),
             title = {
                 Text(
                     checkModel?.data?.checklist?.name ?: getString(R.string.loading_text),
@@ -126,7 +126,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
             actions = {
                 IconButton(
                     onClick = { showGridLayout.value = !showGridLayout.value },
-                    modifier = Modifier.testTag(TestTags.ChecklistPage.LayoutButton.name)
+                    modifier = Modifier.testTag(ChecklistPageTag.LayoutButton)
                 ) {
                     Icon(
                         imageVector = if (showGridLayout.value) Icons.Default.GridOff else Icons.Default.GridOn,
@@ -135,7 +135,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 }
                 IconButton(
                     onClick = { showFilterDialog.value = !showFilterDialog.value },
-                    modifier = Modifier.testTag(TestTags.ChecklistPage.FilterButton.name)
+                    modifier = Modifier.testTag(ChecklistPageTag.FilterButton)
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.FilterList,
