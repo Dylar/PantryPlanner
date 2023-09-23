@@ -18,15 +18,14 @@ fun buildUser(
     User(email = email, firstName = firstName, lastName = lastName, connectedUser = connectedUser)
 
 fun UserRemoteDao.mockDefaultUserDao() {
-    print("MOCK IT")
     val user = buildUser()
     val map = mutableMapOf(user.email to defaultPW)
     mockUserDao(emailPwMap = map, allUser = mutableListOf(user))
 }
 
 fun UserRemoteDao.mockUserDao(
-    emailPwMap: MutableMap<String, String> = emptyMap<String, String>().toMutableMap(),
-    allUser: MutableList<User> = emptyList<User>().toMutableList(),
+    emailPwMap: MutableMap<String, String> = mutableMapOf(),
+    allUser: MutableList<User> = mutableListOf(),
 ) {
     var isLoggedIn = false
     coEvery { isUserLoggedIn() }.answers { Resource.Success(isLoggedIn) }

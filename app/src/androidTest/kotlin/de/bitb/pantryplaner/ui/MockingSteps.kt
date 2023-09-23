@@ -5,6 +5,7 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.data.source.RemoteService
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.test.mockDefaultUserDao
+import de.bitb.pantryplaner.test.mockLocationDao
 import de.bitb.pantryplaner.test.mockUserDao
 import io.cucumber.java.en.Given
 import javax.inject.Inject
@@ -17,8 +18,17 @@ class MockingSteps(
     @Inject
     lateinit var remoteService: RemoteService
 
-    @Given("Mock nothing")
-    fun mockNothing() = remoteService.mockUserDao()
+    @Given("Init Mocks")
+    fun initMocks() {
+        remoteService.mockUserDao()
+        remoteService.mockLocationDao()
+    }
+
+    @Given("Init default Mocks")
+    fun initDefaultMocks() {
+        initMocks()
+        mockDefaultUser()
+    }
 
     @Given("Mock default User")
     fun mockDefaultUser() = remoteService.mockDefaultUserDao()

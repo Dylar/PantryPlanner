@@ -15,6 +15,7 @@ import de.bitb.pantryplaner.usecase.*
 import de.bitb.pantryplaner.usecase.alert.RefreshAlertUC
 import de.bitb.pantryplaner.usecase.checklist.*
 import de.bitb.pantryplaner.usecase.item.*
+import de.bitb.pantryplaner.usecase.location.AddLocationUC
 import de.bitb.pantryplaner.usecase.stock.AddStockItemUC
 import de.bitb.pantryplaner.usecase.stock.DeleteStockItemUC
 import de.bitb.pantryplaner.usecase.user.*
@@ -45,6 +46,7 @@ object AppModule {
         val itemService = FireItemService(fireData)
         val checkService = FireCheckService(fireData)
         val stockItemService = FireStockService(fireData)
+        val locationService = FireLocationService(fireData)
 
         return PantryRemoteService(
             settingsService,
@@ -52,6 +54,7 @@ object AppModule {
             itemService,
             checkService,
             stockItemService,
+            locationService,
         )
     }
 
@@ -89,6 +92,13 @@ object AppModule {
         remoteService: RemoteService,
         localDatabase: LocalDatabase,
     ): StockRepository = StockRepository(remoteService, localDatabase)
+
+    @Provides
+    @Singleton
+    fun provideLocationRepository(
+        remoteService: RemoteService,
+        localDatabase: LocalDatabase,
+    ): LocationRepository = LocationRepository(remoteService, localDatabase)
 
     //USE CASES
     @Provides
@@ -163,6 +173,16 @@ object AppModule {
             unfinishChecklistUC = UnfinishChecklistUC(localDB, checkRepo, stockRepo),
             setItemAmountUC = SetItemAmountUC(checkRepo),
             setSharedWithUC = SetSharedWithUC(checkRepo),
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideLocationUseCases(
+        locationRepo: LocationRepository,
+    ): LocationUseCases {
+        return LocationUseCases(
+            addLocationUC = AddLocationUC(locationRepo),
         )
     }
 

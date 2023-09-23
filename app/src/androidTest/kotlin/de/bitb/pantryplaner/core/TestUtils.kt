@@ -11,5 +11,8 @@ fun getString(@StringRes id: Int, vararg args: Any): String {
     return InstrumentationRegistry.getInstrumentation().targetContext.resources.getString(id, *args)
 }
 
-fun ComposeTestRule.onNodeWithTag(testTag: TestTag): SemanticsNodeInteraction =
-    onNodeWithTag(testTag.tagName)
+fun ComposeTestRule.onNodeWithTag(
+    testTag: TestTag,
+    useUnmergedTree: Boolean = false
+): SemanticsNodeInteraction =
+    onNodeWithTag(testTag.tagName, useUnmergedTree)

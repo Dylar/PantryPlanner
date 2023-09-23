@@ -10,6 +10,7 @@ import de.bitb.pantryplaner.data.CheckRepository
 import de.bitb.pantryplaner.data.CheckRepositoryImpl
 import de.bitb.pantryplaner.data.ItemRepository
 import de.bitb.pantryplaner.data.ItemRepositoryImpl
+import de.bitb.pantryplaner.data.LocationRepository
 import de.bitb.pantryplaner.data.SettingsRepository
 import de.bitb.pantryplaner.data.SettingsRepositoryImpl
 import de.bitb.pantryplaner.data.StockRepository
@@ -23,6 +24,7 @@ import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.usecase.AlertUseCases
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
+import de.bitb.pantryplaner.usecase.LocationUseCases
 import de.bitb.pantryplaner.usecase.StockUseCases
 import de.bitb.pantryplaner.usecase.UserUseCases
 import de.bitb.pantryplaner.usecase.alert.RefreshAlertUC
@@ -41,6 +43,7 @@ import de.bitb.pantryplaner.usecase.item.EditCategoryUC
 import de.bitb.pantryplaner.usecase.item.EditItemUC
 import de.bitb.pantryplaner.usecase.item.LoadDataUC
 import de.bitb.pantryplaner.usecase.item.UncheckAllItemsUC
+import de.bitb.pantryplaner.usecase.location.AddLocationUC
 import de.bitb.pantryplaner.usecase.stock.AddStockItemUC
 import de.bitb.pantryplaner.usecase.stock.DeleteStockItemUC
 import de.bitb.pantryplaner.usecase.user.ConnectUserUC
@@ -108,6 +111,13 @@ object TestAppModule {
         remoteService: RemoteService,
         localDatabase: LocalDatabase,
     ): StockRepository = StockRepository(remoteService, localDatabase)
+
+    @Provides
+    @Singleton
+    fun provideLocationRepository(
+        remoteService: RemoteService,
+        localDatabase: LocalDatabase,
+    ): LocationRepository = LocationRepository(remoteService, localDatabase)
 
     //USE CASES
     @Provides
@@ -182,6 +192,16 @@ object TestAppModule {
             unfinishChecklistUC = UnfinishChecklistUC(localDB, checkRepo, stockRepo),
             setItemAmountUC = SetItemAmountUC(checkRepo),
             setSharedWithUC = SetSharedWithUC(checkRepo),
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideLocationUseCases(
+        locationRepo: LocationRepository,
+    ): LocationUseCases {
+        return LocationUseCases(
+            addLocationUC = AddLocationUC(locationRepo),
         )
     }
 

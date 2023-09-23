@@ -1,7 +1,7 @@
 Feature: Profile locations management
 
   Scenario: Create a new Location from the ProfilePage
-    Given Mock default User
+    Given Init default Mocks
     And   Start on ProfilePage
     When  Tap NewLocationButton on ProfilePage
     Then  NewLocationDialog is displayed

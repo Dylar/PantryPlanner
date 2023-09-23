@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.map
 
 inline fun <reified T> getOwnedOrShared(
     userId: String,
-    ids: List<String>?,
+    ids: List<String>? = null,
     ownerCollection: (String) -> Query,
     sharedCollection: (String) -> Query,
 ): Flow<Resource<List<T>>> {
@@ -32,7 +32,7 @@ inline fun <reified T> getOwnedOrShared(
             ownerQuery.snapshots().map { it.toObjects(T::class.java) },
             sharedQuery.snapshots().map { it.toObjects(T::class.java) }
         ) { owner, shared ->
-            Resource.Success(listOf(*owner.toTypedArray(), *shared.toTypedArray()))
+            Resource.Success(setOf(*owner.toTypedArray(), *shared.toTypedArray()).toList())
         }
     } catch (e: Exception) {
         MutableStateFlow(e.asResourceError(emptyList()))

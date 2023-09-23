@@ -33,7 +33,7 @@ class ProfilePageSteps(
 
     @Then("Location with name {string} should be shown on ProfilePage")
     fun locationWithNameShouldBeShownOnProfilePage(name: String) {
-        onNodeWithTag(ProfilePageTag.LocationItem(name)).assertIsDisplayed()
+        onNodeWithTag(ProfilePageTag.LocationItem(name), true).assertIsDisplayed()
         waitForIdle()
     }
 }

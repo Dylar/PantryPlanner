@@ -3,6 +3,7 @@ package de.bitb.pantryplaner.data.source
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.data.model.Item
+import de.bitb.pantryplaner.data.model.Location
 import de.bitb.pantryplaner.data.model.Settings
 import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.StockItem
@@ -15,7 +16,12 @@ interface LocalDatabase {
 }
 
 // REMOTE
-interface RemoteService : UserRemoteDao, ItemRemoteDao, CheckRemoteDao, StockItemRemoteDao,
+interface RemoteService :
+    UserRemoteDao,
+    ItemRemoteDao,
+    CheckRemoteDao,
+    StockItemRemoteDao,
+    LocationRemoteDao,
     SettingsRemoteDao
 
 class PantryRemoteService(
@@ -24,12 +30,14 @@ class PantryRemoteService(
     itemService: FireItemService,
     checkService: FireCheckService,
     stockItemService: FireStockService,
+    locationService: FireLocationService,
 ) :
     RemoteService,
     UserRemoteDao by userService,
     ItemRemoteDao by itemService,
     CheckRemoteDao by checkService,
     StockItemRemoteDao by stockItemService,
+    LocationRemoteDao by locationService,
     SettingsRemoteDao by settingsService
 
 interface SettingsRemoteDao {
@@ -66,4 +74,9 @@ interface StockItemRemoteDao {
     suspend fun addStockItem(userId: String, item: StockItem): Resource<Boolean>
     suspend fun deleteStockItem(userId: String, item: StockItem): Resource<Boolean>
     suspend fun saveStock(userId: String, stock: Stock): Resource<Unit>
+}
+
+interface LocationRemoteDao {
+    fun getLocations(userId: String): Flow<Resource<List<Location>>>
+    suspend fun addLocation(location: Location): Resource<Boolean>
 }

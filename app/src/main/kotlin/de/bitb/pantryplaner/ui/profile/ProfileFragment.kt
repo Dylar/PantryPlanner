@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -28,7 +27,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.rounded.HomeWork
-import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -39,7 +37,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -49,7 +46,9 @@ import androidx.fragment.app.viewModels
 import com.google.zxing.WriterException
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
+import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.data.model.Location
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
@@ -83,11 +82,11 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
 
     @Composable
     private fun buildContent(paddingValues: PaddingValues) {
-        val user by viewModel.user.observeAsState(null)
+        val model by viewModel.profileModel.observeAsState(null)
         when {
-            user is Resource.Error -> ErrorScreen(user!!.message!!.asString())
-            user == null || !user!!.hasData -> LoadingIndicator()
-            else -> UserDetails(paddingValues, user!!.data!!)
+            model is Resource.Error -> ErrorScreen(model!!.message!!.asString())
+            model?.data?.isLoading != false -> LoadingIndicator()
+            else -> UserDetails(paddingValues, model!!.data!!)
         }
     }
 
@@ -143,7 +142,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
     }
 
     @Composable
-    private fun UserDetails(padding: PaddingValues, user: User) {
+    private fun UserDetails(padding: PaddingValues, model: ProfileModel) {
         Box(
             contentAlignment = Alignment.TopCenter,
             modifier = Modifier
@@ -158,7 +157,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
                     modifier = Modifier
                         .fillMaxWidth(),
                     contentAlignment = Alignment.Center,
-                ) { QrCodeImage(user.uuid) }
+                ) { QrCodeImage(model.user!!.uuid) }
                 Box(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
@@ -181,7 +180,8 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
                         textAlign = TextAlign.Center,
                     )
                 }
-                ConnectedUserList()
+                ConnectedUserList(model.connectedUser!!)
+                LocationList(model.connectedUser, model.locations!!)
             }
         }
     }
@@ -209,55 +209,39 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
     }
 
     @Composable
-    private fun ConnectedUserList() {
-        val connectedResp by viewModel.connectedUser.observeAsState()
-        when {
-            connectedResp is Resource.Error -> ErrorScreen(connectedResp!!.message!!.asString())
-            connectedResp == null || !connectedResp!!.hasData -> LoadingIndicator()
-            else -> {
-                val connectedUser = (connectedResp as Resource<List<User>>).data!!
-                useAddLocationDialog(
-                    showAddDialog,
-                    connectedUser,
-                    onEdit = { _, close ->
-                        if (close) showAddDialog.value = false
-                    },
-                )
-
-                LazyVerticalGrid(
-                    GridCells.Fixed(if (connectedUser.size == 1) 1 else 2),
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalArrangement = Arrangement.Center,
-                    contentPadding = PaddingValues(horizontal = 20.dp),
-                ) {
-                    if (connectedUser.isNotEmpty()) {
-                        stickyGridHeader {
-                            Box(
-                                modifier = Modifier.fillMaxWidth(),
-                                contentAlignment = Alignment.CenterStart,
-                            ) {
-                                Text(
-                                    "Verbundene Benutzer",
-                                    modifier = Modifier
-                                        .drawBehind {
-                                            val strokeWidthPx = 1.dp.toPx()
-                                            val verticalOffset = size.height - 2.sp.toPx()
-                                            drawLine(
-                                                color = BaseColors.ZergPurple,
-                                                strokeWidth = strokeWidthPx,
-                                                start = Offset(0f, verticalOffset),
-                                                end = Offset(size.width, verticalOffset)
-                                            )
-                                        },
-                                    textAlign = TextAlign.Center,
-                                )
-                            }
-                        }
+    private fun ConnectedUserList(connectedUser: List<User>) {
+        LazyVerticalGrid(
+            GridCells.Fixed(if (connectedUser.size == 1) 1 else 2),
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.Top,
+            horizontalArrangement = Arrangement.Center,
+            contentPadding = PaddingValues(horizontal = 20.dp),
+        ) {
+            if (connectedUser.isNotEmpty()) {
+                stickyGridHeader {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.CenterStart,
+                    ) {
+                        Text(
+                            "Verbundene Benutzer",
+                            modifier = Modifier
+                                .drawBehind {
+                                    val strokeWidthPx = 1.dp.toPx()
+                                    val verticalOffset = size.height - 2.sp.toPx()
+                                    drawLine(
+                                        color = BaseColors.ZergPurple,
+                                        strokeWidth = strokeWidthPx,
+                                        start = Offset(0f, verticalOffset),
+                                        end = Offset(size.width, verticalOffset)
+                                    )
+                                },
+                            textAlign = TextAlign.Center,
+                        )
                     }
-                    connectedUser.forEach { user -> items(connectedUser.size) { buildUser(user) } }
                 }
             }
+            items(connectedUser.size) { buildUser(connectedUser[it]) }
         }
     }
 
@@ -274,6 +258,74 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
             ) {
                 Text(
                     user.fullName,
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Start,
+                )
+            }
+        }
+    }
+
+    @Composable
+    private fun LocationList(users: List<User>, locations: List<Location>) {
+        useAddLocationDialog(
+            showAddDialog,
+            users,
+            onEdit = { loc, close ->
+                viewModel.addLocation(loc)
+                if (close) showAddDialog.value = false
+            },
+        )
+        LazyVerticalGrid(
+            GridCells.Fixed(if (locations.size == 1) 1 else 2),
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.Top,
+            horizontalArrangement = Arrangement.Center,
+            contentPadding = PaddingValues(horizontal = 20.dp),
+        ) {
+            if (locations.isNotEmpty()) {
+                stickyGridHeader {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.CenterStart,
+                    ) {
+                        Text(
+                            "Orte",
+                            modifier = Modifier
+                                .drawBehind { // TODO make generic
+                                    val strokeWidthPx = 1.dp.toPx()
+                                    val verticalOffset = size.height - 2.sp.toPx()
+                                    drawLine(
+                                        color = BaseColors.ZergPurple,
+                                        strokeWidth = strokeWidthPx,
+                                        start = Offset(0f, verticalOffset),
+                                        end = Offset(size.width, verticalOffset)
+                                    )
+                                },
+                            textAlign = TextAlign.Center,
+                        )
+                    }
+                }
+            }
+            items(locations.size) { buildLocation(locations[it]) }
+        }
+    }
+
+    @Composable
+    private fun buildLocation(location: Location) {
+        dissmissItem(
+            location.name,
+            BaseColors.ZergPurple,
+            onSwipe = { viewModel.disconnectLocation(location) },
+        ) {
+            Box(
+                modifier = Modifier
+                    .defaultMinSize(minHeight = 48.dp)
+                    .testTag(ProfilePageTag.LocationItem(location.name)),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                Text(
+                    location.name,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
                     fontSize = 16.sp,
                     textAlign = TextAlign.Start,

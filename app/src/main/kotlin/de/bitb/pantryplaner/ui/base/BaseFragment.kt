@@ -38,10 +38,8 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        Logger.justPrint("onCreateView 1")
         return ComposeView(requireContext()).apply {
             setContent {
-                Logger.justPrint("onCreateView 2")
                 scaffoldState = rememberScaffoldState()
                 PantryAppTheme(
                     useDarkTheme = isSystemInDarkTheme()
@@ -52,7 +50,6 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Logger.justPrint("onViewCreated")
         observeSnackBarEvent()
     }
 
@@ -61,14 +58,12 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
 
     private fun observeSnackBarEvent() {
         viewModel.snackbarMessage.observe(viewLifecycleOwner) { message ->
-            Logger.justPrint("show Snackbar")
             message?.let { showSnackBar(it) }
         }
     }
 
     fun showSnackBar(msg: ResString) {
         lifecycleScope.launch {
-            Logger.justPrint("show Snackbar: ${msg.asString(resources::getString)}")
             if (::scaffoldState.isInitialized)
                 scaffoldState.snackbarHostState.showSnackbar(
                     message = msg.asString(resources::getString),

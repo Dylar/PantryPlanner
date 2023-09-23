@@ -1,7 +1,7 @@
 Feature: App navigation
 
   Scenario: Run app and show LoginPage
-    Given Mock nothing
+    Given Init Mocks
     And   Run App
     Then  LoginPage rendered
 
