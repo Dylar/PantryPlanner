@@ -90,5 +90,14 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    fun editLocation(location: Location) {
+        viewModelScope.launch {
+            when (val resp = locationUseCases.editLocationUC(location)) {
+                is Resource.Error -> showSnackbar(resp.message!!)
+                else -> showSnackbar("Ort editiert: ${location.name}".asResString())
+            }
+        }
+    }
+
 }
 

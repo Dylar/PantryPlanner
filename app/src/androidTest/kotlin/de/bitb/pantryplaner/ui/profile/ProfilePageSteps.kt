@@ -2,19 +2,18 @@ package de.bitb.pantryplaner.ui.profile
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeRight
 import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
+import de.bitb.pantryplaner.ui.base.testTags.ConfirmDialogTag
 import de.bitb.pantryplaner.ui.base.testTags.ProfilePageTag
+import io.cucumber.java.en.And
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
-import io.cucumber.java.en.And
-import de.bitb.pantryplaner.ui.base.testTags.ConfirmDialogTag
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 
 @HiltAndroidTest
 class ProfilePageSteps(
@@ -52,7 +51,7 @@ class ProfilePageSteps(
     @Then("Swipe to remove Location {string} on ProfilePage")
     fun swipeToRemoveLocationOnProfilePage(name: String) {
         //TODO do we need unmergedTree?
-        onNodeWithTag(ProfilePageTag.LocationItem(name),true)
+        onNodeWithTag(ProfilePageTag.LocationItem(name), true)
             .performTouchInput { swipeRight() }
         waitForIdle()
     }
@@ -60,6 +59,13 @@ class ProfilePageSteps(
     @And("Tap on confirm deletion")
     fun tapOnConfirmDeletion() {
         onNodeWithTag(ConfirmDialogTag.ConfirmButton).performClick()
+        waitForIdle()
+    }
+
+    @When("LongPress on Location {string} on ProfilePage")
+    fun longPressOnLocationOnProfilePage(name: String) {
+        onNodeWithTag(ProfilePageTag.LocationItem(name), true)
+            .performTouchInput { longClick() }
         waitForIdle()
     }
 }

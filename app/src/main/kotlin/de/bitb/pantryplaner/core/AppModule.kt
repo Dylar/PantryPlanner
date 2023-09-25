@@ -17,6 +17,7 @@ import de.bitb.pantryplaner.usecase.checklist.*
 import de.bitb.pantryplaner.usecase.item.*
 import de.bitb.pantryplaner.usecase.location.AddLocationUC
 import de.bitb.pantryplaner.usecase.location.DeleteLocationUC
+import de.bitb.pantryplaner.usecase.location.EditLocationUC
 import de.bitb.pantryplaner.usecase.stock.AddStockItemUC
 import de.bitb.pantryplaner.usecase.stock.DeleteStockItemUC
 import de.bitb.pantryplaner.usecase.user.*
@@ -185,7 +186,8 @@ object AppModule {
     ): LocationUseCases {
         return LocationUseCases(
             addLocationUC = AddLocationUC(locationRepo),
-            deleteLocationUC = DeleteLocationUC(userRepo, locationRepo)
+            deleteLocationUC = DeleteLocationUC(userRepo, locationRepo),
+            editLocationUC = EditLocationUC(locationRepo),
         )
     }
 

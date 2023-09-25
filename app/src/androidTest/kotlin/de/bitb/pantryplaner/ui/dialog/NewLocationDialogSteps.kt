@@ -3,6 +3,7 @@ package de.bitb.pantryplaner.ui.dialog
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.onNodeWithTag
@@ -16,13 +17,14 @@ class NewLocationDialogSteps(
     val scenarioData: ScenarioData,
 ) : ComposeTestRule by scenarioData.composeRule {
 
-    @Then("NewLocationDialog is displayed")
-    fun newLocationDialogIsDisplayed() {
-        assertNewLocationDialogRendered()
+    @Then("AddEditLocationDialog is displayed")
+    fun addEditLocationDialogIsDisplayed() {
+        assertAddEditLocationDialogRendered()
     }
 
     @And("Input {string} as Location name")
     fun inputAsLocationName(input: String) {
+        onNodeWithTag(AddEditLocationDialogTag.NameLabel).performTextClearance()
         onNodeWithTag(AddEditLocationDialogTag.NameLabel).performTextInput(input)
         waitForIdle()
     }
@@ -35,7 +37,7 @@ class NewLocationDialogSteps(
 
 }
 
-fun ComposeTestRule.assertNewLocationDialogRendered() {
+fun ComposeTestRule.assertAddEditLocationDialogRendered() {
     onNodeWithTag(AddEditLocationDialogTag.NameLabel).assertIsDisplayed()
 //    onNodeWithTag(TestTags.ProfilePage.NewLocationDialog.SharedWithLabel.name).assertIsDisplayed()
 }

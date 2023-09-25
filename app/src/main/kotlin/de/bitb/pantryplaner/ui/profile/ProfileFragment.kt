@@ -60,6 +60,7 @@ import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.ProfilePageTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.dialogs.useAddLocationDialog
+import de.bitb.pantryplaner.ui.dialogs.useEditLocationDialog
 
 @AndroidEntryPoint
 class ProfileFragment : BaseFragment<ProfileViewModel>() {
@@ -306,16 +307,28 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
                     }
                 }
             }
-            items(locations.size) { buildLocation(locations[it]) }
+            items(locations.size) { buildLocation(users, locations[it]) }
         }
     }
 
     @Composable
-    private fun buildLocation(location: Location) {
+    private fun buildLocation(users: List<User>, location: Location) {
+        val showEditDialog = remember { mutableStateOf(false) }
+        useEditLocationDialog(
+            showDialog = showEditDialog,
+            location = location,
+            users = users,
+            onEdit = { loc, _ ->
+                showEditDialog.value = false
+                viewModel.editLocation(loc)
+            }
+        )
+
         dissmissItem(
             location.name,
             BaseColors.ZergPurple,
             onSwipe = { viewModel.removeLocation(location) },
+            onLongClick = { showEditDialog.value = true }
         ) {
             Box(
                 modifier = Modifier
