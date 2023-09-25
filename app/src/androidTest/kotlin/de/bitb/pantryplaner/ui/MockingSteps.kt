@@ -4,6 +4,7 @@ import androidx.compose.ui.test.junit4.ComposeTestRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.data.source.RemoteService
 import de.bitb.pantryplaner.test.ScenarioData
+import de.bitb.pantryplaner.test.mockDefaultLocationDao
 import de.bitb.pantryplaner.test.mockDefaultUserDao
 import de.bitb.pantryplaner.test.mockLocationDao
 import de.bitb.pantryplaner.test.mockUserDao
@@ -28,9 +29,13 @@ class MockingSteps(
     fun initDefaultMocks() {
         initMocks()
         mockDefaultUser()
+        mockDefaultLocation()
     }
 
     @Given("Mock default User")
     fun mockDefaultUser() = remoteService.mockDefaultUserDao()
+
+    @Given("Mock default Location")
+    fun mockDefaultLocation() = remoteService.mockDefaultLocationDao()
 
 }

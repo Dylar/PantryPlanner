@@ -32,23 +32,23 @@ class FireLocationService(
             sharedCollection = ::sharedCollection,
         )
     }
-//
-//    override suspend fun saveItems(userId: String, items: List<Item>): Resource<Unit> {
-//        return tryIt {
-//            firestore.batch().apply {
-//                val itemCollection = ownerCollection(userId)
-//                itemCollection
-//                    .whereIn("uuid", items.map { it.uuid })
-//                    .get().await().documents
-//                    .forEach { snap ->
-//                        val uuid = snap.data?.get("uuid") ?: ""
-//                        set(snap.reference, items.first { it.uuid == uuid })
-//                    }
-//                commit()
-//            }
-//            Resource.Success()
-//        }
-//    }
+
+    override suspend fun saveLocations(userId: String, locations: List<Location>): Resource<Unit> {
+        return tryIt {
+            firestore.batch().apply {
+                val itemCollection = ownerCollection(userId)
+                itemCollection
+                    .whereIn("uuid", locations.map { it.uuid })
+                    .get().await().documents
+                    .forEach { snap ->
+                        val uuid = snap.data?.get("uuid") ?: ""
+                        set(snap.reference, locations.first { it.uuid == uuid })
+                    }
+                commit()
+            }
+            Resource.Success()
+        }
+    }
 
     override suspend fun addLocation(location: Location): Resource<Boolean> {
         return tryIt {
@@ -64,21 +64,21 @@ class FireLocationService(
             }
         }
     }
-//
-//    override suspend fun deleteItem(userId: String, item: Item): Resource<Boolean> {
-//        return tryIt {
-//            val itemCollection = ownerCollection(userId)
-//            val querySnapshot = itemCollection
-//                .whereEqualTo("uuid", item.uuid)
-//                .get().await()
-//
-//            if (querySnapshot.isEmpty) {
-//                Resource.Success(false)
-//            } else {
-//                querySnapshot.documents.first().reference.delete().await()
-//                Resource.Success(true)
-//            }
-//        }
-//    }
+
+    override suspend fun deleteLocation(userId: String, location: Location): Resource<Boolean> {
+        return tryIt {
+            val locCollection = ownerCollection(userId)
+            val querySnapshot = locCollection
+                .whereEqualTo("uuid", location.uuid)
+                .get().await()
+
+            if (querySnapshot.isEmpty) {
+                Resource.Success(false)
+            } else {
+                querySnapshot.documents.first().reference.delete().await()
+                Resource.Success(true)
+            }
+        }
+    }
 
 }

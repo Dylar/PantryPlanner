@@ -81,14 +81,13 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun disconnectLocation(location: Location) {
-        // TODO
-//        viewModelScope.launch {
-//            when (val resp = locationUseCases.disconnectLocationUC(location)) {
-//                is Resource.Error -> showSnackbar(resp.message!!)
-//                else -> showSnackbar("Ort entfernt: ${location.name}".asResString())
-//            }
-//        }
+    fun removeLocation(location: Location) {
+        viewModelScope.launch {
+            when (val resp = locationUseCases.deleteLocationUC(location)) {
+                is Resource.Error -> showSnackbar(resp.message!!)
+                else -> showSnackbar("Ort entfernt: ${location.name}".asResString())
+            }
+        }
     }
 
 }

@@ -44,6 +44,7 @@ import de.bitb.pantryplaner.usecase.item.EditItemUC
 import de.bitb.pantryplaner.usecase.item.LoadDataUC
 import de.bitb.pantryplaner.usecase.item.UncheckAllItemsUC
 import de.bitb.pantryplaner.usecase.location.AddLocationUC
+import de.bitb.pantryplaner.usecase.location.DeleteLocationUC
 import de.bitb.pantryplaner.usecase.stock.AddStockItemUC
 import de.bitb.pantryplaner.usecase.stock.DeleteStockItemUC
 import de.bitb.pantryplaner.usecase.user.ConnectUserUC
@@ -198,10 +199,12 @@ object TestAppModule {
     @Provides
     @Singleton
     fun provideLocationUseCases(
+        userRepo: UserRepository,
         locationRepo: LocationRepository,
     ): LocationUseCases {
         return LocationUseCases(
             addLocationUC = AddLocationUC(locationRepo),
+            deleteLocationUC = DeleteLocationUC(userRepo, locationRepo)
         )
     }
 

@@ -7,10 +7,12 @@ import de.bitb.pantryplaner.data.source.UserRemoteDao
 import io.mockk.coEvery
 import kotlinx.coroutines.flow.flowOf
 
+const val defaultUuid = "defaultUUID"
+const val defaultEmail = "defaul@user.de"
 const val defaultPW = "1Password!"
 
 fun buildUser(
-    email: String = "defaul@user.de",
+    email: String = defaultEmail,
     firstName: String = "Max",
     lastName: String = "Mustermann",
     connectedUser: MutableList<String> = mutableListOf(),
@@ -18,7 +20,7 @@ fun buildUser(
     User(email = email, firstName = firstName, lastName = lastName, connectedUser = connectedUser)
 
 fun UserRemoteDao.mockDefaultUserDao() {
-    val user = buildUser()
+    val user = buildUser().copy(uuid = defaultUuid)
     val map = mutableMapOf(user.email to defaultPW)
     mockUserDao(emailPwMap = map, allUser = mutableListOf(user))
 }

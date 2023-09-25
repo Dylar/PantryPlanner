@@ -46,7 +46,6 @@ import androidx.fragment.app.viewModels
 import com.google.zxing.WriterException
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
-import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Location
 import de.bitb.pantryplaner.data.model.User
@@ -316,7 +315,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
         dissmissItem(
             location.name,
             BaseColors.ZergPurple,
-            onSwipe = { viewModel.disconnectLocation(location) },
+            onSwipe = { viewModel.removeLocation(location) },
         ) {
             Box(
                 modifier = Modifier

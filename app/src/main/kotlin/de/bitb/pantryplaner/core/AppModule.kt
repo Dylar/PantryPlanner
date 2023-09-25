@@ -16,6 +16,7 @@ import de.bitb.pantryplaner.usecase.alert.RefreshAlertUC
 import de.bitb.pantryplaner.usecase.checklist.*
 import de.bitb.pantryplaner.usecase.item.*
 import de.bitb.pantryplaner.usecase.location.AddLocationUC
+import de.bitb.pantryplaner.usecase.location.DeleteLocationUC
 import de.bitb.pantryplaner.usecase.stock.AddStockItemUC
 import de.bitb.pantryplaner.usecase.stock.DeleteStockItemUC
 import de.bitb.pantryplaner.usecase.user.*
@@ -179,10 +180,12 @@ object AppModule {
     @Provides
     @Singleton
     fun provideLocationUseCases(
+        userRepo: UserRepository,
         locationRepo: LocationRepository,
     ): LocationUseCases {
         return LocationUseCases(
             addLocationUC = AddLocationUC(locationRepo),
+            deleteLocationUC = DeleteLocationUC(userRepo, locationRepo)
         )
     }
 
