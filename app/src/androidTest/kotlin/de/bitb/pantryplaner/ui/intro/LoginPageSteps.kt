@@ -10,7 +10,6 @@ import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.test.buildUser
 import de.bitb.pantryplaner.test.defaultPW
 import de.bitb.pantryplaner.ui.base.testTags.LoginPageTag
-import de.bitb.pantryplaner.ui.base.testTags.TestTag
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 

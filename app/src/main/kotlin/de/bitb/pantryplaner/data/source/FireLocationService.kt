@@ -33,11 +33,10 @@ class FireLocationService(
         )
     }
 
-    override suspend fun saveLocations(userId: String, locations: List<Location>): Resource<Unit> {
+    override suspend fun saveLocations(locations: List<Location>): Resource<Unit> {
         return tryIt {
             firestore.batch().apply {
-                val itemCollection = ownerCollection(userId)
-                itemCollection
+                collection
                     .whereIn("uuid", locations.map { it.uuid })
                     .get().await().documents
                     .forEach { snap ->
@@ -65,10 +64,9 @@ class FireLocationService(
         }
     }
 
-    override suspend fun deleteLocation(userId: String, location: Location): Resource<Boolean> {
+    override suspend fun deleteLocation(location: Location): Resource<Boolean> {
         return tryIt {
-            val locCollection = ownerCollection(userId)
-            val querySnapshot = locCollection
+            val querySnapshot = collection
                 .whereEqualTo("uuid", location.uuid)
                 .get().await()
 

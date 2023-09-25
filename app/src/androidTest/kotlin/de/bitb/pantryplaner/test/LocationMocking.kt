@@ -22,8 +22,10 @@ fun buildLocation(
     )
 
 fun LocationRemoteDao.mockDefaultLocationDao() {
-    val loc = buildLocation(creator = defaultUuid)
-    mockLocationDao(mutableMapOf(defaultUuid to listOf(loc)))
+    val loc1 = buildLocation(name = "CreatorLocation", creator = defaultUuid)
+    val loc2 =
+        buildLocation(name = "SharedLocation", creator = "123", sharedWith = listOf(defaultUuid))
+    mockLocationDao(mutableMapOf(defaultUuid to listOf(loc1, loc2)))
 }
 
 fun LocationRemoteDao.mockLocationDao(
@@ -47,9 +49,10 @@ fun LocationRemoteDao.mockLocationDao(
         locationsFlows[addLocation.creator] = flow
         Resource.Success(true)
     }
-    coEvery { deleteLocation(any(), any()) }.answers {
-        val userId = firstArg<String>()
-        val deleteLocation = secondArg<Location>()
+
+    coEvery { deleteLocation(any()) }.answers {
+        val deleteLocation = firstArg<Location>()
+        val userId = deleteLocation.creator
 
         val flow = locationsFlows[userId]
             ?: MutableStateFlow(Resource.Success(emptyList()))
@@ -59,16 +62,14 @@ fun LocationRemoteDao.mockLocationDao(
         Resource.Success(true)
     }
 
-    coEvery { saveLocations(any(), any()) }.answers {
-        val userId = firstArg<String>()
-        val saveLocations = secondArg<List<Location>>().associateBy { it.uuid }
-
-        val flow = locationsFlows[userId]
-            ?: MutableStateFlow(Resource.Success(emptyList()))
-        val newList = flow.value.data!!.toMutableList()
-            .apply { replaceAll { loc -> saveLocations[loc.uuid] ?: loc } }
-        flow.value = Resource.Success(newList)
-        locationsFlows[userId] = flow
+    coEvery { saveLocations(any()) }.answers {
+        val saveLocations = firstArg<List<Location>>().associateBy { it.uuid }
+        locationsFlows.forEach { (userId, flow) ->
+            val newList = flow.value.data!!.toMutableList()
+                .apply { replaceAll { loc -> saveLocations[loc.uuid] ?: loc } }
+                .filter { it.creator == userId || it.sharedWith.contains(userId) }
+            flow.value = Resource.Success(newList)
+        }
 
         Resource.Success()
     }
@@ -85,7 +86,7 @@ fun LocationRemoteDao.mockErrorLocationDao(
     if (addLocationError != null)
         coEvery { addLocation(any()) }.answers { addLocationError }
     if (deleteLocationError != null)
-        coEvery { deleteLocation(any(), any()) }.answers { deleteLocationError }
+        coEvery { deleteLocation(any()) }.answers { deleteLocationError }
     if (saveLocationError != null)
-        coEvery { saveLocations(any(), any()) }.answers { saveLocationError }
+        coEvery { saveLocations(any()) }.answers { saveLocationError }
 }

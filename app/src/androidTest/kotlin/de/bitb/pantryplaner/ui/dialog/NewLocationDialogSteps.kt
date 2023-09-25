@@ -39,5 +39,5 @@ class NewLocationDialogSteps(
 
 fun ComposeTestRule.assertAddEditLocationDialogRendered() {
     onNodeWithTag(AddEditLocationDialogTag.NameLabel).assertIsDisplayed()
-//    onNodeWithTag(TestTags.ProfilePage.NewLocationDialog.SharedWithLabel.name).assertIsDisplayed()
+    onNodeWithTag(AddEditLocationDialogTag.ConfirmButton).assertIsDisplayed()
 }

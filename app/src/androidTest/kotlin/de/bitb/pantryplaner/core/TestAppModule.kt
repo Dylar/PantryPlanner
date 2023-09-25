@@ -206,7 +206,7 @@ object TestAppModule {
         return LocationUseCases(
             addLocationUC = AddLocationUC(locationRepo),
             deleteLocationUC = DeleteLocationUC(userRepo, locationRepo),
-            editLocationUC = EditLocationUC(locationRepo),
+            editLocationUC = EditLocationUC(userRepo, locationRepo),
         )
     }
 

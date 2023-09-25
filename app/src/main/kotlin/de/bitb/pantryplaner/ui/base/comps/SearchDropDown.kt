@@ -37,6 +37,8 @@ import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
+import de.bitb.pantryplaner.ui.base.testTags.SharedWithTag
+import de.bitb.pantryplaner.ui.base.testTags.testTag
 import java.util.Locale
 
 @Composable
@@ -193,42 +195,48 @@ private fun ConnectedUser(
                 item(1) {
                     Text(
                         emptyText,
-                        modifier = Modifier.defaultMinSize(24.dp),
+                        modifier = Modifier
+                            .testTag(SharedWithTag.NothingShared)
+                            .defaultMinSize(24.dp),
                         color = BaseColors.LightGray,
                     )
                 }
             } else {
-                item(selectedUser.value.size) {
-                    selectedUser.value.forEach {
-                        Card(modifier = Modifier.defaultMinSize(minHeight = 24.dp)) {
-                            Row(
-                                modifier = Modifier
-                                    .background(BaseColors.LightGray)
-                                    .clickable {
-                                        if (canChange) {
-                                            val list = selectedUser.value.toMutableList()
-                                            list.remove(it)
-                                            selectedUser.value = list
-                                            onSelect(list)
-                                        }
-                                    },
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                Text(
-                                    it.fullName,
-                                    modifier = Modifier.padding(4.dp),
-                                    textAlign = TextAlign.Center
+                val userlist = selectedUser.value
+                items(userlist.size) {
+                    val user = userlist[it]
+                    Card(
+                        modifier = Modifier
+                            .testTag(SharedWithTag.SharedChip(user.fullName))
+                            .defaultMinSize(minHeight = 24.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .background(BaseColors.LightGray)
+                                .clickable {
+                                    if (canChange) {
+                                        val list = selectedUser.value.toMutableList()
+                                        list.remove(user)
+                                        selectedUser.value = list
+                                        onSelect(list)
+                                    }
+                                },
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                user.fullName,
+                                modifier = Modifier.padding(4.dp),
+                                textAlign = TextAlign.Center
+                            )
+                            if (canChange) {
+                                Icon(
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                        .padding(2.dp),
+                                    imageVector = Icons.Default.Cancel,
+                                    contentDescription = "Cancel button"
                                 )
-                                if (canChange) {
-                                    Icon(
-                                        modifier = Modifier
-                                            .size(24.dp)
-                                            .padding(2.dp),
-                                        imageVector = Icons.Default.Cancel,
-                                        contentDescription = "Cancel button"
-                                    )
-                                }
                             }
                         }
                     }

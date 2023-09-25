@@ -26,7 +26,6 @@ import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Settings
 import de.bitb.pantryplaner.ui.base.BaseFragment
-import de.bitb.pantryplaner.ui.base.testTags.TestTag
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
 import de.bitb.pantryplaner.ui.base.naviSettingsToReleaseNotes

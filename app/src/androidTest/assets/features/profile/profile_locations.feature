@@ -1,34 +1,47 @@
 Feature: Profile Locations management
 
-  Scenario: Create a new Location from the ProfilePage
+  Background:
     Given Init default Mocks
     And   Start on ProfilePage
-    When  Tap NewLocationButton on ProfilePage
-    Then  AddEditLocationDialog is displayed
+    And   Location "Home" should NOT be shown
+    And   Location "CreatorLocation" should be shown
+    And   Location "SharedLocation" should be shown
+
+  Scenario: Create a new Location
+    When  Tap NewLocationButton
+    And   AddEditLocationDialog is displayed
     And   Input "Home" as Location name
     And   Tap on CreateLocationButton
-    Then  Location with name "Home" should be shown on ProfilePage
+    Then  Location "Home" should be shown
 
-  Scenario: Remove a Location from the ProfilePage
-    Given Init default Mocks
-    And   Start on ProfilePage
-    When  Swipe to remove Location "DefaultLocation" on ProfilePage
-    And   Tap on confirm
-    Then  Location with name "DefaultLocation" should NOT be shown on ProfilePage
-
-  Scenario: Try to remove a Location from the ProfilePage, but cancel confirmation
-    Given Init default Mocks
-    And   Start on ProfilePage
-    When  Swipe to remove Location "DefaultLocation" on ProfilePage
+  Scenario: Try to remove a Location, but cancel confirmation
+    When  Swipe to remove Location "CreatorLocation"
     And   Tap on dismiss
-    Then  Location with name "DefaultLocation" should be shown on ProfilePage
+    Then  Location "CreatorLocation" should be shown
 
-  Scenario: Edit Location
-    Given Init default Mocks
-    And   Start on ProfilePage
-    And   Location with name "NEW_NAME" should NOT be shown on ProfilePage
-    When  LongPress on Location "DefaultLocation" on ProfilePage
-    Then  AddEditLocationDialog is displayed
-    And   Input "NEW_NAME" as Location name
+  Scenario: Remove a Location
+    When  Swipe to remove Location "CreatorLocation"
+    And   Tap on confirm
+    Then  Location "CreatorLocation" should NOT be shown
+
+  Scenario: Remove a shared Location
+    When  Swipe to remove Location "SharedLocation"
+    And   Tap on confirm
+    Then  Location "SharedLocation" should NOT be shown
+
+  Scenario: Prevent non-creator from editing a Location
+    When  LongPress on Location "SharedLocation"
+    And   AddEditLocationDialog is displayed
+    And   Input "Home" as Location name
     And   Tap on CreateLocationButton
-    And   Location with name "NEW_NAME" should be shown on ProfilePage
+    Then  Location "Home" should NOT be shown
+    And   Location "SharedLocation" should be shown
+    And   SnackBar shown: "Nur der Ersteller kann den Ort ändern"
+
+  Scenario: Edit a created Location
+    When  LongPress on Location "CreatorLocation"
+    And   AddEditLocationDialog is displayed
+    And   Input "Home" as Location name
+    And   Tap on CreateLocationButton
+    Then  Location "Home" should be shown
+    And   Location "CreatorLocation" should NOT be shown

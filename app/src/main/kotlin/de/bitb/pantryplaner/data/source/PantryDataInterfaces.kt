@@ -79,6 +79,6 @@ interface StockItemRemoteDao {
 interface LocationRemoteDao {
     fun getLocations(userId: String): Flow<Resource<List<Location>>>
     suspend fun addLocation(location: Location): Resource<Boolean>
-    suspend fun deleteLocation(userId: String, location: Location): Resource<Boolean>
-    suspend fun saveLocations(userId: String, locations: List<Location>): Resource<Unit>
+    suspend fun deleteLocation(location: Location): Resource<Boolean>
+    suspend fun saveLocations(locations: List<Location>): Resource<Unit>
 }

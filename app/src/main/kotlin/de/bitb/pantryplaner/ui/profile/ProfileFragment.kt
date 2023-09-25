@@ -57,6 +57,7 @@ import de.bitb.pantryplaner.ui.base.comps.stickyGridHeader
 import de.bitb.pantryplaner.ui.base.naviToScan
 import de.bitb.pantryplaner.ui.base.naviToSettings
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
+import de.bitb.pantryplaner.ui.base.testTags.LocationItem
 import de.bitb.pantryplaner.ui.base.testTags.ProfilePageTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.dialogs.useAddLocationDialog
@@ -333,7 +334,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
             Box(
                 modifier = Modifier
                     .defaultMinSize(minHeight = 48.dp)
-                    .testTag(ProfilePageTag.LocationItem(location.name)),
+                    .testTag(LocationItem(location.name)),
                 contentAlignment = Alignment.CenterStart
             ) {
                 Text(

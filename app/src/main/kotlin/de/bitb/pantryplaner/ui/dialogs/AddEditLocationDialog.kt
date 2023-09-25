@@ -55,7 +55,7 @@ fun useEditLocationDialog(
         "Ort bearbeiten", "Speichern",
         location,
         users,
-    ) {  loc, _ -> onEdit(loc, true) }
+    ) { loc, _ -> onEdit(loc, true) }
 }
 
 
@@ -72,7 +72,7 @@ private fun useDialog(
         AddEditLocationDialog(
             title = title,
             confirmButton = confirmButton,
-            location=location,
+            location = location,
             users = users,
             onConfirm = { loc, close ->
                 onConfirm(loc, close)
@@ -128,7 +128,7 @@ private fun AddEditLocationDialog(
                     onValueChange = { name = it },
                     keyboardActions = KeyboardActions(
                         onDone = {
-                            onConfirm( copyLocation(), false)
+                            onConfirm(copyLocation(), false)
                             name = TextFieldValue()
                         },
                     ),
@@ -143,7 +143,7 @@ private fun AddEditLocationDialog(
         confirmButton = {
             Button(
                 modifier = Modifier.testTag(AddEditLocationDialogTag.ConfirmButton),
-                onClick = { onConfirm( copyLocation(), true) },
+                onClick = { onConfirm(copyLocation(), true) },
                 content = { Text(confirmButton) }
             )
         },

@@ -45,7 +45,6 @@ import de.bitb.pantryplaner.core.misc.parseDateString
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.data.model.StockItem
 import de.bitb.pantryplaner.ui.base.BaseFragment
-import de.bitb.pantryplaner.ui.base.testTags.TestTag
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.GridListLayout

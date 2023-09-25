@@ -6,7 +6,6 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.testTags.SettingsPageTag
-import de.bitb.pantryplaner.ui.base.testTags.TestTag
 import io.cucumber.java.en.Then
 
 @HiltAndroidTest

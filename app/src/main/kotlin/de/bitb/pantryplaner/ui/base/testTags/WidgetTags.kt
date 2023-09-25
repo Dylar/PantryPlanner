@@ -9,13 +9,3 @@ sealed class AddSubRowTag : TestTag {
     object PlusButton : AddSubRowTag()
     object MinusButton : AddSubRowTag()
 }
-
-data class SelectItemHeaderTag(val name: String) : TestTag {
-    override val tagName: String
-        get() = super.tagName + ".$name"
-}
-
-sealed class ConfirmDialogTag : TestTag {
-    object ConfirmButton : ConfirmDialogTag()
-    object DismissButton : ConfirmDialogTag()
-}
