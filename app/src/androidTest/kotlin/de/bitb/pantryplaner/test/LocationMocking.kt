@@ -1,39 +1,26 @@
 package de.bitb.pantryplaner.test
 
 import de.bitb.pantryplaner.core.misc.Resource
-import de.bitb.pantryplaner.core.misc.formatDateNow
+import de.bitb.pantryplaner.core.parsePOKO
 import de.bitb.pantryplaner.data.model.Location
 import de.bitb.pantryplaner.data.source.LocationRemoteDao
 import io.mockk.coEvery
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 
-fun buildLocation(
-    name: String = "DefaultLocation",
-    creator: String = defaultUuid,
-    createdAt: String = formatDateNow(),
-    sharedWith: List<String> = listOf(),
-): Location =
-    Location(
-        name = name,
-        creator = creator,
-        createdAt = createdAt,
-        sharedWith = sharedWith,
-    )
-
-fun LocationRemoteDao.mockDefaultLocationDao() {
-    val loc1 = buildLocation(name = "CreatorLocation", creator = defaultUuid)
-    val loc2 =
-        buildLocation(name = "SharedLocation", creator = "123", sharedWith = listOf(defaultUuid))
-    mockLocationDao(mutableMapOf(defaultUuid to listOf(loc1, loc2)))
-}
+fun parseLocationCreator(): Location = parsePOKO("location_creator")
+fun parseLocationShared(): Location = parsePOKO("location_shared")
 
 fun LocationRemoteDao.mockLocationDao(
-    userLocations: MutableMap<String, List<Location>> = mutableMapOf()
+    locations: List<Location> = emptyList()
 ) {
-    val locationsFlows = userLocations
-        .mapValues { MutableStateFlow<Resource<List<Location>>>(Resource.Success(it.value)) }
-        .toMutableMap()
+    val locationsFlows = locations
+        .flatMap { location -> (listOf(location.creator) + location.sharedWith).map { uuid -> uuid to location } }
+        .groupBy { it.first }
+        .mapValues { (_, locationsList) ->
+            val locs = locationsList.map { it.second }
+            MutableStateFlow<Resource<List<Location>>>(Resource.Success(locs))
+        }.toMutableMap()
 
     coEvery { getLocations(any()) }.answers {
         val uuid = firstArg<String>()
@@ -43,10 +30,12 @@ fun LocationRemoteDao.mockLocationDao(
     }
     coEvery { addLocation(any()) }.answers {
         val addLocation = firstArg<Location>()
-        val flow = locationsFlows[addLocation.creator]
+        val userId = addLocation.creator
+
+        val flow = locationsFlows[userId]
             ?: MutableStateFlow(Resource.Success(emptyList()))
         flow.value = Resource.Success(listOf(addLocation, *flow.value.data!!.toTypedArray()))
-        locationsFlows[addLocation.creator] = flow
+        locationsFlows[userId] = flow
         Resource.Success(true)
     }
 

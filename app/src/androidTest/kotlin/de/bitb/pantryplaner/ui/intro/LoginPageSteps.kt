@@ -7,11 +7,13 @@ import androidx.compose.ui.test.performTextInput
 import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
-import de.bitb.pantryplaner.test.buildUser
 import de.bitb.pantryplaner.test.defaultPW
+import de.bitb.pantryplaner.test.parseUser
 import de.bitb.pantryplaner.ui.base.testTags.LoginPageTag
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 
 @HiltAndroidTest
 class LoginPageSteps(
@@ -27,8 +29,9 @@ class LoginPageSteps(
     }
 
     @When("Login default User")
-    fun loginDefaultUserStep() {
-        loginDefaultUser()
+    fun loginDefaultUser() {
+        val user = parseUser()
+        loginUser(user.email, defaultPW)
     }
 }
 
@@ -47,9 +50,4 @@ fun ComposeTestRule.loginUserWith(email: String, password: String) {
     onNodeWithTag(LoginPageTag.PWLabel).performTextInput(password)
     onNodeWithTag(LoginPageTag.LoginButton).performClick()
     waitForIdle()
-}
-
-fun ComposeTestRule.loginDefaultUser() {
-    val defaultUser = buildUser()
-    loginUserWith(defaultUser.email, defaultPW)
 }

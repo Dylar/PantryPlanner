@@ -4,10 +4,13 @@ import androidx.compose.ui.test.junit4.ComposeTestRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.data.source.RemoteService
 import de.bitb.pantryplaner.test.ScenarioData
-import de.bitb.pantryplaner.test.mockDefaultLocationDao
-import de.bitb.pantryplaner.test.mockDefaultUserDao
+import de.bitb.pantryplaner.test.defaultPW
 import de.bitb.pantryplaner.test.mockLocationDao
 import de.bitb.pantryplaner.test.mockUserDao
+import de.bitb.pantryplaner.test.parseLocationCreator
+import de.bitb.pantryplaner.test.parseLocationShared
+import de.bitb.pantryplaner.test.parseUser
+import de.bitb.pantryplaner.test.parseUserConnected
 import io.cucumber.java.en.Given
 import javax.inject.Inject
 
@@ -28,14 +31,26 @@ class MockingSteps(
     @Given("Init default Mocks")
     fun initDefaultMocks() {
         initMocks()
-        mockDefaultUser()
-        mockDefaultLocation()
+        mockDefaultUsers()
+        mockDefaultLocations()
     }
 
-    @Given("Mock default User")
-    fun mockDefaultUser() = remoteService.mockDefaultUserDao()
+    @Given("Mock default Users")
+    fun mockDefaultUsers() {
+        val user1 = parseUser()
+        val user2 = parseUserConnected()
+        val map = mutableMapOf(
+            user1.email to defaultPW,
+            user2.email to defaultPW
+        )
+        remoteService.mockUserDao(listOf(user1, user2).toMutableList(), map)
+    }
 
-    @Given("Mock default Location")
-    fun mockDefaultLocation() = remoteService.mockDefaultLocationDao()
+    @Given("Mock default Locations")
+    fun mockDefaultLocations() {
+        val loc1 = parseLocationCreator()
+        val loc2 = parseLocationShared()
+        remoteService.mockLocationDao(listOf(loc1, loc2))
+    }
 
 }

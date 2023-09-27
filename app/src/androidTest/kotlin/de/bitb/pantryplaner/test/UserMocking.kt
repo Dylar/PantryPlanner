@@ -2,32 +2,19 @@ package de.bitb.pantryplaner.test
 
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.asResourceError
+import de.bitb.pantryplaner.core.parsePOKO
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.data.source.UserRemoteDao
 import io.mockk.coEvery
 import kotlinx.coroutines.flow.flowOf
 
-const val defaultUuid = "defaultUUID"
-const val defaultEmail = "defaul@user.de"
 const val defaultPW = "1Password!"
-
-fun buildUser(
-    email: String = defaultEmail,
-    firstName: String = "Max",
-    lastName: String = "Mustermann",
-    connectedUser: MutableList<String> = mutableListOf(),
-): User =
-    User(email = email, firstName = firstName, lastName = lastName, connectedUser = connectedUser)
-
-fun UserRemoteDao.mockDefaultUserDao() {
-    val user = buildUser().copy(uuid = defaultUuid)
-    val map = mutableMapOf(user.email to defaultPW)
-    mockUserDao(emailPwMap = map, allUser = mutableListOf(user))
-}
+fun parseUser(): User = parsePOKO("user")
+fun parseUserConnected(): User = parsePOKO("user_connected")
 
 fun UserRemoteDao.mockUserDao(
-    emailPwMap: MutableMap<String, String> = mutableMapOf(),
     allUser: MutableList<User> = mutableListOf(),
+    emailPwMap: MutableMap<String, String> = mutableMapOf(),
 ) {
     var isLoggedIn = false
     coEvery { isUserLoggedIn() }.answers { Resource.Success(isLoggedIn) }
@@ -37,7 +24,7 @@ fun UserRemoteDao.mockUserDao(
         val userExists = allUser.firstOrNull { it.email == email } != null
         if (userExists) "User exists".asResourceError()
         else Resource.Success<Unit>().also {
-            allUser.add(buildUser(email = email))
+            allUser.add(User(email = email))
             emailPwMap[email] = pw
         }
     }

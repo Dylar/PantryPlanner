@@ -3,9 +3,11 @@ package de.bitb.pantryplaner.ui
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.test.ScenarioData
+import de.bitb.pantryplaner.test.defaultPW
+import de.bitb.pantryplaner.test.parseUser
 import de.bitb.pantryplaner.ui.intro.SPLASH_TIMER
 import de.bitb.pantryplaner.ui.intro.assertLoginPageRendered
-import de.bitb.pantryplaner.ui.intro.loginDefaultUser
+import de.bitb.pantryplaner.ui.intro.loginUserWith
 import de.bitb.pantryplaner.ui.overview.assertOverviewPageRendered
 import de.bitb.pantryplaner.ui.overview.tapOnProfileButton
 import de.bitb.pantryplaner.ui.profile.assertProfilePageRendered
@@ -34,7 +36,8 @@ class StartingSteps(
     @Given("Start on OverviewPage")
     fun startOnOverviewPage() {
         startOnLoginPage()
-        loginDefaultUser()
+        val user = parseUser()
+        loginUserWith(user.email, defaultPW)
         assertOverviewPageRendered()
     }
 

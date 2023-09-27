@@ -1,6 +1,5 @@
 package de.bitb.pantryplaner.test
 
-//import io.cucumber.android.hilt.HiltObjectFactory
 import android.app.Application
 import android.content.Context
 import android.content.Intent
@@ -33,23 +32,20 @@ class GherkinsRunner : CucumberAndroidJUnitRunner() {
 }
 
 @WithJunitRule
-class ScenarioData {
+class ScenarioData(
+//    private val data: MutableMap<String, Any> = mutableMapOf(),
+) {
+
     @get:Rule(order = 1)
     val composeRule = createEmptyComposeRule()
 
     private var scenario: ActivityScenario<*>? = null
-    private val data: MutableMap<String, Any> = mutableMapOf()
 
     @After
     fun close() = scenario?.close()
 
     fun launch(intent: Intent? = null) {
         scenario = launchActivity<MainActivity>(intent)
-    }
-
-    fun saveUser(email: String, password: String) {
-        data["email"] = email
-        data["password"] = password
     }
 
 }
