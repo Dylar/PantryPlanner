@@ -5,6 +5,12 @@ data class SelectItemHeaderTag(val name: String) : TestTag {
         get() = super.tagName + ".$name"
 }
 
+object SearchDropDownTag : TestTag
+data class DropDownItemTag(val name: String) : TestTag {
+    override val tagName: String
+        get() = super.tagName + ".$name"
+}
+
 sealed class SharedWithTag : TestTag {
     object NothingShared : SharedWithTag()
     data class SharedChip(val name: String) : SharedWithTag() {

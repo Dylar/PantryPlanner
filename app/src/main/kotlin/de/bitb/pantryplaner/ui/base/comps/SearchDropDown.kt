@@ -35,8 +35,11 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
+import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
+import de.bitb.pantryplaner.ui.base.testTags.DropDownItemTag
+import de.bitb.pantryplaner.ui.base.testTags.SearchDropDownTag
 import de.bitb.pantryplaner.ui.base.testTags.SharedWithTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 import java.util.Locale
@@ -107,7 +110,8 @@ private fun SearchDropDown(
             onValueChange = { selectedState = it },
             modifier = Modifier
                 .fillMaxWidth()
-                .menuAnchor(),
+                .menuAnchor()
+                .testTag(SearchDropDownTag),
             label = { Text(hint) },
             colors = ExposedDropdownMenuDefaults.textFieldColors(),
             singleLine = true,
@@ -138,10 +142,12 @@ private fun SearchDropDown(
 
             cats.forEach { selectedOption ->
                 val isAddText = selectedOption == addText
+                Logger.justPrint("Option: ${DropDownItemTag(selectedOption).name}")
                 DropdownMenuItem(
                     modifier = Modifier
                         .padding(2.dp)
-                        .background(BaseColors.LightGray.copy(alpha = .5f)),
+                        .background(BaseColors.LightGray.copy(alpha = .5f))
+                        .testTag(DropDownItemTag(selectedOption)),
                     onClick = {
                         if (!isAddText) {
                             selectedState =
@@ -202,9 +208,10 @@ private fun ConnectedUser(
                     )
                 }
             } else {
-                val userlist = selectedUser.value
-                items(userlist.size) {
-                    val user = userlist[it]
+                val userList = selectedUser.value
+                items(userList.size) {
+                    val user = userList[it]
+                    Logger.justPrint("User: ${user.fullName}")
                     Card(
                         modifier = Modifier
                             .testTag(SharedWithTag.SharedChip(user.fullName))

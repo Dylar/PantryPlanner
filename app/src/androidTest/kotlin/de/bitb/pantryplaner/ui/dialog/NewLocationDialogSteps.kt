@@ -9,6 +9,8 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.testTags.AddEditLocationDialogTag
+import de.bitb.pantryplaner.ui.base.testTags.SearchDropDownTag
+import de.bitb.pantryplaner.ui.base.testTags.SharedWithTag
 import io.cucumber.java.en.And
 import io.cucumber.java.en.Then
 

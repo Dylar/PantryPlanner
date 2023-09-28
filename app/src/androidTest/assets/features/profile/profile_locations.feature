@@ -45,3 +45,14 @@ Feature: Profile Locations management
     And   Tap on CreateLocationButton
     Then  Location "Home" should be shown
     And   Location "CreatorLocation" should NOT be shown
+
+  Scenario: Share Location with User
+    Given  LongPress on Location "CreatorLocation"
+    And    Shared with none
+    When   Open dropdown
+    And    Dropdown option "Mohammed Lee" is visible
+    And    Dropdown option "Andre Option" is visible
+    And    Select dropdown option "Mohammed Lee"
+    And    Tap on CreateLocationButton
+    Then   LongPress on Location "CreatorLocation"
+    And    Shared with "Mohammed Lee"

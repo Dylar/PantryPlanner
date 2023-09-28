@@ -9,8 +9,9 @@ import io.mockk.coEvery
 import kotlinx.coroutines.flow.flowOf
 
 const val defaultPW = "1Password!"
-fun parseUser(): User = parsePOKO("user")
-fun parseUserConnected(): User = parsePOKO("user_connected")
+fun parseUser(): User = parsePOKO("user_peter_lustig")
+fun parseUserConnected(): User = parsePOKO("user_mohammed_lee")
+fun parseUserOther(): User = parsePOKO("user_andre_option")
 
 fun UserRemoteDao.mockUserDao(
     allUser: MutableList<User> = mutableListOf(),

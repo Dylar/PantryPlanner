@@ -40,6 +40,7 @@ import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.data.model.StockItem
 import de.bitb.pantryplaner.data.model.User
@@ -92,6 +93,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
         showAddToDialog = remember { mutableStateOf(false) }
         showSearchBar = remember { mutableStateOf(false) }
 
+        val filter by viewModel.filterBy.collectAsState(Filter())
         onBack { onDismiss ->
             ConfirmDialog(
                 "Discard changes?",
@@ -103,14 +105,14 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
 
         Scaffold(
             scaffoldState = scaffoldState,
-            topBar = { buildAppBar() },
+            topBar = { buildAppBar(filter) },
             content = { buildContent(it) },
             floatingActionButton = { buildFab() }
         )
 
         if (showFilterDialog.value) {
             FilterDialog(
-                viewModel.filterBy.value,
+                filter,
                 onConfirm = {
                     viewModel.filterBy.value = it
                     showFilterDialog.value = false
@@ -133,7 +135,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
     }
 
     @Composable
-    private fun buildAppBar() {
+    private fun buildAppBar(filter: Filter) {
         TopAppBar(
             modifier = Modifier.testTag(ItemsPageTag.AppBar),
             title = {
@@ -141,7 +143,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
                 if (showSearchBar.value) SearchBar(
                     showSearchBar,
                     isSearching,
-                    viewModel.filterBy.value.searchTerm,
+                    filter.searchTerm,
                     viewModel::search,
                 )
                 else Text(getString(R.string.items_title))
@@ -215,12 +217,12 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
 
     @Composable
     private fun buildContent(innerPadding: PaddingValues) {
-        val stockModel by viewModel.stockModel.observeAsState()
+        val itemsModel by viewModel.itemsModel.observeAsState()
         when {
-            stockModel?.data?.isLoading != false -> LoadingIndicator()
-            stockModel is Resource.Error -> ErrorScreen(stockModel!!.message!!.asString())
+            itemsModel?.data?.isLoading != false -> LoadingIndicator()
+            itemsModel is Resource.Error -> ErrorScreen(itemsModel!!.message!!.asString())
             else -> {
-                val model = stockModel!!.data!!
+                val model = itemsModel!!.data!!
                 val stockItems = model.stockItem!!
                 val items = model.items
                 val categorys = items?.keys?.toList() ?: listOf()

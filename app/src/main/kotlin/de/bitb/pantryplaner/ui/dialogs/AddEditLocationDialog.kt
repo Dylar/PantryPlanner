@@ -101,11 +101,15 @@ private fun AddEditLocationDialog(
         )
     }
 
-    val selectedUser = remember { mutableStateOf(emptyList<User>()) }
     val focusRequester = remember { FocusRequester() }
+    val selectedUser = remember {
+        val selected = users.filter { location.sharedWith.contains(it.uuid) }
+        mutableStateOf(selected)
+    }
 
     fun copyLocation() = location.copy(
         name = name.text,
+        sharedWith = selectedUser.value.map { it.uuid }.toList(),
     )
 
     AlertDialog(

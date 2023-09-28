@@ -32,7 +32,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class StockModel(
+data class ItemsModel(
     val stockItem: Map<String, StockItem>?,
     val items: Map<String, List<Item>>?,
     val connectedUser: List<User>?,
@@ -57,7 +57,7 @@ class ItemsViewModel @Inject constructor(
     val isSearching = _isSearching.asStateFlow()
 
     val filterBy = MutableStateFlow(Filter())
-    val stockModel: LiveData<Resource<StockModel>> = filterBy
+    val itemsModel: LiveData<Resource<ItemsModel>> = filterBy
         .debounce { if (_isSearching.value) 1000L else 0L }
         .flatMapLatest { itemRepo.getItems(filterBy = it) }
         .flatMapLatest { itemsResp ->
@@ -71,7 +71,7 @@ class ItemsViewModel @Inject constructor(
                     stockItems is Resource.Error -> stockItems.castTo()
                     users is Resource.Error -> users.castTo()
                     else -> Resource.Success(
-                        StockModel(
+                        ItemsModel(
                             stockItems.data,
                             itemsResp.data,
                             users.data,
