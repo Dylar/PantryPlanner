@@ -46,7 +46,7 @@ class EditCategoryUC(
             }
 
 //            if (stockItemsToEdit.isNotEmpty()) {
-                //TODO oh god please fix me
+            //TODO oh god please fix me
 //                val saveResp = stockRepo.saveStocks(stockItemsToEdit)
 //                if (saveResp is Resource.Error) return@tryIt saveResp
 //            }

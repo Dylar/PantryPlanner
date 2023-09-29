@@ -19,7 +19,6 @@ import de.bitb.pantryplaner.data.model.StockItem
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseViewModel
 import de.bitb.pantryplaner.ui.base.comps.asResString
-import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
 import de.bitb.pantryplaner.usecase.StockUseCases
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -83,7 +82,7 @@ class StockViewModel @Inject constructor(
         .asLiveData()
 
     val itemErrorList = MutableStateFlow<List<String>>(emptyList())
-    var selectedStock :MutableLiveData<Int> = MutableLiveData(0)
+    var selectedStock: MutableLiveData<Int> = MutableLiveData(0)
 
     fun addItem(item: Item, stockItem: StockItem) {
         val name = item.name

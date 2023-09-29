@@ -85,8 +85,8 @@ class ItemRepositoryImpl(
     }
 
     override suspend fun deleteItem(item: Item): Resource<Boolean> =
-        remoteDB.deleteItem(localDB.getUser(), item)
+        remoteDB.deleteItem(item)
 
     override suspend fun saveItems(items: List<Item>): Resource<Unit> =
-        remoteDB.saveItems(localDB.getUser(), items)
+        remoteDB.saveItems(items)
 }

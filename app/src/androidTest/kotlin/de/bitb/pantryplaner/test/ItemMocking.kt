@@ -20,7 +20,7 @@ fun ItemRemoteDao.mockItemDao(
         .mapValues { (_, stocksList) -> MutableStateFlow(Resource.Success(stocksList.map { it.second })) }
         .toMutableMap()
 
-    coEvery { getItems(any(),any()) }.answers {
+    coEvery { getItems(any(), any()) }.answers {
         val uuid = firstArg<String>()
         val flow = stocksFlows[uuid] ?: MutableStateFlow(Resource.Success(emptyList()))
         stocksFlows[uuid] = flow
@@ -37,7 +37,7 @@ fun ItemRemoteDao.mockItemDao(
         Resource.Success(true)
     }
 
-    coEvery { deleteItem(any(),any()) }.answers {
+    coEvery { deleteItem(any()) }.answers {
         val deleteStock = firstArg<Item>()
         val userId = deleteStock.creator
 
@@ -49,7 +49,7 @@ fun ItemRemoteDao.mockItemDao(
         Resource.Success(true)
     }
 
-    coEvery { saveItems(any(),any()) }.answers {
+    coEvery { saveItems(any()) }.answers {
         val saveItems = firstArg<List<Item>>().associateBy { it.uuid }
         stocksFlows.forEach { (userId, flow) ->
             val newList = flow.value.data!!.toMutableList()
@@ -74,7 +74,7 @@ fun ItemRemoteDao.mockErrorItemDao(
     if (addItemError != null)
         coEvery { addItem(any()) }.answers { addItemError }
     if (deleteItemError != null)
-        coEvery { deleteItem(any(), any()) }.answers { deleteItemError }
+        coEvery { deleteItem(any()) }.answers { deleteItemError }
     if (saveItemError != null)
-        coEvery { saveItems(any(), any()) }.answers { saveItemError }
+        coEvery { saveItems(any()) }.answers { saveItemError }
 }

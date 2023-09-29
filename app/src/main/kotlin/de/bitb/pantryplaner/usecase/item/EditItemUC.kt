@@ -8,11 +8,13 @@ import de.bitb.pantryplaner.core.misc.capitalizeFirstCharacter
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.ItemRepository
 import de.bitb.pantryplaner.data.StockRepository
+import de.bitb.pantryplaner.data.UserRepository
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.data.model.StockItem
 import kotlinx.coroutines.flow.first
 
 class EditItemUC(
+    private val userRepo: UserRepository,
     private val itemRepo: ItemRepository,
     private val stockRepo: StockRepository,
 ) {
@@ -58,6 +60,11 @@ class EditItemUC(
                 }
             },
             onTry = {
+                val user = userRepo.getUser().first()
+                if (user is Resource.Error) return@tryIt user.castTo()
+                if (user.data!!.uuid != item.creator)
+                    return@tryIt "Nur der Ersteller kann das Item ändern".asResourceError()
+                //TODO prevent non-creator, but allow stock specific changes -> or we split it
                 val amountDouble = amount.replace(",", ".").toDouble()
                 val resp = itemRepo.saveItems(
                     listOf(
@@ -67,20 +74,25 @@ class EditItemUC(
                         )
                     )
                 )
-                //TODO fix me
-                Resource.Success()
-//                if (resp is Resource.Error) return@tryIt resp
-//
-//                stockRepo.saveItems(
-//                    listOf(
-//                        stockItem.copy(
-//                            colorHex = color.toArgb(),
-//                            amount = amountDouble,
-//                            freshUntil = freshUntil,
-//                            remindAfter = remindAfter,
-//                        )
-//                    )
-//                )
+                if (resp is Resource.Error) return@tryIt resp
+
+                val stocks = stockRepo.getStocks().first()
+                if (stocks is Resource.Error) return@tryIt stocks.castTo()
+
+                //TODO this will change ;)
+                val stock =
+                    stocks.data?.first { stock -> stock.items.firstOrNull { it.uuid == stockItem.uuid } != null }!!
+                stock.items.replaceAll {
+                    if (it.uuid == stockItem.uuid)
+                        stockItem.copy(
+                            colorHex = color.toArgb(),
+                            amount = amountDouble,
+                            freshUntil = freshUntil,
+                            remindAfter = remindAfter,
+                        )
+                    else it
+                }
+                stockRepo.saveStocks(listOf(stock))
             },
         )
     }

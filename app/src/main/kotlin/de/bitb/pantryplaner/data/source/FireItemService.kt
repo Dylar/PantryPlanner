@@ -30,11 +30,10 @@ class FireItemService(
         return getOwnedOrShared(userId, ids, ::ownerCollection, ::sharedCollection)
     }
 
-    override suspend fun saveItems(userId: String, items: List<Item>): Resource<Unit> {
+    override suspend fun saveItems(items: List<Item>): Resource<Unit> {
         return tryIt {
             firestore.batch().apply {
-                val itemCollection = ownerCollection(userId)
-                itemCollection
+                collection
                     .whereIn("uuid", items.map { it.uuid })
                     .get().await().documents
                     .forEach { snap ->
@@ -62,10 +61,9 @@ class FireItemService(
         }
     }
 
-    override suspend fun deleteItem(userId: String, item: Item): Resource<Boolean> {
+    override suspend fun deleteItem(item: Item): Resource<Boolean> {
         return tryIt {
-            val itemCollection = ownerCollection(userId)
-            val querySnapshot = itemCollection
+            val querySnapshot = collection
                 .whereEqualTo("uuid", item.uuid)
                 .get().await()
 

@@ -72,7 +72,7 @@ private fun useDialog(
         AddEditStockDialog(
             title = title,
             confirmButton = confirmButton,
-            Stock = stock,
+            stock = stock,
             users = users,
             onConfirm = { loc, close ->
                 onConfirm(loc, close)
@@ -87,7 +87,7 @@ private fun useDialog(
 private fun AddEditStockDialog(
     title: String,
     confirmButton: String,
-    Stock: Stock,
+    stock: Stock,
     users: List<User>,
     onConfirm: (Stock, Boolean) -> Unit,
     onDismiss: () -> Unit,
@@ -95,19 +95,19 @@ private fun AddEditStockDialog(
     var name by remember {
         mutableStateOf(
             TextFieldValue(
-                text = Stock.name,
-                selection = TextRange(Stock.name.length)
+                text = stock.name,
+                selection = TextRange(stock.name.length)
             )
         )
     }
 
     val focusRequester = remember { FocusRequester() }
     val selectedUser = remember {
-        val selected = users.filter { Stock.sharedWith.contains(it.uuid) }
+        val selected = users.filter { stock.sharedWith.contains(it.uuid) }
         mutableStateOf(selected)
     }
 
-    fun copyStock() = Stock.copy(
+    fun copyStock() = stock.copy(
         name = name.text,
         sharedWith = selectedUser.value.map { it.uuid }.toList(),
     )

@@ -17,14 +17,14 @@ class StockSteps(
     val scenarioData: ScenarioData,
 ) : ComposeTestRule by scenarioData.composeRule {
 
-    @Then("Stock {string} should be shown")
-    fun stockShouldBeShown(name: String) {
+    @Then("Stock {string} is displayed")
+    fun stockIsDisplayed(name: String) {
         onNodeWithTag(StockTag(name), true).assertIsDisplayed()
         waitForIdle()
     }
 
-    @Then("Stock {string} should NOT be shown")
-    fun stockShouldNotBeShown(name: String) {
+    @Then("Stock {string} is NOT displayed")
+    fun stockIsNotDisplayed(name: String) {
         onNodeWithTag(StockTag(name), true).assertDoesNotExist()
         waitForIdle()
     }

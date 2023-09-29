@@ -33,7 +33,6 @@ import de.bitb.pantryplaner.ui.base.comps.buildCategoryDropDown
 import de.bitb.pantryplaner.ui.base.comps.buildUserDropDown
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.AddEditItemDialogTag
-import de.bitb.pantryplaner.ui.base.testTags.AddEditStockDialogTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.comps.AddSubRow
 
@@ -125,7 +124,10 @@ private fun AddEditItemDialog(
     }
 
     val category = remember { mutableStateOf(TextFieldValue(item.category)) }
-    val selectedUser = remember { mutableStateOf(emptyList<User>()) }
+    val selectedUser = remember {
+        val selected = users.filter { item.sharedWith.contains(it.uuid) }
+        mutableStateOf(selected)
+    }
     val freshUntil = remember { mutableStateOf(stockItem.freshUntil) }
     val remindAfter = remember { mutableStateOf(stockItem.remindAfter) }
     val focusRequester = remember { FocusRequester() }
@@ -133,6 +135,7 @@ private fun AddEditItemDialog(
     fun copyItem() = item.copy(
         name = name.text,
         category = category.value.text,
+        sharedWith = selectedUser.value.map { it.uuid }.toList(),
     )
 
     fun copyStockItem() = stockItem.copy(
@@ -182,6 +185,9 @@ private fun AddEditItemDialog(
                     ) { remindAfter.value = it.toLong() }
                 }
             }
+            LaunchedEffect(Unit) {
+                focusRequester.requestFocus()
+            }
         },
         confirmButton = {
             Button(
@@ -197,9 +203,6 @@ private fun AddEditItemDialog(
             )
         }
     )
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
 }
 
 @Composable

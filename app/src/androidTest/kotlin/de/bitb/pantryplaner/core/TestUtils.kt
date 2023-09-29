@@ -1,11 +1,9 @@
 package de.bitb.pantryplaner.core
 
-import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.gson.Gson
 import de.bitb.pantryplaner.ui.base.testTags.TestTag

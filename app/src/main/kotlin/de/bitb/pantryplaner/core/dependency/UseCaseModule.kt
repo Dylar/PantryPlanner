@@ -10,11 +10,11 @@ import de.bitb.pantryplaner.usecase.*
 import de.bitb.pantryplaner.usecase.alert.RefreshAlertUC
 import de.bitb.pantryplaner.usecase.checklist.*
 import de.bitb.pantryplaner.usecase.item.*
-import de.bitb.pantryplaner.usecase.stock.DeleteStockUC
-import de.bitb.pantryplaner.usecase.stock.EditStockUC
 import de.bitb.pantryplaner.usecase.stock.AddStockItemUC
 import de.bitb.pantryplaner.usecase.stock.AddStockUC
 import de.bitb.pantryplaner.usecase.stock.DeleteStockItemUC
+import de.bitb.pantryplaner.usecase.stock.DeleteStockUC
+import de.bitb.pantryplaner.usecase.stock.EditStockUC
 import de.bitb.pantryplaner.usecase.user.*
 import javax.inject.Singleton
 
@@ -59,7 +59,7 @@ object UsecaseModule {
         return ItemUseCases(
             createItemUC = CreateItemUC(userRepo, itemRepo),
             deleteItemUC = DeleteItemUC(userRepo, itemRepo),
-            editItemUC = EditItemUC(itemRepo, stockRepo),
+            editItemUC = EditItemUC(userRepo, itemRepo, stockRepo),
             editCategoryUC = EditCategoryUC(itemRepo, stockRepo),
             uncheckAllItemsUC = UncheckAllItemsUC(itemRepo),
         )

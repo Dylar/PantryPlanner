@@ -5,7 +5,11 @@ data class SelectItemHeaderTag(val name: String) : TestTag {
         get() = super.tagName + ".$name"
 }
 
-object SearchDropDownTag : TestTag
+data class SearchDropDownTag(val name: String) : TestTag {
+    override val tagName: String
+        get() = super.tagName + ".$name"
+}
+
 data class DropDownItemTag(val name: String) : TestTag {
     override val tagName: String
         get() = super.tagName + ".$name"

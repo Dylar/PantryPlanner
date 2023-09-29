@@ -9,7 +9,6 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.testTags.ItemTag
-import de.bitb.pantryplaner.ui.base.testTags.StockTag
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 
@@ -18,14 +17,14 @@ class ItemSteps(
     val scenarioData: ScenarioData,
 ) : ComposeTestRule by scenarioData.composeRule {
 
-    @Then("Item {string} should be shown")
-    fun itemShouldBeShown(name: String) {
+    @Then("Item {string} is displayed")
+    fun itemIsDisplayed(name: String) {
         onNodeWithTag(ItemTag(name), true).assertIsDisplayed()
         waitForIdle()
     }
 
-    @Then("Item {string} should NOT be shown")
-    fun itemShouldNotBeShown(name: String) {
+    @Then("Item {string} is NOT displayed")
+    fun itemIsNotDisplayed(name: String) {
         onNodeWithTag(ItemTag(name), true).assertDoesNotExist()
         waitForIdle()
     }

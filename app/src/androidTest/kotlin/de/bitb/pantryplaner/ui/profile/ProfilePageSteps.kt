@@ -25,8 +25,8 @@ class ProfilePageSteps(
         tapOnSettingsButton()
     }
 
-    @When("Tap NewStockButton")
-    fun tapNewStockButton() {
+    @When("Tap on NewStockButton")
+    fun tapOnNewStockButton() {
         onNodeWithTag(ProfilePageTag.NewStockButton).performClick()
         waitForIdle()
     }

@@ -53,8 +53,8 @@ interface UserRemoteDao {
 interface ItemRemoteDao {
     fun getItems(userId: String, ids: List<String>?): Flow<Resource<List<Item>>>
     suspend fun addItem(item: Item): Resource<Boolean>
-    suspend fun deleteItem(userId: String, item: Item): Resource<Boolean>
-    suspend fun saveItems(userId: String, items: List<Item>): Resource<Unit>
+    suspend fun deleteItem(item: Item): Resource<Boolean>
+    suspend fun saveItems(items: List<Item>): Resource<Unit>
 }
 
 interface CheckRemoteDao {

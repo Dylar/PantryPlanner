@@ -15,7 +15,7 @@ class DeleteStockItemUC(
                 //TODO fix me
                 Resource.Success(false)
 //                stockRepo.deleteItem(stockItem)
-                    },
+            },
         )
     }
 }

@@ -10,22 +10,22 @@ import kotlinx.coroutines.flow.first
 
 class EditStockUC(
     private val userRepo: UserRepository,
-    private val StockRepo: StockRepository,
+    private val stockRepo: StockRepository,
 ) {
     suspend operator fun invoke(
-        Stock: Stock,
-        name: String = Stock.name,
-        sharedWith: List<String> = Stock.sharedWith,
+        stock: Stock,
+        name: String = stock.name,
+        sharedWith: List<String> = stock.sharedWith,
     ): Resource<Unit> {
         return tryIt(
             onTry = {
                 val user = userRepo.getUser().first()
                 if (user is Resource.Error) return@tryIt user.castTo()
-                if (user.data!!.uuid != Stock.creator)
+                if (user.data!!.uuid != stock.creator)
                     return@tryIt "Nur der Ersteller kann den Ort ändern".asResourceError()
-                StockRepo.saveStocks(
+                stockRepo.saveStocks(
                     listOf(
-                        Stock.copy(
+                        stock.copy(
                             name = name,
                             sharedWith = sharedWith
                         )

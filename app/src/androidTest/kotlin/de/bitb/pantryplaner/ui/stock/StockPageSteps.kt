@@ -6,7 +6,6 @@ import androidx.compose.ui.test.performClick
 import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
-import de.bitb.pantryplaner.ui.base.testTags.ProfilePageTag
 import de.bitb.pantryplaner.ui.base.testTags.StockPageTag
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
@@ -21,8 +20,8 @@ class StockPageSteps(
         assertStockPageRendered()
     }
 
-    @When("Tap NewItemButton")
-    fun tapNewStockButton() {
+    @When("Tap on NewItemButton")
+    fun tapOnNewStockButton() {
         onNodeWithTag(StockPageTag.NewItemButton).performClick()
         waitForIdle()
     }

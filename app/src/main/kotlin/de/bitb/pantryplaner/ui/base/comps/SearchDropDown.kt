@@ -111,7 +111,7 @@ private fun SearchDropDown(
             modifier = Modifier
                 .fillMaxWidth()
                 .menuAnchor()
-                .testTag(SearchDropDownTag),
+                .testTag(SearchDropDownTag(hint)),
             label = { Text(hint) },
             colors = ExposedDropdownMenuDefaults.textFieldColors(),
             singleLine = true,

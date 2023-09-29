@@ -51,6 +51,7 @@ import de.bitb.pantryplaner.ui.base.comps.dissmissItem
 import de.bitb.pantryplaner.ui.base.comps.onBack
 import de.bitb.pantryplaner.ui.base.highlightedText
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
+import de.bitb.pantryplaner.ui.base.testTags.ItemTag
 import de.bitb.pantryplaner.ui.base.testTags.StockPageTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.comps.AddSubRow
@@ -189,7 +190,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
             else -> {
                 val model = stockModel!!.data!!
                 val stocks = model.stocks!!
-                val items = model.items
+                val items = model.items!!
                 val categorys = items?.keys?.toList() ?: listOf()
                 val users = model.connectedUser ?: listOf()
                 useAddItemDialog(
@@ -202,14 +203,14 @@ class StockFragment : BaseFragment<StockViewModel>() {
                 }
 
                 val stock = stocks[selectedStock]
-                if (stock.items.isEmpty()) {
+                if (items.isEmpty()) {
                     EmptyListComp(getString(R.string.no_items))
                 } else {
                     GridListLayout(
                         innerPadding,
                         showGridLayout,
-                        items!!,
-                        { stock.items.first().color }, //TODO color?
+                        items,
+                        { stock.items.firstOrNull()?.color ?: BaseColors.LightGray }, //TODO color?
                         viewModel::editCategory
                     ) { _, item ->
                         listItem(
@@ -261,6 +262,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
             Text(
                 text,
                 modifier = Modifier
+                    .testTag(ItemTag(item.name))
                     .fillMaxWidth()
                     .background(BaseColors.LightGray.copy(alpha = .1f))
                     .padding(horizontal = 12.dp, vertical = 4.dp),
