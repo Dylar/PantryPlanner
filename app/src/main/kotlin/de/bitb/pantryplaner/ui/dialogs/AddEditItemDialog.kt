@@ -114,6 +114,9 @@ private fun AddEditItemDialog(
     onConfirm: (StockItem, Item, Boolean) -> Unit,
     onDismiss: () -> Unit,
 ) {
+    val isStarted = remember { mutableStateOf(true) }
+    val focusRequester = remember { FocusRequester() }
+
     var name by remember {
         mutableStateOf(
             TextFieldValue(
@@ -130,7 +133,6 @@ private fun AddEditItemDialog(
     }
     val freshUntil = remember { mutableStateOf(stockItem.freshUntil) }
     val remindAfter = remember { mutableStateOf(stockItem.remindAfter) }
-    val focusRequester = remember { FocusRequester() }
 
     fun copyItem() = item.copy(
         name = name.text,
@@ -186,7 +188,10 @@ private fun AddEditItemDialog(
                 }
             }
             LaunchedEffect(Unit) {
-                focusRequester.requestFocus()
+                if (isStarted.value) {
+                    focusRequester.requestFocus()
+                    isStarted.value = false
+                }
             }
         },
         confirmButton = {

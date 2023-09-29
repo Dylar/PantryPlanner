@@ -16,7 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
@@ -92,6 +92,9 @@ private fun AddEditStockDialog(
     onConfirm: (Stock, Boolean) -> Unit,
     onDismiss: () -> Unit,
 ) {
+    val isStarted = remember { mutableStateOf(true) }
+    val focusRequester = remember { FocusRequester() }
+
     var name by remember {
         mutableStateOf(
             TextFieldValue(
@@ -101,7 +104,6 @@ private fun AddEditStockDialog(
         )
     }
 
-    val focusRequester = remember { FocusRequester() }
     val selectedUser = remember {
         val selected = users.filter { stock.sharedWith.contains(it.uuid) }
         mutableStateOf(selected)
@@ -125,7 +127,7 @@ private fun AddEditStockDialog(
                     modifier = Modifier
                         .testTag(AddEditStockDialogTag.NameLabel)
                         .padding(horizontal = 16.dp)
-                        .focusRequester(focusRequester),
+                        .onGloballyPositioned { focusRequester.requestFocus() },
                     singleLine = true,
                     label = { Text(stringResource(R.string.item_name)) },
                     value = name,
@@ -141,7 +143,10 @@ private fun AddEditStockDialog(
             }
 
             LaunchedEffect(Unit) {
-                focusRequester.requestFocus()
+                if (isStarted.value) {
+                    focusRequester.requestFocus()
+                    isStarted.value = false
+                }
             }
         },
         confirmButton = {
