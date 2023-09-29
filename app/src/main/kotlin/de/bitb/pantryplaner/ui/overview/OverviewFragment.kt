@@ -152,7 +152,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
             Spacer(modifier = Modifier.height(8.dp))
 
             ExtendedFloatingActionButton(
-                modifier = Modifier.testTag(OverviewPageTag.ToItemsButton),
+                modifier = Modifier.testTag(OverviewPageTag.StockButton),
                 text = { Text(text = "Zum Bestand") },
                 icon = {
                     Icon(

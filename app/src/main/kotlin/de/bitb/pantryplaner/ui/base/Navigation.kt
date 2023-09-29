@@ -45,7 +45,7 @@ fun Fragment.naviToRefresh() {
 }
 
 fun Fragment.naviOverviewToItems() {
-    NavHostFragment.findNavController(this).navigate(R.id.overview_to_items)
+    NavHostFragment.findNavController(this).navigate(R.id.overview_to_stock)
 }
 
 fun Fragment.naviChecklistToItems(uuid: String) {

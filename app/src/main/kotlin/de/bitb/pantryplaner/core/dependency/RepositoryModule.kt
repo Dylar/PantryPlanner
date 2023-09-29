@@ -50,11 +50,4 @@ object RepositoryModule {
         localDatabase: LocalDatabase,
     ): StockRepository = StockRepository(remoteService, localDatabase)
 
-    @Provides
-    @Singleton
-    fun provideLocationRepository(
-        remoteService: RemoteService,
-        localDatabase: LocalDatabase,
-    ): LocationRepository = LocationRepository(remoteService, localDatabase)
-
 }

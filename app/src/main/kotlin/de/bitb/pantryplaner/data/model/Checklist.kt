@@ -15,6 +15,7 @@ data class Checklist(
     val createdAt: String = "",
     val updatedAt: String = "",
     val creator: String = "",
+    val stock: String = "",
     val sharedWith: List<String> = listOf(),
 ) {
     @get:Exclude
@@ -44,6 +45,13 @@ data class Checklist(
     val finished: Boolean
         get() = finishedAt.isNotBlank()
 }
+
+data class CheckItem(
+    val uuid: String = "",
+    var checked: Boolean = false,
+    var amount: Double = 1.0,
+    //TODO timestamp?
+)
 
 //data class ItemList(
 //    val uuid: String = UUID.randomUUID().toString(),

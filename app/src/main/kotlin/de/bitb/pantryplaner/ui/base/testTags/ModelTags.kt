@@ -19,7 +19,12 @@ sealed class SharedWithTag : TestTag {
     }
 }
 
-data class LocationItem(val name: String) : TestTag {
+data class StockTag(val name: String) : TestTag {
+    override val tagName: String
+        get() = super.tagName + ".$name"
+}
+
+data class ItemTag(val name: String) : TestTag {
     override val tagName: String
         get() = super.tagName + ".$name"
 }

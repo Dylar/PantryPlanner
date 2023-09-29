@@ -22,40 +22,40 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
-import de.bitb.pantryplaner.data.model.Location
+import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.comps.buildUserDropDown
-import de.bitb.pantryplaner.ui.base.testTags.AddEditLocationDialogTag
+import de.bitb.pantryplaner.ui.base.testTags.AddEditStockDialogTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 
 @Composable
-fun useAddLocationDialog(
+fun useAddStockDialog(
     showDialog: MutableState<Boolean>,
     users: List<User>,
-    onEdit: (Location, Boolean) -> Unit,
+    onEdit: (Stock, Boolean) -> Unit,
 ) {
     useDialog(
         showDialog,
         "Ort erstellen", "Hinzufügen",
-        Location(),
+        Stock(),
         users,
         onEdit
     )
 }
 
 @Composable
-fun useEditLocationDialog(
+fun useEditStockDialog(
     showDialog: MutableState<Boolean>,
-    location: Location,
+    stock: Stock,
     users: List<User>,
-    onEdit: (Location, Boolean) -> Unit,
+    onEdit: (Stock, Boolean) -> Unit,
 ) {
     useDialog(
         showDialog,
         "Ort bearbeiten", "Speichern",
-        location,
+        stock,
         users,
-    ) { loc, _ -> onEdit(loc, true) }
+    ) { stockX, _ -> onEdit(stockX, true) }
 }
 
 
@@ -64,15 +64,15 @@ private fun useDialog(
     showDialog: MutableState<Boolean>,
     title: String,
     confirmButton: String,
-    location: Location,
+    stock: Stock,
     users: List<User>,
-    onConfirm: (Location, Boolean) -> Unit,
+    onConfirm: (Stock, Boolean) -> Unit,
 ) {
     if (showDialog.value) {
-        AddEditLocationDialog(
+        AddEditStockDialog(
             title = title,
             confirmButton = confirmButton,
-            location = location,
+            Stock = stock,
             users = users,
             onConfirm = { loc, close ->
                 onConfirm(loc, close)
@@ -84,30 +84,30 @@ private fun useDialog(
 }
 
 @Composable
-private fun AddEditLocationDialog(
+private fun AddEditStockDialog(
     title: String,
     confirmButton: String,
-    location: Location,
+    Stock: Stock,
     users: List<User>,
-    onConfirm: (Location, Boolean) -> Unit,
+    onConfirm: (Stock, Boolean) -> Unit,
     onDismiss: () -> Unit,
 ) {
     var name by remember {
         mutableStateOf(
             TextFieldValue(
-                text = location.name,
-                selection = TextRange(location.name.length)
+                text = Stock.name,
+                selection = TextRange(Stock.name.length)
             )
         )
     }
 
     val focusRequester = remember { FocusRequester() }
     val selectedUser = remember {
-        val selected = users.filter { location.sharedWith.contains(it.uuid) }
+        val selected = users.filter { Stock.sharedWith.contains(it.uuid) }
         mutableStateOf(selected)
     }
 
-    fun copyLocation() = location.copy(
+    fun copyStock() = Stock.copy(
         name = name.text,
         sharedWith = selectedUser.value.map { it.uuid }.toList(),
     )
@@ -123,7 +123,7 @@ private fun AddEditLocationDialog(
             Column {
                 OutlinedTextField(
                     modifier = Modifier
-                        .testTag(AddEditLocationDialogTag.NameLabel)
+                        .testTag(AddEditStockDialogTag.NameLabel)
                         .padding(horizontal = 16.dp)
                         .focusRequester(focusRequester),
                     singleLine = true,
@@ -132,7 +132,7 @@ private fun AddEditLocationDialog(
                     onValueChange = { name = it },
                     keyboardActions = KeyboardActions(
                         onDone = {
-                            onConfirm(copyLocation(), false)
+                            onConfirm(copyStock(), false)
                             name = TextFieldValue()
                         },
                     ),
@@ -146,8 +146,8 @@ private fun AddEditLocationDialog(
         },
         confirmButton = {
             Button(
-                modifier = Modifier.testTag(AddEditLocationDialogTag.ConfirmButton),
-                onClick = { onConfirm(copyLocation(), true) },
+                modifier = Modifier.testTag(AddEditStockDialogTag.ConfirmButton),
+                onClick = { onConfirm(copyStock(), true) },
                 content = { Text(confirmButton) }
             )
         },

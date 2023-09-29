@@ -16,6 +16,7 @@ class FinishChecklistUC(
 ) {
     suspend operator fun invoke(checkId: String): Resource<Unit> {
         return tryIt {
+            //TODO on finish select stock
             val checkResp = checkRepo.getCheckLists(listOf(checkId)).first()
             if (checkResp is Resource.Error) return@tryIt checkResp.castTo()
 
@@ -31,28 +32,18 @@ class FinishChecklistUC(
             val saveResp = checkRepo.saveChecklist(saveChecklist)
             if (saveResp is Resource.Error) return@tryIt saveResp.castTo()
 
-            //TODO wem wird das hinzugefügt?
-            // -> oh gott wem wirds zugeordnet ... dem creator? allen gleich viel?
-            // -> shared added garnicht zu bestand? oder nur wenn mans sagt
-            // -> "Household"-listen? "None shared"-Listen
-            // => Inmom werden wohl den items selber dem bestand hinzugefügt
-            // -> aber dann teilen sich ja alle ein Bestand
-            // -> shared Bestand? -> oh gott xD
-            // => bestand auf user ebene nicht item ebene.... oh gott
-            // -> bestand obj mit sharedWith
-
-            // TODO share with location not user
-            val stockResp = stockRepo.getStockItems(checklist.creator).first()
+            val stockResp = stockRepo.getStocks(checklist.creator).first()
             if (stockResp is Resource.Error) return@tryIt stockResp.castTo()
 
-            val stockItems = stockResp.data!!
+            //TODO thats not right?
+            val stock = stockResp.data!!.first { checklist.stock == it.uuid }
             checklist.items.forEach { checkItem ->
                 if (checkItem.checked) {
-                    stockItems[checkItem.uuid]!!.amount += checkItem.amount
+                    stock.items.first { checkItem.uuid == it.uuid }.amount += checkItem.amount
                 }
             }
 
-            stockRepo.saveItems(stockItems.values.toList())
+            stockRepo.saveStocks(listOf(stock))
         }
     }
 }

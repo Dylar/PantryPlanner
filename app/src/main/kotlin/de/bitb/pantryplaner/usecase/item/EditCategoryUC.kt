@@ -24,11 +24,11 @@ class EditCategoryUC(
             val itemsResp = itemRepo.getItems().first()
             if (itemsResp is Resource.Error) return@tryIt itemsResp.castTo()
 
-            val stockResp = stockRepo.getStockItems().first() //TODO only because of color
+            val stockResp = stockRepo.getStocks().first() //TODO only because of color
             if (stockResp is Resource.Error) return@tryIt stockResp.castTo()
 
             val itemsMap = itemsResp.data ?: mapOf()
-            val stockItems = stockResp.data ?: mapOf()
+            val stockItems = stockResp.data?.first()?.items?.associateBy { it.uuid } ?: mapOf()
 
             val itemsToEdit = mutableListOf<Item>()
             val stockItemsToEdit = mutableListOf<StockItem>()
@@ -45,10 +45,11 @@ class EditCategoryUC(
                 if (saveResp is Resource.Error) return@tryIt saveResp
             }
 
-            if (stockItemsToEdit.isNotEmpty()) {
-                val saveResp = stockRepo.saveItems(stockItemsToEdit)
-                if (saveResp is Resource.Error) return@tryIt saveResp
-            }
+//            if (stockItemsToEdit.isNotEmpty()) {
+                //TODO oh god please fix me
+//                val saveResp = stockRepo.saveStocks(stockItemsToEdit)
+//                if (saveResp is Resource.Error) return@tryIt saveResp
+//            }
 
             Resource.Success()
         }

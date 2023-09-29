@@ -1,9 +1,9 @@
 {
-  "uuid": "321",
+  "uuid": "user321",
   "email": "other@email.to",
   "firstName": "Mohammed",
   "lastName": "Lee",
   "connectedUser": [
-    "123"
+    "user123"
   ]
 }

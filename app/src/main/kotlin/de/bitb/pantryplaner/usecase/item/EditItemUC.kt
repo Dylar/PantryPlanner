@@ -24,11 +24,11 @@ class EditItemUC(
             val itemResp = itemRepo.getItem(itemId).first()
             if (itemResp is Resource.Error) return@tryIt itemResp.castTo()
 
-            val stockItemResp = stockRepo.getStockItems().first()
+            val stockItemResp = stockRepo.getStocks().first()
             if (stockItemResp is Resource.Error) return@tryIt stockItemResp.castTo()
 
             this(
-                stockItemResp.data!![itemId]!!,
+                stockItemResp.data!!.first().items.associateBy { it.uuid }[itemId]!!,
                 itemResp.data!!,
                 amount = amount,
             )
@@ -67,18 +67,20 @@ class EditItemUC(
                         )
                     )
                 )
-                if (resp is Resource.Error) return@tryIt resp
-
-                stockRepo.saveItems(
-                    listOf(
-                        stockItem.copy(
-                            colorHex = color.toArgb(),
-                            amount = amountDouble,
-                            freshUntil = freshUntil,
-                            remindAfter = remindAfter,
-                        )
-                    )
-                )
+                //TODO fix me
+                Resource.Success()
+//                if (resp is Resource.Error) return@tryIt resp
+//
+//                stockRepo.saveItems(
+//                    listOf(
+//                        stockItem.copy(
+//                            colorHex = color.toArgb(),
+//                            amount = amountDouble,
+//                            freshUntil = freshUntil,
+//                            remindAfter = remindAfter,
+//                        )
+//                    )
+//                )
             },
         )
     }

@@ -228,9 +228,9 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
                     .combinedClickable(onClick = { viewModel.checkItem(item.uuid) }),
             ) {
                 SelectItemHeader(
-                    stockItem,
                     item,
                     checkedItems.value.contains(item.uuid),
+                    stockItem.color,
                     checkItem = viewModel::checkItem
                 )
             }

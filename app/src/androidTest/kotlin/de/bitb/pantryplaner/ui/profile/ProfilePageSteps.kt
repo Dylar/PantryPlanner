@@ -25,9 +25,9 @@ class ProfilePageSteps(
         tapOnSettingsButton()
     }
 
-    @When("Tap NewLocationButton")
-    fun tapNewLocationButton() {
-        onNodeWithTag(ProfilePageTag.NewLocationButton).performClick()
+    @When("Tap NewStockButton")
+    fun tapNewStockButton() {
+        onNodeWithTag(ProfilePageTag.NewStockButton).performClick()
         waitForIdle()
     }
 
@@ -38,7 +38,7 @@ fun ComposeTestRule.assertProfilePageRendered() {
     onNodeWithTag(ProfilePageTag.SettingsButton).assertIsDisplayed()
     onNodeWithTag(ProfilePageTag.QRInfo).assertIsDisplayed()
     onNodeWithTag(ProfilePageTag.QRLabel).assertIsDisplayed()
-    onNodeWithTag(ProfilePageTag.NewLocationButton).assertIsDisplayed()
+    onNodeWithTag(ProfilePageTag.NewStockButton).assertIsDisplayed()
     onNodeWithTag(ProfilePageTag.ScanButton).assertIsDisplayed()
 }
 

@@ -10,9 +10,11 @@ import de.bitb.pantryplaner.ui.intro.assertLoginPageRendered
 import de.bitb.pantryplaner.ui.intro.loginUserWith
 import de.bitb.pantryplaner.ui.overview.assertOverviewPageRendered
 import de.bitb.pantryplaner.ui.overview.tapOnProfileButton
+import de.bitb.pantryplaner.ui.overview.tapOnStockButton
 import de.bitb.pantryplaner.ui.profile.assertProfilePageRendered
 import de.bitb.pantryplaner.ui.profile.tapOnSettingsButton
 import de.bitb.pantryplaner.ui.settings.assertSettingsPageRendered
+import de.bitb.pantryplaner.ui.stock.assertStockPageRendered
 import io.cucumber.java.en.Given
 
 @HiltAndroidTest
@@ -39,6 +41,13 @@ class StartingSteps(
         val user = parseUser()
         loginUserWith(user.email, defaultPW)
         assertOverviewPageRendered()
+    }
+
+    @Given("Start on StockPage")
+    fun startOnStockPage() {
+        startOnOverviewPage()
+        tapOnStockButton()
+        assertStockPageRendered()
     }
 
     @Given("Start on ProfilePage")

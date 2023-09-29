@@ -27,18 +27,19 @@ class UnfinishChecklistUC(
             val saveResp = checkRepo.saveChecklist(saveChecklist)
             if (saveResp is Resource.Error) return@tryIt saveResp.castTo()
 
-            // TODO share with location not user
-            val stockResp = stockRepo.getStockItems(checklist.creator).first()
+            // TODO share with stock not user
+            val stockResp = stockRepo.getStocks(checklist.creator).first()
             if (stockResp is Resource.Error) return@tryIt stockResp.castTo()
 
-            val stockItems = stockResp.data!!
+            //TODO thats not right?
+            val stock = stockResp.data!!.first { checklist.stock == it.uuid }
             checklist.items.forEach { checkItem ->
                 if (checkItem.checked) {
-                    stockItems[checkItem.uuid]!!.amount -= checkItem.amount
+                    stock.items.first { checkItem.uuid == it.uuid }.amount -= checkItem.amount
                 }
             }
 
-            stockRepo.saveItems(stockItems.values.toList())
+            stockRepo.saveStocks(listOf(stock))
         }
     }
 }

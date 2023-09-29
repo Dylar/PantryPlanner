@@ -24,7 +24,7 @@ class RefreshAlertUC(
                 val checkResp = checkRepo.getCheckLists().first()
                 if (checkResp is Resource.Error) return@tryIt checkResp.castTo(false)
 
-                val stockResp = stockRepo.getStockItems().first()
+                val stockResp = stockRepo.getStocks().first()
                 if (stockResp is Resource.Error) return@tryIt stockResp.castTo(false)
 
                 val allLists = checkResp.data!!
@@ -40,7 +40,8 @@ class RefreshAlertUC(
                     .filter { it.finished }
                     .map { check ->
                         val finishDay = check.finishDate.toLocalDate()
-                        val stockItems = stockResp.data!!
+                        //TODO do for each stock? whatever...
+                        val stockItems = stockResp.data!!.first().items.associateBy { it.uuid }
                         stockItems.values
                             .filter { stockItem ->
                                 !unfinishedItems.contains(stockItem.uuid) &&

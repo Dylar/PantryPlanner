@@ -3,10 +3,8 @@ package de.bitb.pantryplaner.data.source
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.data.model.Item
-import de.bitb.pantryplaner.data.model.Location
 import de.bitb.pantryplaner.data.model.Settings
 import de.bitb.pantryplaner.data.model.Stock
-import de.bitb.pantryplaner.data.model.StockItem
 import de.bitb.pantryplaner.data.model.User
 import kotlinx.coroutines.flow.Flow
 
@@ -20,8 +18,7 @@ interface RemoteService :
     UserRemoteDao,
     ItemRemoteDao,
     CheckRemoteDao,
-    StockItemRemoteDao,
-    LocationRemoteDao,
+    StockRemoteDao,
     SettingsRemoteDao
 
 class PantryRemoteService(
@@ -30,14 +27,12 @@ class PantryRemoteService(
     itemService: FireItemService,
     checkService: FireCheckService,
     stockItemService: FireStockService,
-    locationService: FireLocationService,
 ) :
     RemoteService,
     UserRemoteDao by userService,
     ItemRemoteDao by itemService,
     CheckRemoteDao by checkService,
-    StockItemRemoteDao by stockItemService,
-    LocationRemoteDao by locationService,
+    StockRemoteDao by stockItemService,
     SettingsRemoteDao by settingsService
 
 interface SettingsRemoteDao {
@@ -69,16 +64,9 @@ interface CheckRemoteDao {
     suspend fun saveChecklist(userId: String, check: Checklist): Resource<Unit>
 }
 
-interface StockItemRemoteDao {
-    fun getStock(userId: String): Flow<Resource<Stock>>
-    suspend fun addStockItem(userId: String, item: StockItem): Resource<Boolean>
-    suspend fun deleteStockItem(userId: String, item: StockItem): Resource<Boolean>
-    suspend fun saveStock(userId: String, stock: Stock): Resource<Unit>
-}
-
-interface LocationRemoteDao {
-    fun getLocations(userId: String): Flow<Resource<List<Location>>>
-    suspend fun addLocation(location: Location): Resource<Boolean>
-    suspend fun deleteLocation(location: Location): Resource<Boolean>
-    suspend fun saveLocations(locations: List<Location>): Resource<Unit>
+interface StockRemoteDao {
+    fun getStocks(userId: String): Flow<Resource<List<Stock>>>
+    suspend fun addStock(stock: Stock): Resource<Boolean>
+    suspend fun deleteStock(stock: Stock): Resource<Boolean>
+    suspend fun saveStocks(stocks: List<Stock>): Resource<Unit>
 }

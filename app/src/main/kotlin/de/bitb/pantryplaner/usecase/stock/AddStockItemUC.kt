@@ -10,8 +10,12 @@ class AddStockItemUC(
 ) {
     suspend operator fun invoke(stockItem: StockItem): Resource<Boolean> {
         return tryIt(
-            onError = { Resource.Error(it, false) },
-            onTry = { stockRepo.addItem(stockItem) },
+            errorValue = false,
+            onTry = {
+                //TODO fix me
+                Resource.Success(false)
+//                stockRepo.addItem(stockItem)
+            },
         )
     }
 }

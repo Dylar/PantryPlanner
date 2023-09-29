@@ -22,6 +22,11 @@ class OverviewPageSteps(
     fun tapOnProfileButtonStep() {
         tapOnProfileButton()
     }
+
+    @When("Tap on StockButton")
+    fun tapOnStockButtonStep() {
+        tapOnStockButton()
+    }
 }
 
 fun ComposeTestRule.assertOverviewPageRendered() {
@@ -29,10 +34,15 @@ fun ComposeTestRule.assertOverviewPageRendered() {
     onNodeWithTag(OverviewPageTag.ProfileButton).assertIsDisplayed()
     onNodeWithTag(OverviewPageTag.LayoutButton).assertIsDisplayed()
     onNodeWithTag(OverviewPageTag.AddButton).assertIsDisplayed()
-    onNodeWithTag(OverviewPageTag.ToItemsButton).assertIsDisplayed()
+    onNodeWithTag(OverviewPageTag.StockButton).assertIsDisplayed()
 }
 
 fun ComposeTestRule.tapOnProfileButton() {
     onNodeWithTag(OverviewPageTag.ProfileButton).performClick()
+    waitForIdle()
+}
+
+fun ComposeTestRule.tapOnStockButton() {
+    onNodeWithTag(OverviewPageTag.StockButton).performClick()
     waitForIdle()
 }

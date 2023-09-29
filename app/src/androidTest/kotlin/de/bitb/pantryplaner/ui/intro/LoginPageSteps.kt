@@ -12,8 +12,6 @@ import de.bitb.pantryplaner.test.parseUser
 import de.bitb.pantryplaner.ui.base.testTags.LoginPageTag
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 
 @HiltAndroidTest
 class LoginPageSteps(
@@ -23,7 +21,7 @@ class LoginPageSteps(
     @Then("LoginPage rendered")
     fun renderLoginPage() = assertLoginPageRendered()
 
-    @When("I login with email {string} and password {string}")
+    @When("Login with email {string} and password {string}")
     fun loginUser(email: String, password: String) {
         loginUserWith(email, password)
     }
@@ -33,6 +31,13 @@ class LoginPageSteps(
         val user = parseUser()
         loginUser(user.email, defaultPW)
     }
+
+    @When("Tap on RegisterButton")
+    fun tapRegisterButton() {
+        onNodeWithTag(LoginPageTag.RegisterButton).performClick()
+        waitForIdle()
+    }
+
 }
 
 fun ComposeTestRule.assertLoginPageRendered() {

@@ -10,10 +10,10 @@ import de.bitb.pantryplaner.usecase.*
 import de.bitb.pantryplaner.usecase.alert.RefreshAlertUC
 import de.bitb.pantryplaner.usecase.checklist.*
 import de.bitb.pantryplaner.usecase.item.*
-import de.bitb.pantryplaner.usecase.location.AddLocationUC
-import de.bitb.pantryplaner.usecase.location.DeleteLocationUC
-import de.bitb.pantryplaner.usecase.location.EditLocationUC
+import de.bitb.pantryplaner.usecase.stock.DeleteStockUC
+import de.bitb.pantryplaner.usecase.stock.EditStockUC
 import de.bitb.pantryplaner.usecase.stock.AddStockItemUC
+import de.bitb.pantryplaner.usecase.stock.AddStockUC
 import de.bitb.pantryplaner.usecase.stock.DeleteStockItemUC
 import de.bitb.pantryplaner.usecase.user.*
 import javax.inject.Singleton
@@ -68,9 +68,13 @@ object UsecaseModule {
     @Provides
     @Singleton
     fun provideStockUseCases(
+        userRepo: UserRepository,
         stockRepo: StockRepository,
     ): StockUseCases {
         return StockUseCases(
+            addStockUC = AddStockUC(stockRepo),
+            deleteStockUC = DeleteStockUC(userRepo, stockRepo),
+            editStockUC = EditStockUC(userRepo, stockRepo),
             addStockItemUC = AddStockItemUC(stockRepo),
             deleteStockItemUC = DeleteStockItemUC(stockRepo),
         )
@@ -94,19 +98,6 @@ object UsecaseModule {
             unfinishChecklistUC = UnfinishChecklistUC(localDB, checkRepo, stockRepo),
             setItemAmountUC = SetItemAmountUC(checkRepo),
             setSharedWithUC = SetSharedWithUC(checkRepo),
-        )
-    }
-
-    @Provides
-    @Singleton
-    fun provideLocationUseCases(
-        userRepo: UserRepository,
-        locationRepo: LocationRepository,
-    ): LocationUseCases {
-        return LocationUseCases(
-            addLocationUC = AddLocationUC(locationRepo),
-            deleteLocationUC = DeleteLocationUC(userRepo, locationRepo),
-            editLocationUC = EditLocationUC(userRepo, locationRepo),
         )
     }
 

@@ -59,8 +59,8 @@
             android:id="@+id/overview_to_profile"
             app:destination="@id/profileFragment" />
         <action
-            android:id="@+id/overview_to_items"
-            app:destination="@id/itemsFragment" />
+            android:id="@+id/overview_to_stock"
+            app:destination="@id/stockFragment" />
         <action
             android:id="@+id/overview_to_checklist"
             app:destination="@id/checklistFragment" />
@@ -68,6 +68,11 @@
             android:id="@+id/overview_to_refresh"
             app:destination="@id/refreshFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/stockFragment"
+        android:name="de.bitb.pantryplaner.ui.stock.StockFragment"
+        android:label="stock" />
 
     <fragment
         android:id="@+id/itemsFragment"

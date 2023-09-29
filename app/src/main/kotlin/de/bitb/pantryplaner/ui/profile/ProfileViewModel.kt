@@ -5,13 +5,13 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.bitb.pantryplaner.core.misc.Resource
-import de.bitb.pantryplaner.data.LocationRepository
+import de.bitb.pantryplaner.data.StockRepository
 import de.bitb.pantryplaner.data.UserRepository
-import de.bitb.pantryplaner.data.model.Location
+import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseViewModel
 import de.bitb.pantryplaner.ui.base.comps.asResString
-import de.bitb.pantryplaner.usecase.LocationUseCases
+import de.bitb.pantryplaner.usecase.StockUseCases
 import de.bitb.pantryplaner.usecase.UserUseCases
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,18 +23,18 @@ import javax.inject.Inject
 data class ProfileModel(
     val user: User?,
     val connectedUser: List<User>?,
-    val locations: List<Location>?,
+    val stocks: List<Stock>?,
 ) {
     val isLoading: Boolean
-        get() = locations == null || connectedUser == null || user == null
+        get() = stocks == null || connectedUser == null || user == null
 }
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     userRepo: UserRepository,
-    locationRepo: LocationRepository,
+    stockRepo: StockRepository,
     private val userUseCases: UserUseCases,
-    private val locationUseCases: LocationUseCases,
+    private val stockUseCases: StockUseCases,
 ) : BaseViewModel() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -47,16 +47,16 @@ class ProfileViewModel @Inject constructor(
                 val user = userResp.data!!
                 combine(
                     userRepo.getUser(user.connectedUser),
-                    locationRepo.getLocations(),
-                ) { usersResp, locationResp ->
+                    stockRepo.getStocks(),
+                ) { usersResp, StockResp ->
                     when {
                         usersResp is Resource.Error -> usersResp.castTo()
-                        locationResp is Resource.Error -> locationResp.castTo()
+                        StockResp is Resource.Error -> StockResp.castTo()
                         else -> Resource.Success(
                             ProfileModel(
                                 user,
                                 usersResp.data,
-                                locationResp.data
+                                StockResp.data
                             )
                         )
                     }
@@ -72,29 +72,29 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun addLocation(location: Location) {
+    fun addStock(Stock: Stock) {
         viewModelScope.launch {
-            when (val resp = locationUseCases.addLocationUC(location)) {
+            when (val resp = stockUseCases.addStockUC(Stock)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
-                else -> showSnackbar("Ort hinzugefügt: ${location.name}".asResString())
+                else -> showSnackbar("Ort hinzugefügt: ${Stock.name}".asResString())
             }
         }
     }
 
-    fun removeLocation(location: Location) {
+    fun removeStock(Stock: Stock) {
         viewModelScope.launch {
-            when (val resp = locationUseCases.deleteLocationUC(location)) {
+            when (val resp = stockUseCases.deleteStockUC(Stock)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
-                else -> showSnackbar("Ort entfernt: ${location.name}".asResString())
+                else -> showSnackbar("Ort entfernt: ${Stock.name}".asResString())
             }
         }
     }
 
-    fun editLocation(location: Location) {
+    fun editStock(Stock: Stock) {
         viewModelScope.launch {
-            when (val resp = locationUseCases.editLocationUC(location)) {
+            when (val resp = stockUseCases.editStockUC(Stock)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
-                else -> showSnackbar("Ort editiert: ${location.name}".asResString())
+                else -> showSnackbar("Ort editiert: ${Stock.name}".asResString())
             }
         }
     }

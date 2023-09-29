@@ -31,7 +31,16 @@ sealed class OverviewPageTag : TestTag {
     object ProfileButton : OverviewPageTag()
     object LayoutButton : OverviewPageTag()
     object AddButton : OverviewPageTag()
-    object ToItemsButton : OverviewPageTag()
+    object StockButton : OverviewPageTag()
+}
+
+sealed class StockPageTag : TestTag {
+    object AppBar : StockPageTag()
+    object SearchButton : StockPageTag()
+    object LayoutButton : StockPageTag()
+    object FilterButton : StockPageTag()
+    object NewItemButton : StockPageTag()
+    //TODO add/edit dialog
 }
 
 sealed class ItemsPageTag : TestTag {
@@ -58,7 +67,7 @@ sealed class ProfilePageTag : TestTag {
     object SettingsButton : ProfilePageTag()
     object QRInfo : ProfilePageTag()
     object QRLabel : ProfilePageTag()
-    object NewLocationButton : ProfilePageTag()
+    object NewStockButton : ProfilePageTag()
     object ScanButton : ProfilePageTag()
 }
 

@@ -14,21 +14,21 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import de.bitb.pantryplaner.data.model.Item
-import de.bitb.pantryplaner.data.model.StockItem
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.SelectItemHeaderTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 
 @Composable
 fun SelectItemHeader(
-    stockItem: StockItem,
     item: Item,
     isChecked: Boolean,
+    color: Color = BaseColors.LightGray,
     strikeChecked: Boolean = false,
     checkItem: (String) -> Unit,
 ) {
@@ -50,8 +50,8 @@ fun SelectItemHeader(
                 .padding(horizontal = 4.dp, vertical = 4.dp),
             onCheckedChange = { checkItem(item.uuid) },
             colors = CheckboxDefaults.colors(
-                checkedColor = stockItem.color,
-                uncheckedColor = stockItem.color
+                checkedColor = color,
+                uncheckedColor = color
             )
         )
         Text(

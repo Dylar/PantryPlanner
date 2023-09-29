@@ -17,6 +17,7 @@ fun UserRemoteDao.mockUserDao(
     allUser: MutableList<User> = mutableListOf(),
     emailPwMap: MutableMap<String, String> = mutableMapOf(),
 ) {
+    //TODO make with flow holding -> no updates
     var isLoggedIn = false
     coEvery { isUserLoggedIn() }.answers { Resource.Success(isLoggedIn) }
     coEvery { registerUser(any(), any()) }.answers {
@@ -53,6 +54,7 @@ fun UserRemoteDao.mockUserDao(
     }
 }
 
+// TODO test errors
 fun UserRemoteDao.mockErrorUserDao(
     isLoggedInError: Resource.Error<Boolean>? = null,
     registerError: Resource.Error<Unit>? = null,

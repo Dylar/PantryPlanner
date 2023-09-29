@@ -47,7 +47,7 @@ class RefreshViewModel @Inject constructor(
         combine(
 //            itemRepo.getItems(), // just to update when amount changed (TODO do we need this after stock model?)
             checkRepo.getCheckLists(),
-            stockRepo.getStockItems(),
+            stockRepo.getStocks(),
         ) { checkResp, stockResp ->
             if (checkResp is Resource.Error) return@combine checkResp.castTo()
             if (stockResp is Resource.Error) return@combine stockResp.castTo()
@@ -60,7 +60,7 @@ class RefreshViewModel @Inject constructor(
                 .flatten()
                 .toSet()
                 .map { it.uuid }
-            val stockItems = stockResp.data!!
+            val stocks = stockResp.data!!
             val items = allLists
                 .filter { it.finished }
                 .map { check ->
@@ -69,9 +69,10 @@ class RefreshViewModel @Inject constructor(
                     if (itemResp is Resource.Error) return@combine itemResp.castTo()
 
                     val finishDay = check.finishDate.toLocalDate()
-                    formatDateString(finishDay) to itemResp.data!!.filter {
-                        val stockItem = stockItems[it.uuid]!!
-                        !unfinishedItems.contains(it.uuid) && stockItem.isAlertable(finishDay)
+                    formatDateString(finishDay) to itemResp.data!!.filter { item ->
+                        val stockItem =
+                            stocks.first().items.first { it.uuid == item.uuid } //TODO do for each stock? -> or with tabs on this page
+                        !unfinishedItems.contains(item.uuid) && stockItem.isAlertable(finishDay)
                     }
                 }
                 .groupBy { it.first }
@@ -80,7 +81,7 @@ class RefreshViewModel @Inject constructor(
                 .removeDuplicatesFromLists()
                 .filter { it.value.isNotEmpty() }
 
-            Resource.Success(RefreshModel(stockItems, items))
+            Resource.Success(RefreshModel(stocks.first().items.associateBy { it.uuid }, items))
         }.asLiveData()
 
     fun clearItemAmount(itemId: String) {

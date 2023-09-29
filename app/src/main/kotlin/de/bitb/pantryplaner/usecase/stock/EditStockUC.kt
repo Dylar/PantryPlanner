@@ -1,31 +1,31 @@
-package de.bitb.pantryplaner.usecase.location
+package de.bitb.pantryplaner.usecase.stock
 
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.asResourceError
 import de.bitb.pantryplaner.core.misc.tryIt
-import de.bitb.pantryplaner.data.LocationRepository
+import de.bitb.pantryplaner.data.StockRepository
 import de.bitb.pantryplaner.data.UserRepository
-import de.bitb.pantryplaner.data.model.Location
+import de.bitb.pantryplaner.data.model.Stock
 import kotlinx.coroutines.flow.first
 
-class EditLocationUC(
+class EditStockUC(
     private val userRepo: UserRepository,
-    private val locationRepo: LocationRepository,
+    private val StockRepo: StockRepository,
 ) {
     suspend operator fun invoke(
-        location: Location,
-        name: String = location.name,
-        sharedWith: List<String> = location.sharedWith,
+        Stock: Stock,
+        name: String = Stock.name,
+        sharedWith: List<String> = Stock.sharedWith,
     ): Resource<Unit> {
         return tryIt(
             onTry = {
                 val user = userRepo.getUser().first()
                 if (user is Resource.Error) return@tryIt user.castTo()
-                if (user.data!!.uuid != location.creator)
+                if (user.data!!.uuid != Stock.creator)
                     return@tryIt "Nur der Ersteller kann den Ort ändern".asResourceError()
-                locationRepo.saveLocations(
+                StockRepo.saveStocks(
                     listOf(
-                        location.copy(
+                        Stock.copy(
                             name = name,
                             sharedWith = sharedWith
                         )

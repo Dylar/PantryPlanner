@@ -1,24 +1,36 @@
 Feature: App navigation
 
+  Background:
+    Given Init default Mocks
+
   Scenario: Run app and show LoginPage
-    Given Init Mocks
-    And   Run App
+    When  Run App
     Then  LoginPage rendered
 
-  Scenario: Login default User and show OverviewPage
-    Given Init default Mocks
-    And   Start on LoginPage
+# start on LoginPage
+  Scenario: Navigate to RegisterPage
+    Given Start on LoginPage
+    When  Tap on RegisterButton
+    Then  RegisterPage rendered
+
+  Scenario: Navigate to OverviewPage
+    Given Start on LoginPage
     When  Login default User
     Then  OverviewPage rendered
 
-  Scenario: Navigate to default User ProfilePage
-    Given Init default Mocks
-    And   Start on OverviewPage
+# start on OverviewPage
+  Scenario: Navigate to StockPage
+    Given Start on OverviewPage
+    When  Tap on StockButton
+    Then  StockPage rendered
+
+  Scenario: Navigate to ProfilePage
+    Given Start on OverviewPage
     When  Tap on ProfileButton
     Then  ProfilePage rendered
 
-  Scenario: Navigate to default User SettingsPage
-    Given Init default Mocks
-    And   Start on ProfilePage
+# start on ProfilePage
+  Scenario: Navigate to SettingsPage
+    Given Start on ProfilePage
     When  Tap on SettingsButton
     Then  SettingsPage rendered

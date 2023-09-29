@@ -41,7 +41,6 @@ object DataModule {
         val itemService = FireItemService(fireData)
         val checkService = FireCheckService(fireData)
         val stockItemService = FireStockService(fireData)
-        val locationService = FireLocationService(fireData)
 
         return PantryRemoteService(
             settingsService,
@@ -49,7 +48,6 @@ object DataModule {
             itemService,
             checkService,
             stockItemService,
-            locationService,
         )
     }
 

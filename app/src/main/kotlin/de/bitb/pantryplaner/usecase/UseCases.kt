@@ -16,11 +16,11 @@ import de.bitb.pantryplaner.usecase.item.EditCategoryUC
 import de.bitb.pantryplaner.usecase.item.EditItemUC
 import de.bitb.pantryplaner.usecase.item.LoadDataUC
 import de.bitb.pantryplaner.usecase.item.UncheckAllItemsUC
-import de.bitb.pantryplaner.usecase.location.AddLocationUC
-import de.bitb.pantryplaner.usecase.location.DeleteLocationUC
-import de.bitb.pantryplaner.usecase.location.EditLocationUC
+import de.bitb.pantryplaner.usecase.stock.AddStockUC
 import de.bitb.pantryplaner.usecase.stock.AddStockItemUC
 import de.bitb.pantryplaner.usecase.stock.DeleteStockItemUC
+import de.bitb.pantryplaner.usecase.stock.DeleteStockUC
+import de.bitb.pantryplaner.usecase.stock.EditStockUC
 import de.bitb.pantryplaner.usecase.user.ConnectUserUC
 import de.bitb.pantryplaner.usecase.user.DisconnectUserUC
 import de.bitb.pantryplaner.usecase.user.LoginUC
@@ -49,6 +49,9 @@ data class ItemUseCases(
 )
 
 data class StockUseCases(
+    val addStockUC: AddStockUC,
+    val deleteStockUC: DeleteStockUC,
+    val editStockUC: EditStockUC,
     val addStockItemUC: AddStockItemUC,
     val deleteStockItemUC: DeleteStockItemUC,
 )
@@ -63,10 +66,4 @@ data class ChecklistUseCases(
     val unfinishChecklistUC: UnfinishChecklistUC,
     val setItemAmountUC: SetItemAmountUC, //TODO make one single edit UC
     val setSharedWithUC: SetSharedWithUC,
-)
-
-data class LocationUseCases(
-    val addLocationUC: AddLocationUC,
-    val deleteLocationUC: DeleteLocationUC,
-    val editLocationUC: EditLocationUC
 )

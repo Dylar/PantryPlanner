@@ -1,16 +1,20 @@
-package de.bitb.pantryplaner.ui.items
+package de.bitb.pantryplaner.ui.stock
 
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.ItemRepository
+import de.bitb.pantryplaner.data.StockRepository
 import de.bitb.pantryplaner.data.UserDataExt
 import de.bitb.pantryplaner.data.UserRepository
 import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
+import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.StockItem
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseViewModel
@@ -30,42 +34,45 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class ItemsModel(
+data class StockModel(
+    val stocks: List<Stock>?,
     val items: Map<String, List<Item>>?,
     val connectedUser: List<User>?,
 ) {
     val isLoading: Boolean
-        get() = items == null || connectedUser == null
+        get() = stocks == null || items == null || connectedUser == null
 }
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel
-class ItemsViewModel @Inject constructor(
+class StockViewModel @Inject constructor(
     itemRepo: ItemRepository,
+    stockRepo: StockRepository,
     override val userRepo: UserRepository,
-    private val checkUseCases: ChecklistUseCases,
     private val itemUseCases: ItemUseCases,
     private val stockUseCases: StockUseCases,
 ) : BaseViewModel(), UserDataExt {
-    private var fromChecklistId: String? = null
-
     private val _isSearching = MutableStateFlow(false)
     val isSearching = _isSearching.asStateFlow()
 
     val filterBy = MutableStateFlow(Filter())
-    val itemsModel: LiveData<Resource<ItemsModel>> = filterBy
+    val stockModel: LiveData<Resource<StockModel>> = filterBy
         .debounce { if (_isSearching.value) 1000L else 0L }
-        .flatMapLatest {
+        .flatMapLatest { itemRepo.getItems(filterBy = it) }
+        .flatMapLatest { itemsResp ->
+            if (itemsResp is Resource.Error) return@flatMapLatest MutableStateFlow(itemsResp.castTo())
+//            val items = itemsResp.data!!.values.flatten().toSet()
             combine(
-                itemRepo.getItems(filterBy = it),
+                stockRepo.getStocks(),
                 getConnectedUsers().asFlow(),
-            ) { items, users ->
+            ) { stocks, users ->
                 when {
-                    items is Resource.Error -> items.castTo()
+                    stocks is Resource.Error -> stocks.castTo()
                     users is Resource.Error -> users.castTo()
                     else -> Resource.Success(
-                        ItemsModel(
-                            items.data,
+                        StockModel(
+                            stocks.data,
+                            itemsResp.data,
                             users.data,
                         ),
                     )
@@ -75,13 +82,8 @@ class ItemsViewModel @Inject constructor(
         .onEach { _isSearching.update { false } }
         .asLiveData()
 
-    val checkedItems = MutableStateFlow(listOf<String>())
-
-    override fun isBackable(): Boolean = checkedItems.value.isEmpty()
-
-    fun initItems(checkUuid: String?) {
-        fromChecklistId = checkUuid
-    }
+    val itemErrorList = MutableStateFlow<List<String>>(emptyList())
+    var selectedStock :MutableLiveData<Int> = MutableLiveData(0)
 
     fun addItem(item: Item, stockItem: StockItem) {
         val name = item.name
@@ -97,22 +99,49 @@ class ItemsViewModel @Inject constructor(
         }
     }
 
-    fun checkItem(uuid: String) {
-        checkedItems.update {
-            val items = it.toMutableList()
-            if (!items.remove(uuid)) {
-                items.add(uuid)
+    fun deleteItem(item: Item, stockItem: StockItem) {
+        viewModelScope.launch {
+            val deleteItemResp = itemUseCases.deleteItemUC(item)
+            val deleteStockResp = stockUseCases.deleteStockItemUC(stockItem)
+            when { //TODO guess we need to split item frag :D
+                deleteItemResp is Resource.Error -> showSnackbar(deleteItemResp.message!!)
+                deleteStockResp is Resource.Error -> showSnackbar(deleteStockResp.message!!)
+                deleteItemResp.data == true -> showSnackbar("Item entfernt: ${item.name}".asResString()).also { updateWidgets() }
+                else -> showSnackbar("Item nicht entfernt: ${item.name}".asResString())
             }
-            items.toList()
         }
     }
 
-    fun addToChecklist() {
+    fun editItem(stockItem: StockItem, item: Item) {
         viewModelScope.launch {
-            when (val resp =
-                checkUseCases.addItemsUC(fromChecklistId!!, checkedItems.value)) {
+            when (val resp = itemUseCases.editItemUC(stockItem, item)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
-                else -> navigateBack()
+                else -> showSnackbar("Item editiert".asResString()).also { updateWidgets() }
+            }
+        }
+    }
+
+    fun editCategory(previousCategory: String, newCategory: String, color: Color) {
+        viewModelScope.launch {
+            when (val resp = itemUseCases.editCategoryUC(previousCategory, newCategory, color)) {
+                is Resource.Error -> showSnackbar(resp.message!!)
+                else -> showSnackbar("Kategorie editiert".asResString()).also { updateWidgets() }
+            }
+        }
+    }
+
+    fun changeItemAmount(itemId: String, amount: String) {
+        val itemErrors = itemErrorList.value.toMutableList()
+        itemErrors.remove(itemId)
+        itemErrorList.value = itemErrors
+
+        viewModelScope.launch {
+            val resp = itemUseCases.editItemUC(itemId, amount)
+            if (resp is Resource.Error) {
+                showSnackbar(resp.message!!)
+                val errors = itemErrorList.value.toMutableList()
+                errors.add(itemId)
+                itemErrorList.value = itemErrors
             }
         }
     }

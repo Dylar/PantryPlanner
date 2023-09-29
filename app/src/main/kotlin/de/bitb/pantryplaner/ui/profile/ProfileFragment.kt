@@ -47,7 +47,7 @@ import com.google.zxing.WriterException
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Resource
-import de.bitb.pantryplaner.data.model.Location
+import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
@@ -57,11 +57,11 @@ import de.bitb.pantryplaner.ui.base.comps.stickyGridHeader
 import de.bitb.pantryplaner.ui.base.naviToScan
 import de.bitb.pantryplaner.ui.base.naviToSettings
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
-import de.bitb.pantryplaner.ui.base.testTags.LocationItem
 import de.bitb.pantryplaner.ui.base.testTags.ProfilePageTag
+import de.bitb.pantryplaner.ui.base.testTags.StockTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
-import de.bitb.pantryplaner.ui.dialogs.useAddLocationDialog
-import de.bitb.pantryplaner.ui.dialogs.useEditLocationDialog
+import de.bitb.pantryplaner.ui.dialogs.useAddStockDialog
+import de.bitb.pantryplaner.ui.dialogs.useEditStockDialog
 
 @AndroidEntryPoint
 class ProfileFragment : BaseFragment<ProfileViewModel>() {
@@ -117,13 +117,13 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
             verticalArrangement = Arrangement.Center,
         ) {
             ExtendedFloatingActionButton(
-                modifier = Modifier.testTag(ProfilePageTag.NewLocationButton),
+                modifier = Modifier.testTag(ProfilePageTag.NewStockButton),
                 onClick = { showAddDialog.value = true },
                 text = { Text(text = "Ort anlegen") },
                 icon = {
                     Icon(
                         imageVector = Icons.Rounded.HomeWork,
-                        contentDescription = "Add Location",
+                        contentDescription = "Add Stock",
                     )
                 },
             )
@@ -182,7 +182,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
                     )
                 }
                 ConnectedUserList(model.connectedUser!!)
-                LocationList(model.connectedUser, model.locations!!)
+                StockList(model.connectedUser, model.stocks!!)
             }
         }
     }
@@ -268,23 +268,23 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
     }
 
     @Composable
-    private fun LocationList(users: List<User>, locations: List<Location>) {
-        useAddLocationDialog(
+    private fun StockList(users: List<User>, stocks: List<Stock>) {
+        useAddStockDialog(
             showAddDialog,
             users,
             onEdit = { loc, close ->
-                viewModel.addLocation(loc)
+                viewModel.addStock(loc)
                 if (close) showAddDialog.value = false
             },
         )
         LazyVerticalGrid(
-            GridCells.Fixed(if (locations.size == 1) 1 else 2),
+            GridCells.Fixed(if (stocks.size == 1) 1 else 2),
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.Top,
             horizontalArrangement = Arrangement.Center,
             contentPadding = PaddingValues(horizontal = 20.dp),
         ) {
-            if (locations.isNotEmpty()) {
+            if (stocks.isNotEmpty()) {
                 stickyGridHeader {
                     Box(
                         modifier = Modifier.fillMaxWidth(),
@@ -308,37 +308,37 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
                     }
                 }
             }
-            items(locations.size) { buildLocation(users, locations[it]) }
+            items(stocks.size) { buildStock(users, stocks[it]) }
         }
     }
 
     @Composable
-    private fun buildLocation(users: List<User>, location: Location) {
+    private fun buildStock(users: List<User>, stock: Stock) {
         val showEditDialog = remember { mutableStateOf(false) }
-        useEditLocationDialog(
+        useEditStockDialog(
             showDialog = showEditDialog,
-            location = location,
+            stock = stock,
             users = users,
             onEdit = { loc, _ ->
                 showEditDialog.value = false
-                viewModel.editLocation(loc)
+                viewModel.editStock(loc)
             }
         )
 
         dissmissItem(
-            location.name,
+            stock.name,
             BaseColors.ZergPurple,
-            onSwipe = { viewModel.removeLocation(location) },
+            onSwipe = { viewModel.removeStock(stock) },
             onLongClick = { showEditDialog.value = true }
         ) {
             Box(
                 modifier = Modifier
                     .defaultMinSize(minHeight = 48.dp)
-                    .testTag(LocationItem(location.name)),
+                    .testTag(StockTag(stock.name)),
                 contentAlignment = Alignment.CenterStart
             ) {
                 Text(
-                    location.name,
+                    stock.name,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
                     fontSize = 16.sp,
                     textAlign = TextAlign.Start,

@@ -10,8 +10,12 @@ class DeleteStockItemUC(
 ) {
     suspend operator fun invoke(stockItem: StockItem): Resource<Boolean> {
         return tryIt(
-            onError = { Resource.Error(it, false) },
-            onTry = { stockRepo.deleteItem(stockItem) },
+            errorValue = false,
+            onTry = {
+                //TODO fix me
+                Resource.Success(false)
+//                stockRepo.deleteItem(stockItem)
+                    },
         )
     }
 }

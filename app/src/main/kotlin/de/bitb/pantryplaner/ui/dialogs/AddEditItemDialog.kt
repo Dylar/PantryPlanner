@@ -32,6 +32,9 @@ import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.comps.buildCategoryDropDown
 import de.bitb.pantryplaner.ui.base.comps.buildUserDropDown
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
+import de.bitb.pantryplaner.ui.base.testTags.AddEditItemDialogTag
+import de.bitb.pantryplaner.ui.base.testTags.AddEditStockDialogTag
+import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.comps.AddSubRow
 
 @Composable
@@ -148,6 +151,7 @@ private fun AddEditItemDialog(
             Column {
                 OutlinedTextField(
                     modifier = Modifier
+                        .testTag(AddEditItemDialogTag.NameLabel)
                         .padding(horizontal = 16.dp)
                         .focusRequester(focusRequester),
                     singleLine = true,
@@ -181,6 +185,7 @@ private fun AddEditItemDialog(
         },
         confirmButton = {
             Button(
+                modifier = Modifier.testTag(AddEditItemDialogTag.ConfirmButton),
                 onClick = { onConfirm(copyStockItem(), copyItem(), true) },
                 content = { Text(confirmButton) }
             )

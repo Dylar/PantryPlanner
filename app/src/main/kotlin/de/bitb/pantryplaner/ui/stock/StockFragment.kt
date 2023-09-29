@@ -1,15 +1,11 @@
-package de.bitb.pantryplaner.ui.items
+package de.bitb.pantryplaner.ui.stock
 
-import android.os.Bundle
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.material.Card
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -34,37 +30,42 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
+import de.bitb.pantryplaner.data.model.StockItem
+import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseFragment
-import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.GridListLayout
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
 import de.bitb.pantryplaner.ui.base.comps.SearchBar
+import de.bitb.pantryplaner.ui.base.comps.dissmissItem
 import de.bitb.pantryplaner.ui.base.comps.onBack
+import de.bitb.pantryplaner.ui.base.highlightedText
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
-import de.bitb.pantryplaner.ui.base.testTags.ItemsPageTag
+import de.bitb.pantryplaner.ui.base.testTags.StockPageTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
-import de.bitb.pantryplaner.ui.comps.SelectItemHeader
+import de.bitb.pantryplaner.ui.comps.AddSubRow
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 import de.bitb.pantryplaner.ui.dialogs.FilterDialog
 import de.bitb.pantryplaner.ui.dialogs.useAddItemDialog
+import de.bitb.pantryplaner.ui.dialogs.useEditItemDialog
 
 @AndroidEntryPoint
-class ItemsFragment : BaseFragment<ItemsViewModel>() {
-    override val viewModel: ItemsViewModel by viewModels()
+class StockFragment : BaseFragment<StockViewModel>() {
+    override val viewModel: StockViewModel by viewModels()
 
     private lateinit var showGridLayout: MutableState<Boolean>
     private lateinit var showFilterDialog: MutableState<Boolean>
     private lateinit var showAddDialog: MutableState<Boolean>
-    private lateinit var showAddToDialog: MutableState<Boolean>
     private lateinit var showSearchBar: MutableState<Boolean>
 
     private val searchButtonIcon: ImageVector
@@ -73,17 +74,11 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
             else if (viewModel.filterBy.value.filterByTerm) Icons.Default.SavedSearch
             else Icons.Default.Search
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel.initItems(arguments?.getString(KEY_CHECKLIST_UUID))
-    }
-
     @Composable
     override fun screenContent() {
         showGridLayout = remember { mutableStateOf(true) }
         showFilterDialog = remember { mutableStateOf(false) }
         showAddDialog = remember { mutableStateOf(false) }
-        showAddToDialog = remember { mutableStateOf(false) }
         showSearchBar = remember { mutableStateOf(false) }
 
         val filter by viewModel.filterBy.collectAsState(Filter())
@@ -113,24 +108,12 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
                 onDismiss = { showFilterDialog.value = false },
             )
         }
-
-        if (showAddToDialog.value) {
-            ConfirmDialog(
-                "Hinzufügen?",
-                "Möchten Sie alle markierten Items der Checklist hinzufügen?",
-                onConfirm = {
-                    viewModel.addToChecklist()
-                    showAddToDialog.value = false
-                },
-                onDismiss = { showAddToDialog.value = false },
-            )
-        }
     }
 
     @Composable
     private fun buildAppBar(filter: Filter) {
         TopAppBar(
-            modifier = Modifier.testTag(ItemsPageTag.AppBar),
+            modifier = Modifier.testTag(StockPageTag.AppBar),
             title = {
                 val isSearching by viewModel.isSearching.collectAsState(false)
                 if (showSearchBar.value) SearchBar(
@@ -143,7 +126,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
             },
             actions = {
                 IconButton(
-                    modifier = Modifier.testTag(ItemsPageTag.SearchButton),
+                    modifier = Modifier.testTag(StockPageTag.SearchButton),
                     onClick = { showSearchBar.value = !showSearchBar.value },
                 ) {
                     Icon(
@@ -154,7 +137,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
 
                 if (!showSearchBar.value) {
                     IconButton(
-                        modifier = Modifier.testTag(ItemsPageTag.LayoutButton),
+                        modifier = Modifier.testTag(StockPageTag.LayoutButton),
                         onClick = { showGridLayout.value = !showGridLayout.value },
                     ) {
                         Icon(
@@ -163,7 +146,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
                         )
                     }
                     IconButton(
-                        modifier = Modifier.testTag(ItemsPageTag.FilterButton),
+                        modifier = Modifier.testTag(StockPageTag.FilterButton),
                         onClick = { showFilterDialog.value = !showFilterDialog.value },
                     ) {
                         Icon(
@@ -183,6 +166,7 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
             verticalArrangement = Arrangement.Center,
         ) {
             ExtendedFloatingActionButton(
+                modifier = Modifier.testTag(StockPageTag.NewItemButton),
                 text = { Text(text = "Neu") },
                 icon = {
                     Icon(
@@ -197,12 +181,14 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
 
     @Composable
     private fun buildContent(innerPadding: PaddingValues) {
-        val itemsModel by viewModel.itemsModel.observeAsState()
+        val selectedStock by viewModel.selectedStock.observeAsState(0)
+        val stockModel by viewModel.stockModel.observeAsState()
         when {
-            itemsModel?.data?.isLoading != false -> LoadingIndicator()
-            itemsModel is Resource.Error -> ErrorScreen(itemsModel!!.message!!.asString())
+            stockModel?.data?.isLoading != false -> LoadingIndicator()
+            stockModel is Resource.Error -> ErrorScreen(stockModel!!.message!!.asString())
             else -> {
-                val model = itemsModel!!.data!!
+                val model = stockModel!!.data!!
+                val stocks = model.stocks!!
                 val items = model.items
                 val categorys = items?.keys?.toList() ?: listOf()
                 val users = model.connectedUser ?: listOf()
@@ -215,35 +201,81 @@ class ItemsFragment : BaseFragment<ItemsViewModel>() {
                     if (close) showAddDialog.value = false
                 }
 
-                if (items?.isEmpty() != true) {
+                val stock = stocks[selectedStock]
+                if (stock.items.isEmpty()) {
                     EmptyListComp(getString(R.string.no_items))
                 } else {
                     GridListLayout(
                         innerPadding,
                         showGridLayout,
-                        items,
-                        { BaseColors.LightGray }, //TODO color?
-                    ) { _, item -> listItem(item) }
+                        items!!,
+                        { stock.items.first().color }, //TODO color?
+                        viewModel::editCategory
+                    ) { _, item ->
+                        listItem(
+                            stock.items.firstOrNull { it.uuid == item.uuid } ?: item.toStockItem(),
+                            item,
+                            categorys,
+                            users,
+                        )
+                    }
                 }
             }
         }
     }
 
     @Composable
-    private fun listItem(item: Item) {
-        Card(
-            elevation = 4.dp,
-            border = BorderStroke(2.dp, BaseColors.LightGray),
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { viewModel.checkItem(item.uuid) }
+    private fun listItem(
+        stockItem: StockItem,
+        item: Item,
+        categorys: List<String>,
+        users: List<User>,
+    ) {
+        val showEditDialog = remember { mutableStateOf(false) }
+        useEditItemDialog(
+            showEditDialog,
+            stockItem,
+            item,
+            categorys,
+            users,
+        ) { si, i, _ -> viewModel.editItem(si, i) }
+
+        dissmissItem(
+            item.name,
+            stockItem.color,
+            onSwipe = { viewModel.deleteItem(item, stockItem) },
+            onLongClick = { showEditDialog.value = true },
+        ) { stockItem(item, stockItem) }
+    }
+
+    @Composable
+    private fun stockItem(item: Item, stockItem: StockItem) {
+        val filter = viewModel.filterBy.collectAsState(null)
+        val text = highlightedText(item.name, filter.value?.searchTerm ?: "")
+
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.Center,
         ) {
-            val checkedItems = viewModel.checkedItems.collectAsState()
-            SelectItemHeader(
-                item,
-                checkedItems.value.contains(item.uuid),
-                checkItem = viewModel::checkItem
+            Text(
+                text,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(BaseColors.LightGray.copy(alpha = .1f))
+                    .padding(horizontal = 12.dp, vertical = 4.dp),
+                fontSize = 16.sp,
+                textAlign = TextAlign.Start
             )
+
+            val errors = viewModel.itemErrorList.collectAsState(listOf())
+            val color =
+                if (errors.value.contains(item.uuid)) BaseColors.FireRed
+                else BaseColors.White
+            AddSubRow(
+                stockItem.amount,
+                color,
+            ) { viewModel.changeItemAmount(item.uuid, it) }
         }
     }
 }

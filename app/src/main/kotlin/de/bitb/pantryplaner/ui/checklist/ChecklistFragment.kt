@@ -39,6 +39,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Checklist
+import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.data.model.StockItem
 import de.bitb.pantryplaner.data.model.User
@@ -89,8 +90,9 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
         )
 
         if (showFilterDialog.value) {
+            val filter by viewModel.filterBy.collectAsState(Filter())
             FilterDialog(
-                viewModel.filterBy.value,
+                filter,
                 onConfirm = {
                     viewModel.filterBy.value = it
                     showFilterDialog.value = false
@@ -202,12 +204,12 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 if (items.isEmpty()) {
                     EmptyListComp(getString(R.string.no_items))
                 } else {
-                    val stockItems = model.stockItems!!
+                    val stockItems = model.stocks
                     GridListLayout(
                         innerPadding,
                         showGridLayout,
                         items,
-                        { stockItems.values.first().color }, // TODO color?
+                        { stockItems.first().items.first().color }, // TODO color?
                         viewModel::editCategory
                     ) { _, item ->
                         checkListItem(
@@ -215,7 +217,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                             categorys,
                             allUsers,
                             item,
-                            stockItems[item.uuid]!!,
+                            stockItems.first().items.first { it.uuid == item.uuid },
                         )
                     }
                 }
@@ -255,9 +257,9 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 verticalArrangement = Arrangement.Center,
             ) {
                 SelectItemHeader(
-                    stockItem,
                     item,
                     checkItem.checked,
+                    stockItem.color,
                     true,
                     viewModel::checkItem
                 )
