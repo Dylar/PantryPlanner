@@ -5,40 +5,35 @@ import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTextReplacement
 import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.testTags.DropDownItemTag
+import de.bitb.pantryplaner.ui.base.testTags.ProfilePageTag
+import de.bitb.pantryplaner.ui.base.testTags.SearchBarTag
 import de.bitb.pantryplaner.ui.base.testTags.SearchDropDownTag
+import de.bitb.pantryplaner.ui.base.testTags.StockPageTag
 import io.cucumber.java.en.And
 import io.cucumber.java.en.Then
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 
 @HiltAndroidTest
-class SearchDropDownSteps(
+class SearchBarSteps(
     val scenarioData: ScenarioData,
 ) : ComposeTestRule by scenarioData.composeRule {
 
-    @Then("Open dropdown {string}")
-    fun openDropdown(hint: String) {
-        onNodeWithTag(SearchDropDownTag(hint)).performClick()
+    @Then("Tap on SearchBar")
+    fun tapOnSearchBar() {
+        onNodeWithTag(StockPageTag.SearchButton).performClick()
         waitForIdle()
     }
 
-    @And("Input {string} as Item category")
-    fun inputAsItemCategory(input: String) {
-        onNodeWithTag(SearchDropDownTag("Kategorie")).performTextClearance()
-        onNodeWithTag(SearchDropDownTag("Kategorie")).performTextInput(input)
-        waitForIdle()
-    }
-
-    @Then("Dropdown option {string} is displayed")
-    fun dropdownOptionIsDisplayed(name: String) {
-        onNodeWithTag(DropDownItemTag(name)).assertIsDisplayed()
-    }
-
-    @Then("Select dropdown option {string}")
-    fun selectDropdownOption(name: String) {
-        onNodeWithTag(DropDownItemTag(name)).performClick()
+    @Then("Input search {string}")
+    fun inputSearch(search: String) {
+        onNodeWithTag(SearchBarTag).performTextClearance()
+        onNodeWithTag(SearchBarTag).performTextInput(search)
         waitForIdle()
     }
 

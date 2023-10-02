@@ -14,6 +14,7 @@ import de.bitb.pantryplaner.ui.overview.tapOnStockButton
 import de.bitb.pantryplaner.ui.profile.assertProfilePageRendered
 import de.bitb.pantryplaner.ui.profile.tapOnSettingsButton
 import de.bitb.pantryplaner.ui.settings.assertSettingsPageRendered
+import de.bitb.pantryplaner.ui.stock.INSTANT_SEARCH
 import de.bitb.pantryplaner.ui.stock.assertStockPageRendered
 import io.cucumber.java.en.Given
 
@@ -25,6 +26,7 @@ class StartingSteps(
     @Given("Run App")
     fun runApp() {
         SPLASH_TIMER = 0L
+        INSTANT_SEARCH = true
         scenarioData.launch()
         waitForIdle()
     }

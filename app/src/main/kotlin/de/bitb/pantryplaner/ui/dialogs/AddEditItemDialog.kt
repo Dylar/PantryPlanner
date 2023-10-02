@@ -3,6 +3,7 @@ package de.bitb.pantryplaner.ui.dialogs
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -11,7 +12,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,8 +19,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
@@ -74,7 +72,6 @@ fun useEditItemDialog(
     ) { si, i, _ -> onEdit(si, i, true) }
 }
 
-
 @Composable
 private fun useDialog(
     showDialog: MutableState<Boolean>,
@@ -114,8 +111,8 @@ private fun AddEditItemDialog(
     onConfirm: (StockItem, Item, Boolean) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val isStarted = remember { mutableStateOf(true) }
-    val focusRequester = remember { FocusRequester() }
+//    val isStarted = remember { mutableStateOf(true) }
+//    val focusRequester = remember { FocusRequester() }
 
     var name by remember {
         mutableStateOf(
@@ -157,8 +154,9 @@ private fun AddEditItemDialog(
                 OutlinedTextField(
                     modifier = Modifier
                         .testTag(AddEditItemDialogTag.NameLabel)
-                        .padding(horizontal = 16.dp)
-                        .focusRequester(focusRequester),
+//                        .focusRequester(focusRequester)
+                        .padding(4.dp)
+                        .fillMaxWidth(),
                     singleLine = true,
                     label = { Text(stringResource(R.string.item_name)) },
                     value = name,
@@ -187,12 +185,12 @@ private fun AddEditItemDialog(
                     ) { remindAfter.value = it.toLong() }
                 }
             }
-            LaunchedEffect(Unit) {
-                if (isStarted.value) {
-                    focusRequester.requestFocus()
-                    isStarted.value = false
-                }
-            }
+//            LaunchedEffect(Unit) {
+//                if (isStarted.value) {
+//                    isStarted.value = false
+//                    focusRequester.requestFocus()
+//                }
+//            }
         },
         confirmButton = {
             Button(
@@ -214,7 +212,7 @@ private fun AddEditItemDialog(
 private fun OutlinedComp(content: @Composable () -> Unit) {
     Column(
         modifier = Modifier
-            .padding(top = 16.dp, start = 16.dp, end = 16.dp)
+            .padding(top = 4.dp, start = 4.dp, end = 4.dp)
             .border(width = 2.dp, color = BaseColors.ZergPurple, shape = RoundedCornerShape(4.dp)),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.Start,

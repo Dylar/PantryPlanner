@@ -28,7 +28,7 @@ data class StockTag(val name: String) : TestTag {
         get() = super.tagName + ".$name"
 }
 
-data class ItemTag(val name: String) : TestTag {
+data class ItemTag(val category: String, val name: String) : TestTag {
     override val tagName: String
-        get() = super.tagName + ".$name"
+        get() = super.tagName + ".$category.$name"
 }

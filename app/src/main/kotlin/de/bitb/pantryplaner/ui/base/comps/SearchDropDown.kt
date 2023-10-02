@@ -48,7 +48,7 @@ import java.util.Locale
 fun buildCategoryDropDown(category: MutableState<TextFieldValue>, categorys: List<String>) {
     SearchDropDown(
         stringResource(R.string.item_category),
-        category.value.text,
+        category,
         addUnknownOption = true,
         options = categorys,
     ) { cat ->
@@ -65,8 +65,10 @@ fun buildUserDropDown(
     onSelect: (List<User>) -> Unit = {},
 ) {
     if (canChange) {
+        val selectedState = remember { mutableStateOf(TextFieldValue("")) }
         SearchDropDown(
             "Mit Benutzer teilen",
+            selectedState,
             clearOnSelection = true,
             options = users.filter { !selectedUser.value.contains(it) }.map { it.fullName },
         ) { selection ->
@@ -88,15 +90,12 @@ fun buildUserDropDown(
 @Composable
 private fun SearchDropDown(
     hint: String,
-    selected: String = "",
+    selectedState: MutableState<TextFieldValue>,
     options: List<String>,
     addUnknownOption: Boolean = false,
     clearOnSelection: Boolean = false,
     onConfirm: (String) -> Unit,
 ) {
-    var selectedState by remember {
-        mutableStateOf(TextFieldValue(selected, selection = TextRange(selected.length)))
-    }
     var expanded by remember { mutableStateOf(false) }
     ExposedDropdownMenuBox(
         modifier = Modifier
@@ -106,8 +105,8 @@ private fun SearchDropDown(
         onExpandedChange = { expanded = !expanded }
     ) {
         TextField(
-            value = selectedState,
-            onValueChange = { selectedState = it },
+            value = selectedState.value,
+            onValueChange = { selectedState.value = it },
             modifier = Modifier
                 .fillMaxWidth()
                 .menuAnchor()
@@ -115,7 +114,7 @@ private fun SearchDropDown(
             label = { Text(hint) },
             colors = ExposedDropdownMenuDefaults.textFieldColors(),
             singleLine = true,
-            keyboardActions = KeyboardActions(onDone = { onConfirm(selectedState.text) }),
+            keyboardActions = KeyboardActions(onDone = { onConfirm(selectedState.value.text) }),
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
         )
 
@@ -123,8 +122,8 @@ private fun SearchDropDown(
             expanded = expanded,
             onDismissRequest = { expanded = false },
         ) {
-            val addText = "\"${selectedState.text}\" wird neu angelegt"
-            val input = selectedState.text.lowercase(Locale.ROOT)
+            val addText = "\"${selectedState.value.text}\" wird neu angelegt"
+            val input = selectedState.value.text.lowercase(Locale.ROOT)
             val cats = options
                 .filter {
                     if (it.isBlank()) false
@@ -150,7 +149,7 @@ private fun SearchDropDown(
                         .testTag(DropDownItemTag(selectedOption)),
                     onClick = {
                         if (!isAddText) {
-                            selectedState =
+                            selectedState.value =
                                 if (clearOnSelection) {
                                     TextFieldValue("")
                                 } else {

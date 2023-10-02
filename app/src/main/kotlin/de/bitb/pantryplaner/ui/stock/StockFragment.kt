@@ -262,7 +262,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
             Text(
                 text,
                 modifier = Modifier
-                    .testTag(ItemTag(item.name))
+                    .testTag(ItemTag(item.category, item.name))
                     .fillMaxWidth()
                     .background(BaseColors.LightGray.copy(alpha = .1f))
                     .padding(horizontal = 12.dp, vertical = 4.dp),

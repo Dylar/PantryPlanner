@@ -38,7 +38,7 @@ Feature: ProfilePage Stock management
     And   Stock "SharedStock" is displayed
     And   SnackBar shown: "Nur der Ersteller kann den Ort ändern"
 
-  Scenario: Edit a created Stock
+  Scenario: Edit a created Stock name
     When  LongPress on Stock "CreatorStock"
     And   AddEditStockDialog is displayed
     And   Input "EditStock" as Stock name

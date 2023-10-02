@@ -33,6 +33,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+//TODO just for now
+var INSTANT_SEARCH = false
+
 data class StockModel(
     val stocks: List<Stock>?,
     val items: Map<String, List<Item>>?,
@@ -56,7 +59,7 @@ class StockViewModel @Inject constructor(
 
     val filterBy = MutableStateFlow(Filter())
     val stockModel: LiveData<Resource<StockModel>> = filterBy
-        .debounce { if (_isSearching.value) 1000L else 0L }
+        .debounce { if (!INSTANT_SEARCH && _isSearching.value) 1000L else 0L }
         .flatMapLatest { itemRepo.getItems(filterBy = it) }
         .flatMapLatest { itemsResp ->
             if (itemsResp is Resource.Error) return@flatMapLatest MutableStateFlow(itemsResp.castTo())

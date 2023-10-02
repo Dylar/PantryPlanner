@@ -11,20 +11,20 @@
         <action
             android:id="@+id/splash_to_login"
             app:destination="@id/loginFragment"
-            app:popUpTo="@+id/nav_graph"
+            app:popUpTo="@+id/splashFragment"
             app:popUpToInclusive="true" />
 
         <action
             android:id="@+id/splash_to_overview"
             app:destination="@id/overviewFragment"
-            app:popUpTo="@+id/nav_graph"
+            app:popUpTo="@+id/splashFragment"
             app:popUpToInclusive="true" />
 
         <action
             android:id="@+id/overview_to_refresh"
             app:destination="@id/refreshFragment"
             app:popUpTo="@+id/overviewFragment"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="false" />
     </fragment>
 
     <fragment

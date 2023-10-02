@@ -2,15 +2,20 @@ package de.bitb.pantryplaner.ui.dialog
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import dagger.hilt.android.testing.HiltAndroidTest
+import de.bitb.pantryplaner.core.hasTextInHierarchy
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.testTags.AddEditItemDialogTag
+import de.bitb.pantryplaner.ui.base.testTags.SearchDropDownTag
 import io.cucumber.java.en.And
 import io.cucumber.java.en.Then
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 
 @HiltAndroidTest
 class AddEditItemDialogSteps(
@@ -20,6 +25,20 @@ class AddEditItemDialogSteps(
     @Then("AddEditItemDialog is displayed")
     fun addEditItemDialogIsDisplayed() {
         assertAddEditItemDialogRendered()
+    }
+
+    @Then("Item name is {string}")
+    fun itemNameIs(name: String) {
+        onNodeWithTag(AddEditItemDialogTag.NameLabel)
+            .hasTextInHierarchy(name)
+            .assertIsDisplayed()
+    }
+
+    @Then("Item category is {string}")
+    fun itemCategoryIs(name: String) {
+        onNodeWithTag(SearchDropDownTag("Kategorie"))
+            .hasTextInHierarchy(name)
+            .assertIsDisplayed()
     }
 
     @And("Input {string} as Item name")

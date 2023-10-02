@@ -144,8 +144,8 @@ private fun AddEditStockDialog(
 
             LaunchedEffect(Unit) {
                 if (isStarted.value) {
-                    focusRequester.requestFocus()
                     isStarted.value = false
+                    focusRequester.requestFocus()
                 }
             }
         },

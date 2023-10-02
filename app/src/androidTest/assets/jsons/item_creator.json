@@ -1,7 +1,7 @@
 {
   "uuid": "item123",
   "name": "CreatorItem",
-  "category": "ItemCategory",
+  "category": "CreatorCategory",
   "creator": "user123",
   "createdAt": "2022-01-01T12:00:00Z",
   "sharedWith": []

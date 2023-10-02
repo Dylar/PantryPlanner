@@ -3,9 +3,12 @@ package de.bitb.pantryplaner.ui.stock
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.longClick
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeRight
 import dagger.hilt.android.testing.HiltAndroidTest
+import de.bitb.pantryplaner.R
+import de.bitb.pantryplaner.core.getString
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.testTags.ItemTag
@@ -17,30 +20,33 @@ class ItemSteps(
     val scenarioData: ScenarioData,
 ) : ComposeTestRule by scenarioData.composeRule {
 
-    @Then("Item {string} is displayed")
-    fun itemIsDisplayed(name: String) {
-        onNodeWithTag(ItemTag(name), true).assertIsDisplayed()
+    @Then("No Items displayed")
+    fun noItemsDisplayed() {
+        onNodeWithText(getString(R.string.no_items)).assertIsDisplayed()
         waitForIdle()
     }
 
-    @Then("Item {string} is NOT displayed")
-    fun itemIsNotDisplayed(name: String) {
-        onNodeWithTag(ItemTag(name), true).assertDoesNotExist()
+    @Then("Item {string} in category {string} is displayed")
+    fun itemInCategoryIsDisplayed(name: String, category: String) {
+        onNodeWithTag(ItemTag(category, name), true).assertIsDisplayed()
         waitForIdle()
     }
 
-    @Then("Swipe to remove Item {string}")
-    fun swipeToRemoveItem(name: String) {
-        //TODO do we need unmergedTree?
-        onNodeWithTag(ItemTag(name), true)
-            .performTouchInput { swipeRight() }
+    @Then("Item {string} in category {string} is NOT displayed")
+    fun itemInCategoryIsNotDisplayed(name: String, category: String) {
+        onNodeWithTag(ItemTag(category, name), true).assertDoesNotExist()
         waitForIdle()
     }
 
-    @When("LongPress on Item {string}")
-    fun longPressOnItem(name: String) {
-        onNodeWithTag(ItemTag(name), true)
-            .performTouchInput { longClick() }
+    @Then("Swipe to remove Item {string} in category {string}")
+    fun swipeToRemoveItem(name: String, category: String) {
+        onNodeWithTag(ItemTag(category, name), true).performTouchInput { swipeRight() }
+        waitForIdle()
+    }
+
+    @When("LongPress on Item {string} in category {string}")
+    fun longPressOnItemInCategory(name: String, category: String) {
+        onNodeWithTag(ItemTag(category, name), true).performTouchInput { longClick() }
         waitForIdle()
     }
 }
