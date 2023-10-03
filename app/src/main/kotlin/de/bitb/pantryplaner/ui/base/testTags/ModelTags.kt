@@ -32,3 +32,8 @@ data class ItemTag(val category: String, val name: String) : TestTag {
     override val tagName: String
         get() = super.tagName + ".$category.$name"
 }
+
+data class ChecklistTag(val name: String) : TestTag {
+    override val tagName: String
+        get() = super.tagName + ".$name"
+}

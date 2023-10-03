@@ -57,8 +57,8 @@ class CheckRepositoryImpl(
     }
 
     override suspend fun deleteChecklist(check: Checklist): Resource<Boolean> =
-        remoteDB.deleteChecklist(localDB.getUser(), check)
+        remoteDB.deleteChecklist(check)
 
     override suspend fun saveChecklist(check: Checklist): Resource<Unit> =
-        remoteDB.saveChecklist(localDB.getUser(), check.copy(updatedAt = formatDateNow()))
+        remoteDB.saveChecklist(check.copy(updatedAt = formatDateNow()))
 }

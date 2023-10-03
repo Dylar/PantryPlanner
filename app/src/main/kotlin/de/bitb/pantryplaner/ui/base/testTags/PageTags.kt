@@ -30,7 +30,7 @@ sealed class OverviewPageTag : TestTag {
     object AppBar : OverviewPageTag()
     object ProfileButton : OverviewPageTag()
     object LayoutButton : OverviewPageTag()
-    object AddButton : OverviewPageTag()
+    object NewChecklistButton : OverviewPageTag()
     object StockButton : OverviewPageTag()
 }
 

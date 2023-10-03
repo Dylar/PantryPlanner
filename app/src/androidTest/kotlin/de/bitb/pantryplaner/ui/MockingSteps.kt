@@ -5,9 +5,12 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.data.source.RemoteService
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.test.defaultPW
+import de.bitb.pantryplaner.test.mockChecklistDao
 import de.bitb.pantryplaner.test.mockItemDao
 import de.bitb.pantryplaner.test.mockStockDao
 import de.bitb.pantryplaner.test.mockUserDao
+import de.bitb.pantryplaner.test.parseChecklistCreator
+import de.bitb.pantryplaner.test.parseChecklistShared
 import de.bitb.pantryplaner.test.parseItemCreator
 import de.bitb.pantryplaner.test.parseItemShared
 import de.bitb.pantryplaner.test.parseStockCreator
@@ -31,6 +34,7 @@ class MockingSteps(
         remoteService.mockUserDao()
         remoteService.mockStockDao()
         remoteService.mockItemDao()
+        remoteService.mockChecklistDao()
     }
 
     @Given("Init default Mocks")
@@ -39,6 +43,7 @@ class MockingSteps(
         mockDefaultUsers()
         mockDefaultStocks()
         mockDefaultItems()
+        mockDefaultChecklists()
     }
 
     @Given("Mock default Users")
@@ -66,6 +71,13 @@ class MockingSteps(
         val item1 = parseItemCreator()
         val item2 = parseItemShared()
         remoteService.mockItemDao(listOf(item1, item2))
+    }
+
+    @Given("Mock default Checklists")
+    fun mockDefaultChecklists() {
+        val check1 = parseChecklistCreator()
+        val check2 = parseChecklistShared()
+        remoteService.mockChecklistDao(listOf(check1, check2))
     }
 
 }

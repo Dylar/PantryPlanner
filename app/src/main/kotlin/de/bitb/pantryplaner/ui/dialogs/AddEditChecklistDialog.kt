@@ -8,55 +8,51 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
-import de.bitb.pantryplaner.data.model.Stock
+import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.comps.buildUserDropDown
-import de.bitb.pantryplaner.ui.base.testTags.AddEditStockDialogTag
+import de.bitb.pantryplaner.ui.base.testTags.AddEditChecklistDialogTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 
 @Composable
-fun useAddStockDialog(
+fun useAddChecklistDialog(
     showDialog: MutableState<Boolean>,
     users: List<User>,
-    onEdit: (Stock, Boolean) -> Unit,
+    onEdit: (Checklist, Boolean) -> Unit,
 ) {
     useDialog(
         showDialog,
-        "Ort erstellen", "Hinzufügen",
-        Stock(),
+        "Checklist erstellen", "Hinzufügen",
+        Checklist(),
         users,
         onEdit
     )
 }
 
 @Composable
-fun useEditStockDialog(
+fun useEditChecklistDialog(
     showDialog: MutableState<Boolean>,
-    stock: Stock,
+    checklist: Checklist,
     users: List<User>,
-    onEdit: (Stock, Boolean) -> Unit,
+    onEdit: (Checklist, Boolean) -> Unit,
 ) {
     useDialog(
         showDialog,
-        "Ort bearbeiten", "Speichern",
-        stock,
+        "Checklist bearbeiten", "Speichern",
+        checklist,
         users,
-    ) { stockX, _ -> onEdit(stockX, true) }
+    ) { checklistX, _ -> onEdit(checklistX, true) }
 }
 
 
@@ -65,15 +61,15 @@ private fun useDialog(
     showDialog: MutableState<Boolean>,
     title: String,
     confirmButton: String,
-    stock: Stock,
+    checklist: Checklist,
     users: List<User>,
-    onConfirm: (Stock, Boolean) -> Unit,
+    onConfirm: (Checklist, Boolean) -> Unit,
 ) {
     if (showDialog.value) {
-        AddEditStockDialog(
+        AddEditChecklistDialog(
             title = title,
             confirmButton = confirmButton,
-            stock = stock,
+            checklist = checklist,
             users = users,
             onConfirm = { loc, close ->
                 onConfirm(loc, close)
@@ -85,12 +81,12 @@ private fun useDialog(
 }
 
 @Composable
-private fun AddEditStockDialog(
+private fun AddEditChecklistDialog(
     title: String,
     confirmButton: String,
-    stock: Stock,
+    checklist: Checklist,
     users: List<User>,
-    onConfirm: (Stock, Boolean) -> Unit,
+    onConfirm: (Checklist, Boolean) -> Unit,
     onDismiss: () -> Unit,
 ) {
 //    val isStarted = remember { mutableStateOf(true) }
@@ -99,18 +95,18 @@ private fun AddEditStockDialog(
     var name by remember {
         mutableStateOf(
             TextFieldValue(
-                text = stock.name,
-                selection = TextRange(stock.name.length)
+                text = checklist.name,
+                selection = TextRange(checklist.name.length)
             )
         )
     }
 
     val selectedUser = remember {
-        val selected = users.filter { stock.sharedWith.contains(it.uuid) }
+        val selected = users.filter { checklist.sharedWith.contains(it.uuid) }
         mutableStateOf(selected)
     }
 
-    fun copyStock() = stock.copy(
+    fun copyChecklist() = checklist.copy(
         name = name.text,
         sharedWith = selectedUser.value.map { it.uuid }.toList(),
     )
@@ -126,7 +122,7 @@ private fun AddEditStockDialog(
             Column {
                 OutlinedTextField(
                     modifier = Modifier
-                        .testTag(AddEditStockDialogTag.NameLabel)
+                        .testTag(AddEditChecklistDialogTag.NameLabel)
 //                        .focusRequester(focusRequester)
                         .padding(horizontal = 16.dp),
                     singleLine = true,
@@ -135,12 +131,12 @@ private fun AddEditStockDialog(
                     onValueChange = { name = it },
                     keyboardActions = KeyboardActions(
                         onDone = {
-                            onConfirm(copyStock(), false)
+                            onConfirm(copyChecklist(), false)
                             name = TextFieldValue()
                         },
                     ),
                 )
-                buildUserDropDown("Ort wird nicht geteilt", users, selectedUser)
+                buildUserDropDown("Checkliste wird nicht geteilt", users, selectedUser)
             }
 
 //            LaunchedEffect(Unit) {
@@ -152,8 +148,8 @@ private fun AddEditStockDialog(
         },
         confirmButton = {
             Button(
-                modifier = Modifier.testTag(AddEditStockDialogTag.ConfirmButton),
-                onClick = { onConfirm(copyStock(), true) },
+                modifier = Modifier.testTag(AddEditChecklistDialogTag.ConfirmButton),
+                onClick = { onConfirm(copyChecklist(), true) },
                 content = { Text(confirmButton) }
             )
         },

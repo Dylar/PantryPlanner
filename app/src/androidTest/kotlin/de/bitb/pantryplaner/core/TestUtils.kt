@@ -10,7 +10,9 @@ import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.gson.Gson
+import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.ui.base.testTags.TestTag
+import kotlinx.coroutines.flow.MutableStateFlow
 
 inline fun <reified T> parsePOKO(fileName: String): T {
     val json = readJsonFromAssets(fileName)
@@ -31,6 +33,17 @@ fun getString(@StringRes id: Int, vararg args: Any): String {
         .targetContext
         .resources
         .getString(id, *args)
+}
+
+fun <T> createFlows(
+    items: List<T>,
+    extractUUIDs: (T) -> List<String>
+): MutableMap<String, MutableStateFlow<Resource<List<T>>>> {
+    return items
+        .flatMap { item -> extractUUIDs(item).map { uuid -> uuid to item } }
+        .groupBy { it.first }
+        .mapValues { (_, itemList) -> MutableStateFlow<Resource<List<T>>>(Resource.Success(itemList.map { it.second })) }
+        .toMutableMap()
 }
 
 fun ComposeTestRule.onNodeWithTag(

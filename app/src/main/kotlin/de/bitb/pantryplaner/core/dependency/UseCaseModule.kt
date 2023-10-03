@@ -97,7 +97,8 @@ object UsecaseModule {
             finishChecklistUC = FinishChecklistUC(localDB, checkRepo, stockRepo),
             unfinishChecklistUC = UnfinishChecklistUC(localDB, checkRepo, stockRepo),
             setItemAmountUC = SetItemAmountUC(checkRepo),
-            setSharedWithUC = SetSharedWithUC(checkRepo),
+            setSharedWithUC = SetSharedWithUC(userRepo, checkRepo),
+            saveChecklistUC = SaveChecklistUC(userRepo, checkRepo)
         )
     }
 

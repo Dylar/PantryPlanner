@@ -30,7 +30,7 @@ class FireCheckService(
         return getOwnedOrShared(userId, ids, ::ownerCollection, ::sharedCollection)
     }
 
-    override suspend fun saveChecklist(userId: String, check: Checklist): Resource<Unit> {
+    override suspend fun saveChecklist(check: Checklist): Resource<Unit> {
         return tryIt {
             checkCollection
                 .whereEqualTo("uuid", check.uuid)
@@ -56,9 +56,8 @@ class FireCheckService(
         }
     }
 
-    override suspend fun deleteChecklist(userId: String, check: Checklist): Resource<Boolean> {
+    override suspend fun deleteChecklist(check: Checklist): Resource<Boolean> {
         return tryIt {
-            val checkCollection = ownerCollection(userId)
             val querySnapshot = checkCollection
                 .whereEqualTo("uuid", check.uuid)
                 .get().await()

@@ -55,7 +55,7 @@ import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.RefreshPageTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.comps.SelectItemHeader
-import de.bitb.pantryplaner.ui.dialogs.AddChecklistDialog
+import de.bitb.pantryplaner.ui.dialogs.useAddChecklistDialog
 
 @AndroidEntryPoint
 class RefreshFragment : BaseFragment<RefreshViewModel>() {
@@ -136,13 +136,13 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
             if (showAddToDialog.value) {
                 val users = viewModel.getConnectedUsers().observeAsState()
                 if (users.value is Resource.Success) {
-                    AddChecklistDialog(
-                        users.value!!.data!!,
-                        onConfirm = { name, sharedWith ->
-                            viewModel.addToNewChecklist(name, sharedWith)
+                    useAddChecklistDialog(
+                        showDialog = showAddToDialog, users = users.value!!.data!!,
+                        onEdit = { checklist, _ ->
+                            // TODO add checklist not just properties ?
+                            viewModel.addToNewChecklist(checklist.name, checklist.sharedWith)
                             showAddToDialog.value = false
                         },
-                        onDismiss = { showAddToDialog.value = false },
                     )
                 }
             }

@@ -11,6 +11,11 @@ sealed class AddEditStockDialogTag : TestTag {
 }
 
 sealed class AddEditItemDialogTag : TestTag {
-    object NameLabel : AddEditStockDialogTag()
-    object ConfirmButton : AddEditStockDialogTag()
+    object NameLabel : AddEditItemDialogTag()
+    object ConfirmButton : AddEditItemDialogTag()
+}
+
+sealed class AddEditChecklistDialogTag : TestTag {
+    object NameLabel : AddEditChecklistDialogTag()
+    object ConfirmButton : AddEditChecklistDialogTag()
 }

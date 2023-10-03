@@ -1,5 +1,6 @@
 package de.bitb.pantryplaner.test
 
+import de.bitb.pantryplaner.core.createFlows
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.parsePOKO
 import de.bitb.pantryplaner.data.model.Stock
@@ -14,11 +15,9 @@ fun parseStockShared(): Stock = parsePOKO("stock_shared")
 fun StockRemoteDao.mockStockDao(
     stocks: List<Stock> = emptyList()
 ) {
-    val stocksFlows = stocks
-        .flatMap { stock -> (listOf(stock.creator) + stock.sharedWith).map { uuid -> uuid to stock } }
-        .groupBy { it.first }
-        .mapValues { (_, stocksList) -> MutableStateFlow(Resource.Success(stocksList.map { it.second })) }
-        .toMutableMap()
+    val stocksFlows = createFlows(stocks) { stock ->
+        (listOf(stock.creator) + stock.sharedWith)
+    }
 
     coEvery { getStocks(any()) }.answers {
         val uuid = firstArg<String>()

@@ -45,6 +45,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Checklist
+import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
@@ -55,10 +56,12 @@ import de.bitb.pantryplaner.ui.base.naviOverviewToItems
 import de.bitb.pantryplaner.ui.base.naviToChecklist
 import de.bitb.pantryplaner.ui.base.naviToProfile
 import de.bitb.pantryplaner.ui.base.naviToRefresh
+import de.bitb.pantryplaner.ui.base.testTags.ChecklistTag
 import de.bitb.pantryplaner.ui.base.testTags.OverviewPageTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
-import de.bitb.pantryplaner.ui.dialogs.AddChecklistDialog
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
+import de.bitb.pantryplaner.ui.dialogs.useAddChecklistDialog
+import de.bitb.pantryplaner.ui.dialogs.useEditChecklistDialog
 
 @Preview(showBackground = true)
 @Composable
@@ -84,20 +87,6 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
             content = { buildContent(it) },
             floatingActionButton = { buildFab() },
         )
-
-        if (showAddDialog.value) {
-            val users = viewModel.getConnectedUsers().observeAsState()
-            if (users.value is Resource.Success) {
-                AddChecklistDialog(
-                    users.value!!.data!!,
-                    onConfirm = { name, sharedWith ->
-                        viewModel.addChecklist(name, sharedWith)
-                        showAddDialog.value = false
-                    },
-                    onDismiss = { showAddDialog.value = false },
-                )
-            }
-        }
     }
 
     @Composable
@@ -135,7 +124,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
             verticalArrangement = Arrangement.Center,
         ) {
             SmallFloatingActionButton(
-                modifier = Modifier.testTag(OverviewPageTag.AddButton),
+                modifier = Modifier.testTag(OverviewPageTag.NewChecklistButton),
                 onClick = { showAddDialog.value = true },
                 containerColor = MaterialTheme.colors.secondaryVariant,
                 shape = RoundedCornerShape(12.dp),
@@ -147,7 +136,6 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
                 )
             }
 
-            //TODO add testTags
 // TODO open multi adding -> add template or checklist -> no everything is a checklist ... or more FABs
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -167,46 +155,63 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
 
     @Composable
     private fun buildContent(innerPadding: PaddingValues) {
-        val checklists by viewModel.checkList.observeAsState(null)
+        val model by viewModel.overviewModel.observeAsState(null)
         when {
-            checklists is Resource.Error -> ErrorScreen(checklists!!.message!!.asString())
-            checklists == null -> LoadingIndicator()
-            checklists?.data?.isEmpty() == true -> EmptyListComp(getString(R.string.no_checklists))
-            else -> Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                // TODO depending if needed
-                Button(
-                    onClick = ::naviToRefresh,
-                    shape = MaterialTheme.shapes.medium,
-                    elevation = ButtonDefaults.elevation(8.dp),
-                    modifier = Modifier.padding(8.dp)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.ShoppingCartCheckout,
-                            contentDescription = "Refresh button"
-                        )
-                        Text(text = "Bestand aktualisieren")
-                    }
+            model is Resource.Error -> ErrorScreen(model!!.message!!.asString())
+            model?.data?.isLoading != false -> LoadingIndicator()
+            else -> {
+                val checkLists = model!!.data!!.checkList!!
+                val users = model!!.data!!.connectedUser!!
+                useAddChecklistDialog(
+                    showDialog = showAddDialog,
+                    users = users,
+                    onEdit = { checklist, _ ->
+                        // TODO add checklist not just properties ?
+                        viewModel.addChecklist(checklist.name, checklist.sharedWith)
+                        showAddDialog.value = false
+                    },
+                )
+                if (checkLists.isEmpty()) {
+                    EmptyListComp(getString(R.string.no_items))
+                    return
                 }
-                GridListLayout(
-                    innerPadding,
-                    showGridLayout,
-                    checklists!!.data!!.mapKeys { if (it.key) "Erledigt" else "Checklist" },
-                    { it.color },
-                ) { _, item -> checkListItem(item) }
+
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // TODO depending if needed
+                    Button(
+                        onClick = ::naviToRefresh,
+                        shape = MaterialTheme.shapes.medium,
+                        elevation = ButtonDefaults.elevation(8.dp),
+                        modifier = Modifier.padding(8.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ShoppingCartCheckout,
+                                contentDescription = "Refresh button"
+                            )
+                            Text(text = "Bestand aktualisieren")
+                        }
+                    }
+                    GridListLayout(
+                        innerPadding,
+                        showGridLayout,
+                        checkLists.mapKeys { if (it.key) "Erledigt" else "Checklist" },
+                        { it.color },
+                    ) { _, item -> checkListItem(item, users) }
+                }
             }
         }
     }
 
     @Composable
-    private fun checkListItem(checklist: Checklist) {
+    private fun checkListItem(checklist: Checklist, users: List<User>) {
         val showUnfinishDialog = remember { mutableStateOf(false) }
         if (showUnfinishDialog.value) {
             ConfirmDialog(
@@ -220,6 +225,17 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
             )
         }
 
+        val showEditDialog = remember { mutableStateOf(false) }
+        useEditChecklistDialog(
+            showDialog = showEditDialog,
+            checklist = checklist,
+            users = users,
+            onEdit = { check, _ ->
+                showEditDialog.value = false
+                viewModel.editChecklist(check)
+            }
+        )
+
         dissmissItem(
             checklist.name,
             checklist.color,
@@ -228,9 +244,11 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
                 if (checklist.finished) showUnfinishDialog.value = true
                 else naviToChecklist(checklist.uuid)
             },
+            onLongClick = { showEditDialog.value = true }
         ) {
             Row(
                 modifier = Modifier
+                    .testTag(ChecklistTag(checklist.name))
                     .defaultMinSize(minHeight = 48.dp)
                     .padding(12.dp),
                 verticalAlignment = Alignment.CenterVertically,

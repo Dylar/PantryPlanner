@@ -7,6 +7,7 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.testTags.OverviewPageTag
+import de.bitb.pantryplaner.ui.base.testTags.ProfilePageTag
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 
@@ -27,13 +28,19 @@ class OverviewPageSteps(
     fun tapOnStockButtonStep() {
         tapOnStockButton()
     }
+
+    @When("Tap on NewChecklistButton")
+    fun tapOnNewChecklistButton() {
+        onNodeWithTag(OverviewPageTag.NewChecklistButton).performClick()
+        waitForIdle()
+    }
 }
 
 fun ComposeTestRule.assertOverviewPageRendered() {
     onNodeWithTag(OverviewPageTag.AppBar).assertIsDisplayed()
     onNodeWithTag(OverviewPageTag.ProfileButton).assertIsDisplayed()
     onNodeWithTag(OverviewPageTag.LayoutButton).assertIsDisplayed()
-    onNodeWithTag(OverviewPageTag.AddButton).assertIsDisplayed()
+    onNodeWithTag(OverviewPageTag.NewChecklistButton).assertIsDisplayed()
     onNodeWithTag(OverviewPageTag.StockButton).assertIsDisplayed()
 }
 
