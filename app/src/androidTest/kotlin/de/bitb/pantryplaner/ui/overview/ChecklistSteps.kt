@@ -4,6 +4,8 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onParent
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeRight
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -28,25 +30,35 @@ class ChecklistSteps(
 
     @Then("Checklist {string} is displayed")
     fun checklistIsDisplayed(name: String) {
-        onNodeWithTag(ChecklistTag( name), true).assertIsDisplayed()
+        onNodeWithTag(ChecklistTag(name), true).assertIsDisplayed()
         waitForIdle()
     }
 
     @Then("Checklist {string} is NOT displayed")
     fun checklistIsNotDisplayed(name: String) {
-        onNodeWithTag(ChecklistTag( name), true).assertDoesNotExist()
+        onNodeWithTag(ChecklistTag(name), true).assertDoesNotExist()
         waitForIdle()
     }
 
     @Then("Swipe to remove Checklist {string}")
     fun swipeToRemoveChecklist(name: String) {
-        onNodeWithTag(ChecklistTag( name), true).performTouchInput { swipeRight() }
+        onNodeWithTag(ChecklistTag(name), true).performTouchInput { swipeRight() }
         waitForIdle()
     }
 
     @When("LongPress on Checklist {string}")
     fun longPressOnChecklist(name: String) {
-        onNodeWithTag(ChecklistTag( name), true).performTouchInput { longClick() }
+        onNodeWithTag(ChecklistTag(name), true).performTouchInput { longClick() }
         waitForIdle()
     }
+
+    @When("Tap on Checklist {string}")
+    fun performTapOnChecklist(name: String) {
+        tapOnChecklist(name)
+    }
+}
+
+fun ComposeTestRule.tapOnChecklist(name: String) {
+    onNodeWithTag(ChecklistTag(name), true).performClick()
+    waitForIdle()
 }

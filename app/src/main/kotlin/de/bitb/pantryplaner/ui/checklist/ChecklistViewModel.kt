@@ -6,6 +6,7 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.castOnError
 import de.bitb.pantryplaner.data.CheckRepository
@@ -37,12 +38,12 @@ data class CheckModel(
     val isCreator: Boolean?,
     val checklist: Checklist?,
     val items: Map<String, List<Item>>?,
-    val stocks: List<Stock>,
+    val stocks: List<Stock>?,
     val allUser: List<User>?,
     val sharedUser: List<User>?,
 ) {
     val isLoading: Boolean
-        get() = isCreator == null || checklist == null || items == null || allUser == null || sharedUser == null
+        get() = isCreator == null || checklist == null || items == null || stocks == null || allUser == null || sharedUser == null
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -106,13 +107,16 @@ class ChecklistViewModel @Inject constructor(
                         stocks is Resource.Error -> return@combine stocks.castTo()
                         else -> Resource.Success(
                             CheckModel(
-                                isCreator.data!!,
+                                isCreator.data,
                                 checklist,
-                                items.data!!,
-                                stocks.data!!,
-                                allUsers.data!!,
-                                users.data!!,
-                            ),
+                                items.data,
+                                stocks.data,
+                                allUsers.data,
+                                users.data,
+                            ).also {
+                                Logger.printLog("Model: ${it}")
+                                Logger.printLog("Model: $it")
+                            },
                         )
                     }
                 }

@@ -3,5 +3,23 @@
   "name": "CreatorStock",
   "creator": "user123",
   "createdAt": "2022-01-01T12:00:00Z",
-  "sharedWith": []
+  "sharedWith": [],
+  "items": [
+    {
+      "uuid": "item123",
+      "amount": 1.0,
+      "colorHex": -7829368,
+      "updatedAt": "2023-10-01T11:00:00",
+      "freshUntil": 3,
+      "remindAfter": 7
+    },
+    {
+      "uuid": "item321",
+      "amount": 2.5,
+      "colorHex": -3355444,
+      "updatedAt": "2023-09-30T14:20:00",
+      "freshUntil": 2,
+      "remindAfter": 5
+    }
+  ]
 }

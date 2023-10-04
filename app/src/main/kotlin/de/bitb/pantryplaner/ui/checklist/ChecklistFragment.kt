@@ -155,6 +155,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
             verticalArrangement = Arrangement.Center,
         ) {
             SmallFloatingActionButton(
+                modifier = Modifier.testTag(ChecklistPageTag.AddItemButton),
                 onClick = { naviChecklistToItems(viewModel.checkListId) },
                 containerColor = colors.secondaryVariant,
                 shape = RoundedCornerShape(12.dp),
@@ -167,6 +168,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
             }
             Spacer(modifier = Modifier.height(8.dp))
             ExtendedFloatingActionButton(
+                modifier = Modifier.testTag(ChecklistPageTag.FinishButton),
                 text = { Text(text = "Erledigen") },
                 icon = {
                     Icon(
@@ -191,6 +193,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 val model = checkModel.data
                 val items = model.items!!
                 val categorys = items.keys.toList()
+                val stocks = model.stocks!!
                 val allUsers = model.allUser!!
                 val selectedUser = remember { mutableStateOf(model.sharedUser!!) }
                 buildUserDropDown(
@@ -204,12 +207,14 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 if (items.isEmpty()) {
                     EmptyListComp(getString(R.string.no_items))
                 } else {
-                    val stockItems = model.stocks
                     GridListLayout(
                         innerPadding,
                         showGridLayout,
                         items,
-                        { stockItems.first().items.first().color }, // TODO color?
+                        {
+                            stocks.firstOrNull()?.items?.firstOrNull()?.color
+                                ?: BaseColors.LightGray
+                        }, // TODO color?
                         viewModel::editCategory
                     ) { _, item ->
                         checkListItem(
@@ -217,7 +222,8 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                             categorys,
                             allUsers,
                             item,
-                            stockItems.first().items.first { it.uuid == item.uuid },
+                            stocks.firstOrNull()?.items?.firstOrNull { it.uuid == item.uuid }
+                                ?: StockItem(item.uuid),
                         )
                     }
                 }

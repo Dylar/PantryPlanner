@@ -39,7 +39,7 @@ class ScenarioData(
     @get:Rule(order = 1)
     val composeRule = createEmptyComposeRule()
 
-    private var scenario: ActivityScenario<*>? = null
+    var scenario: ActivityScenario<MainActivity>? = null
 
     @After
     fun close() = scenario?.close()

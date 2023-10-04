@@ -2,13 +2,16 @@ package de.bitb.pantryplaner.ui
 
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.test.defaultPW
 import de.bitb.pantryplaner.test.parseUser
+import de.bitb.pantryplaner.ui.checklist.assertChecklistPageRendered
 import de.bitb.pantryplaner.ui.intro.SPLASH_TIMER
 import de.bitb.pantryplaner.ui.intro.assertLoginPageRendered
 import de.bitb.pantryplaner.ui.intro.loginUserWith
 import de.bitb.pantryplaner.ui.overview.assertOverviewPageRendered
+import de.bitb.pantryplaner.ui.overview.tapOnChecklist
 import de.bitb.pantryplaner.ui.overview.tapOnProfileButton
 import de.bitb.pantryplaner.ui.overview.tapOnStockButton
 import de.bitb.pantryplaner.ui.profile.assertProfilePageRendered
@@ -17,6 +20,8 @@ import de.bitb.pantryplaner.ui.settings.assertSettingsPageRendered
 import de.bitb.pantryplaner.ui.stock.INSTANT_SEARCH
 import de.bitb.pantryplaner.ui.stock.assertStockPageRendered
 import io.cucumber.java.en.Given
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 
 @HiltAndroidTest
 class StartingSteps(
@@ -43,6 +48,13 @@ class StartingSteps(
         val user = parseUser()
         loginUserWith(user.email, defaultPW)
         assertOverviewPageRendered()
+    }
+
+    @Given("Start on ChecklistPage {string}")
+    fun startOnChecklistPage(name:String) {
+        startOnOverviewPage()
+        tapOnChecklist(name)
+        assertChecklistPageRendered()
     }
 
     @Given("Start on StockPage")

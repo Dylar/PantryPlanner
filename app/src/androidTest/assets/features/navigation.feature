@@ -29,10 +29,10 @@ Feature: App navigation
     When  Tap on ProfileButton
     Then  ProfilePage rendered
 
-#  Scenario: Navigate to ChecklistPage
-#    Given Start on OverviewPage
-#    When  Tap on Checklist
-#    Then  ChecklistPage rendered
+  Scenario: Navigate to ChecklistPage
+    Given Start on OverviewPage
+    When  Tap on Checklist "CreatorChecklist"
+    Then  ChecklistPage rendered
 
 # start on ProfilePage
   Scenario: Navigate to SettingsPage

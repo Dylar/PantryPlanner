@@ -6,8 +6,8 @@ import androidx.compose.ui.test.performClick
 import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
+import de.bitb.pantryplaner.ui.base.testTags.ChecklistTag
 import de.bitb.pantryplaner.ui.base.testTags.OverviewPageTag
-import de.bitb.pantryplaner.ui.base.testTags.ProfilePageTag
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 
@@ -25,7 +25,7 @@ class OverviewPageSteps(
     }
 
     @When("Tap on StockButton")
-    fun tapOnStockButtonStep() {
+    fun performTapOnStockButton() {
         tapOnStockButton()
     }
 

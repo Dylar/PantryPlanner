@@ -40,7 +40,6 @@ sealed class StockPageTag : TestTag {
     object LayoutButton : StockPageTag()
     object FilterButton : StockPageTag()
     object NewItemButton : StockPageTag()
-    //TODO add/edit dialog
 }
 
 sealed class ItemsPageTag : TestTag {
@@ -48,13 +47,14 @@ sealed class ItemsPageTag : TestTag {
     object SearchButton : ItemsPageTag()
     object LayoutButton : ItemsPageTag()
     object FilterButton : ItemsPageTag()
-    //TODO add/edit dialog
 }
 
 sealed class ChecklistPageTag : TestTag {
     object AppBar : ChecklistPageTag()
     object LayoutButton : ChecklistPageTag()
     object FilterButton : ChecklistPageTag()
+    object AddItemButton : ChecklistPageTag()
+    object FinishButton : ChecklistPageTag()
 }
 
 sealed class RefreshPageTag : TestTag {
