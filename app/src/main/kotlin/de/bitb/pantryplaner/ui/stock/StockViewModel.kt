@@ -37,12 +37,13 @@ import javax.inject.Inject
 var INSTANT_SEARCH = false
 
 data class StockModel(
-    val stocks: List<Stock>?,
-    val items: Map<String, List<Item>>?,
-    val connectedUser: List<User>?,
+    val stocks: List<Stock>? = null,
+    val items: Map<String, List<Item>>? = null,
+    val connectedUser: List<User>? = null,
+    val user: User? = null,
 ) {
     val isLoading: Boolean
-        get() = stocks == null || items == null || connectedUser == null
+        get() = stocks == null || items == null || connectedUser == null || user == null
 }
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
@@ -63,19 +64,21 @@ class StockViewModel @Inject constructor(
         .flatMapLatest { itemRepo.getItems(filterBy = it) }
         .flatMapLatest { itemsResp ->
             if (itemsResp is Resource.Error) return@flatMapLatest MutableStateFlow(itemsResp.castTo())
-//            val items = itemsResp.data!!.values.flatten().toSet()
             combine(
                 stockRepo.getStocks(),
                 getConnectedUsers().asFlow(),
-            ) { stocks, users ->
+                userRepo.getUser(),
+            ) { stocks, users, user ->
                 when {
                     stocks is Resource.Error -> stocks.castTo()
                     users is Resource.Error -> users.castTo()
+                    user is Resource.Error -> user.castTo()
                     else -> Resource.Success(
                         StockModel(
                             stocks.data,
                             itemsResp.data,
                             users.data,
+                            user.data,
                         ),
                     )
                 }
@@ -85,14 +88,13 @@ class StockViewModel @Inject constructor(
         .asLiveData()
 
     val itemErrorList = MutableStateFlow<List<String>>(emptyList())
-    var selectedStock: MutableLiveData<Int> = MutableLiveData(0)
 
     fun addItem(item: Item, stockItem: StockItem) {
         val name = item.name
         viewModelScope.launch {
             val addStockResp = stockUseCases.addStockItemUC(stockItem)
             val createItemResp = itemUseCases.createItemUC(item)
-            when { //TODO guess we need to split item frag :D
+            when { //TODO guess we need to split item frag :D -> it is but we need to update stockItems only on un/finish
                 createItemResp is Resource.Error -> showSnackbar(createItemResp.message!!)
                 addStockResp is Resource.Error -> showSnackbar(addStockResp.message!!)
                 createItemResp.data == true -> showSnackbar("Item hinzugefügt: $name".asResString()).also { updateWidgets() }
@@ -105,7 +107,7 @@ class StockViewModel @Inject constructor(
         viewModelScope.launch {
             val deleteItemResp = itemUseCases.deleteItemUC(item)
             val deleteStockResp = stockUseCases.deleteStockItemUC(stockItem)
-            when { //TODO guess we need to split item frag :D
+            when { //TODO guess we need to split item frag :D -> it is but we need to update stockItems only on un/finish
                 deleteItemResp is Resource.Error -> showSnackbar(deleteItemResp.message!!)
                 deleteStockResp is Resource.Error -> showSnackbar(deleteStockResp.message!!)
                 deleteItemResp.data == true -> showSnackbar("Item entfernt: ${item.name}".asResString()).also { updateWidgets() }
@@ -148,8 +150,18 @@ class StockViewModel @Inject constructor(
         }
     }
 
+    fun setSharedWith(stock: Stock, users: List<User>) {
+        viewModelScope.launch {
+            when (val resp = stockUseCases.editStockUC(stock, sharedWith = users.map { it.uuid })) {
+                is Resource.Error -> showSnackbar(resp.message!!)
+                else -> updateWidgets()
+            }
+        }
+    }
+
     fun search(text: String) {
         _isSearching.value = true
         filterBy.value = filterBy.value.copy(searchTerm = text)
     }
+
 }

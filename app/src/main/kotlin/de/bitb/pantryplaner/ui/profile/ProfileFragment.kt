@@ -119,7 +119,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
             ExtendedFloatingActionButton(
                 modifier = Modifier.testTag(ProfilePageTag.NewStockButton),
                 onClick = { showAddDialog.value = true },
-                text = { Text(text = "Ort anlegen") },
+                text = { Text(text = "Lager anlegen") },
                 icon = {
                     Icon(
                         imageVector = Icons.Rounded.HomeWork,
@@ -291,7 +291,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
                         contentAlignment = Alignment.CenterStart,
                     ) {
                         Text(
-                            "Orte",
+                            "Lager",
                             modifier = Modifier
                                 .drawBehind { // TODO make generic
                                     val strokeWidthPx = 1.dp.toPx()

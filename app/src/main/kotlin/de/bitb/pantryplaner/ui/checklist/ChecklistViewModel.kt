@@ -38,12 +38,12 @@ data class CheckModel(
     val isCreator: Boolean?,
     val checklist: Checklist?,
     val items: Map<String, List<Item>>?,
-    val stocks: List<Stock>?,
-    val allUser: List<User>?,
+    val stocks: List<Stock>?, // TODO change to no stock needed -> on finish select stock (+ none, to not add? :D)
+    val connectedUser: List<User>?,
     val sharedUser: List<User>?,
 ) {
     val isLoading: Boolean
-        get() = isCreator == null || checklist == null || items == null || stocks == null || allUser == null || sharedUser == null
+        get() = isCreator == null || checklist == null || items == null || stocks == null || connectedUser == null || sharedUser == null
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -98,11 +98,11 @@ class ChecklistViewModel @Inject constructor(
                     userRepo.getUser(checklist.sharedWith),
                     itemsFlow,
                     stockRepo.getStocks()
-                ) { isCreator, allUsers, users, items, stocks ->
+                ) { isCreator, users, sharedUsers, items, stocks ->
                     when {
                         isCreator is Resource.Error -> return@combine isCreator.castTo()
-                        allUsers is Resource.Error -> return@combine allUsers.castTo()
                         users is Resource.Error -> return@combine users.castTo()
+                        sharedUsers is Resource.Error -> return@combine sharedUsers.castTo()
                         items is Resource.Error -> return@combine items.castTo()
                         stocks is Resource.Error -> return@combine stocks.castTo()
                         else -> Resource.Success(
@@ -111,8 +111,8 @@ class ChecklistViewModel @Inject constructor(
                                 checklist,
                                 items.data,
                                 stocks.data,
-                                allUsers.data,
                                 users.data,
+                                sharedUsers.data,
                             ).also {
                                 Logger.printLog("Model: ${it}")
                                 Logger.printLog("Model: $it")

@@ -17,6 +17,7 @@ import de.bitb.pantryplaner.test.parseStockCreator
 import de.bitb.pantryplaner.test.parseStockShared
 import de.bitb.pantryplaner.test.parseUser
 import de.bitb.pantryplaner.test.parseUserConnected
+import de.bitb.pantryplaner.test.parseUserExcludie
 import de.bitb.pantryplaner.test.parseUserOther
 import io.cucumber.java.en.Given
 import javax.inject.Inject
@@ -51,10 +52,12 @@ class MockingSteps(
         val user1 = parseUser()
         val user2 = parseUserConnected()
         val user3 = parseUserOther()
+        val user4 = parseUserExcludie()
         val map = mutableMapOf(
             user1.email to defaultPW,
             user2.email to defaultPW,
             user3.email to defaultPW,
+            user4.email to defaultPW,
         )
         remoteService.mockUserDao(listOf(user1, user2, user3).toMutableList(), map)
     }

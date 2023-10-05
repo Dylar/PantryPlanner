@@ -37,7 +37,7 @@ fun useAddStockDialog(
 ) {
     useDialog(
         showDialog,
-        "Ort erstellen", "Hinzufügen",
+        "Lager erstellen", "Hinzufügen",
         Stock(),
         users,
         onEdit
@@ -53,7 +53,7 @@ fun useEditStockDialog(
 ) {
     useDialog(
         showDialog,
-        "Ort bearbeiten", "Speichern",
+        "Lager bearbeiten", "Speichern",
         stock,
         users,
     ) { stockX, _ -> onEdit(stockX, true) }
@@ -140,7 +140,7 @@ private fun AddEditStockDialog(
                         },
                     ),
                 )
-                buildUserDropDown("Ort wird nicht geteilt", users, selectedUser)
+                buildUserDropDown("Lager wird nicht geteilt", users, selectedUser)
             }
 
 //            LaunchedEffect(Unit) {

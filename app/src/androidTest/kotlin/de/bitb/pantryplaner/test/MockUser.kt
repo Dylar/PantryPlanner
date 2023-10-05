@@ -12,12 +12,12 @@ const val defaultPW = "1Password!"
 fun parseUser(): User = parsePOKO("user_peter_lustig")
 fun parseUserConnected(): User = parsePOKO("user_mohammed_lee")
 fun parseUserOther(): User = parsePOKO("user_andre_option")
+fun parseUserExcludie(): User = parsePOKO("user_excludie_yellow")
 
 fun UserRemoteDao.mockUserDao(
     allUser: MutableList<User> = mutableListOf(),
     emailPwMap: MutableMap<String, String> = mutableMapOf(),
 ) {
-    //TODO make with flow holding -> no updates (look at other mocks)
     var isLoggedIn = false
     coEvery { isUserLoggedIn() }.answers { Resource.Success(isLoggedIn) }
     coEvery { registerUser(any(), any()) }.answers {
@@ -39,17 +39,17 @@ fun UserRemoteDao.mockUserDao(
     coEvery { logoutUser() }.answers { Resource.Success() }
     coEvery { getUser(any()) }.answers {
         val uuids = firstArg<List<String>>()
-        val users = allUser.filter { u -> uuids.contains(u.uuid) }
+        val users = allUser.filter { uuids.contains(it.uuid) }
         flowOf(Resource.Success(users))
     }
     coEvery { getUserByEmail(any()) }.answers {
         val email = firstArg<String>()
-        val users = allUser.firstOrNull { u -> u.email == email }
+        val users = allUser.first { it.email == email }
         Resource.Success(users)
     }
     coEvery { saveUser(any()) }.answers {
         val saveUser = firstArg<User>()
-        allUser.replaceAll { u -> if (u.email == saveUser.email) saveUser else u }
+        allUser.replaceAll { if (it.email == saveUser.email) saveUser else it }
         Resource.Success()
     }
 }

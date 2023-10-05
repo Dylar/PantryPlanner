@@ -37,3 +37,8 @@ data class ChecklistTag(val name: String) : TestTag {
     override val tagName: String
         get() = super.tagName + ".$name"
 }
+
+data class StockTabTag(val name: String) : TestTag {
+    override val tagName: String
+        get() = super.tagName + ".$name"
+}

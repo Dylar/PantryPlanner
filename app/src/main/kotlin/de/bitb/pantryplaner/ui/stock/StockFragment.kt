@@ -1,11 +1,14 @@
 package de.bitb.pantryplaner.ui.stock
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -20,6 +23,8 @@ import androidx.compose.material.icons.filled.SavedSearch
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -27,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -47,18 +53,21 @@ import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.GridListLayout
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
 import de.bitb.pantryplaner.ui.base.comps.SearchBar
+import de.bitb.pantryplaner.ui.base.comps.buildUserDropDown
 import de.bitb.pantryplaner.ui.base.comps.dissmissItem
 import de.bitb.pantryplaner.ui.base.comps.onBack
 import de.bitb.pantryplaner.ui.base.highlightedText
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.ItemTag
 import de.bitb.pantryplaner.ui.base.testTags.StockPageTag
+import de.bitb.pantryplaner.ui.base.testTags.StockTabTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.comps.AddSubRow
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 import de.bitb.pantryplaner.ui.dialogs.FilterDialog
 import de.bitb.pantryplaner.ui.dialogs.useAddItemDialog
 import de.bitb.pantryplaner.ui.dialogs.useEditItemDialog
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class StockFragment : BaseFragment<StockViewModel>() {
@@ -180,10 +189,10 @@ class StockFragment : BaseFragment<StockViewModel>() {
         }
     }
 
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     private fun buildContent(innerPadding: PaddingValues) {
-        val selectedStock by viewModel.selectedStock.observeAsState(0)
-        val stockModel by viewModel.stockModel.observeAsState()
+        val stockModel by viewModel.stockModel.observeAsState(null)
         when {
             stockModel?.data?.isLoading != false -> LoadingIndicator()
             stockModel is Resource.Error -> ErrorScreen(stockModel!!.message!!.asString())
@@ -191,34 +200,81 @@ class StockFragment : BaseFragment<StockViewModel>() {
                 val model = stockModel!!.data!!
                 val stocks = model.stocks!!
                 val items = model.items!!
-                val categorys = items?.keys?.toList() ?: listOf()
+                val categorys = items.keys.toList()
                 val users = model.connectedUser ?: listOf()
-                useAddItemDialog(
-                    showAddDialog,
-                    categorys,
-                    users,
-                ) { stockItem, item, close ->
-                    viewModel.addItem(item, stockItem)
-                    if (close) showAddDialog.value = false
-                }
+                val user = model.user!!
 
-                val stock = stocks[selectedStock]
-                if (items.isEmpty()) {
-                    EmptyListComp(getString(R.string.no_items))
-                } else {
-                    GridListLayout(
-                        innerPadding,
-                        showGridLayout,
-                        items,
-                        { stock.items.firstOrNull()?.color ?: BaseColors.LightGray }, //TODO color?
-                        viewModel::editCategory
-                    ) { _, item ->
-                        listItem(
-                            stock.items.firstOrNull { it.uuid == item.uuid } ?: item.toStockItem(),
-                            item,
-                            categorys,
-                            users,
-                        )
+                val pagerState = rememberPagerState { stocks.size }
+                val allUser = users + listOf(user)
+
+                Column(
+                    verticalArrangement = Arrangement.Top
+                ) {
+                    useAddItemDialog(
+                        showAddDialog,
+                        categorys,
+                        users,
+                    ) { stockItem, item, close ->
+                        viewModel.addItem(item, stockItem)
+                        if (close) showAddDialog.value = false
+                    }
+
+                    TabRow(
+                        containerColor = BaseColors.Black,
+                        selectedTabIndex = pagerState.currentPage,
+                    ) {
+                        val scope = rememberCoroutineScope()
+                        stocks.map { it.name }.forEachIndexed { index, title ->
+                            Tab(
+                                modifier = Modifier.testTag(StockTabTag(title)),
+                                text = { Text(title) },
+                                selected = pagerState.currentPage == index,
+                                onClick = {
+                                    scope.launch {
+                                        pagerState.animateScrollToPage(index)
+                                    }
+                                }
+                            )
+                        }
+                    }
+                    HorizontalPager(state = pagerState) { page ->
+                        Column(
+                            verticalArrangement = Arrangement.Top
+                        ) {
+                            val stock = stocks[page]
+                            val selectedUser = remember(stock) {
+                                mutableStateOf(allUser.filter { stock.sharedWith.contains(it.uuid) })
+                            }
+                            buildUserDropDown(
+                                "Lager wird nicht geteilt",
+                                users,
+                                selectedUser,
+                                canChange = stock.creator == user.uuid,
+                            ) {
+                                viewModel.setSharedWith(stock, it)
+                            }
+                            if (items.isEmpty()) {
+                                EmptyListComp(getString(R.string.no_items))
+                            } else {
+                                GridListLayout(
+                                    innerPadding,
+                                    showGridLayout,
+                                    items,
+                                    {
+                                        stock.items.firstOrNull()?.color ?: BaseColors.LightGray
+                                    }, //TODO color?
+                                    viewModel::editCategory
+                                ) { _, item ->
+                                    listItem(
+                                        stock.items.firstOrNull { it.uuid == item.uuid }
+                                            ?: item.toStockItem(),
+                                        item,
+                                        categorys,
+                                        users,
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }

@@ -76,7 +76,7 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             when (val resp = stockUseCases.addStockUC(Stock)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
-                else -> showSnackbar("Ort hinzugefügt: ${Stock.name}".asResString())
+                else -> showSnackbar("Lager hinzugefügt: ${Stock.name}".asResString())
             }
         }
     }
@@ -85,7 +85,7 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             when (val resp = stockUseCases.deleteStockUC(Stock)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
-                else -> showSnackbar("Ort entfernt: ${Stock.name}".asResString())
+                else -> showSnackbar("Lager entfernt: ${Stock.name}".asResString())
             }
         }
     }
@@ -94,7 +94,7 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             when (val resp = stockUseCases.editStockUC(Stock)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
-                else -> showSnackbar("Ort editiert: ${Stock.name}".asResString())
+                else -> showSnackbar("Lager editiert: ${Stock.name}".asResString())
             }
         }
     }

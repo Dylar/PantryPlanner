@@ -36,10 +36,10 @@ fun getString(@StringRes id: Int, vararg args: Any): String {
 }
 
 fun <T> createFlows(
-    items: List<T>,
+    entries: List<T>,
     extractUUIDs: (T) -> List<String>
 ): MutableMap<String, MutableStateFlow<Resource<List<T>>>> {
-    return items
+    return entries
         .flatMap { item -> extractUUIDs(item).map { uuid -> uuid to item } }
         .groupBy { it.first }
         .mapValues { (_, itemList) -> MutableStateFlow<Resource<List<T>>>(Resource.Success(itemList.map { it.second })) }
