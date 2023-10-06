@@ -10,15 +10,15 @@ Feature: OverviewPage Checklist management
   Scenario: Create a new Checklist
     When  Tap on NewChecklistButton
     And   AddEditChecklistDialog is displayed
-    And   Shared with none
+    And   "ChecklistDialog" shared with none
     And   Input "NewChecklist" as Checklist name
-    And   Open dropdown "Mit Benutzer teilen"
+    And   "ChecklistDialog" open dropdown "Mit Benutzer teilen"
     And   Select dropdown option "Mohammed Lee"
     And   Tap on CreateChecklistButton
     Then  Checklist "NewChecklist" is displayed
     And   LongPress on Checklist "NewChecklist"
     And   Checklist name is "NewChecklist"
-    And   Shared with "Mohammed Lee"
+    And   "ChecklistDialog" shared with "Mohammed Lee"
 
   Scenario: Try to remove a Checklist, but cancel confirmation
     When  Swipe to remove Checklist "CreatorChecklist"
@@ -47,9 +47,9 @@ Feature: OverviewPage Checklist management
   Scenario: Edit a created Checklist
     When  LongPress on Checklist "CreatorChecklist"
     And   AddEditChecklistDialog is displayed
-    And   Shared with none
+    And   "ChecklistDialog" shared with none
     And   Input "EditChecklist" as Checklist name
-    And   Open dropdown "Mit Benutzer teilen"
+    And   "ChecklistDialog" open dropdown "Mit Benutzer teilen"
     And   Dropdown option "Mohammed Lee" is displayed
     And   Dropdown option "Andre Option" is displayed
     And   Select dropdown option "Mohammed Lee"
@@ -58,4 +58,4 @@ Feature: OverviewPage Checklist management
     And   Checklist "CreatorChecklist" is NOT displayed
     And   LongPress on Checklist "EditChecklist"
     And   Checklist name is "EditChecklist"
-    And   Shared with "Mohammed Lee"
+    And   "ChecklistDialog" shared with "Mohammed Lee"

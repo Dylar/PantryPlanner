@@ -1,5 +1,6 @@
 package de.bitb.pantryplaner.ui.checklist
 
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.performClick
@@ -8,6 +9,7 @@ import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.testTags.ChecklistPageTag
 import de.bitb.pantryplaner.ui.base.testTags.SearchDropDownTag
+import de.bitb.pantryplaner.ui.base.testTags.testTag
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 
@@ -35,6 +37,7 @@ class ChecklistPageSteps(
 }
 
 fun ComposeTestRule.assertChecklistPageRendered() {
+    onNodeWithTag(ChecklistPageTag.ChecklistPage).assertIsDisplayed()
     onNodeWithTag(ChecklistPageTag.AppBar).assertIsDisplayed()
     onNodeWithTag(ChecklistPageTag.LayoutButton).assertIsDisplayed()
     onNodeWithTag(ChecklistPageTag.FilterButton).assertIsDisplayed()

@@ -54,6 +54,7 @@ import de.bitb.pantryplaner.ui.base.comps.dissmissItem
 import de.bitb.pantryplaner.ui.base.naviChecklistToItems
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.ChecklistPageTag
+import de.bitb.pantryplaner.ui.base.testTags.ItemTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.comps.AddSubRow
 import de.bitb.pantryplaner.ui.comps.SelectItemHeader
@@ -83,6 +84,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
 
         val checkModel by viewModel.checkModel.observeAsState(null)
         Scaffold(
+            modifier = Modifier.testTag(ChecklistPageTag.ChecklistPage),
             scaffoldState = scaffoldState,
             topBar = { buildAppBar(checkModel) },
             content = { buildContent(it, checkModel) },
@@ -258,7 +260,9 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
             onLongClick = { showEditDialog.value = true },
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag(ItemTag(item.category, item.name)),
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Center,
             ) {

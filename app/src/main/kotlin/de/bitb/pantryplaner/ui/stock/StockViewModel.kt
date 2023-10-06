@@ -7,6 +7,7 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.ItemRepository
 import de.bitb.pantryplaner.data.StockRepository
@@ -69,6 +70,7 @@ class StockViewModel @Inject constructor(
                 getConnectedUsers().asFlow(),
                 userRepo.getUser(),
             ) { stocks, users, user ->
+                Logger.justPrint("ConUserResp: ${users.data}")
                 when {
                     stocks is Resource.Error -> stocks.castTo()
                     users is Resource.Error -> users.castTo()

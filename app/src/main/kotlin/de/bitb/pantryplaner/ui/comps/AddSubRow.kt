@@ -107,6 +107,7 @@ fun EditText(
     BasicTextField(
         textState.value,
         modifier = Modifier
+            .testTag(AddSubRowTag.AmountText)
             .padding(2.dp)
             .width(60.dp)
             .background(color.copy(alpha = .5f)),

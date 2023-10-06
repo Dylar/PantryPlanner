@@ -26,6 +26,7 @@ import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.comps.buildUserDropDown
+import de.bitb.pantryplaner.ui.base.testTags.AddEditItemDialogTag
 import de.bitb.pantryplaner.ui.base.testTags.AddEditStockDialogTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 
@@ -116,6 +117,7 @@ private fun AddEditStockDialog(
     )
 
     AlertDialog(
+        modifier = Modifier.testTag(AddEditStockDialogTag.DialogTag),
         onDismissRequest = onDismiss,
 //        containerColor = darkColorPalette.background,
 //        iconContentColor = darkColorPalette.onSurface,

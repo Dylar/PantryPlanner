@@ -1,7 +1,9 @@
 {
   "uuid": "user420",
-  "email": "exludie@email.to",
-  "firstName": "Excludie",
-  "lastName": "Yellow",
-  "connectedUser": []
+  "email": "andre@option.to",
+  "firstName": "Andre",
+  "lastName": "Option",
+  "connectedUser": [
+    "user123"
+  ]
 }

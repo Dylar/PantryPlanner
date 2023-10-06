@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.sp
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
+import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
@@ -60,7 +61,6 @@ import de.bitb.pantryplaner.ui.base.highlightedText
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.ItemTag
 import de.bitb.pantryplaner.ui.base.testTags.StockPageTag
-import de.bitb.pantryplaner.ui.base.testTags.StockTabTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.comps.AddSubRow
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
@@ -204,6 +204,8 @@ class StockFragment : BaseFragment<StockViewModel>() {
                 val users = model.connectedUser ?: listOf()
                 val user = model.user!!
 
+                Logger.justPrint("option users: ${users}")
+
                 val pagerState = rememberPagerState { stocks.size }
                 val allUser = users + listOf(user)
 
@@ -226,7 +228,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
                         val scope = rememberCoroutineScope()
                         stocks.map { it.name }.forEachIndexed { index, title ->
                             Tab(
-                                modifier = Modifier.testTag(StockTabTag(title)),
+                                modifier = Modifier.testTag(StockPageTag.StockTabTag(title)),
                                 text = { Text(title) },
                                 selected = pagerState.currentPage == index,
                                 onClick = {
@@ -238,10 +240,11 @@ class StockFragment : BaseFragment<StockViewModel>() {
                         }
                     }
                     HorizontalPager(state = pagerState) { page ->
+                        val stock = stocks[page]
                         Column(
+                            modifier = Modifier.testTag(StockPageTag.StockPage(stock.name)),
                             verticalArrangement = Arrangement.Top
                         ) {
-                            val stock = stocks[page]
                             val selectedUser = remember(stock) {
                                 mutableStateOf(allUser.filter { stock.sharedWith.contains(it.uuid) })
                             }
@@ -311,14 +314,15 @@ class StockFragment : BaseFragment<StockViewModel>() {
         val text = highlightedText(item.name, filter.value?.searchTerm ?: "")
 
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag(ItemTag(item.category, item.name)),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
                 text,
                 modifier = Modifier
-                    .testTag(ItemTag(item.category, item.name))
                     .fillMaxWidth()
                     .background(BaseColors.LightGray.copy(alpha = .1f))
                     .padding(horizontal = 12.dp, vertical = 4.dp),

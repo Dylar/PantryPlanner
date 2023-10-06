@@ -143,6 +143,7 @@ private fun AddEditItemDialog(
     )
 
     AlertDialog(
+        modifier = Modifier.testTag(AddEditItemDialogTag.DialogTag),
         onDismissRequest = onDismiss,
 //        containerColor = darkColorPalette.background,
 //        iconContentColor = darkColorPalette.onSurface,

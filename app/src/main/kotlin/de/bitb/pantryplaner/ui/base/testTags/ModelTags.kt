@@ -1,44 +1,15 @@
 package de.bitb.pantryplaner.ui.base.testTags
 
-data class SelectItemHeaderTag(val name: String) : TestTag {
-    override val tagName: String
-        get() = super.tagName + ".$name"
-}
+data class SelectItemHeaderTag(val name: String) : TestTag
 
-data class SearchDropDownTag(val name: String) : TestTag {
-    override val tagName: String
-        get() = super.tagName + ".$name"
-}
-
-data class DropDownItemTag(val name: String) : TestTag {
-    override val tagName: String
-        get() = super.tagName + ".$name"
-}
+data class SearchDropDownTag(val name: String) : TestTag
+data class DropDownItemTag(val name: String) : TestTag
 
 sealed class SharedWithTag : TestTag {
     object NothingShared : SharedWithTag()
-    data class SharedChip(val name: String) : SharedWithTag() {
-        override val tagName: String
-            get() = super.tagName + ".$name"
-    }
+    data class SharedChip(val name: String) : SharedWithTag()
 }
 
-data class StockTag(val name: String) : TestTag {
-    override val tagName: String
-        get() = super.tagName + ".$name"
-}
-
-data class ItemTag(val category: String, val name: String) : TestTag {
-    override val tagName: String
-        get() = super.tagName + ".$category.$name"
-}
-
-data class ChecklistTag(val name: String) : TestTag {
-    override val tagName: String
-        get() = super.tagName + ".$name"
-}
-
-data class StockTabTag(val name: String) : TestTag {
-    override val tagName: String
-        get() = super.tagName + ".$name"
-}
+data class StockTag(val name: String) : TestTag
+data class ItemTag(val category: String, val name: String) : TestTag
+data class ChecklistTag(val name: String) : TestTag

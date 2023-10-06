@@ -40,6 +40,9 @@ sealed class StockPageTag : TestTag {
     object LayoutButton : StockPageTag()
     object FilterButton : StockPageTag()
     object NewItemButton : StockPageTag()
+
+    data class StockPage(val name:String) : StockPageTag()
+    data class StockTabTag(val name: String) : TestTag
 }
 
 sealed class ItemsPageTag : TestTag {
@@ -50,6 +53,7 @@ sealed class ItemsPageTag : TestTag {
 }
 
 sealed class ChecklistPageTag : TestTag {
+    object ChecklistPage : ChecklistPageTag()
     object AppBar : ChecklistPageTag()
     object LayoutButton : ChecklistPageTag()
     object FilterButton : ChecklistPageTag()

@@ -7,17 +7,17 @@ Feature: StockPage User management
     And   Tab "SharedStock" is displayed
 
   Scenario: Share CreatorStock with User
-    Given Shared with none
-    When  Open dropdown "Mit Benutzer teilen"
+    Given "StockPage CreatorStock" shared with none
+    When  "StockPage CreatorStock" open dropdown "Mit Benutzer teilen"
     And   Dropdown option "Mohammed Lee" is displayed
     And   Dropdown option "Andre Option" is displayed
     And   Select dropdown option "Mohammed Lee"
-    Then  Shared with "Mohammed Lee"
+    Then  "StockPage CreatorStock" shared with "Mohammed Lee"
     And   On back
     And   Tap on StockButton
-    And   Shared with "Mohammed Lee"
+    And   "StockPage CreatorStock" shared with "Mohammed Lee"
 
   Scenario: Prevent non-creator from sharing with User
     When  Tap on tab "SharedStock"
-    Then  Shared with "Peter Lustig"
-    And   Dropdown "Mit Benutzer teilen" is NOT displayed
+    Then  "StockPage SharedStock" shared with "Peter Lustig"
+    And   "StockPage SharedStock" dropdown "Mit Benutzer teilen" is NOT displayed

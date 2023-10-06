@@ -7,5 +7,6 @@ object ListLayoutTag : TestTag
 
 sealed class AddSubRowTag : TestTag {
     object PlusButton : AddSubRowTag()
+    object AmountText : AddSubRowTag()
     object MinusButton : AddSubRowTag()
 }

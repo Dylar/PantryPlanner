@@ -141,7 +141,6 @@ private fun SearchDropDown(
 
             cats.forEach { selectedOption ->
                 val isAddText = selectedOption == addText
-                Logger.justPrint("Option: ${DropDownItemTag(selectedOption).name}")
                 DropdownMenuItem(
                     modifier = Modifier
                         .padding(2.dp)
@@ -210,7 +209,6 @@ private fun ConnectedUser(
                 val userList = selectedUser.value
                 items(userList.size) {
                     val user = userList[it]
-                    Logger.justPrint("User: ${user.fullName}")
                     Card(
                         modifier = Modifier
                             .testTag(SharedWithTag.SharedChip(user.fullName))

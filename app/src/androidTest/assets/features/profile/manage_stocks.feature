@@ -48,11 +48,11 @@ Feature: ProfilePage Stock management
 
   Scenario: Share Stock with User
     Given  LongPress on Stock "CreatorStock"
-    And    Shared with none
-    When   Open dropdown "Mit Benutzer teilen"
+    And    "StockDialog" shared with none
+    When   "StockDialog" open dropdown "Mit Benutzer teilen"
     And    Dropdown option "Mohammed Lee" is displayed
     And    Dropdown option "Andre Option" is displayed
     And    Select dropdown option "Mohammed Lee"
     And    Tap on CreateStockButton
     Then   LongPress on Stock "CreatorStock"
-    And    Shared with "Mohammed Lee"
+    And    "StockDialog" shared with "Mohammed Lee"

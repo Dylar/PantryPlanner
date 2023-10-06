@@ -10,10 +10,10 @@ Feature: StockPage Items management
   Scenario: Create a new Item
     When  Tap on NewItemButton
     And   AddEditItemDialog is displayed
-    And   Shared with none
+    And   "ItemDialog" shared with none
     And   Input "NewItem" as Item name
     And   Input "NewCategory" as Item category
-    And   Open dropdown "Mit Benutzer teilen"
+    And   "ItemDialog" open dropdown "Mit Benutzer teilen"
     And   Select dropdown option "Mohammed Lee"
 #   Change MHD and Reminder
     And   Tap on CreateItemButton
@@ -21,7 +21,7 @@ Feature: StockPage Items management
     And   LongPress on Item "NewItem" in category "NewCategory"
     And   Item name is "NewItem"
     And   Item category is "NewCategory"
-    And   Shared with "Mohammed Lee"
+    And   "ItemDialog" shared with "Mohammed Lee"
 
   Scenario: Try to remove a Item, but cancel confirmation
     When  Swipe to remove Item "CreatorItem" in category "CreatorCategory"
@@ -50,10 +50,10 @@ Feature: StockPage Items management
   Scenario: Edit a created Item
     When  LongPress on Item "CreatorItem" in category "CreatorCategory"
     And   AddEditItemDialog is displayed
-    And   Shared with none
+    And   "ItemDialog" shared with none
     And   Input "EditItem" as Item name
     And   Input "EditCategory" as Item category
-    And   Open dropdown "Mit Benutzer teilen"
+    And   "ItemDialog" open dropdown "Mit Benutzer teilen"
     And   Dropdown option "Mohammed Lee" is displayed
     And   Dropdown option "Andre Option" is displayed
     And   Select dropdown option "Mohammed Lee"
@@ -64,7 +64,7 @@ Feature: StockPage Items management
     And   LongPress on Item "EditItem" in category "EditCategory"
     And   Item name is "EditItem"
     And   Item category is "EditCategory"
-    And   Shared with "Mohammed Lee"
+    And   "ItemDialog" shared with "Mohammed Lee"
 
   Scenario: Search Item
     When  Tap on SearchBar
@@ -81,3 +81,23 @@ Feature: StockPage Items management
     And   Item "CreatorItem" in category "CreatorCategory" is NOT displayed
     And   Item "SharedItem" in category "SharedCategory" is NOT displayed
     And   No Items displayed
+
+  Scenario: Increase Item amount
+    Given Item "CreatorItem" in category "CreatorCategory" has amount 1.0
+    When  Increase Item "CreatorItem" in category "CreatorCategory" amount by 2
+    Then  Item "CreatorItem" in category "CreatorCategory" has amount 3.0
+
+  Scenario: Decrease Item amount
+    Given Item "CreatorItem" in category "CreatorCategory" has amount 1.0
+    When  Decrease Item "CreatorItem" in category "CreatorCategory" amount by 2
+    Then  Item "CreatorItem" in category "CreatorCategory" has amount 0.0
+
+  Scenario: Increase shared Item amount
+    Given Item "SharedItem" in category "SharedCategory" has amount 2.5
+    When  Increase Item "SharedItem" in category "SharedCategory" amount by 2
+    Then  Item "SharedItem" in category "SharedCategory" has amount 4.5
+
+  Scenario: Decrease shared Item amount
+    Given Item "SharedItem" in category "SharedCategory" has amount 2.5
+    When  Decrease Item "SharedItem" in category "SharedCategory" amount by 2
+    Then  Item "SharedItem" in category "SharedCategory" has amount 0.5

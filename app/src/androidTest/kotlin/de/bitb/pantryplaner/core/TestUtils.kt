@@ -1,16 +1,14 @@
 package de.bitb.pantryplaner.core
 
 import androidx.annotation.StringRes
-import androidx.compose.ui.semantics.SemanticsNode
-import androidx.compose.ui.semantics.SemanticsProperties
-import androidx.compose.ui.test.SemanticsMatcher
-import androidx.compose.ui.test.SemanticsNodeInteraction
-import androidx.compose.ui.test.hasTestTag
-import androidx.compose.ui.test.junit4.ComposeTestRule
-import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.gson.Gson
 import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.ui.base.testTags.AddEditChecklistDialogTag
+import de.bitb.pantryplaner.ui.base.testTags.AddEditItemDialogTag
+import de.bitb.pantryplaner.ui.base.testTags.AddEditStockDialogTag
+import de.bitb.pantryplaner.ui.base.testTags.ChecklistPageTag
+import de.bitb.pantryplaner.ui.base.testTags.StockPageTag
 import de.bitb.pantryplaner.ui.base.testTags.TestTag
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -46,37 +44,14 @@ fun <T> createFlows(
         .toMutableMap()
 }
 
-fun ComposeTestRule.onNodeWithTag(
-    testTag: TestTag,
-    useUnmergedTree: Boolean = false
-): SemanticsNodeInteraction =
-    onNodeWithTag(testTag.tagName, useUnmergedTree)
-
-fun ComposeTestRule.hasTestTag(testTag: TestTag): SemanticsMatcher = hasTestTag(testTag.tagName)
-fun SemanticsNodeInteraction.hasTextInHierarchy(targetText: String): SemanticsNodeInteraction {
-    fun SemanticsNode.containsText(): Boolean {
-        val hasRegularText = config.contains(SemanticsProperties.Text) &&
-                config[SemanticsProperties.Text].any { it.text == targetText }
-        val hasEditableText = config.contains(SemanticsProperties.EditableText) &&
-                config[SemanticsProperties.EditableText].text == targetText
-
-        return hasRegularText || hasEditableText
+fun getParentTag(parent: String): TestTag {
+    val tag = when {
+        parent == "StockDialog" -> AddEditStockDialogTag.DialogTag
+        parent == "ItemDialog" -> AddEditItemDialogTag.DialogTag
+        parent == "ChecklistDialog" -> AddEditChecklistDialogTag.DialogTag
+        parent.startsWith("StockPage") -> StockPageTag.StockPage(parent.replace("StockPage ", ""))
+        parent == "ChecklistPage" -> ChecklistPageTag.ChecklistPage
+        else -> throw AssertionError("Tag for \"$parent\" not found")
     }
-
-    fun SemanticsNode.hasDescendantNodeWithText(): Boolean {
-        if (containsText()) return true
-
-        for (child in children) {
-            if (child.hasDescendantNodeWithText()) {
-                return true
-            }
-        }
-        return false
-    }
-
-    val currentNode = fetchSemanticsNode()
-    if (!currentNode.hasDescendantNodeWithText()) {
-        throw AssertionError("Cannot find node or descendant with text '$targetText'")
-    }
-    return this
+    return tag
 }

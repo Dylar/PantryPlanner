@@ -53,13 +53,13 @@ class MockingSteps(
         val user2 = parseUserConnected()
         val user3 = parseUserOther()
         val user4 = parseUserExcludie()
-        val map = mutableMapOf(
+        val pwMap = mutableMapOf(
             user1.email to defaultPW,
             user2.email to defaultPW,
             user3.email to defaultPW,
             user4.email to defaultPW,
         )
-        remoteService.mockUserDao(listOf(user1, user2, user3).toMutableList(), map)
+        remoteService.mockUserDao(listOf(user1, user2, user3, user4).toMutableList(), pwMap)
     }
 
     @Given("Mock default Stocks")
