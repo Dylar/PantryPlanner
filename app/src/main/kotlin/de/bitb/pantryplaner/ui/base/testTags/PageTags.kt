@@ -41,15 +41,8 @@ sealed class StockPageTag : TestTag {
     object FilterButton : StockPageTag()
     object NewItemButton : StockPageTag()
 
-    data class StockPage(val name:String) : StockPageTag()
+    data class StockPage(val name: String) : StockPageTag()
     data class StockTabTag(val name: String) : TestTag
-}
-
-sealed class ItemsPageTag : TestTag {
-    object AppBar : ItemsPageTag()
-    object SearchButton : ItemsPageTag()
-    object LayoutButton : ItemsPageTag()
-    object FilterButton : ItemsPageTag()
 }
 
 sealed class ChecklistPageTag : TestTag {
@@ -59,6 +52,14 @@ sealed class ChecklistPageTag : TestTag {
     object FilterButton : ChecklistPageTag()
     object AddItemButton : ChecklistPageTag()
     object FinishButton : ChecklistPageTag()
+}
+
+sealed class SelectItemsPageTag : TestTag {
+    object AppBar : SelectItemsPageTag()
+    object SearchButton : SelectItemsPageTag()
+    object LayoutButton : SelectItemsPageTag()
+    object FilterButton : SelectItemsPageTag()
+    object AddSelectionButton : SelectItemsPageTag()
 }
 
 sealed class RefreshPageTag : TestTag {

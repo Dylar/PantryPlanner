@@ -6,6 +6,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
+import androidx.test.espresso.Espresso
 import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
@@ -34,6 +35,7 @@ class SearchBarSteps(
     fun inputSearch(search: String) {
         onNodeWithTag(SearchBarTag).performTextClearance()
         onNodeWithTag(SearchBarTag).performTextInput(search)
+        Espresso.closeSoftKeyboard()
         waitForIdle()
     }
 

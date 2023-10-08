@@ -50,7 +50,7 @@ fun Fragment.naviOverviewToItems() {
 
 fun Fragment.naviChecklistToItems(uuid: String) {
     NavHostFragment.findNavController(this)
-        .navigate(R.id.checklist_to_items, bundleOf(KEY_CHECKLIST_UUID to uuid))
+        .navigate(R.id.checklist_to_select_items, bundleOf(KEY_CHECKLIST_UUID to uuid))
 }
 
 fun Fragment.naviToChecklist(uuid: String) {

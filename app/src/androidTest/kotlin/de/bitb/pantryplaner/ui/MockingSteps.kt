@@ -12,6 +12,7 @@ import de.bitb.pantryplaner.test.mockUserDao
 import de.bitb.pantryplaner.test.parseChecklistCreator
 import de.bitb.pantryplaner.test.parseChecklistShared
 import de.bitb.pantryplaner.test.parseItemCreator
+import de.bitb.pantryplaner.test.parseItemSelect
 import de.bitb.pantryplaner.test.parseItemShared
 import de.bitb.pantryplaner.test.parseStockCreator
 import de.bitb.pantryplaner.test.parseStockShared
@@ -73,7 +74,8 @@ class MockingSteps(
     fun mockDefaultItems() {
         val item1 = parseItemCreator()
         val item2 = parseItemShared()
-        remoteService.mockItemDao(listOf(item1, item2))
+        val item3 = parseItemSelect()
+        remoteService.mockItemDao(listOf(item1, item2, item3))
     }
 
     @Given("Mock default Checklists")

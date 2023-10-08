@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.flowOf
 
 fun parseItemCreator(): Item = parsePOKO("item_creator")
 fun parseItemShared(): Item = parsePOKO("item_shared")
+fun parseItemSelect(): Item = parsePOKO("item_select")
 
 fun ItemRemoteDao.mockItemDao(
     items: List<Item> = emptyList()

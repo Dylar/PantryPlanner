@@ -75,17 +75,17 @@
         android:label="stock" />
 
     <fragment
-        android:id="@+id/itemsFragment"
-        android:name="de.bitb.pantryplaner.ui.items.ItemsFragment"
-        android:label="items" />
+        android:id="@+id/selectItemsFragment"
+        android:name="de.bitb.pantryplaner.ui.checklist.SelectItemsFragment"
+        android:label="selectItems" />
 
     <fragment
         android:id="@+id/checklistFragment"
         android:name="de.bitb.pantryplaner.ui.checklist.ChecklistFragment"
         android:label="checklist">
         <action
-            android:id="@+id/checklist_to_items"
-            app:destination="@id/itemsFragment" />
+            android:id="@+id/checklist_to_select_items"
+            app:destination="@id/selectItemsFragment" />
     </fragment>
 
     <fragment

@@ -22,6 +22,9 @@ Feature: StockPage Items management
     And   Item name is "NewItem"
     And   Item category is "NewCategory"
     And   "ItemDialog" shared with "Mohammed Lee"
+    Then  On back
+    And   Tap on StockButton
+    And   Item "NewItem" in category "NewCategory" is displayed
 
   Scenario: Try to remove a Item, but cancel confirmation
     When  Swipe to remove Item "CreatorItem" in category "CreatorCategory"
@@ -32,11 +35,17 @@ Feature: StockPage Items management
     When  Swipe to remove Item "CreatorItem" in category "CreatorCategory"
     And   Tap on confirm
     Then  Item "CreatorItem" in category "CreatorCategory" is NOT displayed
+    And   On back
+    And   Tap on StockButton
+    And   Item "CreatorItem" in category "CreatorCategory" is NOT displayed
 
   Scenario: Remove a shared Item
     When  Swipe to remove Item "SharedItem" in category "SharedCategory"
     And   Tap on confirm
     Then  Item "SharedItem" in category "SharedCategory" is NOT displayed
+    And   On back
+    And   Tap on StockButton
+    And   Item "SharedItem" in category "SharedCategory" is NOT displayed
 
   Scenario: Prevent non-creator from editing a Item
     When  LongPress on Item "SharedItem" in category "SharedCategory"
@@ -65,6 +74,9 @@ Feature: StockPage Items management
     And   Item name is "EditItem"
     And   Item category is "EditCategory"
     And   "ItemDialog" shared with "Mohammed Lee"
+    And   On back
+    And   Tap on StockButton
+    And   Item "EditItem" in category "EditCategory" is displayed
 
   Scenario: Search Item
     When  Tap on SearchBar
@@ -81,23 +93,39 @@ Feature: StockPage Items management
     And   Item "CreatorItem" in category "CreatorCategory" is NOT displayed
     And   Item "SharedItem" in category "SharedCategory" is NOT displayed
     And   No Items displayed
+    Then  On back
+    And   Tap on StockButton
+    And   Item "CreatorItem" in category "CreatorCategory" is displayed
+    And   Item "SharedItem" in category "SharedCategory" is displayed
 
   Scenario: Increase Item amount
     Given Item "CreatorItem" in category "CreatorCategory" has amount 1.0
     When  Increase Item "CreatorItem" in category "CreatorCategory" amount by 2
     Then  Item "CreatorItem" in category "CreatorCategory" has amount 3.0
+    And   On back
+    And   Tap on StockButton
+    And   Item "CreatorItem" in category "CreatorCategory" has amount 3.0
 
   Scenario: Decrease Item amount
     Given Item "CreatorItem" in category "CreatorCategory" has amount 1.0
     When  Decrease Item "CreatorItem" in category "CreatorCategory" amount by 2
     Then  Item "CreatorItem" in category "CreatorCategory" has amount 0.0
+    And   On back
+    And   Tap on StockButton
+    And   Item "CreatorItem" in category "CreatorCategory" has amount 0.0
 
   Scenario: Increase shared Item amount
     Given Item "SharedItem" in category "SharedCategory" has amount 2.5
     When  Increase Item "SharedItem" in category "SharedCategory" amount by 2
     Then  Item "SharedItem" in category "SharedCategory" has amount 4.5
+    And   On back
+    And   Tap on StockButton
+    And   Item "SharedItem" in category "SharedCategory" has amount 4.5
 
   Scenario: Decrease shared Item amount
     Given Item "SharedItem" in category "SharedCategory" has amount 2.5
     When  Decrease Item "SharedItem" in category "SharedCategory" amount by 2
     Then  Item "SharedItem" in category "SharedCategory" has amount 0.5
+    And   On back
+    And   Tap on StockButton
+    And   Item "SharedItem" in category "SharedCategory" has amount 0.5
