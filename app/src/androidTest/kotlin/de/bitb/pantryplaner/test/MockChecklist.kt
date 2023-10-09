@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.flowOf
 
 fun parseChecklistCreator(): Checklist = parsePOKO("checklist_creator")
 fun parseChecklistShared(): Checklist = parsePOKO("checklist_shared")
+fun parseChecklistFinished(): Checklist = parsePOKO("checklist_finished")
 
 fun CheckRemoteDao.mockChecklistDao(
     checks: List<Checklist> = emptyList()

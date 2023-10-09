@@ -70,7 +70,6 @@ class StockViewModel @Inject constructor(
                 getConnectedUsers().asFlow(),
                 userRepo.getUser(),
             ) { stocks, users, user ->
-                Logger.justPrint("ConUserResp: ${users.data}")
                 when {
                     stocks is Resource.Error -> stocks.castTo()
                     users is Resource.Error -> users.castTo()

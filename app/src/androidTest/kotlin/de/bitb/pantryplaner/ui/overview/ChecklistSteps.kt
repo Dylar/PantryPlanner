@@ -16,6 +16,8 @@ import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.testTags.ChecklistTag
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 
 @HiltAndroidTest
 class ChecklistSteps(
@@ -54,6 +56,7 @@ class ChecklistSteps(
 
     @When("Tap on Checklist {string}")
     fun performTapOnChecklist(name: String) {
+        runBlocking { delay(4000) }
         tapOnChecklist(name)
     }
 }

@@ -1,0 +1,50 @@
+Feature: Un/Finish checklist
+
+  Background:
+    Given Init default Mocks
+    And   Start on StockPage
+
+  Scenario: Finish Checklist and add checked Item amount to Stock
+    Given Item "CreatorItem" in category "CreatorCategory" has amount 1.0
+    And   Item "SharedItem" in category "SharedCategory" has amount 2.5
+    And   On back
+    And   Tap on Checklist "CreatorChecklist"
+    And   Item "CreatorItem" in category "CreatorCategory" has amount 1.0
+    And   Item "SharedItem" in category "SharedCategory" has amount 2.0
+    When  Tap on FinishButton
+    And   Tap on confirm
+    And   Tap on StockButton
+    Then  Item "CreatorItem" in category "CreatorCategory" has amount 2.0
+    And   Item "SharedItem" in category "SharedCategory" has amount 2.5
+
+  Scenario: Check Items and finish Checklist and add checked Item amount to Stock
+    Given Item "CreatorItem" in category "CreatorCategory" has amount 1.0
+    And   Item "SharedItem" in category "SharedCategory" has amount 2.5
+    And   On back
+    And   Tap on Checklist "CreatorChecklist"
+    And   Item "CreatorItem" in category "CreatorCategory" has amount 1.0
+    And   Item "SharedItem" in category "SharedCategory" has amount 2.0
+    When  Tap on Item "CreatorItem" in category "CreatorCategory"
+    And   Tap on Item "SharedItem" in category "SharedCategory"
+    And   Tap on FinishButton
+    And   Tap on confirm
+    And   Tap on StockButton
+    Then  Item "CreatorItem" in category "CreatorCategory" has amount 1.0
+    And   Item "SharedItem" in category "SharedCategory" has amount 4.5
+
+  Scenario: Prevent non-creator from finish Checklist
+    Given On back
+    And   Tap on Checklist "SharedChecklist"
+    When  Tap on FinishButton
+    And   Tap on confirm
+    Then  SnackBar shown: "Du hast die Liste nicht erstellt"
+
+  Scenario: Unfinish Checklist and reduce checked Item amount to Stock
+    Given Item "CreatorItem" in category "CreatorCategory" has amount 1.0
+    And   Item "SharedItem" in category "SharedCategory" has amount 2.5
+    And   On back
+    When  Tap on Checklist "FinishedChecklist"
+    And   Tap on confirm
+    And   Tap on StockButton
+    Then  Item "CreatorItem" in category "CreatorCategory" has amount 0.0
+    And   Item "SharedItem" in category "SharedCategory" has amount 2.5

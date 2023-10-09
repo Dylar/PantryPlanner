@@ -204,8 +204,6 @@ class StockFragment : BaseFragment<StockViewModel>() {
                 val users = model.connectedUser ?: listOf()
                 val user = model.user!!
 
-                Logger.justPrint("option users: ${users}")
-
                 val pagerState = rememberPagerState { stocks.size }
                 val allUser = users + listOf(user)
 

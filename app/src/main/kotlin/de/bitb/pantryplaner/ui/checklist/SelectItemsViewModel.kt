@@ -60,7 +60,6 @@ class SelectItemsViewModel @Inject constructor(
                 itemRepo.getItems(filterBy = it),
                 getConnectedUsers().asFlow(),
             ) { items, users ->
-                Logger.justPrint("ITEMS: ${items.data}")
                 when {
                     items is Resource.Error -> items.castTo()
                     users is Resource.Error -> users.castTo()

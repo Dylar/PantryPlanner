@@ -113,10 +113,7 @@ class ChecklistViewModel @Inject constructor(
                                 stocks.data,
                                 users.data,
                                 sharedUsers.data,
-                            ).also {
-                                Logger.printLog("Model: ${it}")
-                                Logger.printLog("Model: $it")
-                            },
+                            ),
                         )
                     }
                 }

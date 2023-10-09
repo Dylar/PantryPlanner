@@ -10,6 +10,8 @@ import de.bitb.pantryplaner.ui.base.testTags.ChecklistTag
 import de.bitb.pantryplaner.ui.base.testTags.OverviewPageTag
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 
 @HiltAndroidTest
 class OverviewPageSteps(
@@ -52,4 +54,5 @@ fun ComposeTestRule.tapOnProfileButton() {
 fun ComposeTestRule.tapOnStockButton() {
     onNodeWithTag(OverviewPageTag.StockButton).performClick()
     waitForIdle()
+    runBlocking { delay(4000) }
 }

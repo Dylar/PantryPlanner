@@ -27,15 +27,14 @@ class UnfinishChecklistUC(
             val saveResp = checkRepo.saveChecklist(saveChecklist)
             if (saveResp is Resource.Error) return@tryIt saveResp.castTo()
 
-            // TODO share with stock not user
             val stockResp = stockRepo.getStocks(checklist.creator).first()
             if (stockResp is Resource.Error) return@tryIt stockResp.castTo()
 
-            //TODO thats not right?
             val stock = stockResp.data!!.first { checklist.stock == it.uuid }
             checklist.items.forEach { checkItem ->
                 if (checkItem.checked) {
-                    stock.items.first { checkItem.uuid == it.uuid }.amount -= checkItem.amount
+                    val item = stock.items.first { checkItem.uuid == it.uuid }
+                    item.amount = (item.amount - checkItem.amount).coerceAtLeast(0.0)
                 }
             }
 

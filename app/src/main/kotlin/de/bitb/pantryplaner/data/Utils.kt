@@ -20,7 +20,6 @@ interface UserDataExt {
                 if (resp is Resource.Error) {
                     return@flatMapConcat MutableStateFlow(resp.castTo())
                 }
-                Logger.justPrint("connectedUser: ${resp.data!!.connectedUser}")
                 userRepo.getUser(resp.data!!.connectedUser)
             }.asLiveData()
     }
