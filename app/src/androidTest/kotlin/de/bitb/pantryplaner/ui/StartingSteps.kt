@@ -2,7 +2,6 @@ package de.bitb.pantryplaner.ui
 
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.test.defaultPW
 import de.bitb.pantryplaner.test.parseUser
@@ -20,8 +19,6 @@ import de.bitb.pantryplaner.ui.settings.assertSettingsPageRendered
 import de.bitb.pantryplaner.ui.stock.INSTANT_SEARCH
 import de.bitb.pantryplaner.ui.stock.assertStockPageRendered
 import io.cucumber.java.en.Given
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 
 @HiltAndroidTest
 class StartingSteps(
@@ -51,7 +48,7 @@ class StartingSteps(
     }
 
     @Given("Start on ChecklistPage {string}")
-    fun startOnChecklistPage(name:String) {
+    fun startOnChecklistPage(name: String) {
         startOnOverviewPage()
         tapOnChecklist(name)
         assertChecklistPageRendered()

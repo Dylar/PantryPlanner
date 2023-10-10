@@ -118,6 +118,7 @@ class SettingsFragment : BaseFragment<SettingsViewModel>() {
             )
             Button(
                 modifier = Modifier
+                    .testTag(SettingsPageTag.LogoutButton)
                     .fillMaxWidth()
                     .padding(16.dp),
                 onClick = { showLogoutDialog.value = true },

@@ -10,7 +10,7 @@ Feature: App navigation
 # start on LoginPage
   Scenario: Navigate to RegisterPage
     Given Start on LoginPage
-    When  Tap on RegisterButton
+    When  Tap on NaviToRegisterButton
     Then  RegisterPage rendered
 
   Scenario: Navigate to OverviewPage

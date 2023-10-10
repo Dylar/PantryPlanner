@@ -13,7 +13,7 @@ Feature: StockPage User management
     And   Dropdown option "Andre Option" is displayed
     And   Select dropdown option "Mohammed Lee"
     Then  "StockPage CreatorStock" shared with "Mohammed Lee"
-    And   On back
+    And   On Back
     And   Tap on StockButton
     And   "StockPage CreatorStock" shared with "Mohammed Lee"
 

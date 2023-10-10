@@ -15,7 +15,7 @@ class CommonSteps(
     val scenarioData: ScenarioData,
 ) : ComposeTestRule by scenarioData.composeRule {
 
-    @Then("On back")
+    @Then("On Back")
     fun onBack() {
         scenarioData.scenario?.onActivity { activity ->
             val fragManger = activity.supportFragmentManager

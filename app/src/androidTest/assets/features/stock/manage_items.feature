@@ -22,7 +22,7 @@ Feature: StockPage Items management
     And   Item name is "NewItem"
     And   Item category is "NewCategory"
     And   "ItemDialog" shared with "Mohammed Lee"
-    Then  On back
+    Then  On Back
     And   Tap on StockButton
     And   Item "NewItem" in category "NewCategory" is displayed
 
@@ -33,17 +33,17 @@ Feature: StockPage Items management
 
   Scenario: Remove a Item
     When  Swipe to remove Item "CreatorItem" in category "CreatorCategory"
-    And   Tap on confirm
+    And   Tap on Confirm
     Then  Item "CreatorItem" in category "CreatorCategory" is NOT displayed
-    And   On back
+    And   On Back
     And   Tap on StockButton
     And   Item "CreatorItem" in category "CreatorCategory" is NOT displayed
 
   Scenario: Remove a shared Item
     When  Swipe to remove Item "SharedItem" in category "SharedCategory"
-    And   Tap on confirm
+    And   Tap on Confirm
     Then  Item "SharedItem" in category "SharedCategory" is NOT displayed
-    And   On back
+    And   On Back
     And   Tap on StockButton
     And   Item "SharedItem" in category "SharedCategory" is NOT displayed
 
@@ -74,7 +74,7 @@ Feature: StockPage Items management
     And   Item name is "EditItem"
     And   Item category is "EditCategory"
     And   "ItemDialog" shared with "Mohammed Lee"
-    And   On back
+    And   On Back
     And   Tap on StockButton
     And   Item "EditItem" in category "EditCategory" is displayed
 
@@ -93,7 +93,7 @@ Feature: StockPage Items management
     And   Item "CreatorItem" in category "CreatorCategory" is NOT displayed
     And   Item "SharedItem" in category "SharedCategory" is NOT displayed
     And   No Items displayed
-    Then  On back
+    Then  On Back
     And   Tap on StockButton
     And   Item "CreatorItem" in category "CreatorCategory" is displayed
     And   Item "SharedItem" in category "SharedCategory" is displayed
@@ -102,7 +102,7 @@ Feature: StockPage Items management
     Given Item "CreatorItem" in category "CreatorCategory" has amount 1.0
     When  Increase Item "CreatorItem" in category "CreatorCategory" amount by 2
     Then  Item "CreatorItem" in category "CreatorCategory" has amount 3.0
-    And   On back
+    And   On Back
     And   Tap on StockButton
     And   Item "CreatorItem" in category "CreatorCategory" has amount 3.0
 
@@ -110,7 +110,7 @@ Feature: StockPage Items management
     Given Item "CreatorItem" in category "CreatorCategory" has amount 1.0
     When  Decrease Item "CreatorItem" in category "CreatorCategory" amount by 2
     Then  Item "CreatorItem" in category "CreatorCategory" has amount 0.0
-    And   On back
+    And   On Back
     And   Tap on StockButton
     And   Item "CreatorItem" in category "CreatorCategory" has amount 0.0
 
@@ -118,7 +118,7 @@ Feature: StockPage Items management
     Given Item "SharedItem" in category "SharedCategory" has amount 2.5
     When  Increase Item "SharedItem" in category "SharedCategory" amount by 2
     Then  Item "SharedItem" in category "SharedCategory" has amount 4.5
-    And   On back
+    And   On Back
     And   Tap on StockButton
     And   Item "SharedItem" in category "SharedCategory" has amount 4.5
 
@@ -126,6 +126,6 @@ Feature: StockPage Items management
     Given Item "SharedItem" in category "SharedCategory" has amount 2.5
     When  Decrease Item "SharedItem" in category "SharedCategory" amount by 2
     Then  Item "SharedItem" in category "SharedCategory" has amount 0.5
-    And   On back
+    And   On Back
     And   Tap on StockButton
     And   Item "SharedItem" in category "SharedCategory" has amount 0.5

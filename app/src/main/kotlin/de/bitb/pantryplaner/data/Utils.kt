@@ -2,7 +2,6 @@ package de.bitb.pantryplaner.data
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
-import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.User
 import kotlinx.coroutines.ExperimentalCoroutinesApi

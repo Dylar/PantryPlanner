@@ -3,6 +3,7 @@ package de.bitb.pantryplaner.ui.base.testTags
 sealed class SettingsPageTag : TestTag {
     object AppBar : SettingsPageTag()
     object InfoButton : SettingsPageTag()
+    object LogoutButton : SettingsPageTag()
 }
 
 sealed class LoginPageTag : TestTag {

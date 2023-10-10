@@ -7,6 +7,7 @@ import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.test.defaultPW
 import de.bitb.pantryplaner.test.mockChecklistDao
 import de.bitb.pantryplaner.test.mockItemDao
+import de.bitb.pantryplaner.test.mockSettingsDao
 import de.bitb.pantryplaner.test.mockStockDao
 import de.bitb.pantryplaner.test.mockUserDao
 import de.bitb.pantryplaner.test.parseChecklistCreator
@@ -15,6 +16,7 @@ import de.bitb.pantryplaner.test.parseChecklistShared
 import de.bitb.pantryplaner.test.parseItemCreator
 import de.bitb.pantryplaner.test.parseItemSelect
 import de.bitb.pantryplaner.test.parseItemShared
+import de.bitb.pantryplaner.test.parseSettings
 import de.bitb.pantryplaner.test.parseStockCreator
 import de.bitb.pantryplaner.test.parseStockShared
 import de.bitb.pantryplaner.test.parseUser
@@ -34,6 +36,7 @@ class MockingSteps(
 
     @Given("Init Mocks")
     fun initMocks() {
+        remoteService.mockSettingsDao()
         remoteService.mockUserDao()
         remoteService.mockStockDao()
         remoteService.mockItemDao()
@@ -43,10 +46,17 @@ class MockingSteps(
     @Given("Init default Mocks")
     fun initDefaultMocks() {
         initMocks()
+        mockDefaultSettings()
         mockDefaultUsers()
         mockDefaultStocks()
         mockDefaultItems()
         mockDefaultChecklists()
+    }
+
+    @Given("Mock default Settings")
+    fun mockDefaultSettings() {
+        val settings = parseSettings()
+        remoteService.mockSettingsDao(settings)
     }
 
     @Given("Mock default Users")

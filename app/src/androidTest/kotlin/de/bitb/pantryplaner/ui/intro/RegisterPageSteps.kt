@@ -30,9 +30,9 @@ class RegisterPageSteps(
 
     @When("Register with first name {string}, last name {string}, email {string} and password {string}")
     fun registerUser(firstName: String, lastName: String, email: String, password: String) {
-        onNodeWithTag(RegisterPageTag.EmailLabel).performTextInput(email)
         onNodeWithTag(RegisterPageTag.FirstNameLabel).performTextInput(firstName)
         onNodeWithTag(RegisterPageTag.LastNameLabel).performTextInput(lastName)
+        onNodeWithTag(RegisterPageTag.EmailLabel).performTextInput(email)
         onNodeWithTag(RegisterPageTag.PW1Label).performTextInput(password)
         onNodeWithTag(RegisterPageTag.PW2Label).performTextInput(password)
         onNodeWithTag(RegisterPageTag.RegisterButton).performClick()

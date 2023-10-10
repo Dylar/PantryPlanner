@@ -12,26 +12,26 @@ Feature: ChecklistPage Items management
     And   SelectItemsPage rendered
     Then  Tap on Item "SelectItem" in category "SelectCategory"
     And   Tap on AddSelectionButton
-    And   Tap on confirm
+    And   Tap on Confirm
     Then  ChecklistPage rendered
     And   Item "SelectItem" in category "SelectCategory" is displayed
-    Then  On back
+    Then  On Back
     And   Tap on Checklist "CreatorChecklist"
     And   Item "SelectItem" in category "SelectCategory" is displayed
 
   Scenario: Remove a Item
     When  Swipe to remove Item "CreatorItem" in category "CreatorCategory"
-    And   Tap on confirm
+    And   Tap on Confirm
     Then  Item "CreatorItem" in category "CreatorCategory" is NOT displayed
-    And   On back
+    And   On Back
     And   Tap on Checklist "CreatorChecklist"
     And   Item "CreatorItem" in category "CreatorCategory" is NOT displayed
 
   Scenario: Remove a shared Item
     When  Swipe to remove Item "SharedItem" in category "SharedCategory"
-    And   Tap on confirm
+    And   Tap on Confirm
     Then  Item "SharedItem" in category "SharedCategory" is NOT displayed
-    And   On back
+    And   On Back
     And   Tap on Checklist "CreatorChecklist"
     And   Item "SharedItem" in category "SharedCategory" is NOT displayed
 
@@ -39,7 +39,7 @@ Feature: ChecklistPage Items management
     Given Item "CreatorItem" in category "CreatorCategory" has amount 1.0
     When  Increase Item "CreatorItem" in category "CreatorCategory" amount by 2
     Then  Item "CreatorItem" in category "CreatorCategory" has amount 3.0
-    And   On back
+    And   On Back
     And   Tap on Checklist "CreatorChecklist"
     And   Item "CreatorItem" in category "CreatorCategory" has amount 3.0
 
@@ -47,7 +47,7 @@ Feature: ChecklistPage Items management
     Given Item "CreatorItem" in category "CreatorCategory" has amount 1.0
     When  Decrease Item "CreatorItem" in category "CreatorCategory" amount by 2
     Then  Item "CreatorItem" in category "CreatorCategory" has amount 0.0
-    And   On back
+    And   On Back
     And   Tap on Checklist "CreatorChecklist"
     And   Item "CreatorItem" in category "CreatorCategory" has amount 0.0
 
@@ -55,7 +55,7 @@ Feature: ChecklistPage Items management
     Given Item "SharedItem" in category "SharedCategory" has amount 2.0
     When  Increase Item "SharedItem" in category "SharedCategory" amount by 2
     Then  Item "SharedItem" in category "SharedCategory" has amount 4.0
-    And   On back
+    And   On Back
     And   Tap on Checklist "CreatorChecklist"
     And   Item "SharedItem" in category "SharedCategory" has amount 4.0
 
@@ -63,6 +63,6 @@ Feature: ChecklistPage Items management
     Given Item "SharedItem" in category "SharedCategory" has amount 2.0
     When  Decrease Item "SharedItem" in category "SharedCategory" amount by 2
     Then  Item "SharedItem" in category "SharedCategory" has amount 0.0
-    And   On back
+    And   On Back
     And   Tap on Checklist "CreatorChecklist"
     And   Item "SharedItem" in category "SharedCategory" has amount 0.0

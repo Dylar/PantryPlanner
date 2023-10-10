@@ -1,6 +1,7 @@
 package de.bitb.pantryplaner.data
 
 import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.asResourceError
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.data.source.LocalDatabase
@@ -45,8 +46,9 @@ class UserRepositoryImpl(
 
             val user = remoteDB.getUserByEmail(email)
             if (user is Resource.Error) return@tryIt user
+            if (user.data == null) return@tryIt "Benutzer nicht gefunden".asResourceError()
 
-            localDB.setUser(user.data!!.uuid)
+            localDB.setUser(user.data.uuid)
             user
         }
     }
@@ -76,8 +78,9 @@ class UserRepositoryImpl(
         return if (uuids.isEmpty()) MutableStateFlow(Resource.Success(emptyList()))
         else remoteDB.getUser(uuids)
             .map { resp ->
-                if (resp is Resource.Error) resp.castTo()
-                else Resource.Success(resp.data!!)
+                if (resp is Resource.Error) return@map resp.castTo()
+                if (resp.data?.isEmpty() != false) return@map "Benutzer nicht gefunden: $uuids".asResourceError()
+                else Resource.Success(resp.data)
             }
     }
 

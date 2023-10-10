@@ -10,11 +10,8 @@ import de.bitb.pantryplaner.core.hasTextInHierarchy
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.testTags.AddEditChecklistDialogTag
-import de.bitb.pantryplaner.ui.base.testTags.AddEditItemDialogTag
 import io.cucumber.java.en.And
 import io.cucumber.java.en.Then
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 
 @HiltAndroidTest
 class AddEditChecklistDialogSteps(

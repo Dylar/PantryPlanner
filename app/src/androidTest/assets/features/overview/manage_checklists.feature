@@ -27,12 +27,12 @@ Feature: OverviewPage Checklist management
 
   Scenario: Remove a Checklist
     When  Swipe to remove Checklist "CreatorChecklist"
-    And   Tap on confirm
+    And   Tap on Confirm
     Then  Checklist "CreatorChecklist" is NOT displayed
 
   Scenario: Remove a shared Checklist
     When  Swipe to remove Checklist "SharedChecklist"
-    And   Tap on confirm
+    And   Tap on Confirm
     Then  Checklist "SharedChecklist" is NOT displayed
 
   Scenario: Prevent non-creator from editing a Checklist

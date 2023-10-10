@@ -21,8 +21,6 @@ import de.bitb.pantryplaner.ui.base.testTags.ItemTag
 import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 
 @HiltAndroidTest
 class ItemSteps(

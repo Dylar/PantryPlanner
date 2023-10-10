@@ -13,8 +13,6 @@ import de.bitb.pantryplaner.ui.base.testTags.AddEditItemDialogTag
 import de.bitb.pantryplaner.ui.base.testTags.SearchDropDownTag
 import io.cucumber.java.en.And
 import io.cucumber.java.en.Then
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 
 @HiltAndroidTest
 class AddEditItemDialogSteps(

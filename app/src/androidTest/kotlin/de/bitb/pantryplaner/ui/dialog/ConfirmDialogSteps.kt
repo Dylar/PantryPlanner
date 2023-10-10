@@ -13,7 +13,7 @@ class ConfirmDialogSteps(
     val scenarioData: ScenarioData,
 ) : ComposeTestRule by scenarioData.composeRule {
 
-    @And("Tap on confirm")
+    @And("Tap on Confirm")
     fun tapOnConfirm() {
         onNodeWithTag(ConfirmDialogTag.ConfirmButton).performClick()
         waitForIdle()

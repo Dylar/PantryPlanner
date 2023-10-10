@@ -6,14 +6,13 @@ import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.CheckRepository
 import de.bitb.pantryplaner.data.UserRepository
 import de.bitb.pantryplaner.data.model.Checklist
-import de.bitb.pantryplaner.data.model.User
 import kotlinx.coroutines.flow.first
 
 class SaveChecklistUC(
     private val userRepo: UserRepository,
     private val checkRepo: CheckRepository,
 ) {
-    suspend operator fun invoke(checklist:Checklist): Resource<Boolean> {
+    suspend operator fun invoke(checklist: Checklist): Resource<Boolean> {
         return tryIt(
             onError = { Resource.Error(it, false) },
             onTry = {

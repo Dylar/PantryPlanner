@@ -11,7 +11,7 @@ Feature: ChecklistPage User management
     And   Dropdown option "Andre Option" is displayed
     And   Select dropdown option "Mohammed Lee"
     Then  "ChecklistPage" shared with "Mohammed Lee"
-    And   On back
+    And   On Back
     And   Tap on Checklist "CreatorChecklist"
     And   "ChecklistPage" shared with "Mohammed Lee"
 

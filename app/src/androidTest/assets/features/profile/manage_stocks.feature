@@ -21,12 +21,12 @@ Feature: ProfilePage Stock management
 
   Scenario: Remove a Stock
     When  Swipe to remove Stock "CreatorStock"
-    And   Tap on confirm
+    And   Tap on Confirm
     Then  Stock "CreatorStock" is NOT displayed
 
   Scenario: Remove a shared Stock
     When  Swipe to remove Stock "SharedStock"
-    And   Tap on confirm
+    And   Tap on Confirm
     Then  Stock "SharedStock" is NOT displayed
 
   Scenario: Prevent non-creator from editing a Stock

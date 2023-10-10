@@ -32,7 +32,7 @@ class LoginPageSteps(
         loginUser(user.email, defaultPW)
     }
 
-    @When("Tap on RegisterButton")
+    @When("Tap on NaviToRegisterButton")
     fun tapRegisterButton() {
         onNodeWithTag(LoginPageTag.RegisterButton).performClick()
         waitForIdle()

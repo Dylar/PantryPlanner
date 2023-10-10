@@ -60,7 +60,6 @@ class FireUserService(
                 .snapshots()
                 .map {
                     val user = it.toObjects(User::class.java)
-                    if (user.isEmpty()) return@map "Benutzer nicht gefunden: $uuids".asResourceError()
                     Resource.Success(user)
                 }
         } catch (e: Exception) {

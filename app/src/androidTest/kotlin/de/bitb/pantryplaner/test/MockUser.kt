@@ -24,11 +24,10 @@ fun UserRemoteDao.mockUserDao(
         val email = firstArg<String>()
         val pw = secondArg<String>()
         val userExists = allUser.firstOrNull { it.email == email } != null
-        if (userExists) "User exists".asResourceError()
-        else Resource.Success<Unit>().also {
-            allUser.add(User(email = email))
-            emailPwMap[email] = pw
-        }
+        if (userExists) return@answers "User exists".asResourceError()
+        allUser.add(User(email = email))
+        emailPwMap[email] = pw
+        Resource.Success()
     }
     coEvery { loginUser(any(), any()) }.answers {
         val email = firstArg<String>()
@@ -44,8 +43,8 @@ fun UserRemoteDao.mockUserDao(
     }
     coEvery { getUserByEmail(any()) }.answers {
         val email = firstArg<String>()
-        val users = allUser.first { it.email == email }
-        Resource.Success(users)
+        val user = allUser.firstOrNull { it.email == email }
+        Resource.Success(user)
     }
     coEvery { saveUser(any()) }.answers {
         val saveUser = firstArg<User>()
