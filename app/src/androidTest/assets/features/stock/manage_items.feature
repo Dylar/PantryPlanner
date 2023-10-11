@@ -47,6 +47,24 @@ Feature: StockPage Items management
     And   Tap on StockButton
     And   Item "SharedItem" in category "SharedCategory" is NOT displayed
 
+  Scenario: Remove all Items
+    When  Swipe to remove Item "CreatorItem" in category "CreatorCategory"
+    And   Tap on Confirm
+    And   Swipe to remove Item "SharedItem" in category "SharedCategory"
+    And   Tap on Confirm
+    And   Swipe to remove Item "SelectItem" in category "SelectCategory"
+    And   Tap on Confirm
+    Then  Item "CreatorItem" in category "CreatorCategory" is NOT displayed
+    And   Item "SharedItem" in category "SharedCategory" is NOT displayed
+    And   Item "SelectItem" in category "SelectCategory" is NOT displayed
+    And   No Items displayed
+    And   On Back
+    And   Tap on StockButton
+    And   Item "SharedItem" in category "SharedCategory" is NOT displayed
+    And   Item "CreatorItem" in category "CreatorCategory" is NOT displayed
+    And   Item "SelectItem" in category "SelectCategory" is NOT displayed
+    And   No Items displayed
+
   Scenario: Prevent non-creator from editing a Item
     When  LongPress on Item "SharedItem" in category "SharedCategory"
     And   AddEditItemDialog is displayed

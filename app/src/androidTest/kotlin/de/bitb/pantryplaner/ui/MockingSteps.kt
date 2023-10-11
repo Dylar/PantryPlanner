@@ -86,7 +86,7 @@ class MockingSteps(
         val item1 = parseItemCreator()
         val item2 = parseItemShared()
         val item3 = parseItemSelect()
-        remoteService.mockItemDao(listOf(item1, item2, item3))
+        remoteService.mockItemDao(mutableListOf(item1, item2, item3))
     }
 
     @Given("Mock default Checklists")

@@ -31,7 +31,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.collections.set
 
 data class CheckModel(
     val isCreator: Boolean?,
@@ -74,14 +73,13 @@ class ChecklistViewModel @Inject constructor(
                     itemRepo.getItems(ids, filter)
                         .map { itemResp ->
                             castOnError(itemResp) {
-                                // oh god - sort each list ....
-                                val newMap = mutableMapOf<String, List<Item>>()
-                                itemResp.data?.forEach { lists ->
-                                    newMap[lists.key] = lists.value.sortedBy { item ->
-                                        checklist.items.first { it.uuid == item.uuid }.checked
+                                val newMap = itemResp.data?.mapValues { (_, value) ->
+                                    value.sortedBy { item ->
+                                        checklist.items.find { it.uuid == item.uuid }?.checked
+                                            ?: false
                                     }
-                                }
-                                Resource.Success(newMap.toMap())
+                                } ?: mutableMapOf()
+                                Resource.Success(newMap)
                             }
                         }
                 }
@@ -104,16 +102,22 @@ class ChecklistViewModel @Inject constructor(
                         sharedUsers is Resource.Error -> return@combine sharedUsers.castTo()
                         items is Resource.Error -> return@combine items.castTo()
                         stocks is Resource.Error -> return@combine stocks.castTo()
-                        else -> Resource.Success(
-                            CheckModel(
-                                isCreator.data,
-                                checklist,
-                                items.data,
-                                stocks.data,
-                                users.data,
-                                sharedUsers.data,
-                            ),
-                        )
+                        else -> {
+                            //TODO just in test?
+                            val filteredItems = items.data?.mapValues { (_, list) ->
+                                list.filter { it.uuid in ids }
+                            }?.filterValues { it.isNotEmpty() }
+                            Resource.Success(
+                                CheckModel(
+                                    isCreator.data,
+                                    checklist,
+                                    filteredItems,
+                                    stocks.data,
+                                    users.data,
+                                    sharedUsers.data,
+                                ),
+                            )
+                        }
                     }
                 }
             }.asLiveData()

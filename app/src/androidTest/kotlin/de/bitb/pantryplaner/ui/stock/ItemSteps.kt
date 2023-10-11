@@ -30,7 +30,6 @@ class ItemSteps(
     @Then("No Items displayed")
     fun noItemsDisplayed() {
         onNodeWithText(getString(R.string.no_items)).assertIsDisplayed()
-        waitForIdle()
     }
 
     @Then("Item {string} in category {string} is displayed")
@@ -40,13 +39,11 @@ class ItemSteps(
             name,
             true,
         ).assertIsDisplayed()
-        waitForIdle()
     }
 
     @Then("Item {string} in category {string} is NOT displayed")
     fun itemInCategoryIsNotDisplayed(name: String, category: String) {
         onNodeWithTag(ItemTag(category, name), true).assertDoesNotExist()
-        waitForIdle()
     }
 
     @Then("Swipe to remove Item {string} in category {string}")

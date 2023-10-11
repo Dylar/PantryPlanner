@@ -22,9 +22,8 @@ class RemoveItemsUC(
 
                 val checklist = checkResp.data!!.first()
                 val items = checklist.items.filter { !itemIds.contains(it.uuid) }.toMutableList()
-                val saveChecklist = checklist.copy(items = items)
 
-                val saveResp = checkRepo.saveChecklist(saveChecklist)
+                val saveResp = checkRepo.saveChecklist(checklist.copy(items = items))
                 if (saveResp is Resource.Error) return@tryIt saveResp.castTo(false)
 
                 Resource.Success(true)

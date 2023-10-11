@@ -39,6 +39,18 @@ Feature: Un/Finish checklist
     And   Tap on Confirm
     Then  SnackBar shown: "Du hast die Liste nicht erstellt"
 
+  Scenario: Prevent empty Checklist from finishing
+    Given On Back
+    And   Tap on Checklist "CreatorChecklist"
+    And   Swipe to remove Item "CreatorItem" in category "CreatorCategory"
+    And   Tap on Confirm
+    And   Swipe to remove Item "SharedItem" in category "SharedCategory"
+    And   Tap on Confirm
+    And   No Items displayed
+    When  Tap on FinishButton
+    And   Tap on Confirm
+    Then  SnackBar shown: "Liste enthält keine Items"
+
   Scenario: Unfinish Checklist and reduce checked Item amount to Stock
     Given Item "CreatorItem" in category "CreatorCategory" has amount 1.0
     And   Item "SharedItem" in category "SharedCategory" has amount 2.5

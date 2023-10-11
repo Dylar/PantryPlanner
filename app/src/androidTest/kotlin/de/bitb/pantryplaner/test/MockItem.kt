@@ -14,16 +14,19 @@ fun parseItemShared(): Item = parsePOKO("item_shared")
 fun parseItemSelect(): Item = parsePOKO("item_select")
 
 fun ItemRemoteDao.mockItemDao(
-    items: List<Item> = emptyList()
+    items: MutableList<Item> = mutableListOf()
 ) {
     val stocksFlows = createFlows(items) { item ->
         (listOf(item.creator) + item.sharedWith)
     }
 
     coEvery { getItems(any(), any()) }.answers {
-        val uuid = firstArg<String>()
-        val flow = stocksFlows[uuid] ?: MutableStateFlow(Resource.Success(emptyList()))
-        stocksFlows[uuid] = flow
+        val userId = firstArg<String>()
+        val itemIds = secondArg<List<String>?>()
+        val flow = stocksFlows[userId] ?: MutableStateFlow(Resource.Success(emptyList()))
+        flow.value =
+            Resource.Success(if (itemIds == null) items else items.filter { itemIds.contains(it.uuid) })
+        stocksFlows[userId] = flow
         flow
     }
     coEvery { addItem(any()) }.answers {
@@ -52,9 +55,13 @@ fun ItemRemoteDao.mockItemDao(
     coEvery { saveItems(any()) }.answers {
         val saveItems = firstArg<List<Item>>().associateBy { it.uuid }
         stocksFlows.forEach { (userId, flow) ->
-            val newList = flow.value.data!!.toMutableList()
+            val oldList = flow.value.data!!.toMutableList()
+            val newList = items
                 .apply { replaceAll { loc -> saveItems[loc.uuid] ?: loc } }
-                .filter { it.creator == userId || it.sharedWith.contains(userId) }
+                .filter { item ->
+                    oldList.firstOrNull { it.uuid === item.uuid } != null &&
+                            (item.creator == userId || item.sharedWith.contains(userId))
+                }
             flow.value = Resource.Success(newList)
         }
 

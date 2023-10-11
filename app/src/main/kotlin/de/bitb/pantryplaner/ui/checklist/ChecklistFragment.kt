@@ -241,7 +241,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
         item: Item,
         stockItem: StockItem,
     ) {
-        val checkItem = checklist.items.firstOrNull { it.uuid == item.uuid } ?: return
+        val checkItem = checklist.items.first { it.uuid == item.uuid }
 
         val showEditDialog = remember { mutableStateOf(false) }
         useEditItemDialog(
