@@ -172,7 +172,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
                     },
                 )
                 if (checkLists.isEmpty()) {
-                    EmptyListComp(getString(R.string.no_items))
+                    EmptyListComp(getString(R.string.no_checklists))
                     return
                 }
 

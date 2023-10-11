@@ -35,6 +35,15 @@ Feature: OverviewPage Checklist management
     And   Tap on Confirm
     Then  Checklist "SharedChecklist" is NOT displayed
 
+  Scenario: Remove a Checklist
+    When  Swipe to remove Checklist "CreatorChecklist"
+    And   Tap on Confirm
+    And   Swipe to remove Checklist "SharedChecklist"
+    And   Tap on Confirm
+    And   Swipe to remove Checklist "FinishedChecklist"
+    And   Tap on Confirm
+    Then  No Checklists displayed
+
   Scenario: Prevent non-creator from editing a Checklist
     When  LongPress on Checklist "SharedChecklist"
     And   AddEditChecklistDialog is displayed
