@@ -13,10 +13,7 @@ import kotlinx.coroutines.flow.map
 
 interface ItemRepository {
     fun getItem(id: String): Flow<Resource<Item>>
-    fun getItems(
-        ids: List<String>? = null,
-        filterBy: Filter? = null,
-    ): Flow<Resource<Map<String, List<Item>>>>
+    fun getItems(ids: List<String>? = null, filterBy: Filter? = null): Flow<Resource<List<Item>>>
 
     suspend fun getAllItems(ids: List<String>?): Resource<List<Item>>
 
@@ -42,7 +39,7 @@ class ItemRepositoryImpl(
     override fun getItems(
         ids: List<String>?,
         filterBy: Filter?,
-    ): Flow<Resource<Map<String, List<Item>>>> {
+    ): Flow<Resource<List<Item>>> {
         return remoteDB
             .getItems(localDB.getUser(), ids)
             .map { resp ->
@@ -57,9 +54,9 @@ class ItemRepositoryImpl(
                                     (filterBy.filterByTerm && it.name.contains(filterBy.searchTerm))
 //                                    (filterBy.filterByColor && it.color == filterBy.color) // TODO ?
                         }
-                        ?.groupBy { it.category }
-                        ?.toSortedMap { a1, a2 -> a1.compareTo(a2) }
-                        ?: emptyMap()
+//                        ?.groupBy { it.category }
+//                        ?.toSortedMap { a1, a2 -> a1.compareTo(a2) }
+//                        ?: emptyMap()
                     Resource.Success(groupedItems)
                 }
             }

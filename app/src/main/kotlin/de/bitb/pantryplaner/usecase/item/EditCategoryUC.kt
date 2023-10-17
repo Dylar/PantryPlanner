@@ -27,7 +27,7 @@ class EditCategoryUC(
             val stockResp = stockRepo.getStocks().first() //TODO only because of color
             if (stockResp is Resource.Error) return@tryIt stockResp.castTo()
 
-            val itemsMap = itemsResp.data ?: mapOf()
+            val itemsMap = itemsResp.data?.groupBy { it.category } ?: mapOf()
             val stockItems = stockResp.data?.first()?.items?.associateBy { it.uuid } ?: mapOf()
 
             val itemsToEdit = mutableListOf<Item>()

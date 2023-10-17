@@ -209,6 +209,11 @@ class StockFragment : BaseFragment<StockViewModel>() {
                 Column(
                     verticalArrangement = Arrangement.Top
                 ) {
+                    if (stocks.isEmpty()) {
+                        EmptyListComp(getString(R.string.no_stocks))
+                        return
+                    }
+
                     useAddItemDialog(
                         showAddDialog,
                         categorys,
@@ -242,6 +247,11 @@ class StockFragment : BaseFragment<StockViewModel>() {
                             modifier = Modifier.testTag(StockPageTag.StockPage(stock.name)),
                             verticalArrangement = Arrangement.Top
                         ) {
+                            if (items.isEmpty()) {
+                                EmptyListComp(getString(R.string.no_items))
+                                return@HorizontalPager
+                            }
+
                             val selectedUser = remember(stock) {
                                 mutableStateOf(allUser.filter { stock.sharedWith.contains(it.uuid) })
                             }
@@ -253,26 +263,23 @@ class StockFragment : BaseFragment<StockViewModel>() {
                             ) {
                                 viewModel.setSharedWith(stock, it)
                             }
-                            if (items.isEmpty()) {
-                                EmptyListComp(getString(R.string.no_items))
-                            } else {
-                                GridListLayout(
-                                    innerPadding,
-                                    showGridLayout,
-                                    items,
-                                    {
-                                        stock.items.firstOrNull()?.color ?: BaseColors.LightGray
-                                    }, //TODO color?
-                                    viewModel::editCategory
-                                ) { _, item ->
-                                    listItem(
-                                        stock.items.firstOrNull { it.uuid == item.uuid }
-                                            ?: item.toStockItem(),
-                                        item,
-                                        categorys,
-                                        users,
-                                    )
-                                }
+                            GridListLayout(
+                                innerPadding,
+                                showGridLayout,
+                                items,
+                                {
+                                    stock.items.firstOrNull()?.color ?: BaseColors.LightGray
+                                }, //TODO color?
+                                viewModel::editCategory
+                            ) { _, item ->
+                                listItem(
+                                    stock.items.firstOrNull { it.uuid == item.uuid }
+                                        ?: item.toStockItem(),
+                                    item,
+                                    categorys,
+                                    users,
+                                    user,
+                                )
                             }
                         }
                     }
@@ -287,6 +294,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
         item: Item,
         categorys: List<String>,
         users: List<User>,
+        user: User,
     ) {
         val showEditDialog = remember { mutableStateOf(false) }
         useEditItemDialog(
@@ -295,12 +303,13 @@ class StockFragment : BaseFragment<StockViewModel>() {
             item,
             categorys,
             users,
+            user,
         ) { si, i, _ -> viewModel.editItem(si, i) }
 
         dissmissItem(
             item.name,
             stockItem.color,
-            onSwipe = { viewModel.deleteItem(item, stockItem) },
+            onSwipe = { viewModel.deleteItem(item) },
             onLongClick = { showEditDialog.value = true },
         ) { stockItem(item, stockItem) }
     }

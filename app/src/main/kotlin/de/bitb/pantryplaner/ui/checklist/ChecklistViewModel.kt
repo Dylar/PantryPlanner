@@ -23,8 +23,8 @@ import de.bitb.pantryplaner.ui.base.BaseViewModel
 import de.bitb.pantryplaner.ui.base.comps.asResString
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
+import de.bitb.pantryplaner.usecase.StockUseCases
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
@@ -33,15 +33,17 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class CheckModel(
-    val isCreator: Boolean?,
     val checklist: Checklist?,
     val items: Map<String, List<Item>>?,
     val stocks: List<Stock>?, // TODO change to no stock needed -> on finish select stock (+ none, to not add? :D)
+    val user: User?,
     val connectedUser: List<User>?,
     val sharedUser: List<User>?,
 ) {
     val isLoading: Boolean
-        get() = isCreator == null || checklist == null || items == null || stocks == null || connectedUser == null || sharedUser == null
+        get() = checklist == null || items == null || stocks == null || user == null || connectedUser == null || sharedUser == null
+
+    fun isCreator(): Boolean = user?.uuid == checklist?.creator
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -53,6 +55,7 @@ class ChecklistViewModel @Inject constructor(
     private val checkRepo: CheckRepository,
     private val checkUseCases: ChecklistUseCases,
     private val itemUseCases: ItemUseCases,
+    private val stockUseCases: StockUseCases,
 ) : BaseViewModel(), UserDataExt {
 
     val itemErrorList = MutableStateFlow<List<String>>(emptyList())
@@ -73,31 +76,26 @@ class ChecklistViewModel @Inject constructor(
                     itemRepo.getItems(ids, filter)
                         .map { itemResp ->
                             castOnError(itemResp) {
-                                val newMap = itemResp.data?.mapValues { (_, value) ->
-                                    value.sortedBy { item ->
-                                        checklist.items.find { it.uuid == item.uuid }?.checked
-                                            ?: false
-                                    }
-                                } ?: mutableMapOf()
+                                val newMap = itemResp.data?.groupBy { it.category }
+                                    ?.mapValues { (_, value) ->
+                                        value.sortedBy { item ->
+                                            checklist.items
+                                                .find { it.uuid == item.uuid }?.checked ?: false
+                                        }
+                                    } ?: mutableMapOf()
                                 Resource.Success(newMap)
                             }
                         }
                 }
-                val isCreatorFlow: Flow<Resource<Boolean>> = userRepo.getUser()
-                    .flatMapLatest { userResp ->
-                        if (userResp is Resource.Error) MutableStateFlow(userResp.castTo())
-                        else Resource.Success(userResp.data!!.uuid == checklist.creator)
-                            .asFlow<Boolean>()
-                    }
                 combine(
-                    isCreatorFlow,
+                    userRepo.getUser(),
                     getConnectedUsers().asFlow(),
                     userRepo.getUser(checklist.sharedWith),
                     itemsFlow,
                     stockRepo.getStocks()
-                ) { isCreator, users, sharedUsers, items, stocks ->
+                ) { user, users, sharedUsers, items, stocks ->
                     when {
-                        isCreator is Resource.Error -> return@combine isCreator.castTo()
+                        user is Resource.Error -> return@combine user.castTo()
                         users is Resource.Error -> return@combine users.castTo()
                         sharedUsers is Resource.Error -> return@combine sharedUsers.castTo()
                         items is Resource.Error -> return@combine items.castTo()
@@ -107,12 +105,13 @@ class ChecklistViewModel @Inject constructor(
                             val filteredItems = items.data?.mapValues { (_, list) ->
                                 list.filter { it.uuid in ids }
                             }?.filterValues { it.isNotEmpty() }
+
                             Resource.Success(
                                 CheckModel(
-                                    isCreator.data,
                                     checklist,
                                     filteredItems,
                                     stocks.data,
+                                    user.data,
                                     users.data,
                                     sharedUsers.data,
                                 ),
@@ -145,8 +144,11 @@ class ChecklistViewModel @Inject constructor(
 
     fun editItem(stockItem: StockItem, item: Item) {
         viewModelScope.launch {
-            when (val resp = itemUseCases.editItemUC(stockItem, item)) {
-                is Resource.Error -> showSnackbar(resp.message!!)
+            val editItemResp = itemUseCases.editItemUC(item)
+            val editStockItemResp = stockUseCases.editStockItemUC(stockItem)
+            when {
+                editStockItemResp is Resource.Error -> showSnackbar(editStockItemResp.message!!)
+                editItemResp is Resource.Error -> showSnackbar(editItemResp.message!!)
                 else -> showSnackbar("Item editiert".asResString()).also { updateWidgets() }
             }
         }

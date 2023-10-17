@@ -44,10 +44,15 @@ import de.bitb.pantryplaner.ui.base.testTags.testTag
 import java.util.Locale
 
 @Composable
-fun buildCategoryDropDown(category: MutableState<TextFieldValue>, categorys: List<String>) {
+fun buildCategoryDropDown(
+    category: MutableState<TextFieldValue>,
+    categorys: List<String>,
+    canChange: Boolean = true,
+) {
     SearchDropDown(
         stringResource(R.string.item_category),
         category,
+        canChange = canChange,
         addUnknownOption = true,
         options = categorys,
     ) { cat ->
@@ -68,6 +73,7 @@ fun buildUserDropDown(
         SearchDropDown(
             "Mit Benutzer teilen",
             selectedState,
+            canChange = canChange,
             clearOnSelection = true,
             options = users.filter { !selectedUser.value.contains(it) }.map { it.fullName },
         ) { selection ->
@@ -91,6 +97,7 @@ private fun SearchDropDown(
     hint: String,
     selectedState: MutableState<TextFieldValue>,
     options: List<String>,
+    canChange: Boolean = true,
     addUnknownOption: Boolean = false,
     clearOnSelection: Boolean = false,
     onConfirm: (String) -> Unit,
@@ -104,6 +111,7 @@ private fun SearchDropDown(
         onExpandedChange = { expanded = !expanded }
     ) {
         TextField(
+            readOnly = !canChange,
             value = selectedState.value,
             onValueChange = { selectedState.value = it },
             modifier = Modifier

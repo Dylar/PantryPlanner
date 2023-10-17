@@ -1,6 +1,7 @@
 package de.bitb.pantryplaner.data
 
 import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.asResourceError
 import de.bitb.pantryplaner.core.misc.castOnError
 import de.bitb.pantryplaner.core.misc.formatDateNow
 import de.bitb.pantryplaner.data.model.Checklist
@@ -31,7 +32,8 @@ class CheckRepositoryImpl(
             .flatMapLatest { remoteDB.getUser(listOf(it)) }
             .flatMapLatest { resp ->
                 if (resp is Resource.Error) return@flatMapLatest flow { emit(resp.castTo()) }
-                val user = resp.data!!.first()
+                val user = resp.data!!.firstOrNull() //TODO needed?
+                    ?: return@flatMapLatest flow { emit("Benutzer nicht gefunden".asResourceError()) }
                 remoteDB.getCheckLists(user.uuid, uuids)
             }.map { resp ->
                 return@map castOnError(resp) {

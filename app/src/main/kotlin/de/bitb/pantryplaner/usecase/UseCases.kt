@@ -21,6 +21,7 @@ import de.bitb.pantryplaner.usecase.stock.AddStockItemUC
 import de.bitb.pantryplaner.usecase.stock.AddStockUC
 import de.bitb.pantryplaner.usecase.stock.DeleteStockItemUC
 import de.bitb.pantryplaner.usecase.stock.DeleteStockUC
+import de.bitb.pantryplaner.usecase.stock.EditStockItemUC
 import de.bitb.pantryplaner.usecase.stock.EditStockUC
 import de.bitb.pantryplaner.usecase.user.ConnectUserUC
 import de.bitb.pantryplaner.usecase.user.DisconnectUserUC
@@ -55,6 +56,7 @@ data class StockUseCases(
     val editStockUC: EditStockUC,
     val addStockItemUC: AddStockItemUC,
     val deleteStockItemUC: DeleteStockItemUC,
+    val editStockItemUC: EditStockItemUC,
 )
 
 data class ChecklistUseCases(

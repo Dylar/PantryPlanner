@@ -196,13 +196,14 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 val items = model.items!!
                 val categorys = items.keys.toList()
                 val stocks = model.stocks!!
+                val user = model.user!!
                 val connectedUsers = model.connectedUser!!
                 val selectedUser = remember { mutableStateOf(model.sharedUser!!) }
                 buildUserDropDown(
                     "Checkliste wird nicht geteilt",
                     connectedUsers,
                     selectedUser,
-                    canChange = model.isCreator == true
+                    canChange = model.isCreator()
                 ) {
                     viewModel.setSharedWith(it)
                 }
@@ -223,6 +224,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                             model.checklist!!,
                             categorys,
                             connectedUsers,
+                            user,
                             item,
                             stocks.firstOrNull()?.items?.firstOrNull { it.uuid == item.uuid }
                                 ?: StockItem(item.uuid),
@@ -238,6 +240,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
         checklist: Checklist,
         categorys: List<String>,
         users: List<User>,
+        user: User,
         item: Item,
         stockItem: StockItem,
     ) {
@@ -250,6 +253,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
             item,
             categorys,
             users,
+            user,
         ) { si, i, _ -> viewModel.editItem(si, i) }
 
         dissmissItem(

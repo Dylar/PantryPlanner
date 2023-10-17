@@ -22,15 +22,8 @@ class EditStockUC(
                 val user = userRepo.getUser().first()
                 if (user is Resource.Error) return@tryIt user.castTo()
                 if (user.data!!.uuid != stock.creator)
-                    return@tryIt "Nur der Ersteller kann den Lager ändern".asResourceError()
-                stockRepo.saveStocks(
-                    listOf(
-                        stock.copy(
-                            name = name,
-                            sharedWith = sharedWith
-                        )
-                    )
-                )
+                    return@tryIt "Nur der Ersteller kann das Lager ändern".asResourceError()
+                stockRepo.saveStocks(listOf(stock.copy(name = name, sharedWith = sharedWith)))
             },
         )
     }

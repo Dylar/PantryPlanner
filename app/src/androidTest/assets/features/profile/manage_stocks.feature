@@ -36,7 +36,7 @@ Feature: ProfilePage Stock management
     And   Tap on CreateStockButton
     Then  Stock "EditStock" is NOT displayed
     And   Stock "SharedStock" is displayed
-    And   SnackBar shown: "Nur der Ersteller kann den Lager ändern"
+    And   SnackBar shown: "Nur der Ersteller kann das Lager ändern"
 
   Scenario: Edit a created Stock name
     When  LongPress on Stock "CreatorStock"

@@ -10,7 +10,9 @@ import de.bitb.pantryplaner.ui.base.testTags.AddEditStockDialogTag
 import de.bitb.pantryplaner.ui.base.testTags.ChecklistPageTag
 import de.bitb.pantryplaner.ui.base.testTags.StockPageTag
 import de.bitb.pantryplaner.ui.base.testTags.TestTag
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.runBlocking
 
 inline fun <reified T> parsePOKO(fileName: String): T {
     val json = readJsonFromAssets(fileName)
@@ -55,3 +57,5 @@ fun getParentTag(parent: String): TestTag {
     }
     return tag
 }
+
+fun waitFor() = runBlocking { delay(4000) }

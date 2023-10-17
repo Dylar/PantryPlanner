@@ -23,32 +23,27 @@ fun CheckRemoteDao.mockChecklistDao(
 
     coEvery { getCheckLists(any(), any()) }.answers {
         val userId = firstArg<String>()
-        val uuids = secondArg<List<String>?>() ?: emptyList()
+        val uuids = secondArg<List<String>?>()
 
-        val userList = checksMap[userId] ?: mutableListOf()
+        val checksList = checksMap[userId] ?: mutableListOf()
         val flow = checksFlows[userId] ?: MutableStateFlow(Resource.Success(emptyList()))
         checksFlows[userId] = flow
 
-        val list = if (uuids.isEmpty()) userList else userList.filter { uuids.contains(it.uuid) }
-        flow.value = Resource.Success(list)
+        flow.value = Resource.Success(
+            if (uuids == null) checksList
+            else checksList.filter { uuids.contains(it.uuid) }
+        )
         flow
     }
     coEvery { addChecklist(any()) }.answers {
         val addChecklist = firstArg<Checklist>()
         val userId = addChecklist.creator
 
-        val userList = checksMap[userId] ?: mutableListOf()
-        userList.add(addChecklist)
+        val checksList = checksMap[userId] ?: mutableListOf()
+        checksMap[userId] = checksList
+        checksList.add(addChecklist)
 
-        val flow = checksFlows[userId]
-            ?: MutableStateFlow(Resource.Success(emptyList()))
-        checksFlows[userId] = flow
-
-        val oldData = flow.value.data!!
-        flow.value = Resource.Success(
-            userList.filter { oldData.firstOrNull { old -> old.uuid == it.uuid } != null }
-        )
-
+        setFlowValue(checksFlows, userId, checksList)
         Resource.Success(true)
     }
 
@@ -56,18 +51,10 @@ fun CheckRemoteDao.mockChecklistDao(
         val deleteChecklist = firstArg<Checklist>()
         val userId = deleteChecklist.creator
 
-        val userList = checksMap[userId] ?: mutableListOf()
-        userList.remove(deleteChecklist)
+        val checksList = checksMap[userId] ?: mutableListOf()
+        checksList.remove(deleteChecklist)
 
-        val flow = checksFlows[userId]
-            ?: MutableStateFlow(Resource.Success(emptyList()))
-        checksFlows[userId] = flow
-
-        val oldData = flow.value.data!!
-        flow.value = Resource.Success(
-            userList.filter { oldData.firstOrNull { old -> old.uuid == it.uuid } != null }
-        )
-
+        setFlowValue(checksFlows, userId, checksList)
         Resource.Success(true)
     }
 
@@ -85,6 +72,23 @@ fun CheckRemoteDao.mockChecklistDao(
 
         Resource.Success()
     }
+}
+
+private fun setFlowValue(
+    checksFlows: MutableMap<String, MutableStateFlow<Resource<List<Checklist>>>>,
+    userId: String,
+    checksList: MutableList<Checklist>
+) {
+    val flow = checksFlows[userId]
+        ?: MutableStateFlow(Resource.Success(emptyList()))
+    checksFlows[userId] = flow
+
+    val oldData = flow.value.data!!
+    flow.value = Resource.Success(
+        if (oldData.isEmpty()) checksList.toList()
+        else
+            checksList.filter { oldData.firstOrNull { old -> old.uuid == it.uuid } != null }
+    )
 }
 
 // TODO test errors

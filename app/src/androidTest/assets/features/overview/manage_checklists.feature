@@ -35,7 +35,7 @@ Feature: OverviewPage Checklist management
     And   Tap on Confirm
     Then  Checklist "SharedChecklist" is NOT displayed
 
-  Scenario: Remove a Checklist
+  Scenario: Remove all Checklist
     When  Swipe to remove Checklist "CreatorChecklist"
     And   Tap on Confirm
     And   Swipe to remove Checklist "SharedChecklist"

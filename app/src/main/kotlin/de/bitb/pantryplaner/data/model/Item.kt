@@ -18,4 +18,6 @@ data class Item(
         get() = parseDateTimeString(createdAt)
 
     fun toStockItem(): StockItem = StockItem(uuid)
+
+    fun sharedWith(userId: String): Boolean = creator == userId || sharedWith.contains(userId)
 }

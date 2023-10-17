@@ -15,7 +15,7 @@ class UncheckAllItemsUC(
             val getItemsResp = itemRepo.getItems().first()
             if (getItemsResp is Resource.Error) return@tryIt getItemsResp.castTo()
 
-            val itemsMap = getItemsResp.data ?: mapOf()
+            val itemsMap = getItemsResp.data?.groupBy { it.category } ?: mapOf()
             if (itemsMap.isEmpty()) {
                 return@tryIt Resource.Success()
             }

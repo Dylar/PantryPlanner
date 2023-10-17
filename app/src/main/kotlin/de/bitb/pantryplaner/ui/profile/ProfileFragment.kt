@@ -50,6 +50,7 @@ import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseFragment
+import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
 import de.bitb.pantryplaner.ui.base.comps.dissmissItem
@@ -218,31 +219,34 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
             horizontalArrangement = Arrangement.Center,
             contentPadding = PaddingValues(horizontal = 20.dp),
         ) {
-            if (connectedUser.isNotEmpty()) {
-                stickyGridHeader {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.CenterStart,
-                    ) {
-                        Text(
-                            "Verbundene Benutzer",
-                            modifier = Modifier
-                                .drawBehind {
-                                    val strokeWidthPx = 1.dp.toPx()
-                                    val verticalOffset = size.height - 2.sp.toPx()
-                                    drawLine(
-                                        color = BaseColors.ZergPurple,
-                                        strokeWidth = strokeWidthPx,
-                                        start = Offset(0f, verticalOffset),
-                                        end = Offset(size.width, verticalOffset)
-                                    )
-                                },
-                            textAlign = TextAlign.Center,
-                        )
-                    }
+            stickyGridHeader {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.CenterStart,
+                ) {
+                    Text(
+                        "Verbundene Benutzer",
+                        modifier = Modifier
+                            .drawBehind {
+                                val strokeWidthPx = 1.dp.toPx()
+                                val verticalOffset = size.height - 2.sp.toPx()
+                                drawLine(
+                                    color = BaseColors.ZergPurple,
+                                    strokeWidth = strokeWidthPx,
+                                    start = Offset(0f, verticalOffset),
+                                    end = Offset(size.width, verticalOffset)
+                                )
+                            },
+                        textAlign = TextAlign.Center,
+                    )
                 }
             }
-            items(connectedUser.size) { buildUser(connectedUser[it]) }
+
+            if (connectedUser.isEmpty()) {
+                items(1) { EmptyListComp(getString(R.string.no_connected_users)) }
+            } else {
+                items(connectedUser.size) { buildUser(connectedUser[it]) }
+            }
         }
     }
 
@@ -284,31 +288,33 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
             horizontalArrangement = Arrangement.Center,
             contentPadding = PaddingValues(horizontal = 20.dp),
         ) {
-            if (stocks.isNotEmpty()) {
-                stickyGridHeader {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.CenterStart,
-                    ) {
-                        Text(
-                            "Lager",
-                            modifier = Modifier
-                                .drawBehind { // TODO make generic
-                                    val strokeWidthPx = 1.dp.toPx()
-                                    val verticalOffset = size.height - 2.sp.toPx()
-                                    drawLine(
-                                        color = BaseColors.ZergPurple,
-                                        strokeWidth = strokeWidthPx,
-                                        start = Offset(0f, verticalOffset),
-                                        end = Offset(size.width, verticalOffset)
-                                    )
-                                },
-                            textAlign = TextAlign.Center,
-                        )
-                    }
+            stickyGridHeader {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.CenterStart,
+                ) {
+                    Text(
+                        "Lager",
+                        modifier = Modifier
+                            .drawBehind { // TODO make generic
+                                val strokeWidthPx = 1.dp.toPx()
+                                val verticalOffset = size.height - 2.sp.toPx()
+                                drawLine(
+                                    color = BaseColors.ZergPurple,
+                                    strokeWidth = strokeWidthPx,
+                                    start = Offset(0f, verticalOffset),
+                                    end = Offset(size.width, verticalOffset)
+                                )
+                            },
+                        textAlign = TextAlign.Center,
+                    )
                 }
             }
-            items(stocks.size) { buildStock(users, stocks[it]) }
+            if (stocks.isEmpty()) {
+                items(1) { EmptyListComp(getString(R.string.no_stocks)) }
+            } else {
+                items(stocks.size) { buildStock(users, stocks[it]) }
+            }
         }
     }
 

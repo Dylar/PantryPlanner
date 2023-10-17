@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -49,6 +50,7 @@ fun useAddItemDialog(
         item,
         categorys,
         users,
+        true,
         onEdit
     )
 }
@@ -60,8 +62,10 @@ fun useEditItemDialog(
     item: Item,
     categorys: List<String>,
     users: List<User>,
+    user: User,
     onEdit: (StockItem, Item, Boolean) -> Unit,
 ) {
+    val isCreator = user.uuid == item.creator
     useDialog(
         showDialog,
         "Item bearbeiten", "Speichern",
@@ -69,6 +73,7 @@ fun useEditItemDialog(
         item,
         categorys,
         users,
+        isCreator,
     ) { si, i, _ -> onEdit(si, i, true) }
 }
 
@@ -81,6 +86,7 @@ private fun useDialog(
     item: Item,
     categorys: List<String>,
     users: List<User>,
+    isCreator: Boolean,
     onConfirm: (StockItem, Item, Boolean) -> Unit,
 ) {
     if (showDialog.value) {
@@ -91,6 +97,7 @@ private fun useDialog(
             item = item,
             categorys = categorys,
             users = users,
+            isCreator = isCreator,
             onConfirm = { si, i, close ->
                 onConfirm(si, i, close)
                 showDialog.value = false
@@ -108,6 +115,7 @@ private fun AddEditItemDialog(
     item: Item,
     categorys: List<String>,
     users: List<User>,
+    isCreator: Boolean,
     onConfirm: (StockItem, Item, Boolean) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -128,8 +136,8 @@ private fun AddEditItemDialog(
         val selected = users.filter { item.sharedWith.contains(it.uuid) }
         mutableStateOf(selected)
     }
-    val freshUntil = remember { mutableStateOf(stockItem.freshUntil) }
-    val remindAfter = remember { mutableStateOf(stockItem.remindAfter) }
+    val freshUntil = remember { mutableLongStateOf(stockItem.freshUntil) }
+    val remindAfter = remember { mutableLongStateOf(stockItem.remindAfter) }
 
     fun copyItem() = item.copy(
         name = name.text,
@@ -138,8 +146,8 @@ private fun AddEditItemDialog(
     )
 
     fun copyStockItem() = stockItem.copy(
-        freshUntil = freshUntil.value,
-        remindAfter = remindAfter.value,
+        freshUntil = freshUntil.longValue,
+        remindAfter = remindAfter.longValue,
     )
 
     AlertDialog(
@@ -153,6 +161,7 @@ private fun AddEditItemDialog(
         text = {
             Column {
                 OutlinedTextField(
+                    readOnly = !isCreator,
                     modifier = Modifier
                         .testTag(AddEditItemDialogTag.NameLabel)
 //                        .focusRequester(focusRequester)
@@ -169,21 +178,21 @@ private fun AddEditItemDialog(
                         },
                     ),
                 )
-                buildCategoryDropDown(category, categorys)
+                buildCategoryDropDown(category, categorys, canChange = isCreator)
                 buildUserDropDown("Item wird nicht geteilt", users, selectedUser)
                 OutlinedComp {
                     Text("MHD", modifier = Modifier.padding(4.dp))
                     AddSubRow(
-                        freshUntil.value.toDouble(),
+                        freshUntil.longValue.toDouble(),
                         backgroundColor = BaseColors.LightGray
-                    ) { freshUntil.value = it.toLong() }
+                    ) { freshUntil.longValue = it.toLong() }
                 }
                 OutlinedComp {
                     Text("Erinnerung", modifier = Modifier.padding(4.dp))
                     AddSubRow(
-                        remindAfter.value.toDouble(),
+                        remindAfter.longValue.toDouble(),
                         backgroundColor = BaseColors.LightGray
-                    ) { remindAfter.value = it.toLong() }
+                    ) { remindAfter.longValue = it.toLong() }
                 }
             }
 //            LaunchedEffect(Unit) {

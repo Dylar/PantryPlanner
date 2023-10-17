@@ -25,12 +25,12 @@ object Logger {
     @Suppress("unused")
     fun printTimer(msg: String) {
         val inMillis = (System.currentTimeMillis() - time).toDouble()
-        printLog("$msg (TIME: $inMillis)")
+        printLog("Start Timer" to "$msg (TIME: $inMillis)")
     }
 
     @SuppressWarnings("FunctionCouldBePrivate")
-    fun <T : Any> printLog(vararg params: T, level: PrintLevel = PrintLevel.SYSTEM) {
-        val log = createLog(params)
+    fun printLog(vararg params: Pair<String, *>, level: PrintLevel = PrintLevel.SYSTEM) {
+        val log = createLog(*params)
         printMessage(
             "\n${LOG_BORDER_TOP}" +
                     "\nTime:${log.timeStamp}" +
@@ -43,7 +43,7 @@ object Logger {
     }
 
     fun justPrint(message: String, level: PrintLevel = PrintLevel.SYSTEM) {
-        val log = createLog(message)
+        val log = createLog("" to message)
         val tag = "\n${LOG_BORDER_TOP}" +
                 "\nTime:${log.timeStamp}"
         val msg = "\nParams:${log.params}" +
@@ -62,11 +62,12 @@ object Logger {
         }
     }
 
-    private fun <TYPE : Any> createLog(vararg params: TYPE): LogData {
+    private fun createLog(vararg params: Pair<String, *>): LogData {
         return Thread.currentThread().let { thread ->
             val xParams = params
-                .contentDeepToString()
-                .removeArrayBrackets()
+                .map { it.first + ": " + it.second }
+                .reduce { first, second -> first + "\n" + second }
+
 
             val xThread = thread.name
                 .removeArrayBrackets()

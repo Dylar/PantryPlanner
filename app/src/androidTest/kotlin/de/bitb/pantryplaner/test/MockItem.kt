@@ -1,70 +1,62 @@
 package de.bitb.pantryplaner.test
 
 import de.bitb.pantryplaner.core.createFlows
+import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.parsePOKO
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.data.source.ItemRemoteDao
 import io.mockk.coEvery
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 
 fun parseItemCreator(): Item = parsePOKO("item_creator")
 fun parseItemShared(): Item = parsePOKO("item_shared")
 fun parseItemSelect(): Item = parsePOKO("item_select")
 
+@OptIn(ExperimentalCoroutinesApi::class)
 fun ItemRemoteDao.mockItemDao(
-    items: MutableList<Item> = mutableListOf()
+    allItems: List<Item> = listOf()
 ) {
-    val stocksFlows = createFlows(items) { item ->
+    val allFlow = MutableStateFlow(allItems)
+    val itemsFlows = createFlows(allItems) { item ->
         (listOf(item.creator) + item.sharedWith)
     }
 
     coEvery { getItems(any(), any()) }.answers {
         val userId = firstArg<String>()
         val itemIds = secondArg<List<String>?>()
-        val flow = stocksFlows[userId] ?: MutableStateFlow(Resource.Success(emptyList()))
-        flow.value =
-            Resource.Success(if (itemIds == null) items else items.filter { itemIds.contains(it.uuid) })
-        stocksFlows[userId] = flow
-        flow
+        val flow = itemsFlows[userId] ?: MutableStateFlow(Resource.Success(emptyList()))
+        itemsFlows[userId] = flow
+        allFlow.flatMapLatest { items ->
+            flow.value =
+                Resource.Success(
+                    if (itemIds == null) items
+                    else items.filter { itemIds.contains(it.uuid) && it.sharedWith(userId) }
+                )
+            Logger.printLog("IDS" to itemIds, "ALL ITEMS" to items, "FLOW" to flow.value.data)
+            flow
+        }
     }
     coEvery { addItem(any()) }.answers {
         val addItem = firstArg<Item>()
-        val userId = addItem.creator
-
-        val flow = stocksFlows[userId]
-            ?: MutableStateFlow(Resource.Success(emptyList()))
-        flow.value = Resource.Success(listOf(addItem, *flow.value.data!!.toTypedArray()))
-        stocksFlows[userId] = flow
+        allFlow.value = (allFlow.value + listOf(addItem)).toMutableList()
         Resource.Success(true)
     }
 
     coEvery { deleteItem(any()) }.answers {
-        val deleteStock = firstArg<Item>()
-        val userId = deleteStock.creator
-
-        val flow = stocksFlows[userId]
-            ?: MutableStateFlow(Resource.Success(emptyList()))
-        flow.value = Resource.Success(flow.value.data!!.subtract(setOf(deleteStock)).toList())
-        stocksFlows[userId] = flow
-
+        val deleteItem = firstArg<Item>()
+        allFlow.value = (allFlow.value - setOf(deleteItem))
         Resource.Success(true)
     }
 
     coEvery { saveItems(any()) }.answers {
         val saveItems = firstArg<List<Item>>().associateBy { it.uuid }
-        stocksFlows.forEach { (userId, flow) ->
-            val oldList = flow.value.data!!.toMutableList()
-            val newList = items
-                .apply { replaceAll { loc -> saveItems[loc.uuid] ?: loc } }
-                .filter { item ->
-                    oldList.firstOrNull { it.uuid === item.uuid } != null &&
-                            (item.creator == userId || item.sharedWith.contains(userId))
-                }
-            flow.value = Resource.Success(newList)
-        }
-
+        val oldAll = allFlow.value.toMutableList()
+        oldAll.replaceAll { loc -> saveItems[loc.uuid] ?: loc }
+        allFlow.value = oldAll
         Resource.Success()
     }
 }

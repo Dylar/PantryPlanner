@@ -17,6 +17,7 @@ import de.bitb.pantryplaner.data.model.StockItem
 import de.bitb.pantryplaner.ui.base.BaseViewModel
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
+import de.bitb.pantryplaner.usecase.StockUseCases
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
@@ -39,6 +40,7 @@ class RefreshViewModel @Inject constructor(
     override val userRepo: UserRepository,
     private val checkUseCases: ChecklistUseCases,
     private val itemUseCases: ItemUseCases,
+    private val stockUseCases: StockUseCases,
 ) : BaseViewModel(), UserDataExt {
 
     val checkedItems = MutableStateFlow(listOf<String>())
@@ -86,7 +88,7 @@ class RefreshViewModel @Inject constructor(
 
     fun clearItemAmount(itemId: String) {
         viewModelScope.launch {
-            val resp = itemUseCases.editItemUC(itemId, "0")
+            val resp = stockUseCases.editStockItemUC(itemId, "0") //TODO not right?
             if (resp is Resource.Error) showSnackbar(resp.message!!)
         }
     }

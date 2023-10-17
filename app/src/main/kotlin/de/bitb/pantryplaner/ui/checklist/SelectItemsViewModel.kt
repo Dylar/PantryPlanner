@@ -50,9 +50,9 @@ class SelectItemsViewModel @Inject constructor(
     val filterBy = MutableStateFlow(Filter())
     val itemsModel: LiveData<Resource<ItemsModel>> = filterBy
         .debounce { if (!INSTANT_SEARCH && _isSearching.value) 1000L else 0L }
-        .flatMapLatest {
+        .flatMapLatest { filter ->
             combine(
-                itemRepo.getItems(filterBy = it),
+                itemRepo.getItems(filterBy = filter),
                 getConnectedUsers().asFlow(),
             ) { items, users ->
                 when {
@@ -60,7 +60,7 @@ class SelectItemsViewModel @Inject constructor(
                     users is Resource.Error -> users.castTo()
                     else -> Resource.Success(
                         ItemsModel(
-                            items.data,
+                            items.data!!.groupBy { it.category },
                             users.data,
                         ),
                     )
