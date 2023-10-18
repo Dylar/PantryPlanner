@@ -62,14 +62,12 @@ class StockViewModel @Inject constructor(
     val stockModel: LiveData<Resource<StockModel>> = filterBy
         .debounce { if (!INSTANT_SEARCH && _isSearching.value) 1000L else 0L }
         .flatMapLatest {
-            Logger.justPrint("INIT FLOW")
             combine(
                 stockRepo.getStocks(),
                 itemRepo.getItems(filterBy = it),
                 getConnectedUsers().asFlow(),
                 userRepo.getUser(),
             ) { stocks, items, users, user ->
-                Logger.printLog("VIEWMODEL STOCK" to stocks.data, "VIEWMODEL ITEMS" to items.data)
                 when {
                     stocks is Resource.Error -> stocks.castTo()
                     items is Resource.Error -> items.castTo()
@@ -92,6 +90,15 @@ class StockViewModel @Inject constructor(
         .asLiveData()
 
     val itemErrorList = MutableStateFlow<List<String>>(emptyList())
+
+    fun addStock(stock: Stock) {
+        viewModelScope.launch {
+            when (val resp = stockUseCases.addStockUC(stock)) {
+                is Resource.Error -> showSnackbar(resp.message!!)
+                else -> showSnackbar("Lager hinzugefügt: ${stock.name}".asResString())
+            }
+        }
+    }
 
     fun addItem(item: Item, stockItem: StockItem) {
         val name = item.name

@@ -34,7 +34,7 @@ object Logger {
         printMessage(
             "\n${LOG_BORDER_TOP}" +
                     "\nTime:${log.timeStamp}" +
-                    "\nParams:${log.params}",
+                    "\nParams:\n${log.params}",
             "\nThread:${log.thread}" +
                     "\nStack:${log.stack}" +
                     "\n$LOG_BORDER_BOT",

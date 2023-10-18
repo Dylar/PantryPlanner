@@ -5,7 +5,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -42,6 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
+import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
@@ -65,6 +68,7 @@ import de.bitb.pantryplaner.ui.comps.AddSubRow
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 import de.bitb.pantryplaner.ui.dialogs.FilterDialog
 import de.bitb.pantryplaner.ui.dialogs.useAddItemDialog
+import de.bitb.pantryplaner.ui.dialogs.useAddStockDialog
 import de.bitb.pantryplaner.ui.dialogs.useEditItemDialog
 import kotlinx.coroutines.launch
 
@@ -74,7 +78,8 @@ class StockFragment : BaseFragment<StockViewModel>() {
 
     private lateinit var showGridLayout: MutableState<Boolean>
     private lateinit var showFilterDialog: MutableState<Boolean>
-    private lateinit var showAddDialog: MutableState<Boolean>
+    private lateinit var showAddStockDialog: MutableState<Boolean>
+    private lateinit var showAddItemDialog: MutableState<Boolean>
     private lateinit var showSearchBar: MutableState<Boolean>
 
     private val searchButtonIcon: ImageVector
@@ -87,7 +92,8 @@ class StockFragment : BaseFragment<StockViewModel>() {
     override fun screenContent() {
         showGridLayout = remember { mutableStateOf(true) }
         showFilterDialog = remember { mutableStateOf(false) }
-        showAddDialog = remember { mutableStateOf(false) }
+        showAddStockDialog = remember { mutableStateOf(false) }
+        showAddItemDialog = remember { mutableStateOf(false) }
         showSearchBar = remember { mutableStateOf(false) }
 
         val filter by viewModel.filterBy.collectAsState(Filter())
@@ -100,11 +106,12 @@ class StockFragment : BaseFragment<StockViewModel>() {
             )
         }
 
+        val stockModel by viewModel.stockModel.observeAsState()
         Scaffold(
             scaffoldState = scaffoldState,
             topBar = { buildAppBar(filter) },
-            content = { buildContent(it) },
-            floatingActionButton = { buildFab() }
+            content = { buildContent(it, stockModel) },
+            floatingActionButton = { buildFab(stockModel) }
         )
 
         if (showFilterDialog.value) {
@@ -169,34 +176,50 @@ class StockFragment : BaseFragment<StockViewModel>() {
     }
 
     @Composable
-    private fun buildFab() {
+    private fun buildFab(stockModel: Resource<StockModel>?) {
         Column(
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.Center,
         ) {
             ExtendedFloatingActionButton(
-                modifier = Modifier.testTag(StockPageTag.NewItemButton),
-                text = { Text(text = "Neu") },
+                modifier = Modifier.testTag(StockPageTag.NewStockButton),
+                text = { Text(text = "Lager anlegen") },
                 icon = {
                     Icon(
                         imageVector = Icons.Rounded.Add,
-                        contentDescription = "New item FAB",
+                        contentDescription = "New stock FAB",
                     )
                 },
-                onClick = { showAddDialog.value = true },
+                onClick = { showAddStockDialog.value = true },
             )
+            if (stockModel !is Resource.Error &&
+                stockModel?.data?.isLoading == false &&
+                stockModel.data.stocks?.isNotEmpty() != false
+            ) {
+                Spacer(modifier = Modifier.height(8.dp))
+                ExtendedFloatingActionButton(
+                    modifier = Modifier.testTag(StockPageTag.NewItemButton),
+                    text = { Text(text = "Neues Item") },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Rounded.Add,
+                            contentDescription = "New item FAB",
+                        )
+                    },
+                    onClick = { showAddItemDialog.value = true },
+                )
+            }
         }
     }
 
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    private fun buildContent(innerPadding: PaddingValues) {
-        val stockModel by viewModel.stockModel.observeAsState(null)
+    private fun buildContent(innerPadding: PaddingValues, stockModel: Resource<StockModel>?) {
         when {
             stockModel?.data?.isLoading != false -> LoadingIndicator()
-            stockModel is Resource.Error -> ErrorScreen(stockModel!!.message!!.asString())
+            stockModel is Resource.Error -> ErrorScreen(stockModel.message!!.asString())
             else -> {
-                val model = stockModel!!.data!!
+                val model = stockModel.data
                 val stocks = model.stocks!!
                 val items = model.items!!
                 val categorys = items.keys.toList()
@@ -205,6 +228,15 @@ class StockFragment : BaseFragment<StockViewModel>() {
 
                 val pagerState = rememberPagerState { stocks.size }
                 val allUser = users + listOf(user)
+
+                useAddStockDialog(
+                    showAddStockDialog,
+                    users,
+                    onEdit = { loc, close ->
+                        viewModel.addStock(loc)
+                        if (close) showAddStockDialog.value = false
+                    },
+                )
 
                 Column(
                     verticalArrangement = Arrangement.Top
@@ -215,12 +247,12 @@ class StockFragment : BaseFragment<StockViewModel>() {
                     }
 
                     useAddItemDialog(
-                        showAddDialog,
+                        showAddItemDialog,
                         categorys,
                         users,
                     ) { stockItem, item, close ->
                         viewModel.addItem(item, stockItem)
-                        if (close) showAddDialog.value = false
+                        if (close) showAddItemDialog.value = false
                     }
 
                     TabRow(

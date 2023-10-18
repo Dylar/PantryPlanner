@@ -5,6 +5,7 @@ import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.performClick
 import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.onNodeWithTag
+import de.bitb.pantryplaner.core.waitFor
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.testTags.ProfilePageTag
 import io.cucumber.java.en.Then
@@ -25,7 +26,7 @@ class ProfilePageSteps(
         tapOnSettingsButton()
     }
 
-    @When("Tap on NewStockButton")
+    @When("Tap on ProfilePage NewStockButton")
     fun tapOnNewStockButton() {
         onNodeWithTag(ProfilePageTag.NewStockButton).performClick()
         waitForIdle()

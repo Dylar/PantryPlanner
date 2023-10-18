@@ -124,7 +124,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
                 icon = {
                     Icon(
                         imageVector = Icons.Rounded.HomeWork,
-                        contentDescription = "Add Stock",
+                        contentDescription = "New Stock",
                     )
                 },
             )

@@ -31,3 +31,17 @@ Feature: App walkthrough
     Then  SelectItemsPage rendered
     And   No Items displayed
 
+  Scenario: StockPage create stock and manage items
+    Given Mock default Users
+    And   Login default User
+    And   OverviewPage rendered
+    And   Tap on StockButton
+    And   StockPage rendered
+    And   NewItemButton is NOT displayed
+    When  Tap on StockPage NewStockButton
+    And   AddEditStockDialog is displayed
+    And   Input "NewStock" as Stock name
+    And   Tap on CreateStockButton
+    Then  Tab "NewStock" is displayed
+    And   NewItemButton is displayed
+

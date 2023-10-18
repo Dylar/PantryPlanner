@@ -40,6 +40,7 @@ sealed class StockPageTag : TestTag {
     object SearchButton : StockPageTag()
     object LayoutButton : StockPageTag()
     object FilterButton : StockPageTag()
+    object NewStockButton : StockPageTag()
     object NewItemButton : StockPageTag()
 
     data class StockPage(val name: String) : StockPageTag()

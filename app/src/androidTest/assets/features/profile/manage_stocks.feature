@@ -8,7 +8,7 @@ Feature: ProfilePage Stock management
     And   Stock "SharedStock" is displayed
 
   Scenario: Create a new Stock
-    When  Tap on NewStockButton
+    When  Tap on ProfilePage NewStockButton
     And   AddEditStockDialog is displayed
     And   Input "NewStock" as Stock name
     And   Tap on CreateStockButton

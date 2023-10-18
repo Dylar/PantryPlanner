@@ -72,11 +72,11 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun addStock(Stock: Stock) {
+    fun addStock(stock: Stock) {
         viewModelScope.launch {
-            when (val resp = stockUseCases.addStockUC(Stock)) {
+            when (val resp = stockUseCases.addStockUC(stock)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
-                else -> showSnackbar("Lager hinzugefügt: ${Stock.name}".asResString())
+                else -> showSnackbar("Lager hinzugefügt: ${stock.name}".asResString())
             }
         }
     }
