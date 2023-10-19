@@ -44,4 +44,12 @@ Feature: App walkthrough
     And   Tap on CreateStockButton
     Then  Tab "NewStock" is displayed
     And   NewItemButton is displayed
+    When  Tap on NewItemButton
+    And   Input "NewItem" as Item name
+    And   Input "NewCategory" as Item category
+    And   Tap on CreateItemButton
+    Then  Item "NewItem" in category "NewCategory" is displayed
+    When  Item "NewItem" in category "NewCategory" has amount 1.0
+    And   Increase Item "NewItem" in category "NewCategory" amount by 2
+    Then  Item "NewItem" in category "NewCategory" has amount 3.0
 

@@ -44,10 +44,10 @@ import androidx.compose.ui.unit.sp
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
-import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
+import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.StockItem
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseFragment
@@ -305,8 +305,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
                                 viewModel::editCategory
                             ) { _, item ->
                                 listItem(
-                                    stock.items.firstOrNull { it.uuid == item.uuid }
-                                        ?: item.toStockItem(),
+                                    stock,
                                     item,
                                     categorys,
                                     users,
@@ -322,12 +321,14 @@ class StockFragment : BaseFragment<StockViewModel>() {
 
     @Composable
     private fun listItem(
-        stockItem: StockItem,
+        stock: Stock,
         item: Item,
         categorys: List<String>,
         users: List<User>,
         user: User,
     ) {
+        val stockItem = stock.items.firstOrNull { it.uuid == item.uuid }
+            ?: item.toStockItem()
         val showEditDialog = remember { mutableStateOf(false) }
         useEditItemDialog(
             showEditDialog,
@@ -336,18 +337,18 @@ class StockFragment : BaseFragment<StockViewModel>() {
             categorys,
             users,
             user,
-        ) { si, i, _ -> viewModel.editItem(si, i) }
+        ) { si, i, _ -> viewModel.editItem(stock, si, i) }
 
         dissmissItem(
             item.name,
             stockItem.color,
             onSwipe = { viewModel.deleteItem(item) },
             onLongClick = { showEditDialog.value = true },
-        ) { stockItem(item, stockItem) }
+        ) { stockItem(stock, item, stockItem) }
     }
 
     @Composable
-    private fun stockItem(item: Item, stockItem: StockItem) {
+    private fun stockItem(stock: Stock, item: Item, stockItem: StockItem) {
         val filter = viewModel.filterBy.collectAsState(null)
         val text = highlightedText(item.name, filter.value?.searchTerm ?: "")
 
@@ -375,7 +376,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
             AddSubRow(
                 stockItem.amount,
                 color,
-            ) { viewModel.changeItemAmount(item.uuid, it) }
+            ) { viewModel.changeItemAmount(stock, stockItem, it) }
         }
     }
 }

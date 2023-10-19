@@ -17,13 +17,11 @@ import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.data.model.Stock
-import de.bitb.pantryplaner.data.model.StockItem
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseViewModel
 import de.bitb.pantryplaner.ui.base.comps.asResString
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
-import de.bitb.pantryplaner.usecase.StockUseCases
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -35,7 +33,7 @@ import javax.inject.Inject
 data class CheckModel(
     val checklist: Checklist?,
     val items: Map<String, List<Item>>?,
-    val stocks: List<Stock>?, // TODO change to no stock needed -> on finish select stock (+ none, to not add? :D)
+    val stocks: List<Stock>?,
     val user: User?,
     val connectedUser: List<User>?,
     val sharedUser: List<User>?,
@@ -55,7 +53,6 @@ class ChecklistViewModel @Inject constructor(
     private val checkRepo: CheckRepository,
     private val checkUseCases: ChecklistUseCases,
     private val itemUseCases: ItemUseCases,
-    private val stockUseCases: StockUseCases,
 ) : BaseViewModel(), UserDataExt {
 
     val itemErrorList = MutableStateFlow<List<String>>(emptyList())
@@ -138,18 +135,6 @@ class ChecklistViewModel @Inject constructor(
             when (val resp = checkUseCases.checkItemUC(checkListId, itemId)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
                 else -> updateWidgets()
-            }
-        }
-    }
-
-    fun editItem(stockItem: StockItem, item: Item) {
-        viewModelScope.launch {
-            val editItemResp = itemUseCases.editItemUC(item)
-            val editStockItemResp = stockUseCases.editStockItemUC(stockItem)
-            when {
-                editStockItemResp is Resource.Error -> showSnackbar(editStockItemResp.message!!)
-                editItemResp is Resource.Error -> showSnackbar(editItemResp.message!!)
-                else -> showSnackbar("Item editiert".asResString()).also { updateWidgets() }
             }
         }
     }

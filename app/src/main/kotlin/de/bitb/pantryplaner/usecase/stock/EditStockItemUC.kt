@@ -7,6 +7,7 @@ import de.bitb.pantryplaner.core.misc.asResourceError
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.StockRepository
 import de.bitb.pantryplaner.data.UserRepository
+import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.StockItem
 import kotlinx.coroutines.flow.first
 
@@ -14,22 +15,9 @@ class EditStockItemUC(
     private val userRepo: UserRepository,
     private val stockRepo: StockRepository,
 ) {
-    suspend operator fun invoke(
-        itemId: String,
-        amount: String,
-    ): Resource<Unit> {
-        return tryIt {
-            val stockItemResp = stockRepo.getStocks().first()
-            if (stockItemResp is Resource.Error) return@tryIt stockItemResp.castTo()
-
-            val stockMap =
-                stockItemResp.data?.firstOrNull()?.items?.associateBy { it.uuid }
-                    ?: mutableMapOf(itemId to StockItem(itemId))
-            this(stockMap[itemId]!!, amount = amount)
-        }
-    }
 
     suspend operator fun invoke(
+        stock: Stock,
         stockItem: StockItem,
         color: Color = stockItem.color,
         amount: String = stockItem.amount.toString(),
@@ -53,22 +41,17 @@ class EditStockItemUC(
                 if (user is Resource.Error) return@tryIt user.castTo()
                 val amountDouble = amount.replace(",", ".").toDouble()
 
-                val stocks = stockRepo.getStocks().first()
-                if (stocks is Resource.Error) return@tryIt stocks.castTo()
+                val updatedItem = stockItem.copy(
+                    colorHex = color.toArgb(),
+                    amount = amountDouble,
+                    freshUntil = freshUntil,
+                    remindAfter = remindAfter,
+                )
+                stock.items
+                    .find { it.uuid == stockItem.uuid }
+                    ?.let { stock.items[stock.items.indexOf(it)] = updatedItem }
+                    ?: stock.items.add(updatedItem)
 
-                //TODO this will change ;)
-                val stock =
-                    stocks.data?.first { stock -> stock.items.firstOrNull { it.uuid == stockItem.uuid } != null }!!
-                stock.items.replaceAll {
-                    if (it.uuid == stockItem.uuid)
-                        stockItem.copy(
-                            colorHex = color.toArgb(),
-                            amount = amountDouble,
-                            freshUntil = freshUntil,
-                            remindAfter = remindAfter,
-                        )
-                    else it
-                }
                 stockRepo.saveStocks(listOf(stock))
             },
         )

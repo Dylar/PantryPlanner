@@ -7,6 +7,7 @@ Feature: OverviewPage Checklist management
     And   Checklist "CreatorChecklist" is displayed
     And   Checklist "SharedChecklist" is displayed
 
+#    TODO add to stock + on ChecklistPage
   Scenario: Create a new Checklist
     When  Tap on NewChecklistButton
     And   AddEditChecklistDialog is displayed

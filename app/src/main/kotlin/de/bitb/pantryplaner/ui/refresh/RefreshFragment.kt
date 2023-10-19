@@ -185,7 +185,9 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
         clearItem(
             item.name,
             stockItem.color,
-            onSwipe = { viewModel.clearItemAmount(item.uuid) },
+            onSwipe = {
+//                viewModel.clearItemAmount(item)  TODO fix this whole page
+            },
             onClick = { viewModel.checkItem(item.uuid) },
         ) {
             Row(

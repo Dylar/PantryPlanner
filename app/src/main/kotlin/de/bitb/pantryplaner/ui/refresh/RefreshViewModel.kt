@@ -87,10 +87,10 @@ class RefreshViewModel @Inject constructor(
         }.asLiveData()
 
     fun clearItemAmount(itemId: String) {
-        viewModelScope.launch {
-            val resp = stockUseCases.editStockItemUC(itemId, "0") //TODO not right?
-            if (resp is Resource.Error) showSnackbar(resp.message!!)
-        }
+//        viewModelScope.launch {
+//            val resp = stockUseCases.editStockItemUC(itemId, "0") //TODO fix this page
+//            if (resp is Resource.Error) showSnackbar(resp.message!!)
+//        }
     }
 
     fun checkItem(uuid: String) {

@@ -41,8 +41,7 @@ import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
-import de.bitb.pantryplaner.data.model.StockItem
-import de.bitb.pantryplaner.data.model.User
+import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
@@ -60,7 +59,6 @@ import de.bitb.pantryplaner.ui.comps.AddSubRow
 import de.bitb.pantryplaner.ui.comps.SelectItemHeader
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 import de.bitb.pantryplaner.ui.dialogs.FilterDialog
-import de.bitb.pantryplaner.ui.dialogs.useEditItemDialog
 
 @AndroidEntryPoint
 class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
@@ -194,9 +192,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
             ) {
                 val model = checkModel.data
                 val items = model.items!!
-                val categorys = items.keys.toList()
                 val stocks = model.stocks!!
-                val user = model.user!!
                 val connectedUsers = model.connectedUser!!
                 val selectedUser = remember { mutableStateOf(model.sharedUser!!) }
                 buildUserDropDown(
@@ -222,12 +218,8 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                     ) { _, item ->
                         checkListItem(
                             model.checklist!!,
-                            categorys,
-                            connectedUsers,
-                            user,
                             item,
-                            stocks.firstOrNull()?.items?.firstOrNull { it.uuid == item.uuid }
-                                ?: StockItem(item.uuid),
+                            stocks.first(),
                         )
                     }
                 }
@@ -238,30 +230,16 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
     @Composable
     private fun checkListItem(
         checklist: Checklist,
-        categorys: List<String>,
-        users: List<User>,
-        user: User,
         item: Item,
-        stockItem: StockItem,
+        stock: Stock,
     ) {
         val checkItem = checklist.items.first { it.uuid == item.uuid }
-
-        val showEditDialog = remember { mutableStateOf(false) }
-        useEditItemDialog(
-            showEditDialog,
-            stockItem,
-            item,
-            categorys,
-            users,
-            user,
-        ) { si, i, _ -> viewModel.editItem(si, i) }
-
+        val stockItem = stock.items.firstOrNull { it.uuid == item.uuid } ?: item.toStockItem()
         dissmissItem(
             item.name,
             stockItem.color,
             onSwipe = { viewModel.removeItem(item) },
             onClick = { viewModel.checkItem(item.uuid) },
-            onLongClick = { showEditDialog.value = true },
         ) {
             Column(
                 modifier = Modifier
