@@ -138,9 +138,9 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
                 if (users.value is Resource.Success) {
                     useAddChecklistDialog(
                         showDialog = showAddToDialog, users = users.value!!.data!!,
+                        emptyList(), //TODO fix this page...
                         onEdit = { checklist, _ ->
-                            // TODO add checklist not just properties ?
-                            viewModel.addToNewChecklist(checklist.name, checklist.sharedWith)
+                            viewModel.addToNewChecklist(checklist)
                             showAddToDialog.value = false
                         },
                     )

@@ -35,6 +35,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
+import de.bitb.pantryplaner.core.misc.Logger
+import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.DropDownItemTag
@@ -55,6 +57,7 @@ fun buildCategoryDropDown(
         canChange = canChange,
         addUnknownOption = true,
         options = categorys,
+        optionMapper = { it },
     ) { cat ->
         category.value = TextFieldValue(cat, selection = TextRange(cat.length))
     }
@@ -75,34 +78,73 @@ fun buildUserDropDown(
             selectedState,
             canChange = canChange,
             clearOnSelection = true,
-            options = users.filter { !selectedUser.value.contains(it) }.map { it.fullName },
+            options = users.filter { !selectedUser.value.contains(it) },
+            optionMapper = { it.fullName },
         ) { selection ->
-            val user = users.firstOrNull { it.fullName == selection }
-            if (user != null) {
-                val list = selectedUser.value.toMutableList()
-                if (!list.remove(user)) {
-                    list.add(user)
-                }
-                selectedUser.value = list
-                onSelect(list)
+            val user = users.first { it.fullName == selection }
+            //TODO oh oh was passiert wenn wir uns ne liste teilen und ich hab den user nicht den du teilst ... aaahhh xD
+            val list = selectedUser.value.toMutableList()
+            if (!list.remove(user)) {
+                list.add(user)
             }
+            selectedUser.value = list
+            onSelect(list)
         }
     }
     ConnectedUser(emptyText, selectedUser, canChange, onSelect)
 }
 
+@Composable
+fun buildStockDropDown(
+    selectedStock: MutableState<Stock>,
+    stocks: List<Stock>,
+    canChange: Boolean = true,
+) {
+    fun optionMapper(stock: Stock): String = stock.name
+    val selectedState = remember {
+        val option = optionMapper(selectedStock.value)
+        mutableStateOf(TextFieldValue(option))
+    }
+    SearchDropDown(
+        stringResource(R.string.choose_stock),
+        selectedState,
+        canChange = canChange,
+        options = stocks,
+        optionMapper = ::optionMapper
+    ) { selection ->
+        Logger.printLog("selection" to selection)
+        selectedStock.value = stocks.first { it.name == selection }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SearchDropDown(
+private fun <T> SearchDropDown(
     hint: String,
     selectedState: MutableState<TextFieldValue>,
-    options: List<String>,
+    options: List<T>,
+    optionMapper: (T) -> String,
     canChange: Boolean = true,
     addUnknownOption: Boolean = false,
     clearOnSelection: Boolean = false,
     onConfirm: (String) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
+    val addText = "\"${selectedState.value.text}\" wird neu angelegt"
+    val input = selectedState.value.text.lowercase(Locale.ROOT)
+    val opts = options
+        .associateWith { optionMapper(it) }
+        .asSequence()
+        .filter {
+            val text = it.value.lowercase(Locale.ROOT)
+            if (text.isBlank()) false
+            else input.isBlank() || text.contains(input)
+        }
+        .sortedBy {
+            val text = it.value
+            !text.lowercase(Locale.ROOT).startsWith(input)
+        }
+
     ExposedDropdownMenuBox(
         modifier = Modifier
             .padding(4.dp)
@@ -129,49 +171,49 @@ private fun SearchDropDown(
             expanded = expanded,
             onDismissRequest = { expanded = false },
         ) {
-            val addText = "\"${selectedState.value.text}\" wird neu angelegt"
-            val input = selectedState.value.text.lowercase(Locale.ROOT)
-            val cats = options
-                .filter {
-                    if (it.isBlank()) false
-                    else input.isBlank() || it.lowercase(Locale.ROOT).contains(input)
-                }
-                .sortedBy { !it.lowercase(Locale.ROOT).startsWith(input) }
-                .toMutableList()
-
             if (addUnknownOption &&
                 input.isNotBlank() &&
-                cats.none { it.lowercase(Locale.ROOT) == input }
+                opts.none { it.value.lowercase(Locale.ROOT) == input }
             ) {
-                cats.add(0, addText)
-            }
-
-            cats.forEach { selectedOption ->
-                val isAddText = selectedOption == addText
                 DropdownMenuItem(
                     modifier = Modifier
                         .padding(2.dp)
                         .background(BaseColors.LightGray.copy(alpha = .5f))
-                        .testTag(DropDownItemTag(selectedOption)),
+                        .testTag(DropDownItemTag(addText)),
+                    onClick = { expanded = false },
+                    text = {
+                        Text(
+                            text = addText,
+                            color = BaseColors.Black.copy(alpha = .5f),
+                        )
+                    },
+                )
+            }
+
+            opts.forEach { option ->
+                val mappedOption = option.value
+                DropdownMenuItem(
+                    modifier = Modifier
+                        .padding(2.dp)
+                        .background(BaseColors.LightGray.copy(alpha = .5f))
+                        .testTag(DropDownItemTag(mappedOption)),
                     onClick = {
-                        if (!isAddText) {
-                            selectedState.value =
-                                if (clearOnSelection) {
-                                    TextFieldValue("")
-                                } else {
-                                    TextFieldValue(
-                                        selectedOption,
-                                        TextRange(selectedOption.length)
-                                    )
-                                }
-                            onConfirm(selectedOption)
-                        }
+                        selectedState.value =
+                            if (clearOnSelection) {
+                                TextFieldValue("")
+                            } else {
+                                TextFieldValue(
+                                    mappedOption,
+                                    TextRange(mappedOption.length)
+                                )
+                            }
+                        onConfirm(mappedOption)
                         expanded = false
                     },
                     text = {
                         Text(
-                            text = selectedOption,
-                            color = BaseColors.Black.copy(alpha = if (isAddText) .5f else 1f),
+                            text = mappedOption,
+                            color = BaseColors.Black.copy(alpha = 1f),
                         )
                     },
                 )

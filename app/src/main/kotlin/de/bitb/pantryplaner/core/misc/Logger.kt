@@ -65,9 +65,8 @@ object Logger {
     private fun createLog(vararg params: Pair<String, *>): LogData {
         return Thread.currentThread().let { thread ->
             val xParams = params
-                .map { it.first + ": " + it.second }
+                .map { if (it.first.isBlank()) it.second.toString() else "   ${it.first}: ${it.second}" }
                 .reduce { first, second -> first + "\n" + second }
-
 
             val xThread = thread.name
                 .removeArrayBrackets()

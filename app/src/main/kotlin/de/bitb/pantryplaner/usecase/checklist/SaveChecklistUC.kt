@@ -1,5 +1,6 @@
 package de.bitb.pantryplaner.usecase.checklist
 
+import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.asResourceError
 import de.bitb.pantryplaner.core.misc.tryIt
@@ -21,6 +22,7 @@ class SaveChecklistUC(
                 if (user.data!!.uuid != checklist.creator)
                     return@tryIt "Nur der Ersteller kann die Checklist ändern".asResourceError()
 
+                Logger.printLog("UC Checklist" to checklist)
                 val saveResp = checkRepo.saveChecklist(checklist)
                 if (saveResp is Resource.Error) return@tryIt saveResp.castTo(false)
                 else Resource.Success(true)

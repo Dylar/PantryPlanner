@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -23,7 +21,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.GridOff
 import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.ShoppingCartCheckout
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.FormatListBulleted
 import androidx.compose.material3.SmallFloatingActionButton
@@ -45,6 +42,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Checklist
+import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
@@ -55,7 +53,6 @@ import de.bitb.pantryplaner.ui.base.comps.dissmissItem
 import de.bitb.pantryplaner.ui.base.naviOverviewToItems
 import de.bitb.pantryplaner.ui.base.naviToChecklist
 import de.bitb.pantryplaner.ui.base.naviToProfile
-import de.bitb.pantryplaner.ui.base.naviToRefresh
 import de.bitb.pantryplaner.ui.base.testTags.ChecklistTag
 import de.bitb.pantryplaner.ui.base.testTags.OverviewPageTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
@@ -81,11 +78,12 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
         showGridLayout = remember { mutableStateOf(true) }
         showAddDialog = remember { mutableStateOf(false) }
 
+        val modelResp by viewModel.overviewModel.observeAsState(null)
         Scaffold(
             scaffoldState = scaffoldState,
             topBar = { buildAppBar() },
-            content = { buildContent(it) },
-            floatingActionButton = { buildFab() },
+            content = { buildContent(it, modelResp) },
+            floatingActionButton = { buildFab(modelResp) },
         )
     }
 
@@ -118,26 +116,31 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
     }
 
     @Composable
-    private fun buildFab() {
+    private fun buildFab(modelResp: Resource<OverviewModel>?) {
         Column(
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.Center,
         ) {
-            SmallFloatingActionButton(
-                modifier = Modifier.testTag(OverviewPageTag.NewChecklistButton),
-                onClick = { showAddDialog.value = true },
-                containerColor = MaterialTheme.colors.secondaryVariant,
-                shape = RoundedCornerShape(12.dp),
+            if (modelResp !is Resource.Error &&
+                modelResp?.data?.isLoading == false &&
+                modelResp.data.stocks?.isNotEmpty() != false
             ) {
-                Icon(
-                    imageVector = Icons.Rounded.Add,
-                    contentDescription = "add checklist FAB",
-                    tint = Color.Black,
-                )
+                SmallFloatingActionButton(
+                    modifier = Modifier.testTag(OverviewPageTag.NewChecklistButton),
+                    onClick = { showAddDialog.value = true },
+                    containerColor = MaterialTheme.colors.secondaryVariant,
+                    shape = RoundedCornerShape(12.dp),
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Add,
+                        contentDescription = "add checklist FAB",
+                        tint = Color.Black,
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
             }
 
 // TODO open multi adding -> add template or checklist -> no everything is a checklist ... or more FABs
-            Spacer(modifier = Modifier.height(8.dp))
 
             ExtendedFloatingActionButton(
                 modifier = Modifier.testTag(OverviewPageTag.StockButton),
@@ -154,20 +157,21 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
     }
 
     @Composable
-    private fun buildContent(innerPadding: PaddingValues) {
-        val model by viewModel.overviewModel.observeAsState(null)
+    private fun buildContent(innerPadding: PaddingValues, modelResp: Resource<OverviewModel>?) {
         when {
-            model is Resource.Error -> ErrorScreen(model!!.message!!.asString())
-            model?.data?.isLoading != false -> LoadingIndicator()
+            modelResp is Resource.Error -> ErrorScreen(modelResp.message!!.asString())
+            modelResp?.data?.isLoading != false -> LoadingIndicator()
             else -> {
-                val checkLists = model!!.data!!.checkList!!
-                val users = model!!.data!!.connectedUser!!
+                val model = modelResp.data
+                val users = model.connectedUser!!
+                val stocks = model.stocks!!
+                val checkLists = model.checkList!!
                 useAddChecklistDialog(
                     showDialog = showAddDialog,
                     users = users,
+                    stocks = stocks,
                     onEdit = { checklist, _ ->
-                        // TODO add checklist not just properties ?
-                        viewModel.addChecklist(checklist.name, checklist.sharedWith)
+                        viewModel.addChecklist(checklist)
                         showAddDialog.value = false
                     },
                 )
@@ -181,37 +185,37 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // TODO depending if needed
-                    Button(
-                        onClick = ::naviToRefresh,
-                        shape = MaterialTheme.shapes.medium,
-                        elevation = ButtonDefaults.elevation(8.dp),
-                        modifier = Modifier.padding(8.dp)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.ShoppingCartCheckout,
-                                contentDescription = "Refresh button"
-                            )
-                            Text(text = "Bestand aktualisieren")
-                        }
-                    }
+                    // TODO depending if needed + fix this page
+//                    Button(
+//                        onClick = ::naviToRefresh,
+//                        shape = MaterialTheme.shapes.medium,
+//                        elevation = ButtonDefaults.elevation(8.dp),
+//                        modifier = Modifier.padding(8.dp)
+//                    ) {
+//                        Row(
+//                            verticalAlignment = Alignment.CenterVertically,
+//                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+//                        ) {
+//                            Icon(
+//                                imageVector = Icons.Default.ShoppingCartCheckout,
+//                                contentDescription = "Refresh button"
+//                            )
+//                            Text(text = "Bestand aktualisieren")
+//                        }
+//                    }
                     GridListLayout(
                         innerPadding,
                         showGridLayout,
                         checkLists.mapKeys { if (it.key) "Erledigt" else "Checklist" },
                         { it.color },
-                    ) { _, item -> checkListItem(item, users) }
+                    ) { _, item -> checkListItem(stocks, item, users) }
                 }
             }
         }
     }
 
     @Composable
-    private fun checkListItem(checklist: Checklist, users: List<User>) {
+    private fun checkListItem(stocks: List<Stock>, checklist: Checklist, users: List<User>) {
         val showUnfinishDialog = remember { mutableStateOf(false) }
         if (showUnfinishDialog.value) {
             ConfirmDialog(
@@ -230,6 +234,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
             showDialog = showEditDialog,
             checklist = checklist,
             users = users,
+            stocks = stocks,
             onEdit = { check, _ ->
                 showEditDialog.value = false
                 viewModel.editChecklist(check)

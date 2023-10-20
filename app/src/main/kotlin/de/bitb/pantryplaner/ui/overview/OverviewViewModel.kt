@@ -4,11 +4,14 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.CheckRepository
+import de.bitb.pantryplaner.data.StockRepository
 import de.bitb.pantryplaner.data.UserDataExt
 import de.bitb.pantryplaner.data.UserRepository
 import de.bitb.pantryplaner.data.model.Checklist
+import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseViewModel
 import de.bitb.pantryplaner.ui.base.comps.asResString
@@ -18,45 +21,54 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class OverviewModel(
-    val checkList: Map<Boolean, List<Checklist>>?,
+    val stocks: List<Stock>?,
     val connectedUser: List<User>?,
+    val checkList: Map<Boolean, List<Checklist>>?,
 ) {
     val isLoading: Boolean
-        get() = checkList == null || connectedUser == null
+        get() = checkList == null || connectedUser == null || stocks == null
 }
 
 @HiltViewModel
 class OverviewViewModel @Inject constructor(
+    stockRepo: StockRepository,
     checkRepo: CheckRepository,
     override val userRepo: UserRepository,
     private val checkUseCases: ChecklistUseCases,
 ) : BaseViewModel(), UserDataExt {
 
     val overviewModel = combine(
+        stockRepo.getStocks(),
         checkRepo.getCheckLists(),
         getConnectedUsers().asFlow(),
-    ) { checklists, users ->
-        if (checklists is Resource.Error) return@combine checklists.castTo()
-        if (users is Resource.Error) return@combine users.castTo()
-
-        val groupedChecklists = checklists.data
-            ?.groupBy { it.finished }
-            ?.toSortedMap { a1, a2 -> a1.compareTo(a2) }
-        Resource.Success(
-            OverviewModel(
-                groupedChecklists,
-                users.data,
-            )
-        )
+    ) { stocks, checklists, users ->
+        when {
+            stocks is Resource.Error -> stocks.castTo()
+            checklists is Resource.Error -> checklists.castTo()
+            users is Resource.Error -> users.castTo()
+            else -> {
+                val groupedChecklists = checklists.data
+                    ?.groupBy { it.finished }
+                    ?.toSortedMap { a1, a2 -> a1.compareTo(a2) }
+                Logger.printLog("STOCK" to stocks.data)
+                Resource.Success(
+                    OverviewModel(
+                        stocks.data!!,
+                        users.data,
+                        groupedChecklists,
+                    )
+                )
+            }
+        }
     }.asLiveData()
 
-    fun addChecklist(name: String, sharedWith: List<String>) {
+    fun addChecklist(check: Checklist) {
         viewModelScope.launch {
-            val resp = checkUseCases.createChecklistUC(name, sharedWith = sharedWith)
+            val resp = checkUseCases.createChecklistUC(check)
             when {
                 resp is Resource.Error -> showSnackbar(resp.message!!)
-                resp.data == true -> showSnackbar("Checklist hinzugefügt: $name".asResString())
-                else -> showSnackbar("Checklist gibt es schon: $name".asResString())
+                resp.data == true -> showSnackbar("Checklist hinzugefügt: ${check.name}".asResString())
+                else -> showSnackbar("Checklist gibt es schon: ${check.name}".asResString())
             }
         }
     }

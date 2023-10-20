@@ -92,11 +92,11 @@ class ChecklistViewModel @Inject constructor(
                     stockRepo.getStocks()
                 ) { user, users, sharedUsers, items, stocks ->
                     when {
-                        user is Resource.Error -> return@combine user.castTo()
-                        users is Resource.Error -> return@combine users.castTo()
-                        sharedUsers is Resource.Error -> return@combine sharedUsers.castTo()
-                        items is Resource.Error -> return@combine items.castTo()
-                        stocks is Resource.Error -> return@combine stocks.castTo()
+                        user is Resource.Error -> user.castTo()
+                        users is Resource.Error -> users.castTo()
+                        sharedUsers is Resource.Error -> sharedUsers.castTo()
+                        items is Resource.Error -> items.castTo()
+                        stocks is Resource.Error -> stocks.castTo()
                         else -> {
                             //TODO just in test?
                             val filteredItems = items.data?.mapValues { (_, list) ->

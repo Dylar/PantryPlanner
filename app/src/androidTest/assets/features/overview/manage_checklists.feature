@@ -7,18 +7,26 @@ Feature: OverviewPage Checklist management
     And   Checklist "CreatorChecklist" is displayed
     And   Checklist "SharedChecklist" is displayed
 
-#    TODO add to stock + on ChecklistPage
   Scenario: Create a new Checklist
     When  Tap on NewChecklistButton
     And   AddEditChecklistDialog is displayed
+    And   Checklist Stock is "CreatorStock"
     And   "ChecklistDialog" shared with none
     And   Input "NewChecklist" as Checklist name
+    And   "ChecklistDialog" open dropdown "Lager"
+    And   Dropdown option "CreatorStock" is displayed
+    And   Dropdown option "SharedStock" is NOT displayed
+    And   Input "" as Checklist Stock
+    And   Dropdown option "CreatorStock" is displayed
+    And   Dropdown option "SharedStock" is displayed
+    And   Select dropdown option "SharedStock"
     And   "ChecklistDialog" open dropdown "Mit Benutzer teilen"
     And   Select dropdown option "Mohammed Lee"
     And   Tap on CreateChecklistButton
     Then  Checklist "NewChecklist" is displayed
     And   LongPress on Checklist "NewChecklist"
     And   Checklist name is "NewChecklist"
+    And   Checklist Stock is "SharedStock"
     And   "ChecklistDialog" shared with "Mohammed Lee"
 
   Scenario: Try to remove a Checklist, but cancel confirmation

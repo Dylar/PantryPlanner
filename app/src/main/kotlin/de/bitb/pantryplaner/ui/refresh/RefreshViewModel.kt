@@ -12,6 +12,7 @@ import de.bitb.pantryplaner.data.ItemRepository
 import de.bitb.pantryplaner.data.StockRepository
 import de.bitb.pantryplaner.data.UserDataExt
 import de.bitb.pantryplaner.data.UserRepository
+import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.data.model.StockItem
 import de.bitb.pantryplaner.ui.base.BaseViewModel
@@ -103,10 +104,10 @@ class RefreshViewModel @Inject constructor(
         }
     }
 
-    fun addToNewChecklist(name: String, sharedWith: List<String>) {
+    fun addToNewChecklist(checklist: Checklist) {
         viewModelScope.launch {
             when (val resp =
-                checkUseCases.createChecklistUC(name, checkedItems.value, sharedWith)) {
+                checkUseCases.createChecklistUC(checklist)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
                 else -> navigateBack()
             }

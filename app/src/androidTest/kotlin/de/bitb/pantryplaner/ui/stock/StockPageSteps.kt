@@ -51,13 +51,11 @@ class StockPageSteps(
     @Then("NewItemButton is NOT displayed")
     fun newItemButtonIsNotDisplayed() {
         onNodeWithTag(StockPageTag.NewItemButton).assertDoesNotExist()
-        waitForIdle()
     }
 
     @Then("NewItemButton is displayed")
     fun newItemButtonIsDisplayed() {
         onNodeWithTag(StockPageTag.NewItemButton).assertIsDisplayed()
-        waitForIdle()
     }
 }
 

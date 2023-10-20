@@ -7,9 +7,12 @@ import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.hasTextInHierarchy
+import de.bitb.pantryplaner.core.onNodeWithParentTag
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.testTags.AddEditChecklistDialogTag
+import de.bitb.pantryplaner.ui.base.testTags.AddEditItemDialogTag
+import de.bitb.pantryplaner.ui.base.testTags.SearchDropDownTag
 import io.cucumber.java.en.And
 import io.cucumber.java.en.Then
 
@@ -26,6 +29,13 @@ class AddEditChecklistDialogSteps(
     @Then("Checklist name is {string}")
     fun itemNameIs(name: String) {
         onNodeWithTag(AddEditChecklistDialogTag.NameLabel)
+            .hasTextInHierarchy(name)
+            .assertIsDisplayed()
+    }
+
+    @Then("Checklist Stock is {string}")
+    fun stockIs(name: String) {
+        onNodeWithTag(SearchDropDownTag("Lager"))
             .hasTextInHierarchy(name)
             .assertIsDisplayed()
     }

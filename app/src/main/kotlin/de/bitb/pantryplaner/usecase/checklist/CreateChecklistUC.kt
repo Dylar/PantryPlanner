@@ -15,26 +15,25 @@ class CreateChecklistUC(
     private val checkRepo: CheckRepository,
 ) {
     suspend operator fun invoke(
-        name: String,
-        items: List<String> = emptyList(),
-        sharedWith: List<String> = emptyList(),
+        checklist: Checklist
     ): Resource<Boolean> {
         return tryIt(
             onError = { Resource.Error(it, false) },
             onTry = {
+                val name = checklist.name
                 if (name.isBlank()) {
                     return@tryIt "Name darf nicht leer sein".asResourceError()
+                }
+                if (checklist.stock.isBlank()) {
+                    return@tryIt "Checkliste muss einem Lager zugeordnet sein".asResourceError()
                 }
 
                 val user = userRepo.getUser().first()
                 if (user is Resource.Error) return@tryIt user.castTo(false)
 
-                val checkItems = items.map { CheckItem(it) }.toMutableList()
-                val check = Checklist(
+                val check = checklist.copy(
                     name = name.capitalizeFirstCharacter(),
-                    items = checkItems,
                     creator = user.data!!.uuid,
-                    sharedWith = sharedWith,
                 )
                 checkRepo.addChecklist(check)
             },

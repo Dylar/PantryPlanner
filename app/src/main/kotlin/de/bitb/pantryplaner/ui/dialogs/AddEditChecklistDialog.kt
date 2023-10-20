@@ -19,8 +19,11 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
+import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.data.model.Checklist
+import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.User
+import de.bitb.pantryplaner.ui.base.comps.buildStockDropDown
 import de.bitb.pantryplaner.ui.base.comps.buildUserDropDown
 import de.bitb.pantryplaner.ui.base.testTags.AddEditChecklistDialogTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
@@ -29,13 +32,15 @@ import de.bitb.pantryplaner.ui.base.testTags.testTag
 fun useAddChecklistDialog(
     showDialog: MutableState<Boolean>,
     users: List<User>,
+    stocks: List<Stock>,
     onEdit: (Checklist, Boolean) -> Unit,
 ) {
     useDialog(
         showDialog,
         "Checklist erstellen", "Hinzufügen",
-        Checklist(),
         users,
+        stocks,
+        Checklist(),
         onEdit
     )
 }
@@ -43,15 +48,17 @@ fun useAddChecklistDialog(
 @Composable
 fun useEditChecklistDialog(
     showDialog: MutableState<Boolean>,
-    checklist: Checklist,
     users: List<User>,
+    stocks: List<Stock>,
+    checklist: Checklist,
     onEdit: (Checklist, Boolean) -> Unit,
 ) {
     useDialog(
         showDialog,
         "Checklist bearbeiten", "Speichern",
-        checklist,
         users,
+        stocks,
+        checklist,
     ) { checklistX, _ -> onEdit(checklistX, true) }
 }
 
@@ -61,8 +68,9 @@ private fun useDialog(
     showDialog: MutableState<Boolean>,
     title: String,
     confirmButton: String,
-    checklist: Checklist,
     users: List<User>,
+    stocks: List<Stock>,
+    checklist: Checklist,
     onConfirm: (Checklist, Boolean) -> Unit,
 ) {
     if (showDialog.value) {
@@ -71,6 +79,7 @@ private fun useDialog(
             confirmButton = confirmButton,
             checklist = checklist,
             users = users,
+            stocks = stocks,
             onConfirm = { loc, close ->
                 onConfirm(loc, close)
                 showDialog.value = false
@@ -86,6 +95,7 @@ private fun AddEditChecklistDialog(
     confirmButton: String,
     checklist: Checklist,
     users: List<User>,
+    stocks: List<Stock>,
     onConfirm: (Checklist, Boolean) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -101,6 +111,10 @@ private fun AddEditChecklistDialog(
         )
     }
 
+    Logger.printLog("Checklist" to checklist)
+    val selectedStock = remember {
+        mutableStateOf(stocks.firstOrNull { it.uuid == checklist.stock } ?: stocks.first())
+    }
     val selectedUser = remember {
         val selected = users.filter { checklist.sharedWith.contains(it.uuid) }
         mutableStateOf(selected)
@@ -108,6 +122,7 @@ private fun AddEditChecklistDialog(
 
     fun copyChecklist() = checklist.copy(
         name = name.text,
+        stock = selectedStock.value.uuid,
         sharedWith = selectedUser.value.map { it.uuid }.toList(),
     )
 
@@ -137,6 +152,7 @@ private fun AddEditChecklistDialog(
                         },
                     ),
                 )
+                buildStockDropDown(selectedStock, stocks)
                 buildUserDropDown("Checkliste wird nicht geteilt", users, selectedUser)
             }
 
@@ -150,7 +166,10 @@ private fun AddEditChecklistDialog(
         confirmButton = {
             Button(
                 modifier = Modifier.testTag(AddEditChecklistDialogTag.ConfirmButton),
-                onClick = { onConfirm(copyChecklist(), true) },
+                onClick = {
+                    Logger.printLog("CHECK COPY" to copyChecklist())
+                    onConfirm(copyChecklist(), true)
+                          },
                 content = { Text(confirmButton) }
             )
         },

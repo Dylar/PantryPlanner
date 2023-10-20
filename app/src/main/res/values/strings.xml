@@ -19,6 +19,7 @@
     <string name="item_name">Name</string>
     <string name="item_category">Kategorie</string>
 
+    <string name="choose_stock">Lager</string>
     <string name="no_stocks">Keine Lager vorhanden</string>
     <string name="no_connected_users">Keine verbundenen Benutzer vorhanden</string>
 

@@ -106,12 +106,12 @@ class StockFragment : BaseFragment<StockViewModel>() {
             )
         }
 
-        val stockModel by viewModel.stockModel.observeAsState()
+        val modelResp by viewModel.stockModel.observeAsState()
         Scaffold(
             scaffoldState = scaffoldState,
             topBar = { buildAppBar(filter) },
-            content = { buildContent(it, stockModel) },
-            floatingActionButton = { buildFab(stockModel) }
+            content = { buildContent(it, modelResp) },
+            floatingActionButton = { buildFab(modelResp) }
         )
 
         if (showFilterDialog.value) {
@@ -176,7 +176,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
     }
 
     @Composable
-    private fun buildFab(stockModel: Resource<StockModel>?) {
+    private fun buildFab(modelResp: Resource<StockModel>?) {
         Column(
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.Center,
@@ -192,9 +192,9 @@ class StockFragment : BaseFragment<StockViewModel>() {
                 },
                 onClick = { showAddStockDialog.value = true },
             )
-            if (stockModel !is Resource.Error &&
-                stockModel?.data?.isLoading == false &&
-                stockModel.data.stocks?.isNotEmpty() != false
+            if (modelResp !is Resource.Error &&
+                modelResp?.data?.isLoading == false &&
+                modelResp.data.stocks?.isNotEmpty() != false
             ) {
                 Spacer(modifier = Modifier.height(8.dp))
                 ExtendedFloatingActionButton(
@@ -214,12 +214,12 @@ class StockFragment : BaseFragment<StockViewModel>() {
 
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    private fun buildContent(innerPadding: PaddingValues, stockModel: Resource<StockModel>?) {
+    private fun buildContent(innerPadding: PaddingValues, modelResp: Resource<StockModel>?) {
         when {
-            stockModel?.data?.isLoading != false -> LoadingIndicator()
-            stockModel is Resource.Error -> ErrorScreen(stockModel.message!!.asString())
+            modelResp?.data?.isLoading != false -> LoadingIndicator()
+            modelResp is Resource.Error -> ErrorScreen(modelResp.message!!.asString())
             else -> {
-                val model = stockModel.data
+                val model = modelResp.data
                 val stocks = model.stocks!!
                 val items = model.items!!
                 val categorys = items.keys.toList()
