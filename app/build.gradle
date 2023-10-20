@@ -8,17 +8,18 @@ plugins {
 }
 
 android {
-    compileSdk 33
-    buildToolsVersion '33.0.2'
-
+    namespace 'de.bitb.pantryplaner'
     defaultConfig {
+        compileSdk 34
         applicationId "de.bitb.pantryplaner"
         minSdk 26
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "0.0"
 
-        testInstrumentationRunner "de.bitb.pantryplaner.core.HiltTestRunner"
+        testApplicationId "de.bitb.pantryplaner.test"
+        testInstrumentationRunner "de.bitb.pantryplaner.test.GherkinsRunner"
+//        testInstrumentationRunnerArguments clearPackageData: 'true'
         vectorDrawables {
             useSupportLibrary true
         }
@@ -34,12 +35,10 @@ android {
 //    sourceSets.androidTest.java.srcDirs += ["src/sharedTest/kotlin/"]
 //    sourceSets.test.java.srcDirs += ["src/sharedTest/kotlin/"]
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
+    kotlin {
+        jvmToolchain {
+            languageVersion.set(JavaLanguageVersion.of("17"))
+        }
     }
     buildFeatures {
         compose true
@@ -47,9 +46,7 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion '1.4.7'
     }
-    lintOptions {
-        disable 'ComposableNaming'
-    }
+
     packagingOptions {
         resources {
             excludes += '/META-INF/*'
@@ -64,7 +61,7 @@ android {
         }
     }
 
-    flavorDimensions "env"
+    flavorDimensions = ["env"]
     productFlavors {
         dev {
             dimension "env"
@@ -84,52 +81,56 @@ android {
             resValue "string", "app_name", "PantryPlaner"
         }
     }
+    lint {
+        disable 'ComposableNaming'
+    }
 }
 
 dependencies {
-
     // QR Scanner
-//    implementation 'com.github.yuriy-budiyev:code-scanner:2.3.2'
-//    implementation 'com.github.androidmads:QRGenerator:1.0.1'
+    implementation 'com.github.yuriy-budiyev:code-scanner:2.3.2'
+    implementation 'com.github.androidmads:QRGenerator:1.0.1'
 
     // Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1'
 
     // Core
-    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.activity:activity-compose:1.7.2'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
-    implementation 'androidx.preference:preference-ktx:1.2.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.2'
+    implementation 'androidx.preference:preference-ktx:1.2.1'
 
     // Material
-    implementation 'androidx.compose.material3:material3:1.1.0'
-    implementation "androidx.compose.material:material-icons-extended:1.4.3"
-    implementation 'androidx.compose.material:material-icons-core:1.4.3'
+    implementation 'androidx.compose.material3:material3:1.1.1'
+    implementation "androidx.compose.material:material-icons-extended:1.5.1"
+    implementation 'androidx.compose.material:material-icons-core:1.5.1'
 
     // Navigation
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.7.0-beta01'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.7.0-beta01'
-    implementation "androidx.navigation:navigation-compose:2.7.0-beta01"
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.7.2'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.7.2'
+    implementation "androidx.navigation:navigation-compose:2.7.2"
     implementation 'androidx.test.ext:junit-ktx:1.1.5'
 
     // homescreen widgets
-    implementation 'androidx.glance:glance:1.0.0-beta01'
-    implementation "androidx.glance:glance-appwidget:1.0.0-beta01"
+    implementation 'androidx.glance:glance:1.0.0'
+    implementation "androidx.glance:glance-appwidget:1.0.0"
 
     // Compose dependencies
-    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1"
-    implementation "androidx.navigation:navigation-compose:2.7.0-beta01"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.6.2"
+
+    implementation "androidx.navigation:navigation-compose:2.7.2"
     implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
-    implementation "androidx.compose.ui:ui:1.4.3"
-    implementation "androidx.compose.animation:animation:1.4.3"
-    implementation "androidx.compose.material:material:1.4.3"
-    implementation "androidx.compose.ui:ui-tooling-preview:1.4.3"
-    implementation 'androidx.compose.foundation:foundation:1.4.3'
-    implementation 'androidx.compose.runtime:runtime-livedata:1.5.0-beta02'
-    implementation "androidx.compose.material:material-icons-extended:1.4.3"
-    kapt "androidx.compose.compiler:compiler:1.4.7"
+    implementation "androidx.compose.ui:ui:1.5.1"
+    implementation "androidx.compose.animation:animation:1.5.1"
+    implementation "androidx.compose.material:material:1.5.1"
+    implementation "androidx.compose.ui:ui-tooling-preview:1.5.1"
+    implementation 'androidx.compose.foundation:foundation:1.5.1'
+    implementation 'androidx.compose.runtime:runtime-livedata:1.5.1'
+    implementation "androidx.compose.material:material-icons-extended:1.5.1"
+    kapt "androidx.compose.compiler:compiler:1.5.3"
 
     // Dagger - Hilt
     implementation 'com.google.dagger:hilt-android:2.46.1'
@@ -137,9 +138,9 @@ dependencies {
     kapt "androidx.hilt:hilt-compiler:1.0.0"
 
     // Room Database
-    implementation 'androidx.room:room-runtime:2.5.1'
-    implementation 'androidx.room:room-ktx:2.5.1'
-    kapt 'androidx.room:room-compiler:2.5.1'
+//    implementation 'androidx.room:room-runtime:2.5.1'
+//    implementation 'androidx.room:room-ktx:2.5.1'
+//    kapt 'androidx.room:room-compiler:2.5.1'
 
     // Firebase shit
     implementation platform('com.google.firebase:firebase-bom:32.1.1')
@@ -152,38 +153,50 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
-    // unit tests
-    testImplementation "androidx.test:core:1.5.0"
-    testImplementation "junit:junit:4.13.2"
-    testImplementation "androidx.arch.core:core-testing:2.2.0"
-    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1'
-    testImplementation 'com.google.truth:truth:1.1.4'
-    testImplementation 'com.squareup.okhttp3:mockwebserver:5.0.0-alpha.11'
-    testImplementation 'io.mockk:mockk:1.13.5'
-
-    // Instrumentation tests
+    // Gherkins
+//    androidTestImplementation "io.cucumber:cucumber-core:4.8.1"
+    androidTestImplementation "io.cucumber:cucumber-java:4.8.1"
+    androidTestImplementation 'io.cucumber:cucumber-junit:4.8.1'
+//    androidTestImplementation "io.cucumber:cucumber-jvm:4.8.1"
+    androidTestImplementation 'io.cucumber:cucumber-android:4.10.0'
+    androidTestImplementation "io.cucumber:cucumber-android-hilt:4.10.0"
+//    androidTestImplementation 'io.cucumber:cucumber-picocontainer:6.9.1'
+//
+//    // unit tests
+//    testImplementation "androidx.test:core:1.5.0"
+//    testImplementation "junit:junit:4.13.2"
+//    testImplementation "androidx.arch.core:core-testing:2.2.0"
+//    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1'
+//    testImplementation 'com.google.truth:truth:1.1.4'
+//    testImplementation 'com.squareup.okhttp3:mockwebserver:5.0.0-alpha.11'
+//    testImplementation 'io.mockk:mockk:1.13.5'
+//
+//    // Instrumentation tests
     androidTestImplementation "junit:junit:4.13.2"
-    androidTestImplementation 'io.mockk:mockk-android:1.13.5'
-    androidTestImplementation 'io.mockk:mockk-agent-jvm:1.13.5'
+    androidTestImplementation 'io.mockk:mockk-android:1.13.3'
+    androidTestImplementation 'io.mockk:mockk-agent-jvm:1.13.3'
     androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1'
+
     androidTestImplementation 'com.google.dagger:hilt-android-testing:2.46.1'
     kaptAndroidTest 'com.google.dagger:hilt-android-compiler:2.46.1'
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:1.4.3"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:1.5.0-beta02"
+
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:1.5.1"
+    androidTestImplementation "androidx.compose.ui:ui-test-manifest:1.5.1"
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test:runner:1.5.2'
     androidTestImplementation 'androidx.test:core-ktx:1.5.0'
-    androidTestImplementation "androidx.arch.core:core-testing:2.2.0"
-    androidTestImplementation 'androidx.fragment:fragment-testing:1.7.0-alpha01'
-    androidTestImplementation 'androidx.fragment:fragment-ktx:1.6.0-alpha08'
-    androidTestImplementation 'com.google.truth:truth:1.1.4'
-    androidTestImplementation 'com.squareup.okhttp3:mockwebserver:5.0.0-alpha.11'
-
-    androidTestImplementation "androidx.navigation:navigation-testing:2.7.0-beta01"
-    debugImplementation "androidx.compose.ui:ui-tooling:1.4.3"
-
-    // fixing android security policy .... o.O
-    implementation 'com.github.ChickenHook:RestrictionBypass:2.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+//    androidTestImplementation "androidx.arch.core:core-testing:2.2.0"
+//    androidTestImplementation 'androidx.fragment:fragment-testing:1.7.0-alpha01'
+//    androidTestImplementation 'androidx.fragment:fragment-ktx:1.6.0-alpha08'
+//    androidTestImplementation 'com.google.truth:truth:1.1.4'
+//    androidTestImplementation 'com.squareup.okhttp3:mockwebserver:5.0.0-alpha.11'
+//
+//    androidTestImplementation "androidx.navigation:navigation-testing:2.7.2"
+    debugImplementation "androidx.compose.ui:ui-tooling:1.5.1"
+//
+//    // fixing android security policy .... o.O
+//    implementation 'com.github.ChickenHook:RestrictionBypass:2.2'
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -5,7 +5,7 @@ import de.bitb.pantryplaner.ui.base.styles.BaseColors
 
 data class Filter(
     val searchTerm: String = "",
-    val color: Color = BaseColors.UnselectedColor
+    val color: Color = BaseColors.UnselectedColor,
 ) {
     val filterByColor
         get() = color != BaseColors.UnselectedColor

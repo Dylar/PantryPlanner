@@ -1,0 +1,21 @@
+package de.bitb.pantryplaner.usecase.stock
+
+import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.tryIt
+import de.bitb.pantryplaner.data.StockRepository
+import de.bitb.pantryplaner.data.model.StockItem
+
+class AddStockItemUC(
+    private val stockRepo: StockRepository,
+) {
+    suspend operator fun invoke(stockItem: StockItem): Resource<Boolean> {
+        return tryIt(
+            errorValue = false,
+            onTry = {
+                //TODO fix me
+                Resource.Success(false)
+//                stockRepo.addItem(stockItem)
+            },
+        )
+    }
+}

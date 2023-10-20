@@ -7,7 +7,12 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -25,7 +30,7 @@ fun EditCategoryDialog(
     color: Color,
     category: String,
     onConfirm: (String, Color) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     var categoryState by remember {
         mutableStateOf(
@@ -44,7 +49,7 @@ fun EditCategoryDialog(
             Column {
                 OutlinedTextField(
                     modifier = Modifier
-                        .padding(top = 32.dp, start = 16.dp, end = 16.dp)
+                        .padding(vertical = 16.dp)
                         .focusRequester(focusRequester),
                     singleLine = true,
                     label = { Text(stringResource(R.string.item_category)) },
@@ -63,13 +68,13 @@ fun EditCategoryDialog(
         confirmButton = {
             Button(
                 onClick = { onConfirm(categoryState.text, colorState.value) },
-                content = { Text("EDIT") }
+                content = { Text("BEARBEITEN") }
             )
         },
         dismissButton = {
             Button(
                 onClick = onDismiss,
-                content = { Text("CANCEL") }
+                content = { Text("ABBRECHEN") }
             )
         }
     )

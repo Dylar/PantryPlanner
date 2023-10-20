@@ -1,38 +1,56 @@
 package de.bitb.pantryplaner.ui.dialogs
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.data.model.Item
+import de.bitb.pantryplaner.data.model.StockItem
+import de.bitb.pantryplaner.data.model.User
+import de.bitb.pantryplaner.ui.base.comps.buildCategoryDropDown
+import de.bitb.pantryplaner.ui.base.comps.buildUserDropDown
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
+import de.bitb.pantryplaner.ui.base.testTags.AddEditItemDialogTag
+import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.comps.AddSubRow
-import java.util.*
 
 @Composable
 fun useAddItemDialog(
     showDialog: MutableState<Boolean>,
     categorys: List<String>,
-    onEdit: (Item, Boolean) -> Unit
+    users: List<User>,
+    onEdit: (StockItem, Item, Boolean) -> Unit,
 ) {
+    val item = Item()
     useDialog(
         showDialog,
         "Item erstellen", "Hinzufügen",
-        Item(), categorys,
+        item.toStockItem(),
+        item,
+        categorys,
+        users,
+        true,
         onEdit
     )
 }
@@ -40,35 +58,48 @@ fun useAddItemDialog(
 @Composable
 fun useEditItemDialog(
     showDialog: MutableState<Boolean>,
+    stockItem: StockItem,
     item: Item,
     categorys: List<String>,
-    onEdit: (Item, Boolean) -> Unit
+    users: List<User>,
+    user: User,
+    onEdit: (StockItem, Item, Boolean) -> Unit,
 ) {
+    val isCreator = user.uuid == item.creator
     useDialog(
         showDialog,
         "Item bearbeiten", "Speichern",
-        item, categorys
-    ) { edited, _ -> onEdit(edited, true) }
+        stockItem,
+        item,
+        categorys,
+        users,
+        isCreator,
+    ) { si, i, _ -> onEdit(si, i, true) }
 }
-
 
 @Composable
 private fun useDialog(
     showDialog: MutableState<Boolean>,
     title: String,
     confirmButton: String,
+    stockItem: StockItem,
     item: Item,
     categorys: List<String>,
-    onConfirm: (Item, Boolean) -> Unit
+    users: List<User>,
+    isCreator: Boolean,
+    onConfirm: (StockItem, Item, Boolean) -> Unit,
 ) {
     if (showDialog.value) {
         AddEditItemDialog(
             title = title,
             confirmButton = confirmButton,
+            stockItem = stockItem,
             item = item,
             categorys = categorys,
-            onConfirm = { it, close ->
-                onConfirm(it, close)
+            users = users,
+            isCreator = isCreator,
+            onConfirm = { si, i, close ->
+                onConfirm(si, i, close)
                 showDialog.value = false
             },
             onDismiss = { showDialog.value = false },
@@ -80,11 +111,17 @@ private fun useDialog(
 private fun AddEditItemDialog(
     title: String,
     confirmButton: String,
+    stockItem: StockItem,
     item: Item,
     categorys: List<String>,
-    onConfirm: (Item, Boolean) -> Unit,
-    onDismiss: () -> Unit
+    users: List<User>,
+    isCreator: Boolean,
+    onConfirm: (StockItem, Item, Boolean) -> Unit,
+    onDismiss: () -> Unit,
 ) {
+//    val isStarted = remember { mutableStateOf(true) }
+//    val focusRequester = remember { FocusRequester() }
+
     var name by remember {
         mutableStateOf(
             TextFieldValue(
@@ -95,18 +132,26 @@ private fun AddEditItemDialog(
     }
 
     val category = remember { mutableStateOf(TextFieldValue(item.category)) }
-    val freshUntil = remember { mutableStateOf(item.freshUntil) }
-    val remindAfter = remember { mutableStateOf(item.remindAfter) }
-    val focusRequester = remember { FocusRequester() }
+    val selectedUser = remember {
+        val selected = users.filter { item.sharedWith.contains(it.uuid) }
+        mutableStateOf(selected)
+    }
+    val freshUntil = remember { mutableLongStateOf(stockItem.freshUntil) }
+    val remindAfter = remember { mutableLongStateOf(stockItem.remindAfter) }
 
     fun copyItem() = item.copy(
         name = name.text,
         category = category.value.text,
-        freshUntil = freshUntil.value,
-        remindAfter = remindAfter.value,
+        sharedWith = selectedUser.value.map { it.uuid }.toList(),
+    )
+
+    fun copyStockItem() = stockItem.copy(
+        freshUntil = freshUntil.longValue,
+        remindAfter = remindAfter.longValue,
     )
 
     AlertDialog(
+        modifier = Modifier.testTag(AddEditItemDialogTag.DialogTag),
         onDismissRequest = onDismiss,
 //        containerColor = darkColorPalette.background,
 //        iconContentColor = darkColorPalette.onSurface,
@@ -116,42 +161,51 @@ private fun AddEditItemDialog(
         text = {
             Column {
                 OutlinedTextField(
+                    readOnly = !isCreator,
                     modifier = Modifier
-                        .padding(top = 32.dp, start = 16.dp, end = 16.dp)
-                        .focusRequester(focusRequester),
+                        .testTag(AddEditItemDialogTag.NameLabel)
+//                        .focusRequester(focusRequester)
+                        .padding(4.dp)
+                        .fillMaxWidth(),
                     singleLine = true,
                     label = { Text(stringResource(R.string.item_name)) },
                     value = name,
                     onValueChange = { name = it },
                     keyboardActions = KeyboardActions(
                         onDone = {
-                            onConfirm(copyItem(), false)
+                            onConfirm(copyStockItem(), copyItem(), false)
                             name = TextFieldValue()
                         },
                     ),
                 )
-                buildCategoryDropDown(category, categorys) { cat ->
-                    category.value = TextFieldValue(cat, selection = TextRange(cat.length))
-                }
+                buildCategoryDropDown(category, categorys, canChange = isCreator)
+                buildUserDropDown("Item wird nicht geteilt", users, selectedUser)
                 OutlinedComp {
                     Text("MHD", modifier = Modifier.padding(4.dp))
                     AddSubRow(
-                        freshUntil.value.toDouble(),
+                        freshUntil.longValue.toDouble(),
                         backgroundColor = BaseColors.LightGray
-                    ) { freshUntil.value = it.toLong() }
+                    ) { freshUntil.longValue = it.toLong() }
                 }
                 OutlinedComp {
                     Text("Erinnerung", modifier = Modifier.padding(4.dp))
                     AddSubRow(
-                        remindAfter.value.toDouble(),
+                        remindAfter.longValue.toDouble(),
                         backgroundColor = BaseColors.LightGray
-                    ) { remindAfter.value = it.toLong() }
+                    ) { remindAfter.longValue = it.toLong() }
                 }
             }
+//            LaunchedEffect(Unit) {
+//                if (isStarted.value) {
+//                    isStarted.value = false
+//                    focusRequester.requestFocus()
+//                }
+//            }
         },
         confirmButton = {
             Button(
-                onClick = { onConfirm(copyItem(), true) },
+                modifier = Modifier.testTag(AddEditItemDialogTag.ConfirmButton),
+                onClick = { onConfirm(copyStockItem(), copyItem(), true) },
                 content = { Text(confirmButton) }
             )
         },
@@ -162,91 +216,15 @@ private fun AddEditItemDialog(
             )
         }
     )
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
 }
 
 @Composable
 private fun OutlinedComp(content: @Composable () -> Unit) {
     Column(
         modifier = Modifier
-            .padding(top = 16.dp, start = 16.dp, end = 16.dp)
+            .padding(top = 4.dp, start = 4.dp, end = 4.dp)
             .border(width = 2.dp, color = BaseColors.ZergPurple, shape = RoundedCornerShape(4.dp)),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.Start,
     ) { content() }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun buildCategoryDropDown(
-    category: MutableState<TextFieldValue>,
-    categorys: List<String>,
-    onConfirm: (String) -> Unit
-) {
-    var expanded by remember {
-        mutableStateOf(false)
-    }
-
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = !expanded }
-    ) {
-        TextField(
-            value = category.value,
-            onValueChange = { category.value = it },
-            modifier = Modifier
-                .menuAnchor()
-                .padding(top = 32.dp, start = 16.dp, end = 16.dp),
-            label = { Text(stringResource(R.string.item_category)) },
-            colors = ExposedDropdownMenuDefaults.textFieldColors(),
-            singleLine = true,
-            keyboardActions = KeyboardActions(onDone = { onConfirm(category.value.text) }),
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
-        )
-
-        ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            val addText = "\"${category.value.text}\" wird als neue Kategorie angelegt"
-            val input = category.value.text.lowercase(Locale.ROOT)
-            val cats = categorys
-                .filter {
-                    if (it.isBlank()) false
-                    else input.isBlank() || it.lowercase(Locale.ROOT).contains(input)
-                }
-                .sortedBy { !it.lowercase(Locale.ROOT).startsWith(input) }
-                .toMutableList()
-
-            if (input.isNotBlank() && cats.none { it.lowercase(Locale.ROOT) == input }) {
-                cats.add(0, addText)
-            }
-
-            cats.forEach { selectedOption ->
-                val isAddText = selectedOption == addText
-                DropdownMenuItem(
-                    modifier = Modifier
-                        .padding(2.dp)
-                        .background(BaseColors.LightGray.copy(alpha = .5f)),
-                    onClick = {
-                        if (!isAddText) {
-                            category.value = TextFieldValue(
-                                selectedOption,
-                                TextRange(selectedOption.length)
-                            )
-                        }
-                        expanded = false
-                    },
-                    text = {
-                        Text(
-                            text = selectedOption,
-                            color = BaseColors.Black.copy(alpha = if (isAddText) .5f else 1f),
-                        )
-                    },
-                )
-            }
-        }
-    }
 }

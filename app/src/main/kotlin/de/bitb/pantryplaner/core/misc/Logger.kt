@@ -25,16 +25,16 @@ object Logger {
     @Suppress("unused")
     fun printTimer(msg: String) {
         val inMillis = (System.currentTimeMillis() - time).toDouble()
-        printLog("$msg (TIME: $inMillis)")
+        printLog("Start Timer" to "$msg (TIME: $inMillis)")
     }
 
     @SuppressWarnings("FunctionCouldBePrivate")
-    fun <T : Any> printLog(vararg params: T, level: PrintLevel = PrintLevel.SYSTEM) {
-        val log = createLog(params)
+    fun printLog(vararg params: Pair<String, *>, level: PrintLevel = PrintLevel.SYSTEM) {
+        val log = createLog(*params)
         printMessage(
             "\n${LOG_BORDER_TOP}" +
                     "\nTime:${log.timeStamp}" +
-                    "\nParams:${log.params}",
+                    "\nParams:\n${log.params}",
             "\nThread:${log.thread}" +
                     "\nStack:${log.stack}" +
                     "\n$LOG_BORDER_BOT",
@@ -43,7 +43,7 @@ object Logger {
     }
 
     fun justPrint(message: String, level: PrintLevel = PrintLevel.SYSTEM) {
-        val log = createLog(message)
+        val log = createLog("" to message)
         val tag = "\n${LOG_BORDER_TOP}" +
                 "\nTime:${log.timeStamp}"
         val msg = "\nParams:${log.params}" +
@@ -62,11 +62,11 @@ object Logger {
         }
     }
 
-    private fun <TYPE : Any> createLog(vararg params: TYPE): LogData {
+    private fun createLog(vararg params: Pair<String, *>): LogData {
         return Thread.currentThread().let { thread ->
             val xParams = params
-                .contentDeepToString()
-                .removeArrayBrackets()
+                .map { if (it.first.isBlank()) it.second.toString() else "   ${it.first}: ${it.second}" }
+                .reduce { first, second -> first + "\n" + second }
 
             val xThread = thread.name
                 .removeArrayBrackets()
@@ -98,7 +98,7 @@ data class LogData(
     val params: String,
     val stack: String,
     val timeStamp: String = LocalDateTime.now()
-        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
 )
 
 private fun appClass(): (StackTraceElement) -> Boolean = { it.className.contains(PACKAGE_NAME) }

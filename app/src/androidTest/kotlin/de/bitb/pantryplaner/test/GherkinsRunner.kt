@@ -1,0 +1,51 @@
+package de.bitb.pantryplaner.test
+
+import android.app.Application
+import android.content.Context
+import android.content.Intent
+import androidx.compose.ui.test.junit4.createEmptyComposeRule
+import androidx.test.core.app.ActivityScenario
+import androidx.test.core.app.launchActivity
+import dagger.hilt.android.testing.HiltTestApplication
+import de.bitb.pantryplaner.core.MainActivity
+import io.cucumber.android.runner.CucumberAndroidJUnitRunner
+import io.cucumber.java.After
+import io.cucumber.junit.CucumberOptions
+import io.cucumber.junit.WithJunitRule
+import org.junit.Rule
+
+@CucumberOptions(
+    features = ["features"],
+    glue = ["de.bitb.pantryplaner"],
+)
+class GherkinsRunner : CucumberAndroidJUnitRunner() {
+    @Throws(
+        ClassNotFoundException::class,
+        IllegalAccessException::class,
+        InstantiationException::class
+    )
+    override fun newApplication(
+        cl: ClassLoader?,
+        className: String?,
+        context: Context?,
+    ): Application? = super.newApplication(cl, HiltTestApplication::class.java.name, context)
+}
+
+@WithJunitRule
+class ScenarioData(
+//    private val data: MutableMap<String, Any> = mutableMapOf(),
+) {
+
+    @get:Rule(order = 1)
+    val composeRule = createEmptyComposeRule()
+
+    var scenario: ActivityScenario<MainActivity>? = null
+
+    @After
+    fun close() = scenario?.close()
+
+    fun launch(intent: Intent? = null) {
+        scenario = launchActivity<MainActivity>(intent)
+    }
+
+}

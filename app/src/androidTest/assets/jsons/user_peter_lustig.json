@@ -1,0 +1,10 @@
+{
+  "uuid": "user123",
+  "email": "default@email.to",
+  "firstName": "Peter",
+  "lastName": "Lustig",
+  "connectedUser": [
+    "user321",
+    "user420"
+  ]
+}

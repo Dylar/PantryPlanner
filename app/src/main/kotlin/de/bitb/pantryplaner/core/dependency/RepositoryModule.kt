@@ -1,0 +1,53 @@
+package de.bitb.pantryplaner.core.dependency
+
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import de.bitb.pantryplaner.data.*
+import de.bitb.pantryplaner.data.source.*
+import de.bitb.pantryplaner.usecase.*
+import de.bitb.pantryplaner.usecase.checklist.*
+import de.bitb.pantryplaner.usecase.item.*
+import de.bitb.pantryplaner.usecase.user.*
+import javax.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+object RepositoryModule {
+
+    @Provides
+    @Singleton
+    fun provideSettingsRepository(
+        remoteService: RemoteService,
+    ): SettingsRepository = SettingsRepositoryImpl(remoteService)
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(
+        remoteService: RemoteService,
+        localDatabase: LocalDatabase,
+    ): UserRepository = UserRepositoryImpl(remoteService, localDatabase)
+
+    @Provides
+    @Singleton
+    fun provideItemRepository(
+        remoteService: RemoteService,
+        localDatabase: LocalDatabase,
+    ): ItemRepository = ItemRepositoryImpl(remoteService, localDatabase)
+
+    @Provides
+    @Singleton
+    fun provideCheckRepository(
+        remoteService: RemoteService,
+        localDatabase: LocalDatabase,
+    ): CheckRepository = CheckRepositoryImpl(remoteService, localDatabase)
+
+    @Provides
+    @Singleton
+    fun provideStockRepository(
+        remoteService: RemoteService,
+        localDatabase: LocalDatabase,
+    ): StockRepository = StockRepository(remoteService, localDatabase)
+
+}

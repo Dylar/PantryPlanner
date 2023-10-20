@@ -12,7 +12,9 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun LoadingIndicator(
-    modifier: Modifier = Modifier.fillMaxSize().padding(20.dp),
+    modifier: Modifier = Modifier
+        .fillMaxSize()
+        .padding(20.dp),
 ) {
     Box(
         contentAlignment = Alignment.Center,

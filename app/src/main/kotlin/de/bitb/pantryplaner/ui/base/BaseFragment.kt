@@ -26,38 +26,49 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.navigate = { navController.navigate(it) }
-        viewModel.navigateBack = { id ->
-            navController.apply {
-                id?.let { popBackStack(id, false) } ?: popBackStack()
-            }
-        }
-        viewModel.showSnackbar = ::showSnackBar
+        viewModel.navigate = { navController.navigate(it) } //TODO dont use callbacks
+        viewModel.navigateBack = { navController.popBackStack() }
+        viewModel.navigateBackTo = { id -> navController.popBackStack(id, false) }
         viewModel.updateWidgets = ::updateWidgets
     }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View = ComposeView(requireContext()).apply {
-        setContent {
-            scaffoldState = rememberScaffoldState()
-            PantryAppTheme(
-                useDarkTheme = isSystemInDarkTheme()
-            ) { screenContent() }
+        savedInstanceState: Bundle?,
+    ): View {
+        return ComposeView(requireContext()).apply {
+            setContent {
+                scaffoldState = rememberScaffoldState()
+                PantryAppTheme(
+                    useDarkTheme = isSystemInDarkTheme()
+                ) { screenContent() }
+            }
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        observeSnackBarEvent()
     }
 
     @Composable
     abstract fun screenContent()
 
-    protected fun showSnackBar(msg: ResString) {
+    private fun observeSnackBarEvent() {
+        viewModel.snackbarMessage.observe(viewLifecycleOwner) { message ->
+            message?.let { showSnackBar(it) }
+        }
+    }
+
+    fun showSnackBar(msg: ResString) {
         lifecycleScope.launch {
-            scaffoldState.snackbarHostState.showSnackbar(
-                message = msg.asString(resources::getString),
+            if (::scaffoldState.isInitialized)
+                scaffoldState.snackbarHostState.showSnackbar(
+                    message = msg.asString(resources::getString),
 //                    actionLabel = "Do something"
-            )
+                )
+            viewModel.clearSnackBar()
         }
     }
 

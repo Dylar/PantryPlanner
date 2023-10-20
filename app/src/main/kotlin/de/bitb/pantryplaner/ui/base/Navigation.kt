@@ -17,11 +17,27 @@ fun Activity.openAppSettings() {
 }
 
 fun Fragment.naviToSettings() {
-    NavHostFragment.findNavController(this).navigate(R.id.overview_to_settings)
+    NavHostFragment.findNavController(this).navigate(R.id.profile_to_settings)
 }
 
-fun Fragment.naviToReleaseNotes() {
+fun Fragment.naviToProfile() {
+    NavHostFragment.findNavController(this).navigate(R.id.overview_to_profile)
+}
+
+fun Fragment.naviToScan() {
+    NavHostFragment.findNavController(this).navigate(R.id.profile_to_scan)
+}
+
+fun Fragment.naviSettingsToReleaseNotes() {
     NavHostFragment.findNavController(this).navigate(R.id.settings_to_releasenotes)
+}
+
+fun Fragment.naviLoginToReleaseNotes() {
+    NavHostFragment.findNavController(this).navigate(R.id.login_to_releasenotes)
+}
+
+fun Fragment.naviToRegister() {
+    NavHostFragment.findNavController(this).navigate(R.id.login_to_register)
 }
 
 fun Fragment.naviToRefresh() {
@@ -29,12 +45,12 @@ fun Fragment.naviToRefresh() {
 }
 
 fun Fragment.naviOverviewToItems() {
-    NavHostFragment.findNavController(this).navigate(R.id.overview_to_items)
+    NavHostFragment.findNavController(this).navigate(R.id.overview_to_stock)
 }
 
 fun Fragment.naviChecklistToItems(uuid: String) {
     NavHostFragment.findNavController(this)
-        .navigate(R.id.checklist_to_items, bundleOf(KEY_CHECKLIST_UUID to uuid))
+        .navigate(R.id.checklist_to_select_items, bundleOf(KEY_CHECKLIST_UUID to uuid))
 }
 
 fun Fragment.naviToChecklist(uuid: String) {

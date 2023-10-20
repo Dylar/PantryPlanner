@@ -1,0 +1,10 @@
+{
+  "uuid": "stock321",
+  "name": "SharedStock",
+  "creator": "user321",
+  "createdAt": "2022-01-01T12:00:00Z",
+  "sharedWith": [
+    "user123"
+  ],
+  "items": []
+}

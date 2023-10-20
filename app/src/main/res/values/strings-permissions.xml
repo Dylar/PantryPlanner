@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="grant_permission">Berechtigung erteilen</string>
+    <string name="camera_permission_declined">Sie haben die Berechtigung für die Kamera permanent abgelehnt./nSie können in die Appeinstellungen gehen um Berechtigung zu geben.</string>
+    <string name="camera_permission_asking">Um einen QR Code zu scannen, wird die Berechtigung die Kamera zu nutzen benötigt.</string>
+    <string name="permission_needed">Berechtigung benötigt</string>
+</resources>

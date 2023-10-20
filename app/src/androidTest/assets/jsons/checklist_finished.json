@@ -1,0 +1,22 @@
+{
+  "uuid": "check420",
+  "name": "FinishedChecklist",
+  "items": [
+    {
+      "uuid": "item123",
+      "checked": true,
+      "amount": 10.0
+    },
+    {
+      "uuid": "item321",
+      "checked": false,
+      "amount": 8.0
+    }
+  ],
+  "finishedAt": "2022-02-01T12:00:00Z",
+  "createdAt": "2022-01-01T12:00:00Z",
+  "updatedAt": "",
+  "creator": "user123",
+  "stock": "stock123",
+  "sharedWith": []
+}
