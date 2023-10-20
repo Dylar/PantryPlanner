@@ -10,6 +10,7 @@ import de.bitb.pantryplaner.usecase.checklist.RemoveItemsUC
 import de.bitb.pantryplaner.usecase.checklist.SaveChecklistUC
 import de.bitb.pantryplaner.usecase.checklist.SetItemAmountUC
 import de.bitb.pantryplaner.usecase.checklist.SetSharedWithUC
+import de.bitb.pantryplaner.usecase.checklist.SetStockWithUC
 import de.bitb.pantryplaner.usecase.checklist.UnfinishChecklistUC
 import de.bitb.pantryplaner.usecase.item.CreateItemUC
 import de.bitb.pantryplaner.usecase.item.DeleteItemUC
@@ -69,5 +70,6 @@ data class ChecklistUseCases(
     val unfinishChecklistUC: UnfinishChecklistUC,
     val setItemAmountUC: SetItemAmountUC, //TODO make one single edit UC
     val setSharedWithUC: SetSharedWithUC,
+    val setStockWithUC: SetStockWithUC,
     val saveChecklistUC: SaveChecklistUC,
 )

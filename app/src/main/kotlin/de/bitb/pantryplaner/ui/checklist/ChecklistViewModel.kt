@@ -184,4 +184,13 @@ class ChecklistViewModel @Inject constructor(
             }
         }
     }
+
+    fun changeStock(stock: Stock) {
+        viewModelScope.launch {
+            when (val resp = checkUseCases.setStockWithUC(checkListId, stock.uuid)) {
+                is Resource.Error -> showSnackbar(resp.message!!)
+                else -> updateWidgets()
+            }
+        }
+    }
 }

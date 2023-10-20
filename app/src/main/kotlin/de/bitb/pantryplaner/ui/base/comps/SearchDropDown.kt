@@ -35,7 +35,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
-import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
@@ -99,6 +98,7 @@ fun buildStockDropDown(
     selectedStock: MutableState<Stock>,
     stocks: List<Stock>,
     canChange: Boolean = true,
+    onSelect: (Stock) -> Unit = {},
 ) {
     fun optionMapper(stock: Stock): String = stock.name
     val selectedState = remember {
@@ -112,8 +112,9 @@ fun buildStockDropDown(
         options = stocks,
         optionMapper = ::optionMapper
     ) { selection ->
-        Logger.printLog("selection" to selection)
-        selectedStock.value = stocks.first { it.name == selection }
+        val stock = stocks.first { it.name == selection }
+        selectedStock.value = stock
+        onSelect(stock)
     }
 }
 
@@ -150,10 +151,11 @@ private fun <T> SearchDropDown(
             .padding(4.dp)
             .fillMaxWidth(),
         expanded = expanded,
-        onExpandedChange = { expanded = !expanded }
+        onExpandedChange = { if (canChange) expanded = !expanded }
     ) {
         TextField(
             readOnly = !canChange,
+            enabled = canChange,
             value = selectedState.value,
             onValueChange = { selectedState.value = it },
             modifier = Modifier

@@ -111,7 +111,6 @@ private fun AddEditChecklistDialog(
         )
     }
 
-    Logger.printLog("Checklist" to checklist)
     val selectedStock = remember {
         mutableStateOf(stocks.firstOrNull { it.uuid == checklist.stock } ?: stocks.first())
     }

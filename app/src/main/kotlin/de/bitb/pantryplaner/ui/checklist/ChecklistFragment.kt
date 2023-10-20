@@ -48,6 +48,7 @@ import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.GridListLayout
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
+import de.bitb.pantryplaner.ui.base.comps.buildStockDropDown
 import de.bitb.pantryplaner.ui.base.comps.buildUserDropDown
 import de.bitb.pantryplaner.ui.base.comps.dissmissItem
 import de.bitb.pantryplaner.ui.base.naviChecklistToItems
@@ -191,15 +192,32 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 verticalArrangement = Arrangement.Center,
             ) {
                 val model = checkModel.data
+                val checklist = model.checklist!!
                 val items = model.items!!
                 val stocks = model.stocks!!
                 val connectedUsers = model.connectedUser!!
+
                 val selectedUser = remember { mutableStateOf(model.sharedUser!!) }
+                val selectedStock = remember {
+                    mutableStateOf(stocks
+                        .firstOrNull { it.uuid == checklist.stock }
+                        ?: stocks.first()
+                    )
+                }
+
+                val canChange = model.isCreator()
+                buildStockDropDown(
+                    selectedStock = selectedStock,
+                    stocks = stocks,
+                    canChange = canChange
+                ) {
+                    viewModel.changeStock(it)
+                }
                 buildUserDropDown(
                     "Checkliste wird nicht geteilt",
                     connectedUsers,
                     selectedUser,
-                    canChange = model.isCreator()
+                    canChange = canChange
                 ) {
                     viewModel.setSharedWith(it)
                 }
@@ -217,7 +235,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                         viewModel::editCategory
                     ) { _, item ->
                         checkListItem(
-                            model.checklist!!,
+                            checklist,
                             item,
                             stocks.first(),
                         )

@@ -58,4 +58,4 @@ fun getParentTag(parent: String): TestTag {
     return tag
 }
 
-fun waitFor() = runBlocking { delay(4000) }
+fun waitForIt() = runBlocking { delay(4000) }

@@ -3,10 +3,14 @@ package de.bitb.pantryplaner.ui.checklist
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextReplacement
 import dagger.hilt.android.testing.HiltAndroidTest
+import de.bitb.pantryplaner.core.hasTextInHierarchy
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.testTags.ChecklistPageTag
+import de.bitb.pantryplaner.ui.base.testTags.SearchDropDownTag
+import io.cucumber.java.en.And
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 
@@ -18,6 +22,12 @@ class ChecklistPageSteps(
     @Then("ChecklistPage rendered")
     fun renderChecklistPage() {
         assertChecklistPageRendered()
+    }
+
+    @And("Checklist Stock {string} is displayed")
+    fun inputAsChecklistStock(stock: String) {
+        onNodeWithTag(SearchDropDownTag("Lager")).hasTextInHierarchy(stock)
+        waitForIdle()
     }
 
     @When("Tap on AddItemButton")
