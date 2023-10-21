@@ -6,7 +6,14 @@ import de.bitb.pantryplaner.core.parsePOKO
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.data.source.UserRemoteDao
 import io.mockk.coEvery
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 
 const val defaultPW = "1Password!"
 fun parseUser(): User = parsePOKO("user_peter_lustig")
@@ -14,41 +21,66 @@ fun parseUserConnected(): User = parsePOKO("user_mohammed_lee")
 fun parseUserOther(): User = parsePOKO("user_andre_option")
 fun parseUserExcludie(): User = parsePOKO("user_excludie_yellow")
 
+@OptIn(ExperimentalCoroutinesApi::class)
 fun UserRemoteDao.mockUserDao(
-    allUser: MutableList<User> = mutableListOf(),
+    allUser: List<User> = listOf(),
     emailPwMap: MutableMap<String, String> = mutableMapOf(),
 ) {
-    var isLoggedIn = false
-    coEvery { isUserLoggedIn() }.answers { Resource.Success(isLoggedIn) }
+    val scope = CoroutineScope(Dispatchers.IO)
+    val allFlow = MutableSharedFlow<List<User>>(1).apply { tryEmit(allUser) }
+    fun allFlowValue() = allFlow.replayCache.first()
+
+    var loggedInWith: String? = null
+    coEvery { isUserLoggedIn() }.answers { Resource.Success(loggedInWith != null) }
     coEvery { registerUser(any(), any()) }.answers {
         val email = firstArg<String>()
         val pw = secondArg<String>()
-        val userExists = allUser.firstOrNull { it.email == email } != null
+        val userExists = allFlowValue().firstOrNull { it.email == email } != null
         if (userExists) return@answers "User exists".asResourceError()
-        allUser.add(User(email = email))
         emailPwMap[email] = pw
+        loggedInWith = email
         Resource.Success()
     }
     coEvery { loginUser(any(), any()) }.answers {
         val email = firstArg<String>()
         val pw = secondArg<String>()
-        isLoggedIn = emailPwMap[email] == pw
-        Resource.Success(isLoggedIn)
+        if (emailPwMap[email] == pw) {
+            loggedInWith = email
+        }
+        Resource.Success(loggedInWith != null)
     }
-    coEvery { logoutUser() }.answers { Resource.Success() }
+    coEvery { logoutUser() }.answers {
+        loggedInWith = null
+        Resource.Success()
+    }
     coEvery { getUser(any()) }.answers {
         val uuids = firstArg<List<String>>()
-        val users = allUser.filter { uuids.contains(it.uuid) }
-        flowOf(Resource.Success(users))
+        allFlow.flatMapLatest { users ->
+            val user = allFlowValue().first { it.email == loggedInWith }
+            MutableStateFlow(Resource.Success(
+                if (uuids.size == 1 && uuids.first() == user.uuid) {
+                    users.filter { it.uuid == user.uuid }
+                } else {
+                    users.filter { uuids.contains(it.uuid) && user.connectedUser.contains(it.uuid) }
+                }
+            ))
+        }
     }
     coEvery { getUserByEmail(any()) }.answers {
         val email = firstArg<String>()
-        val user = allUser.firstOrNull { it.email == email }
+        val user = allFlowValue().firstOrNull { it.email == email }
         Resource.Success(user)
     }
     coEvery { saveUser(any()) }.answers {
         val saveUser = firstArg<User>()
-        allUser.replaceAll { if (it.email == saveUser.email) saveUser else it }
+        val oldData = allFlowValue()
+        val userExists = oldData.any { it.uuid == saveUser.uuid }
+        scope.launch {
+            allFlow.emit(
+                if (userExists) oldData.map { if (it.uuid == saveUser.uuid) saveUser else it }
+                else oldData + saveUser
+            )
+        }
         Resource.Success()
     }
 }

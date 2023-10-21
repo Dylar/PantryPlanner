@@ -28,10 +28,10 @@ class CheckRepositoryImpl(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun getCheckLists(uuids: List<String>?): Flow<Resource<List<Checklist>>> =
-        flow { emit(localDB.getUser()) }
-            .flatMapLatest { remoteDB.getUser(listOf(it)) }
+        remoteDB.getUser(listOf(localDB.getUser()))
             .flatMapLatest { resp ->
                 if (resp is Resource.Error) return@flatMapLatest flow { emit(resp.castTo()) }
+
                 val user = resp.data!!.firstOrNull() //TODO needed?
                     ?: return@flatMapLatest flow { emit("Benutzer nicht gefunden".asResourceError()) }
                 remoteDB.getCheckLists(user.uuid, uuids)

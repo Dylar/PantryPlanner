@@ -9,7 +9,6 @@ import de.bitb.pantryplaner.core.assertNodeWithParentTagDoesNotExists
 import de.bitb.pantryplaner.core.getParentTag
 import de.bitb.pantryplaner.core.onNodeWithParentTag
 import de.bitb.pantryplaner.core.onNodeWithTag
-import de.bitb.pantryplaner.core.waitForIt
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.testTags.DropDownItemTag
 import de.bitb.pantryplaner.ui.base.testTags.SearchDropDownTag

@@ -26,7 +26,6 @@ class FireStockService(
     override fun getStocks(
         userId: String,
     ): Flow<Resource<List<Stock>>> {
-        //TODO what about on start without stock?
         return getOwnedOrShared(
             userId,
             ownerCollection = ::ownerCollection,

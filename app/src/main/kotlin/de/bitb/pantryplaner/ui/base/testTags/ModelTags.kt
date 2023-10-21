@@ -10,6 +10,7 @@ sealed class SharedWithTag : TestTag {
     data class SharedChip(val name: String) : SharedWithTag()
 }
 
+data class UserTag(val fullName: String) : TestTag
 data class StockTag(val name: String) : TestTag
 data class ItemTag(val category: String, val name: String) : TestTag
 data class ChecklistTag(val name: String) : TestTag

@@ -1,7 +1,6 @@
 package de.bitb.pantryplaner.test
 
 import de.bitb.pantryplaner.core.createFlows
-import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.parsePOKO
 import de.bitb.pantryplaner.data.model.Item
@@ -31,32 +30,29 @@ fun ItemRemoteDao.mockItemDao(
         val flow = itemsFlows[userId] ?: MutableStateFlow(Resource.Success(emptyList()))
         itemsFlows[userId] = flow
         allFlow.flatMapLatest { items ->
-            flow.value =
-                Resource.Success(
+            flow.apply {
+                value = Resource.Success(
                     if (itemIds == null) items
                     else items.filter { itemIds.contains(it.uuid) && it.sharedWith(userId) }
                 )
-            Logger.printLog("IDS" to itemIds, "ALL ITEMS" to items, "FLOW" to flow.value.data)
-            flow
+            }
         }
     }
     coEvery { addItem(any()) }.answers {
         val addItem = firstArg<Item>()
-        allFlow.value = (allFlow.value + listOf(addItem)).toMutableList()
+        allFlow.value = allFlow.value + listOf(addItem)
         Resource.Success(true)
     }
 
     coEvery { deleteItem(any()) }.answers {
         val deleteItem = firstArg<Item>()
-        allFlow.value = (allFlow.value - setOf(deleteItem))
+        allFlow.value = allFlow.value - setOf(deleteItem)
         Resource.Success(true)
     }
 
     coEvery { saveItems(any()) }.answers {
         val saveItems = firstArg<List<Item>>().associateBy { it.uuid }
-        val oldAll = allFlow.value.toMutableList()
-        oldAll.replaceAll { loc -> saveItems[loc.uuid] ?: loc }
-        allFlow.value = oldAll
+        allFlow.value = allFlow.value.map { saveItems[it.uuid] ?: it }
         Resource.Success()
     }
 }

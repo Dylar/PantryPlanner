@@ -40,7 +40,6 @@ class StockSteps(
 
     @Then("Swipe to remove Stock {string}")
     fun swipeToRemoveStock(name: String) {
-        //TODO do we need unmergedTree?
         onNodeWithTag(StockTag(name), true)
             .performTouchInput { swipeRight() }
         waitForIdle()

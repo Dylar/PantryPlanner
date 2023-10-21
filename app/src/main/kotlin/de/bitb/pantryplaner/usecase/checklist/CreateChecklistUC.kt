@@ -6,7 +6,6 @@ import de.bitb.pantryplaner.core.misc.capitalizeFirstCharacter
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.CheckRepository
 import de.bitb.pantryplaner.data.UserRepository
-import de.bitb.pantryplaner.data.model.CheckItem
 import de.bitb.pantryplaner.data.model.Checklist
 import kotlinx.coroutines.flow.first
 

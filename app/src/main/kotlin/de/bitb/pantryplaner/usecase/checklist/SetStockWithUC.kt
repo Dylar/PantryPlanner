@@ -5,8 +5,6 @@ import de.bitb.pantryplaner.core.misc.asResourceError
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.CheckRepository
 import de.bitb.pantryplaner.data.UserRepository
-import de.bitb.pantryplaner.data.model.Stock
-import de.bitb.pantryplaner.data.model.User
 import kotlinx.coroutines.flow.first
 
 class SetStockWithUC(

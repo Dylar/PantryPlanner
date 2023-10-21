@@ -3,7 +3,6 @@ package de.bitb.pantryplaner.ui.checklist
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performTextReplacement
 import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.hasTextInHierarchy
 import de.bitb.pantryplaner.core.onNodeWithTag

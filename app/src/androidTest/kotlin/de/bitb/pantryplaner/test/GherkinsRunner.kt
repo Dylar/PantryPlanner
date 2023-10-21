@@ -32,9 +32,7 @@ class GherkinsRunner : CucumberAndroidJUnitRunner() {
 }
 
 @WithJunitRule
-class ScenarioData(
-//    private val data: MutableMap<String, Any> = mutableMapOf(),
-) {
+class ScenarioData {
 
     @get:Rule(order = 1)
     val composeRule = createEmptyComposeRule()

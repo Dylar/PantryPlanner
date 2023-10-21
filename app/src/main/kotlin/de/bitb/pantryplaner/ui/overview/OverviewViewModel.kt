@@ -4,7 +4,6 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.CheckRepository
 import de.bitb.pantryplaner.data.StockRepository
@@ -50,7 +49,6 @@ class OverviewViewModel @Inject constructor(
                 val groupedChecklists = checklists.data
                     ?.groupBy { it.finished }
                     ?.toSortedMap { a1, a2 -> a1.compareTo(a2) }
-                Logger.printLog("STOCK" to stocks.data)
                 Resource.Success(
                     OverviewModel(
                         stocks.data!!,

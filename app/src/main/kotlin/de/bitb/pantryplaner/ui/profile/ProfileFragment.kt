@@ -60,6 +60,7 @@ import de.bitb.pantryplaner.ui.base.naviToSettings
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.ProfilePageTag
 import de.bitb.pantryplaner.ui.base.testTags.StockTag
+import de.bitb.pantryplaner.ui.base.testTags.UserTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.dialogs.useAddStockDialog
 import de.bitb.pantryplaner.ui.dialogs.useEditStockDialog
@@ -258,7 +259,9 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
             onSwipe = { viewModel.disconnectUser(user) },
         ) {
             Box(
-                modifier = Modifier.defaultMinSize(minHeight = 48.dp),
+                modifier = Modifier
+                    .defaultMinSize(minHeight = 48.dp)
+                    .testTag(UserTag(user.fullName)),
                 contentAlignment = Alignment.CenterStart
             ) {
                 Text(

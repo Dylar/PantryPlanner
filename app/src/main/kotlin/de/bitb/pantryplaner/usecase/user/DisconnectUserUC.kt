@@ -9,16 +9,16 @@ import kotlinx.coroutines.flow.first
 class DisconnectUserUC(
     private val userRepo: UserRepository,
 ) {
-    suspend operator fun invoke(user: User): Resource<Unit> {
+    suspend operator fun invoke(removeUser: User): Resource<Unit> {
         return tryIt {
-            val currentUserResp = userRepo.getUser().first()
-            if (currentUserResp is Resource.Error) {
-                return@tryIt currentUserResp.castTo()
+            val userResp = userRepo.getUser().first()
+            if (userResp is Resource.Error) {
+                return@tryIt userResp.castTo()
             }
 
-            val currentUser = currentUserResp.data!!
-            currentUser.connectedUser.remove(user.uuid)
-            val saveUserResp = userRepo.saveUser(currentUser)
+            val user = userResp.data!!
+            user.connectedUser.remove(removeUser.uuid)
+            val saveUserResp = userRepo.saveUser(user)
             if (saveUserResp is Resource.Error) saveUserResp.castTo()
             else Resource.Success()
         }

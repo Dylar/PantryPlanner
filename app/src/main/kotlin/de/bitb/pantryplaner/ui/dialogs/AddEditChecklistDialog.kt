@@ -19,7 +19,6 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
-import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.User
@@ -165,10 +164,7 @@ private fun AddEditChecklistDialog(
         confirmButton = {
             Button(
                 modifier = Modifier.testTag(AddEditChecklistDialogTag.ConfirmButton),
-                onClick = {
-                    Logger.printLog("CHECK COPY" to copyChecklist())
-                    onConfirm(copyChecklist(), true)
-                          },
+                onClick = { onConfirm(copyChecklist(), true) },
                 content = { Text(confirmButton) }
             )
         },
