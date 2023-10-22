@@ -81,21 +81,29 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun removeStock(Stock: Stock) {
+    fun removeStock(stock: Stock) {
         viewModelScope.launch {
-            when (val resp = stockUseCases.deleteStockUC(Stock)) {
+            when (val resp = stockUseCases.deleteStockUC(stock)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
-                else -> showSnackbar("Lager entfernt: ${Stock.name}".asResString())
+                else -> showSnackbar("Lager entfernt: ${stock.name}".asResString())
             }
         }
     }
 
-    fun editStock(Stock: Stock) {
+    fun editStock(stock: Stock) {
         viewModelScope.launch {
-            when (val resp = stockUseCases.editStockUC(Stock)) {
+            when (val resp = stockUseCases.editStockUC(stock)) {
                 is Resource.Error -> showSnackbar(resp.message!!)
-                else -> showSnackbar("Lager editiert: ${Stock.name}".asResString())
+                else -> showSnackbar("Lager editiert: ${stock.name}".asResString())
             }
+        }
+    }
+
+    fun connectUser(email: String) {
+        viewModelScope.launch {
+            val res = userUseCases.connectUserUC(email)
+            if (res is Resource.Error) showSnackbar(res.message!!)
+            else showSnackbar("Benutzer hinzugefügt".asResString())
         }
     }
 

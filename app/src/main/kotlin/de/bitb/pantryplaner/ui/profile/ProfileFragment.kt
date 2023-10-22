@@ -63,6 +63,7 @@ import de.bitb.pantryplaner.ui.base.testTags.StockTag
 import de.bitb.pantryplaner.ui.base.testTags.UserTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.dialogs.useAddStockDialog
+import de.bitb.pantryplaner.ui.dialogs.useAddUserDialog
 import de.bitb.pantryplaner.ui.dialogs.useEditStockDialog
 
 @AndroidEntryPoint
@@ -70,11 +71,13 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
 
     override val viewModel: ProfileViewModel by viewModels()
 
-    private lateinit var showAddDialog: MutableState<Boolean>
+    private lateinit var showAddStockDialog: MutableState<Boolean>
+    private lateinit var showAddUserDialog: MutableState<Boolean>
 
     @Composable
     override fun screenContent() {
-        showAddDialog = remember { mutableStateOf(false) }
+        showAddStockDialog = remember { mutableStateOf(false) }
+        showAddUserDialog = remember { mutableStateOf(false) }
         Scaffold(
             scaffoldState = scaffoldState,
             topBar = { buildAppBar() },
@@ -120,7 +123,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
         ) {
             ExtendedFloatingActionButton(
                 modifier = Modifier.testTag(ProfilePageTag.NewStockButton),
-                onClick = { showAddDialog.value = true },
+                onClick = { showAddStockDialog.value = true },
                 text = { Text(text = "Lager anlegen") },
                 icon = {
                     Icon(
@@ -131,13 +134,13 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
             )
             Spacer(modifier = Modifier.height(8.dp))
             ExtendedFloatingActionButton(
-                modifier = Modifier.testTag(ProfilePageTag.ScanButton),
-                onClick = ::naviToScan, // TODO add via (email)dialog
-                text = { Text(text = "Scannen") },
+                modifier = Modifier.testTag(ProfilePageTag.AddUserButton),
+                onClick = { showAddUserDialog.value = true },
+                text = { Text(text = "Benutzer verbinden") },
                 icon = {
                     Icon(
                         imageVector = Icons.Filled.QrCodeScanner,
-                        contentDescription = "Scan",
+                        contentDescription = "Connect User",
                     )
                 },
             )
@@ -160,7 +163,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
                     modifier = Modifier
                         .fillMaxWidth(),
                     contentAlignment = Alignment.Center,
-                ) { QrCodeImage(model.user!!.uuid) }
+                ) { QrCodeImage(model.user!!.email) }
                 Box(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
@@ -213,6 +216,14 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
 
     @Composable
     private fun ConnectedUserList(connectedUser: List<User>) {
+        useAddUserDialog(
+            showAddUserDialog,
+            onScanOption = ::naviToScan,
+            onEdit = { email, close ->
+                viewModel.connectUser(email)
+                if (close) showAddUserDialog.value = false
+            },
+        )
         LazyVerticalGrid(
             GridCells.Fixed(if (connectedUser.size == 1) 1 else 2),
             modifier = Modifier.fillMaxWidth(),
@@ -277,11 +288,11 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
     @Composable
     private fun StockList(users: List<User>, stocks: List<Stock>) {
         useAddStockDialog(
-            showAddDialog,
+            showAddStockDialog,
             users,
             onEdit = { loc, close ->
                 viewModel.addStock(loc)
-                if (close) showAddDialog.value = false
+                if (close) showAddStockDialog.value = false
             },
         )
         LazyVerticalGrid(

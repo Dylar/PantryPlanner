@@ -18,6 +18,7 @@ interface UserRepository { //TODO remove repo interface
     fun getUser(): Flow<Resource<User>>
     fun getUser(uuid: String): Flow<Resource<User>>
     fun getUser(uuids: List<String>): Flow<Resource<List<User>>>
+    suspend fun getUserByEmail(email: String): Resource<User>
     suspend fun saveUser(user: User): Resource<User>
 }
 
@@ -44,11 +45,10 @@ class UserRepositoryImpl(
             val resp = remoteDB.loginUser(email, pw)
             if (resp is Resource.Error) return@tryIt resp.castTo()
 
-            val user = remoteDB.getUserByEmail(email)
+            val user = getUserByEmail(email)
             if (user is Resource.Error) return@tryIt user
-            if (user.data == null) return@tryIt "Benutzer nicht gefunden".asResourceError()
 
-            localDB.setUser(user.data.uuid)
+            localDB.setUser(user.data!!.uuid)
             user
         }
     }
@@ -72,7 +72,7 @@ class UserRepositoryImpl(
             if (resp is Resource.Error) resp.castTo()
             else Resource.Success(resp.data!!.first())
         }
-    }
+    }//TODO getUser to watchUser
 
     override fun getUser(uuids: List<String>): Flow<Resource<List<User>>> {
         return if (uuids.isEmpty()) MutableStateFlow(Resource.Success(emptyList()))
@@ -82,6 +82,17 @@ class UserRepositoryImpl(
                 if (resp.data?.isEmpty() != false) return@map "Benutzer nicht gefunden: $uuids".asResourceError()
                 else Resource.Success(resp.data)
             }
+    }
+
+    override suspend fun getUserByEmail(email: String): Resource<User> {
+        return tryIt {
+            val user = remoteDB.getUserByEmail(email)
+            when {
+                user is Resource.Error -> user
+                user.data == null -> "Benutzer nicht gefunden".asResourceError()
+                else -> user
+            }
+        }
     }
 
     override suspend fun saveUser(user: User): Resource<User> {

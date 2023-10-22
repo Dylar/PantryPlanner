@@ -5,6 +5,13 @@ sealed class ConfirmDialogTag : TestTag {
     object DismissButton : ConfirmDialogTag()
 }
 
+sealed class AddUserDialogTag : TestTag {
+    object DialogTag : AddUserDialogTag()
+    object EmailLabel : AddUserDialogTag()
+    object ScanButton : AddUserDialogTag()
+    object ConfirmButton : AddUserDialogTag()
+}
+
 sealed class AddEditStockDialogTag : TestTag {
     object DialogTag : AddEditStockDialogTag()
     object NameLabel : AddEditStockDialogTag()

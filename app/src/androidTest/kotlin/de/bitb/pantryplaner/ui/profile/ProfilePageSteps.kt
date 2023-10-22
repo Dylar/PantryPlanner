@@ -31,6 +31,12 @@ class ProfilePageSteps(
         waitForIdle()
     }
 
+    @When("Tap on AddUserButton")
+    fun tapOnAddUserButton() {
+        onNodeWithTag(ProfilePageTag.AddUserButton).performClick()
+        waitForIdle()
+    }
+
 }
 
 fun ComposeTestRule.assertProfilePageRendered() {
@@ -39,7 +45,7 @@ fun ComposeTestRule.assertProfilePageRendered() {
     onNodeWithTag(ProfilePageTag.QRInfo).assertIsDisplayed()
     onNodeWithTag(ProfilePageTag.QRLabel).assertIsDisplayed()
     onNodeWithTag(ProfilePageTag.NewStockButton).assertIsDisplayed()
-    onNodeWithTag(ProfilePageTag.ScanButton).assertIsDisplayed()
+    onNodeWithTag(ProfilePageTag.AddUserButton).assertIsDisplayed()
 }
 
 fun ComposeTestRule.tapOnSettingsButton() {

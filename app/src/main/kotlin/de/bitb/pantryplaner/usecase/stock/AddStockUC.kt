@@ -8,11 +8,11 @@ import de.bitb.pantryplaner.data.model.Stock
 class AddStockUC(
     private val stockRepo: StockRepository,
 ) {
-    suspend operator fun invoke(Stock: Stock): Resource<Boolean> {
+    suspend operator fun invoke(stock: Stock): Resource<Boolean> {
         return tryIt(
             onError = { Resource.Error(it, false) },
             onTry = {
-                val saveResp = stockRepo.addStock(Stock)
+                val saveResp = stockRepo.addStock(stock)
                 if (saveResp is Resource.Error) {
                     return@tryIt saveResp.castTo(false)
                 }

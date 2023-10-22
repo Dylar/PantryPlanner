@@ -22,6 +22,8 @@
     <string name="choose_stock">Lager</string>
     <string name="no_stocks">Keine Lager vorhanden</string>
     <string name="no_connected_users">Keine verbundenen Benutzer vorhanden</string>
+    <string name="user_email">Email</string>
+
 
     <string name="refresh_title">Aktualisieren</string>
 

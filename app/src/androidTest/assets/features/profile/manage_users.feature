@@ -7,12 +7,20 @@ Feature: ProfilePage User management
     And   User "Mohammed Lee" is displayed
     And   User "Andre Option" is displayed
 
-#  Scenario: Connect a new User
-#    When  Tap on ProfilePage NewStockButton
-#    And   AddEditStockDialog is displayed
-#    And   Input "NewStock" as Stock name
-#    And   Tap on CreateStockButton
-#    Then  User "NewStock" is displayed
+#  Scenario: Connect a new User via scan
+#    When  Tap on AddUserButton
+#    And   Select scan option
+#    Then  ScanPage rendered
+#    When  Scan "Excludie@yellow.to"
+#    Then  ProfilePage rendered
+#    And   User "Excludie Yellow" is displayed
+
+  Scenario: Connect a new User via email
+    When  Tap on AddUserButton
+    And   AddUserDialog is displayed
+    When  Input "Excludie@yellow.to" as User email
+    And   Tap on ConnectUserButton
+    Then  User "Excludie Yellow" is displayed
 
   Scenario: Try to remove a User, but cancel confirmation
     When  Swipe to remove User "Mohammed Lee"

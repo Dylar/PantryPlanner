@@ -1,5 +1,6 @@
 package de.bitb.pantryplaner.test
 
+import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.asResourceError
 import de.bitb.pantryplaner.core.parsePOKO
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 const val defaultPW = "1Password!"
 fun parseUser(): User = parsePOKO("user_peter_lustig")
@@ -67,14 +69,17 @@ fun UserRemoteDao.mockUserDao(
         }
     }
     coEvery { getUserByEmail(any()) }.answers {
-        val email = firstArg<String>()
-        val user = allFlowValue().firstOrNull { it.email == email }
+        val email = firstArg<String>().lowercase(Locale.ROOT)
+        val allFlowValue = allFlowValue()
+        val user = allFlowValue.firstOrNull { it.email.lowercase(Locale.ROOT) == email }
+        Logger.printLog("all user" to allFlowValue, "user" to user, "email" to email)
         Resource.Success(user)
     }
     coEvery { saveUser(any()) }.answers {
         val saveUser = firstArg<User>()
         val oldData = allFlowValue()
         val userExists = oldData.any { it.uuid == saveUser.uuid }
+        Logger.printLog("Old DATA" to oldData, "saveUser" to saveUser)
         scope.launch {
             allFlow.emit(
                 if (userExists) oldData.map { if (it.uuid == saveUser.uuid) saveUser else it }

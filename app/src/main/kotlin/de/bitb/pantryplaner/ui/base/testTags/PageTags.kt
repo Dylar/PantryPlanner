@@ -75,7 +75,7 @@ sealed class ProfilePageTag : TestTag {
     object QRInfo : ProfilePageTag()
     object QRLabel : ProfilePageTag()
     object NewStockButton : ProfilePageTag()
-    object ScanButton : ProfilePageTag()
+    object AddUserButton : ProfilePageTag()
 }
 
 sealed class ScanPageTag : TestTag {
