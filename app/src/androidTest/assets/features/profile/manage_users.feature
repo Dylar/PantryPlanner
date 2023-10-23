@@ -7,13 +7,14 @@ Feature: ProfilePage User management
     And   User "Mohammed Lee" is displayed
     And   User "Andre Option" is displayed
 
-#  Scenario: Connect a new User via scan
-#    When  Tap on AddUserButton
-#    And   Select scan option
-#    Then  ScanPage rendered
-#    When  Scan "Excludie@yellow.to"
-#    Then  ProfilePage rendered
-#    And   User "Excludie Yellow" is displayed
+  Scenario: Connect a new User via scan
+    When  Tap on AddUserButton
+    And   Tap on ScanButton
+    And   Tap on allow permission
+    Then  ScanPage rendered
+    When  Scan "Excludie@yellow.to"
+    Then  ProfilePage rendered
+    And   User "Excludie Yellow" is displayed
 
   Scenario: Connect a new User via email
     When  Tap on AddUserButton

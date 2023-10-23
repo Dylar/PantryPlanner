@@ -1,16 +1,17 @@
 package de.bitb.pantryplaner.ui.dialogs
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.QrCodeScanner
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -24,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
+import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.AddUserDialogTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 import kotlin.reflect.KFunction0
@@ -62,13 +64,16 @@ private fun AddUserDialog(
         onDismissRequest = onDismiss,
         title = { Text(title) },
         text = {
-            Column(
-                horizontalAlignment = Alignment.End
+            Row(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 OutlinedTextField(
                     modifier = Modifier
                         .testTag(AddUserDialogTag.EmailLabel)
-                        .padding(horizontal = 16.dp),
+                        .weight(1f)
+                        .padding(end = 4.dp),
                     singleLine = true,
                     label = { Text(stringResource(R.string.user_email)) },
                     value = email,
@@ -80,22 +85,22 @@ private fun AddUserDialog(
                         },
                     ),
                 )
-                ExtendedFloatingActionButton(
-                    modifier = Modifier
-                        .size(30.dp)
-                        .testTag(AddUserDialogTag.ScanButton),
+
+                SmallFloatingActionButton(
+                    modifier = Modifier.testTag(AddUserDialogTag.ScanButton),
+                    containerColor = MaterialTheme.colors.secondaryVariant,
+                    shape = RoundedCornerShape(12.dp),
                     onClick = {
                         onDismiss()
                         onScanOption()
                     },
-                    text = { Text(text = "Scannen") },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Rounded.QrCodeScanner,
-                            contentDescription = "New Stock",
-                        )
-                    },
-                )
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.QrCodeScanner,
+                        tint = BaseColors.Black,
+                        contentDescription = "Scan User",
+                    )
+                }
             }
         },
         confirmButton = {

@@ -34,4 +34,10 @@ class AddUserDialogSteps(
         waitForIdle()
     }
 
+    @And("Tap on ScanButton")
+    fun tapOnScanButton() {
+        onNodeWithTag(AddUserDialogTag.ScanButton).performClick()
+        waitForIdle()
+    }
+
 }

@@ -6,6 +6,9 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.navigation.fragment.NavHostFragment
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiSelector
 import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.test.ScenarioData
@@ -31,5 +34,16 @@ class CommonSteps(
     fun snackBarShown(message: String) {
         waitUntilAtLeastOneExists(hasText(message), 15000)
         onNodeWithText(message).assertIsDisplayed()
+    }
+
+    @Then("Tap on allow permission")
+    fun tapOnAllowPermission() {
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+
+        val allowButton = device.findObject(UiSelector().text("WHILE USING THE APP"))
+        if (allowButton.exists()) {
+            allowButton.click()
+        }
+        waitForIdle()
     }
 }
