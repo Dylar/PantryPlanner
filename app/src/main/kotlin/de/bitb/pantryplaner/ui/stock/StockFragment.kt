@@ -246,15 +246,6 @@ class StockFragment : BaseFragment<StockViewModel>() {
                         return
                     }
 
-                    useAddItemDialog(
-                        showAddItemDialog,
-                        categorys,
-                        users,
-                    ) { stockItem, item, close ->
-                        viewModel.addItem(item, stockItem)
-                        if (close) showAddItemDialog.value = false
-                    }
-
                     TabRow(
                         containerColor = BaseColors.Black,
                         selectedTabIndex = pagerState.currentPage,
@@ -275,6 +266,16 @@ class StockFragment : BaseFragment<StockViewModel>() {
                     }
                     HorizontalPager(state = pagerState) { page ->
                         val stock = stocks[page]
+
+                        useAddItemDialog(
+                            showAddItemDialog,
+                            categorys,
+                            users,
+                        ) { stockItem, item, close ->
+                            viewModel.addItem(stock, item, stockItem)
+                            if (close) showAddItemDialog.value = false
+                        }
+
                         Column(
                             modifier = Modifier.testTag(StockPageTag.StockPage(stock.name)),
                             verticalArrangement = Arrangement.Top

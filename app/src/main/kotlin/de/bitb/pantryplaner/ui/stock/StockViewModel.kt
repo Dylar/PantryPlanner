@@ -99,12 +99,12 @@ class StockViewModel @Inject constructor(
         }
     }
 
-    fun addItem(item: Item, stockItem: StockItem) {
+    fun addItem(stock: Stock, item: Item, stockItem: StockItem) {
         val name = item.name
         viewModelScope.launch {
-            val addStockResp = stockUseCases.addStockItemUC(stockItem)
+            val addStockResp = stockUseCases.addEditStockItemUC(stock, stockItem)
             val createItemResp = itemUseCases.createItemUC(item)
-            when { //TODO guess we need to split item frag :D -> it is but we need to update stockItems only on un/finish -> nope ... look into it :D
+            when {
                 createItemResp is Resource.Error -> showSnackbar(createItemResp.message!!)
                 addStockResp is Resource.Error -> showSnackbar(addStockResp.message!!)
                 createItemResp.data == true -> showSnackbar("Item hinzugefügt: $name".asResString()).also { updateWidgets() }
@@ -127,7 +127,7 @@ class StockViewModel @Inject constructor(
     fun editItem(stock: Stock, stockItem: StockItem, item: Item) {
         viewModelScope.launch {
             val editItemResp = itemUseCases.editItemUC(item)
-            val editStockItemResp = stockUseCases.editStockItemUC(stock, stockItem)
+            val editStockItemResp = stockUseCases.addEditStockItemUC(stock, stockItem)
             when {
                 editStockItemResp is Resource.Error -> showSnackbar(editStockItemResp.message!!)
                 editItemResp is Resource.Error -> showSnackbar(editItemResp.message!!)
@@ -151,7 +151,7 @@ class StockViewModel @Inject constructor(
         itemErrorList.value = itemErrors
 
         viewModelScope.launch {
-            val editStockItemResp = stockUseCases.editStockItemUC(stock, item, amount = amount)
+            val editStockItemResp = stockUseCases.addEditStockItemUC(stock, item, amount = amount)
             if (editStockItemResp is Resource.Error) {
                 showSnackbar(editStockItemResp.message!!)
                 val errors = itemErrorList.value.toMutableList()

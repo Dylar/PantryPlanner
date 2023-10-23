@@ -11,7 +11,7 @@ import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.StockItem
 import kotlinx.coroutines.flow.first
 
-class EditStockItemUC(
+class AddEditStockItemUC(
     private val userRepo: UserRepository,
     private val stockRepo: StockRepository,
 ) {
