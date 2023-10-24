@@ -16,17 +16,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material.ExtendedFloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.rounded.HomeWork
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -79,7 +81,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
         showAddStockDialog = remember { mutableStateOf(false) }
         showAddUserDialog = remember { mutableStateOf(false) }
         Scaffold(
-            scaffoldState = scaffoldState,
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
             topBar = { buildAppBar() },
             floatingActionButton = { buildFab() },
             content = { buildContent(it) },
@@ -96,6 +98,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
         }
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun buildAppBar() {
         TopAppBar(
@@ -173,7 +176,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
                     Text(
                         getString(R.string.profile_qr_info),
                         modifier = Modifier
-                            .drawBehind {
+                            .drawBehind { // TODO make generic
                                 val strokeWidthPx = 1.dp.toPx()
                                 val verticalOffset = size.height - 2.sp.toPx()
                                 drawLine(
@@ -194,8 +197,8 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
 
     @Composable
     private fun QrCodeImage(uuid: String) {
-        val black = MaterialTheme.colors.background
-        val white = MaterialTheme.colors.onBackground
+        val black = MaterialTheme.colorScheme.background
+        val white = MaterialTheme.colorScheme.onBackground
         return AndroidView(
             modifier = Modifier.testTag(ProfilePageTag.QRLabel),
             factory = { context ->
@@ -239,7 +242,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
                     Text(
                         "Verbundene Benutzer",
                         modifier = Modifier
-                            .drawBehind {
+                            .drawBehind { // TODO make generic
                                 val strokeWidthPx = 1.dp.toPx()
                                 val verticalOffset = size.height - 2.sp.toPx()
                                 drawLine(

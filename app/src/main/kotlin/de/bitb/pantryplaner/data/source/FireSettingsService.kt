@@ -7,6 +7,7 @@ import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.model.Settings
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 
@@ -29,6 +30,7 @@ class FireSettingsService(
                     Resource.Success(obj)
                 }
             }
+            .distinctUntilChanged()
     }
 
     override suspend fun saveSettings(settings: Settings): Resource<Unit> {

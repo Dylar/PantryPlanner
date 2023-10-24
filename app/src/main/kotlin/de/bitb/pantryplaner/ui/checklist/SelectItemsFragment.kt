@@ -7,13 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Card
-import androidx.compose.material.ExtendedFloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.GridOff
@@ -22,6 +15,15 @@ import androidx.compose.material.icons.filled.SavedSearch
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -93,7 +95,7 @@ class SelectItemsFragment : BaseFragment<SelectItemsViewModel>() {
         }
 
         Scaffold(
-            scaffoldState = scaffoldState,
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
             topBar = { buildAppBar(filter) },
             content = { buildContent(it) },
             floatingActionButton = { buildFab() }
@@ -123,6 +125,7 @@ class SelectItemsFragment : BaseFragment<SelectItemsViewModel>() {
         }
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun buildAppBar(filter: Filter) {
         TopAppBar(
@@ -219,7 +222,6 @@ class SelectItemsFragment : BaseFragment<SelectItemsViewModel>() {
     @Composable
     private fun listItem(item: Item) {
         Card(
-            elevation = 4.dp,
             border = BorderStroke(2.dp, BaseColors.LightGray),
             modifier = Modifier
                 .testTag(ItemTag(item.category, item.name))

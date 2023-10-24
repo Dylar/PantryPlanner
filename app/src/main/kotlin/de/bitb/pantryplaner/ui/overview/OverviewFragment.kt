@@ -10,20 +10,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExtendedFloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.GridOff
 import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.FormatListBulleted
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -80,13 +81,14 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
 
         val modelResp by viewModel.overviewModel.observeAsState(null)
         Scaffold(
-            scaffoldState = scaffoldState,
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
             topBar = { buildAppBar() },
             content = { buildContent(it, modelResp) },
             floatingActionButton = { buildFab(modelResp) },
         )
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun buildAppBar() {
         TopAppBar(
@@ -128,7 +130,6 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
                 SmallFloatingActionButton(
                     modifier = Modifier.testTag(OverviewPageTag.NewChecklistButton),
                     onClick = { showAddDialog.value = true },
-                    containerColor = MaterialTheme.colors.secondaryVariant,
                     shape = RoundedCornerShape(12.dp),
                 ) {
                     Icon(

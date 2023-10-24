@@ -1,5 +1,6 @@
 package de.bitb.pantryplaner.ui.settings
 
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.bitb.pantryplaner.R
@@ -18,7 +19,7 @@ class SettingsViewModel @Inject constructor(
     private val userUC: UserUseCases,
 ) : BaseViewModel() {
 
-    val settings = settingsRepo.getSettings()
+    val settings = settingsRepo.getSettings().asLiveData()
 
     fun saveSettings(settings: Settings) {
         viewModelScope.launch {

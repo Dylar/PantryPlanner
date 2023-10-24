@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import de.bitb.pantryplaner.ui.base.comps.ResString
 
 abstract class BaseViewModel : ViewModel() {
+
     lateinit var updateWidgets: () -> Unit  //TODO deprecated or fix it
     lateinit var navigate: (Int) -> Unit
     lateinit var navigateBack: () -> Unit
@@ -21,4 +22,5 @@ abstract class BaseViewModel : ViewModel() {
     fun clearSnackBar() {
         _snackbarMessage.value = null
     }
+
 }

@@ -8,13 +8,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Card
-import androidx.compose.material.DismissDirection
-import androidx.compose.material.DismissValue
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.SwipeToDismiss
-import androidx.compose.material.Text
-import androidx.compose.material.rememberDismissState
+import androidx.compose.material3.Card
+import androidx.compose.material3.DismissDirection
+import androidx.compose.material3.DismissValue
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SwipeToDismiss
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -69,7 +69,7 @@ fun clearItem(
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 private fun swipeItem(
     color: Color,
@@ -83,7 +83,7 @@ private fun swipeItem(
 ) {
     val showRemoveDialog = remember { mutableStateOf(false) }
     val dismissState = rememberDismissState(
-        confirmStateChange = {
+        confirmValueChange = {
             if (it == DismissValue.DismissedToEnd) {
                 showRemoveDialog.value = true
                 true
@@ -116,7 +116,6 @@ private fun swipeItem(
         background = { swipeBackground(onSwipeText) },
         dismissContent = {
             Card(
-                elevation = 4.dp,
                 border = BorderStroke(2.dp, color),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -132,7 +131,6 @@ private fun swipeItem(
 @Composable
 private fun swipeBackground(text: String) {
     Card(
-        elevation = 4.dp,
         modifier = Modifier
             .padding(vertical = 4.dp)
     ) {

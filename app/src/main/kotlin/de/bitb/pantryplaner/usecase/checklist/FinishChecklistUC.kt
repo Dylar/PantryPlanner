@@ -16,7 +16,6 @@ class FinishChecklistUC(
 ) {
     suspend operator fun invoke(checkId: String): Resource<Unit> {
         return tryIt {
-            //TODO on finish select stock
             val checkResp = checkRepo.getCheckLists(listOf(checkId)).first()
             if (checkResp is Resource.Error) return@tryIt checkResp.castTo()
 

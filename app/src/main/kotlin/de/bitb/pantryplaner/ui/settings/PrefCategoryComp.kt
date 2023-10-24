@@ -1,8 +1,8 @@
 package de.bitb.pantryplaner.ui.settings
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -22,8 +22,8 @@ fun PreferenceCategory(
                 end = 16.dp,
                 bottom = 8.dp,
             ),
-        color = MaterialTheme.colors.primary,
-        style = MaterialTheme.typography.subtitle2,
+        color = MaterialTheme.colorScheme.primary,
+        style = MaterialTheme.typography.bodyMedium,
     )
 }
 

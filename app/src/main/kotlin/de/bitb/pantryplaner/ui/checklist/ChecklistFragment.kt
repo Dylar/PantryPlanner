@@ -8,20 +8,21 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExtendedFloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme.colors
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.GridOff
 import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -84,7 +85,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
         val checkModel by viewModel.checkModel.observeAsState(null)
         Scaffold(
             modifier = Modifier.testTag(ChecklistPageTag.ChecklistPage),
-            scaffoldState = scaffoldState,
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
             topBar = { buildAppBar(checkModel) },
             content = { buildContent(it, checkModel) },
             floatingActionButton = { buildFab() },
@@ -115,6 +116,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
         }
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun buildAppBar(checkModel: Resource<CheckModel>?) {
         TopAppBar(
@@ -158,7 +160,6 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
             SmallFloatingActionButton(
                 modifier = Modifier.testTag(ChecklistPageTag.AddItemButton),
                 onClick = { naviChecklistToItems(viewModel.checkListId) },
-                containerColor = colors.secondaryVariant,
                 shape = RoundedCornerShape(12.dp),
             ) {
                 Icon(

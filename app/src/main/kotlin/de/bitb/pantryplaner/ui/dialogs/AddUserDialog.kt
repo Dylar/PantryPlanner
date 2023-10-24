@@ -4,12 +4,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.QrCodeScanner
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
@@ -88,7 +87,6 @@ private fun AddUserDialog(
 
                 SmallFloatingActionButton(
                     modifier = Modifier.testTag(AddUserDialogTag.ScanButton),
-                    containerColor = MaterialTheme.colors.secondaryVariant,
                     shape = RoundedCornerShape(12.dp),
                     onClick = {
                         onDismiss()
