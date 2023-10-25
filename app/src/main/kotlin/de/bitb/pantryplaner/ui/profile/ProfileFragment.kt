@@ -37,8 +37,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -175,17 +173,17 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
                 ) {
                     Text(
                         getString(R.string.profile_qr_info),
-                        modifier = Modifier
-                            .drawBehind { // TODO make generic
-                                val strokeWidthPx = 1.dp.toPx()
-                                val verticalOffset = size.height - 2.sp.toPx()
-                                drawLine(
-                                    color = BaseColors.ZergPurple,
-                                    strokeWidth = strokeWidthPx,
-                                    start = Offset(0f, verticalOffset),
-                                    end = Offset(size.width, verticalOffset)
-                                )
-                            },
+                        modifier = Modifier,
+//                            .drawBehind { // TODO make generic
+//                                val strokeWidthPx = 1.dp.toPx()
+//                                val verticalOffset = size.height - 2.sp.toPx()
+//                                drawLine(
+//                                    color = BaseColors.ZergPurple,
+//                                    strokeWidth = strokeWidthPx,
+//                                    start = Offset(0f, verticalOffset),
+//                                    end = Offset(size.width, verticalOffset)
+//                                )
+//                            },
                         textAlign = TextAlign.Center,
                     )
                 }
@@ -241,17 +239,17 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
                 ) {
                     Text(
                         "Verbundene Benutzer",
-                        modifier = Modifier
-                            .drawBehind { // TODO make generic
-                                val strokeWidthPx = 1.dp.toPx()
-                                val verticalOffset = size.height - 2.sp.toPx()
-                                drawLine(
-                                    color = BaseColors.ZergPurple,
-                                    strokeWidth = strokeWidthPx,
-                                    start = Offset(0f, verticalOffset),
-                                    end = Offset(size.width, verticalOffset)
-                                )
-                            },
+                        modifier = Modifier,
+//                            .drawBehind { // TODO make generic
+//                                val strokeWidthPx = 1.dp.toPx()
+//                                val verticalOffset = size.height - 2.sp.toPx()
+//                                drawLine(
+//                                    color = BaseColors.ZergPurple,
+//                                    strokeWidth = strokeWidthPx,
+//                                    start = Offset(0f, verticalOffset),
+//                                    end = Offset(size.width, verticalOffset)
+//                                )
+//                            },
                         textAlign = TextAlign.Center,
                     )
                 }
@@ -269,7 +267,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
     private fun buildUser(user: User) {
         dissmissItem(
             user.fullName,
-            BaseColors.ZergPurple,
+            BaseColors.FireRed,
             onSwipe = { viewModel.disconnectUser(user) },
         ) {
             Box(
@@ -312,17 +310,17 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
                 ) {
                     Text(
                         "Lager",
-                        modifier = Modifier
-                            .drawBehind { // TODO make generic
-                                val strokeWidthPx = 1.dp.toPx()
-                                val verticalOffset = size.height - 2.sp.toPx()
-                                drawLine(
-                                    color = BaseColors.ZergPurple,
-                                    strokeWidth = strokeWidthPx,
-                                    start = Offset(0f, verticalOffset),
-                                    end = Offset(size.width, verticalOffset)
-                                )
-                            },
+                        modifier = Modifier,
+//                            .drawBehind { // TODO make generic
+//                                val strokeWidthPx = 1.dp.toPx()
+//                                val verticalOffset = size.height - 2.sp.toPx()
+//                                drawLine(
+//                                    color = BaseColors.ZergPurple,
+//                                    strokeWidth = strokeWidthPx,
+//                                    start = Offset(0f, verticalOffset),
+//                                    end = Offset(size.width, verticalOffset)
+//                                )
+//                            },
                         textAlign = TextAlign.Center,
                     )
                 }
@@ -350,7 +348,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
 
         dissmissItem(
             stock.name,
-            BaseColors.ZergPurple,
+            BaseColors.FireRed,
             onSwipe = { viewModel.removeStock(stock) },
             onLongClick = { showEditDialog.value = true }
         ) {

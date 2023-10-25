@@ -13,7 +13,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -180,15 +179,10 @@ private fun <T> SearchDropDown(
                 DropdownMenuItem(
                     modifier = Modifier
                         .padding(2.dp)
-                        .background(BaseColors.LightGray.copy(alpha = .5f))
+                        .background(BaseColors.FireRed.copy(alpha = .5f))
                         .testTag(DropDownItemTag(addText)),
                     onClick = { expanded = false },
-                    text = {
-                        Text(
-                            text = addText,
-                            color = BaseColors.Black.copy(alpha = .5f),
-                        )
-                    },
+                    text = { Text(text = addText) },
                 )
             }
 
@@ -197,7 +191,7 @@ private fun <T> SearchDropDown(
                 DropdownMenuItem(
                     modifier = Modifier
                         .padding(2.dp)
-                        .background(BaseColors.LightGray.copy(alpha = .5f))
+                        .background(BaseColors.FireRed.copy(alpha = .5f))
                         .testTag(DropDownItemTag(mappedOption)),
                     onClick = {
                         selectedState.value =
@@ -212,12 +206,7 @@ private fun <T> SearchDropDown(
                         onConfirm(mappedOption)
                         expanded = false
                     },
-                    text = {
-                        Text(
-                            text = mappedOption,
-                            color = BaseColors.Black.copy(alpha = 1f),
-                        )
-                    },
+                    text = { Text(text = mappedOption) },
                 )
             }
         }
@@ -236,7 +225,6 @@ private fun ConnectedUser(
             .defaultMinSize(minHeight = 32.dp)
             .padding(4.dp)
             .fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = BaseColors.DarkGray.copy(alpha = .4f)),
     ) {
         LazyRow(
             modifier = Modifier
@@ -253,7 +241,6 @@ private fun ConnectedUser(
                         modifier = Modifier
                             .testTag(SharedWithTag.NothingShared)
                             .defaultMinSize(24.dp),
-                        color = BaseColors.LightGray,
                     )
                 }
             } else {
@@ -267,7 +254,7 @@ private fun ConnectedUser(
                     ) {
                         Row(
                             modifier = Modifier
-                                .background(BaseColors.LightGray)
+//                                .background(BaseColors.LightGray)
                                 .clickable {
                                     if (canChange) {
                                         val list = selectedUser.value.toMutableList()

@@ -37,7 +37,7 @@ fun SelectItemHeader(
             .testTag(SelectItemHeaderTag(item.name))
             .fillMaxWidth()
             .defaultMinSize(minHeight = 48.dp)
-            .background(BaseColors.LightGray.copy(alpha = .1f)),
+            .background(BaseColors.FireRed.copy(alpha = .1f)),
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
     ) {

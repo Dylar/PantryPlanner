@@ -222,7 +222,7 @@ class SelectItemsFragment : BaseFragment<SelectItemsViewModel>() {
     @Composable
     private fun listItem(item: Item) {
         Card(
-            border = BorderStroke(2.dp, BaseColors.LightGray),
+            border = BorderStroke(2.dp, BaseColors.FireRed),
             modifier = Modifier
                 .testTag(ItemTag(item.category, item.name))
                 .fillMaxWidth()

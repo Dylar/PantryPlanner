@@ -153,10 +153,6 @@ private fun AddEditItemDialog(
     AlertDialog(
         modifier = Modifier.testTag(AddEditItemDialogTag.DialogTag),
         onDismissRequest = onDismiss,
-//        containerColor = darkColorPalette.background,
-//        iconContentColor = darkColorPalette.onSurface,
-//        titleContentColor = darkColorPalette.onSurface,
-//        textContentColor = darkColorPalette.onSurface,
         title = { Text(title) },
         text = {
             Column {
@@ -182,17 +178,15 @@ private fun AddEditItemDialog(
                 buildUserDropDown("Item wird nicht geteilt", users, selectedUser)
                 OutlinedComp {
                     Text("MHD", modifier = Modifier.padding(4.dp))
-                    AddSubRow(
-                        freshUntil.longValue.toDouble(),
-                        backgroundColor = BaseColors.LightGray
-                    ) { freshUntil.longValue = it.toLong() }
+                    AddSubRow(freshUntil.longValue.toDouble()) {
+                        freshUntil.longValue = it.toLong()
+                    }
                 }
                 OutlinedComp {
                     Text("Erinnerung", modifier = Modifier.padding(4.dp))
-                    AddSubRow(
-                        remindAfter.longValue.toDouble(),
-                        backgroundColor = BaseColors.LightGray
-                    ) { remindAfter.longValue = it.toLong() }
+                    AddSubRow(remindAfter.longValue.toDouble()) {
+                        remindAfter.longValue = it.toLong()
+                    }
                 }
             }
 //            LaunchedEffect(Unit) {

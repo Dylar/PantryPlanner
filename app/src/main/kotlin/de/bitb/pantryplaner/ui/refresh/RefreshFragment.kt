@@ -212,7 +212,7 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
                     modifier = Modifier
                         .width(50.dp)
                         .padding(start = 4.dp)
-                        .background(BaseColors.LightGray.copy(alpha = .1f)),
+                        .background(BaseColors.FireRed.copy(alpha = .1f)),
                     fontSize = 14.sp,
                     textAlign = TextAlign.Center
                 )

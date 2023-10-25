@@ -18,14 +18,15 @@ import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TextFieldDefaults.colors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
@@ -43,14 +44,11 @@ import java.lang.Double.max
 @Composable
 fun AddSubRow(
     amount: Double,
-    editColor: Color = BaseColors.White,
-    backgroundColor: Color = Color.Transparent,
     onChange: (String) -> Unit,
 ) {
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .background(backgroundColor),
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -68,13 +66,12 @@ fun AddSubRow(
             },
         ) {
             Icon(
-                modifier = Modifier
-                    .background(Color.Red, shape = CircleShape),
+                modifier = Modifier.background(BaseColors.Red, shape = CircleShape),
                 imageVector = Icons.Default.Remove,
                 contentDescription = "Minus button"
             )
         }
-        EditText(amountState, editColor) { onChange(it) }
+        EditText(amountState) { onChange(it) }
 
         IconButton(
             modifier = Modifier
@@ -87,8 +84,7 @@ fun AddSubRow(
             },
         ) {
             Icon(
-                modifier = Modifier
-                    .background(Color.Green, shape = CircleShape),
+                modifier = Modifier.background(BaseColors.Green, shape = CircleShape),
                 imageVector = Icons.Default.Add,
                 contentDescription = "Plus button"
             )
@@ -100,7 +96,6 @@ fun AddSubRow(
 @Composable
 fun EditText(
     textState: MutableState<TextFieldValue>,
-    color: Color = BaseColors.White,
     onChange: (String) -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -110,23 +105,30 @@ fun EditText(
             .testTag(AddSubRowTag.AmountText)
             .padding(2.dp)
             .width(60.dp)
-            .background(color.copy(alpha = .5f)),
+            .background(BaseColors.Transparent),
         textStyle = TextStyle.Default.copy(
             fontSize = 16.sp,
             textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onBackground,
         ),
         maxLines = 1,
         interactionSource = interactionSource,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        onValueChange = {
-            if (it.text.length < 8) {
-                textState.value = it
-                onChange(it.text)
+        onValueChange = { field ->
+            val sanitizedInput = field.text.replace(",", ".")
+            val pattern = "^\\d{0,5}(\\.\\d{0,2})?$|^.\\d{1,2}$".toRegex()
+            if (sanitizedInput.matches(pattern)) {
+                textState.value = TextFieldValue(sanitizedInput, field.selection)
+                onChange(sanitizedInput)
             }
         },
     ) { innerTextField ->
-        TextFieldDefaults.TextFieldDecorationBox(
+        TextFieldDefaults.DecorationBox(
             value = textState.value.text,
+            colors = colors(
+                focusedContainerColor = MaterialTheme.colorScheme.background,
+                unfocusedContainerColor = MaterialTheme.colorScheme.background,
+            ),
             visualTransformation = VisualTransformation.None,
             innerTextField = innerTextField,
             singleLine = true,

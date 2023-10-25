@@ -88,8 +88,6 @@ class StockViewModel @Inject constructor(
         .onEach { _isSearching.update { false } }
         .asLiveData()
 
-    val itemErrorList = MutableStateFlow<List<String>>(emptyList())
-
     fun addStock(stock: Stock) {
         viewModelScope.launch {
             when (val resp = stockUseCases.addStockUC(stock)) {
@@ -146,17 +144,10 @@ class StockViewModel @Inject constructor(
     }
 
     fun changeItemAmount(stock: Stock, item: StockItem, amount: String) {
-        val itemErrors = itemErrorList.value.toMutableList()
-        itemErrors.remove(item.uuid)
-        itemErrorList.value = itemErrors
-
         viewModelScope.launch {
             val editStockItemResp = stockUseCases.addEditStockItemUC(stock, item, amount = amount)
             if (editStockItemResp is Resource.Error) {
                 showSnackbar(editStockItemResp.message!!)
-                val errors = itemErrorList.value.toMutableList()
-                errors.add(item.uuid)
-                itemErrorList.value = itemErrors
             }
         }
     }

@@ -55,7 +55,6 @@ class ChecklistViewModel @Inject constructor(
     private val itemUseCases: ItemUseCases,
 ) : BaseViewModel(), UserDataExt {
 
-    val itemErrorList = MutableStateFlow<List<String>>(emptyList())
     val filterBy = MutableStateFlow(Filter())
 
     lateinit var checkModel: LiveData<Resource<CheckModel>>
@@ -161,17 +160,10 @@ class ChecklistViewModel @Inject constructor(
     }
 
     fun changeItemAmount(itemId: String, amount: String) {
-        val itemErrors = itemErrorList.value.toMutableList()
-        itemErrors.remove(itemId)
-        itemErrorList.value = itemErrors
-
         viewModelScope.launch {
             val resp = checkUseCases.setItemAmountUC(checkListId, itemId, amount)
             if (resp is Resource.Error) {
                 showSnackbar(resp.message!!)
-                val errors = itemErrorList.value.toMutableList()
-                errors.add(itemId)
-                itemErrorList.value = itemErrors
             }
         }
     }

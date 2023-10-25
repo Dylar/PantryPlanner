@@ -24,7 +24,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
-import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.AddUserDialogTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 import kotlin.reflect.KFunction0
@@ -95,7 +94,6 @@ private fun AddUserDialog(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.QrCodeScanner,
-                        tint = BaseColors.Black,
                         contentDescription = "Scan User",
                     )
                 }

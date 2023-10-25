@@ -49,7 +49,7 @@ fun Circle(
         contentDescription = "color cycle",
         modifier = Modifier
             .background(
-                if (isSelected) BaseColors.Black.copy(alpha = .4f) else Color.Transparent,
+                if (isSelected) BaseColors.Black.copy(alpha = .4f) else BaseColors.Transparent,
                 shape = CircleShape,
             )
             .padding(4.dp)

@@ -32,7 +32,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.viewModels
@@ -165,7 +164,6 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 Icon(
                     imageVector = Icons.Rounded.Add,
                     contentDescription = "add FAB",
-                    tint = Color.Black,
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -274,14 +272,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                     true,
                     viewModel::checkItem
                 )
-                val errors = viewModel.itemErrorList.collectAsState(listOf())
-                val color =
-                    if (errors.value.contains(item.uuid)) BaseColors.FireRed
-                    else BaseColors.White
-                AddSubRow(
-                    checkItem.amount,
-                    color
-                ) { viewModel.changeItemAmount(item.uuid, it) }
+                AddSubRow(checkItem.amount) { viewModel.changeItemAmount(item.uuid, it) }
             }
         }
     }

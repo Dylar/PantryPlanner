@@ -9,7 +9,6 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 @Composable
@@ -31,6 +30,7 @@ fun PantryAppTheme(
         content = content
     )
 }
+
 private val DarkColorPalette = darkColorScheme(
     primary = Blue80,
     onPrimary = Blue20,
@@ -62,20 +62,20 @@ private val DarkColorPalette = darkColorScheme(
 
 private val LightColorPalette = lightColorScheme(
     primary = Blue40,
-    onPrimary = Color.White,
+    onPrimary = BaseColors.White,
     primaryContainer = Blue90,
     onPrimaryContainer = Blue10,
     inversePrimary = Blue80,
     secondary = DarkBlue40,
-    onSecondary = Color.White,
+    onSecondary = BaseColors.White,
     secondaryContainer = DarkBlue90,
     onSecondaryContainer = DarkBlue10,
     tertiary = Violet40,
-    onTertiary = Color.White,
+    onTertiary = BaseColors.White,
     tertiaryContainer = Violet90,
     onTertiaryContainer = Violet10,
     error = Red40,
-    onError = Color.White,
+    onError = BaseColors.White,
     errorContainer = Red90,
     onErrorContainer = Red10,
     background = Grey99,

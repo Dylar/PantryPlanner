@@ -114,10 +114,6 @@ private fun AddEditStockDialog(
     AlertDialog(
         modifier = Modifier.testTag(AddEditStockDialogTag.DialogTag),
         onDismissRequest = onDismiss,
-//        containerColor = darkColorPalette.background,
-//        iconContentColor = darkColorPalette.onSurface,
-//        titleContentColor = darkColorPalette.onSurface,
-//        textContentColor = darkColorPalette.onSurface,
         title = { Text(title) },
         text = {
             Column {

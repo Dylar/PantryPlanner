@@ -1,7 +1,6 @@
 package de.bitb.pantryplaner.ui.stock
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -250,7 +249,6 @@ class StockFragment : BaseFragment<StockViewModel>() {
                     }
 
                     TabRow(
-                        containerColor = BaseColors.Black,
                         selectedTabIndex = pagerState.currentPage,
                     ) {
                         val scope = rememberCoroutineScope()
@@ -304,7 +302,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
                                 showGridLayout,
                                 items,
                                 {
-                                    stock.items.firstOrNull()?.color ?: BaseColors.LightGray
+                                    stock.items.firstOrNull()?.color ?: BaseColors.FireRed
                                 }, //TODO color?
                                 viewModel::editCategory
                             ) { _, item ->
@@ -367,20 +365,12 @@ class StockFragment : BaseFragment<StockViewModel>() {
                 text,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(BaseColors.LightGray.copy(alpha = .1f))
                     .padding(horizontal = 12.dp, vertical = 4.dp),
                 fontSize = 16.sp,
                 textAlign = TextAlign.Start
             )
 
-            val errors = viewModel.itemErrorList.collectAsState(listOf())
-            val color =
-                if (errors.value.contains(item.uuid)) BaseColors.FireRed
-                else BaseColors.White
-            AddSubRow(
-                stockItem.amount,
-                color,
-            ) { viewModel.changeItemAmount(stock, stockItem, it) }
+            AddSubRow(stockItem.amount) { viewModel.changeItemAmount(stock, stockItem, it) }
         }
     }
 }
