@@ -72,14 +72,12 @@ fun UserRemoteDao.mockUserDao(
         val email = firstArg<String>().lowercase(Locale.ROOT)
         val allFlowValue = allFlowValue()
         val user = allFlowValue.firstOrNull { it.email.lowercase(Locale.ROOT) == email }
-        Logger.printLog("all user" to allFlowValue, "user" to user, "email" to email)
         Resource.Success(user)
     }
     coEvery { saveUser(any()) }.answers {
         val saveUser = firstArg<User>()
         val oldData = allFlowValue()
         val userExists = oldData.any { it.uuid == saveUser.uuid }
-        Logger.printLog("Old DATA" to oldData, "saveUser" to saveUser)
         scope.launch {
             allFlow.emit(
                 if (userExists) oldData.map { if (it.uuid == saveUser.uuid) saveUser else it }

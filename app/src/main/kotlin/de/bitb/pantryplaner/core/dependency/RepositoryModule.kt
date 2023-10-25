@@ -20,7 +20,8 @@ object RepositoryModule {
     @Singleton
     fun provideSettingsRepository(
         remoteService: RemoteService,
-    ): SettingsRepository = SettingsRepositoryImpl(remoteService)
+        localDatabase: LocalDatabase,
+    ): SettingsRepository = SettingsRepositoryImpl(remoteService, localDatabase)
 
     @Provides
     @Singleton

@@ -5,6 +5,7 @@ import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeRight
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -15,6 +16,7 @@ import de.bitb.pantryplaner.core.misc.formatted
 import de.bitb.pantryplaner.core.onNodeWithParentTag
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.core.onNodeWithTextWithParentTag
+import de.bitb.pantryplaner.core.sleepFor
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.testTags.AddSubRowTag
 import de.bitb.pantryplaner.ui.base.testTags.ItemTag
@@ -79,6 +81,16 @@ class ItemSteps(
     @Given("Item {string} in category {string} has amount {double}")
     fun itemHasAmount(name: String, category: String, amount: Double) {
         onNodeWithTag(ItemTag(category, name), true).hasTextInHierarchy(amount.formatted)
+    }
+
+    @When("Set Item {string} in category {string} amount to {string}")
+    fun setItemAmountBy(name: String, category: String, input: String) {
+        onNodeWithParentTag(
+            ItemTag(category, name),
+            AddSubRowTag.AmountText,
+            true
+        ).performTextReplacement(input)
+        waitForIdle()
     }
 
     @When("Increase Item {string} in category {string} amount by {int}")

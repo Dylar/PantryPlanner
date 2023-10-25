@@ -18,27 +18,24 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import de.bitb.pantryplaner.core.MainActivity
+import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Settings
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
-import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
 import de.bitb.pantryplaner.ui.base.comps.ResString
 import de.bitb.pantryplaner.ui.base.styles.PantryAppTheme
 import kotlinx.coroutines.launch
 
 abstract class BaseFragment<T : BaseViewModel> : Fragment() {
 
-    fun settings() = (activity as MainActivity).settings()
+    val navController by lazy { NavHostFragment.findNavController(this) }
+    lateinit var snackBarHostState: SnackbarHostState
     abstract val viewModel: T
 
-    val navController by lazy { NavHostFragment.findNavController(this) }
-    lateinit var snackbarHostState: SnackbarHostState
+    private fun settingsFlow() = (activity as MainActivity).settingsFlow()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.navigate = { navController.navigate(it) } //TODO dont use callbacks
-        viewModel.navigateBack = { navController.popBackStack() }
-        viewModel.navigateBackTo = { id -> navController.popBackStack(id, false) }
         viewModel.updateWidgets = ::updateWidgets
     }
 
@@ -49,13 +46,12 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                snackbarHostState = remember { SnackbarHostState() }
+                snackBarHostState = remember { SnackbarHostState() }
                 var settingsResp by remember { mutableStateOf<Resource<Settings>?>(null) }
-                LaunchedEffect(Unit) { settings().collect { settingsResp = it } }
+                LaunchedEffect(Unit) { settingsFlow().collect { settingsResp = it } }
 
                 when (settingsResp) {
                     is Resource.Error<*> -> ErrorScreen(errorText = settingsResp!!.message!!.asString())
-                    null -> LoadingIndicator()
                     else -> {
                         val settings = settingsResp?.data
                         val darkMode =
@@ -69,26 +65,34 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        observeNavigateEvent()
         observeSnackBarEvent()
     }
 
     @Composable
     abstract fun screenContent()
 
-    private fun observeSnackBarEvent() {
-        viewModel.snackbarMessage.observe(viewLifecycleOwner) { message ->
-            message?.let { showSnackBar(it) }
+    private fun observeNavigateEvent() {
+        viewModel.navigation.observe(viewLifecycleOwner) { event ->
+            when (event) {
+                NavigateEvent.NavigateBack -> navController.popBackStack()
+                is NavigateEvent.Navigate -> navController.navigate(event.route)
+                is NavigateEvent.NavigateTo -> navController.popBackStack(event.route, false)
+            }
         }
+    }
+
+    private fun observeSnackBarEvent() {
+        viewModel.snackBarMessage.observe(viewLifecycleOwner) { showSnackBar(it) }
     }
 
     fun showSnackBar(msg: ResString) {
         lifecycleScope.launch {
-            if (::snackbarHostState.isInitialized)
-                snackbarHostState.showSnackbar(
+            if (::snackBarHostState.isInitialized)
+                snackBarHostState.showSnackbar(
                     message = msg.asString(resources::getString),
 //                    actionLabel = "Do something"
                 )
-            viewModel.clearSnackBar()
         }
     }
 

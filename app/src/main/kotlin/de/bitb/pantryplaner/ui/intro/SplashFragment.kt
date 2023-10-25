@@ -21,6 +21,7 @@ import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.NotifyManager.ACTION_REFRESH_PAGE
+import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
 
@@ -43,7 +44,7 @@ class SplashFragment : BaseFragment<SplashViewModel>() {
         ) {
             Image(
                 painterResource(R.drawable.ic_launcher),
-                contentDescription = "",
+                contentDescription = "Launcher icon",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .width(220.dp)

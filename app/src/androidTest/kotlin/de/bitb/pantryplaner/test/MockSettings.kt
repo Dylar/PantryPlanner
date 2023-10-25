@@ -14,7 +14,7 @@ fun SettingsRemoteDao.mockSettingsDao(
     settings: Settings = Settings()
 ) {
     val flow = MutableStateFlow(Resource.Success(settings))
-    coEvery { getSettings() }.answers { flow }
+    coEvery { getSettings(any()) }.answers { flow }
     coEvery { saveSettings(any()) }.answers {
         val saveSetting = firstArg<Settings>()
         flow.value = Resource.Success(saveSetting)
@@ -28,7 +28,7 @@ fun SettingsRemoteDao.mockErrorSettingsDao(
     saveSettingsError: Resource.Error<Unit>? = null,
 ) {
     if (getSettingsError != null)
-        coEvery { getSettings() }.answers { flowOf(getSettingsError) }
+        coEvery { getSettings(any()) }.answers { flowOf(getSettingsError) }
     if (saveSettingsError != null)
         coEvery { saveSettings(any()) }.answers { saveSettingsError }
 }

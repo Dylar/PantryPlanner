@@ -72,7 +72,7 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
 
         val model by viewModel.refreshModel.observeAsState(null)
         Scaffold(
-            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+            snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
             topBar = { buildAppBar() },
             content = { buildContent(it, model) },
             floatingActionButton = { buildFab(model) }

@@ -95,7 +95,7 @@ class SelectItemsFragment : BaseFragment<SelectItemsViewModel>() {
         }
 
         Scaffold(
-            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+            snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
             topBar = { buildAppBar(filter) },
             content = { buildContent(it) },
             floatingActionButton = { buildFab() }

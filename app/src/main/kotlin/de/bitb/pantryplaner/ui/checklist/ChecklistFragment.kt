@@ -84,7 +84,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
         val checkModel by viewModel.checkModel.observeAsState(null)
         Scaffold(
             modifier = Modifier.testTag(ChecklistPageTag.ChecklistPage),
-            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+            snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
             topBar = { buildAppBar(checkModel) },
             content = { buildContent(it, checkModel) },
             floatingActionButton = { buildFab() },

@@ -21,12 +21,13 @@ class FireSettingsService(
             .document(BuildConfig.FLAVOR)
             .collection("settings")
 
-    override fun getSettings(): Flow<Resource<Settings>> {
+    override fun getSettings(userId:String): Flow<Resource<Settings>> {
         return collection
+            .whereEqualTo("uuid", userId)
             .snapshots()
             .map {
                 tryIt {
-                    val obj = it.toObjects(Settings::class.java).firstOrNull() ?: Settings()
+                    val obj = it.toObjects(Settings::class.java).firstOrNull() ?: Settings(userId)
                     Resource.Success(obj)
                 }
             }
@@ -36,6 +37,7 @@ class FireSettingsService(
     override suspend fun saveSettings(settings: Settings): Resource<Unit> {
         return tryIt {
             val ref = collection
+                .whereEqualTo("uuid", settings.uuid)
                 .get().await()
                 .documents.firstOrNull()
             if (ref == null) collection.document().set(settings)

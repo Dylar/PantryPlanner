@@ -54,7 +54,7 @@ class ScanFragment : BaseFragment<ScanViewModel>(), PermissionHandler by Permiss
         )
 
         Scaffold(
-            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+            snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
             topBar = {
                 TopAppBar(
                     modifier = Modifier.testTag(ScanPageTag.AppBar),

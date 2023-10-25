@@ -48,11 +48,11 @@ Feature: StockPage Items management
     And   Item "SharedItem" in category "SharedCategory" is NOT displayed
 
   Scenario: Remove all Items
-    When  Swipe to remove Item "CreatorItem" in category "CreatorCategory"
+    And   Swipe to remove Item "SelectItem" in category "SelectCategory"
     And   Tap on Confirm
     And   Swipe to remove Item "SharedItem" in category "SharedCategory"
     And   Tap on Confirm
-    And   Swipe to remove Item "SelectItem" in category "SelectCategory"
+    When  Swipe to remove Item "CreatorItem" in category "CreatorCategory"
     And   Tap on Confirm
     Then  Item "CreatorItem" in category "CreatorCategory" is NOT displayed
     And   Item "SharedItem" in category "SharedCategory" is NOT displayed
@@ -101,20 +101,46 @@ Feature: StockPage Items management
     And   Input search "CreatorItem"
     Then  Item "CreatorItem" in category "CreatorCategory" is displayed
     And   Item "SharedItem" in category "SharedCategory" is NOT displayed
+    And   Item "SelectItem" in category "SelectCategory" is NOT displayed
     Then  Input search "SharedItem"
     And   Item "CreatorItem" in category "CreatorCategory" is NOT displayed
     And   Item "SharedItem" in category "SharedCategory" is displayed
+    And   Item "SelectItem" in category "SelectCategory" is NOT displayed
     Then  Input search "Item"
     And   Item "CreatorItem" in category "CreatorCategory" is displayed
     And   Item "SharedItem" in category "SharedCategory" is displayed
+    And   Item "SelectItem" in category "SelectCategory" is displayed
     Then  Input search "NOItem"
     And   Item "CreatorItem" in category "CreatorCategory" is NOT displayed
     And   Item "SharedItem" in category "SharedCategory" is NOT displayed
+    And   Item "SelectItem" in category "SelectCategory" is NOT displayed
     And   No Items displayed
     Then  On Back
     And   Tap on StockButton
     And   Item "CreatorItem" in category "CreatorCategory" is displayed
     And   Item "SharedItem" in category "SharedCategory" is displayed
+    And   Item "SelectItem" in category "SelectCategory" is displayed
+
+  Scenario: Prevent setting Item amount wrong value
+    Given Item "CreatorItem" in category "CreatorCategory" has amount 1.0
+    When  Set Item "CreatorItem" in category "CreatorCategory" amount to "WRONG VALUE"
+    Then  Item "CreatorItem" in category "CreatorCategory" has amount 1.0
+
+  Scenario: Set Item amount
+    Given Item "CreatorItem" in category "CreatorCategory" has amount 1.0
+    When  Set Item "CreatorItem" in category "CreatorCategory" amount to "2"
+    Then  Item "CreatorItem" in category "CreatorCategory" has amount 2.0
+    And   On Back
+    And   Tap on StockButton
+    And   Item "CreatorItem" in category "CreatorCategory" has amount 2.0
+
+  Scenario: Set shared Item amount
+    Given Item "SharedItem" in category "SharedCategory" has amount 2.5
+    When  Set Item "SharedItem" in category "SharedCategory" amount to "2"
+    Then  Item "SharedItem" in category "SharedCategory" has amount 2.0
+    And   On Back
+    And   Tap on StockButton
+    And   Item "SharedItem" in category "SharedCategory" has amount 2.0
 
   Scenario: Increase Item amount
     Given Item "CreatorItem" in category "CreatorCategory" has amount 1.0

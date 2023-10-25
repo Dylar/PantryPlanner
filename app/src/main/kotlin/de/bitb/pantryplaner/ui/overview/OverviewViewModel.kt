@@ -64,9 +64,9 @@ class OverviewViewModel @Inject constructor(
         viewModelScope.launch {
             val resp = checkUseCases.createChecklistUC(check)
             when {
-                resp is Resource.Error -> showSnackbar(resp.message!!)
-                resp.data == true -> showSnackbar("Checklist hinzugefügt: ${check.name}".asResString())
-                else -> showSnackbar("Checklist gibt es schon: ${check.name}".asResString())
+                resp is Resource.Error -> showSnackBar(resp.message!!)
+                resp.data == true -> showSnackBar("Checklist hinzugefügt: ${check.name}".asResString())
+                else -> showSnackBar("Checklist gibt es schon: ${check.name}".asResString())
             }
         }
     }
@@ -76,9 +76,9 @@ class OverviewViewModel @Inject constructor(
             val name = check.name
             val resp = checkUseCases.deleteChecklistUC(check)
             when {
-                resp is Resource.Error -> showSnackbar(resp.message!!)
-                resp.data == true -> showSnackbar("Checkliste entfernt: $name".asResString())
-                else -> showSnackbar("Checkliste nicht entfernt: $name".asResString())
+                resp is Resource.Error -> showSnackBar(resp.message!!)
+                resp.data == true -> showSnackBar("Checkliste entfernt: $name".asResString())
+                else -> showSnackBar("Checkliste nicht entfernt: $name".asResString())
             }
         }
     }
@@ -86,8 +86,8 @@ class OverviewViewModel @Inject constructor(
     fun unfinishChecklist(check: Checklist) {
         viewModelScope.launch {
             when (val resp = checkUseCases.unfinishChecklistUC(check.uuid)) {
-                is Resource.Error -> showSnackbar(resp.message!!)
-                else -> showSnackbar("Checkliste geöffnet: ${check.name}".asResString())
+                is Resource.Error -> showSnackBar(resp.message!!)
+                else -> showSnackBar("Checkliste geöffnet: ${check.name}".asResString())
             }
         }
     }
@@ -95,8 +95,8 @@ class OverviewViewModel @Inject constructor(
     fun editChecklist(check: Checklist) {
         viewModelScope.launch {
             when (val resp = checkUseCases.saveChecklistUC(check)) {
-                is Resource.Error -> showSnackbar(resp.message!!)
-                else -> showSnackbar("Checkliste editiert: ${check.name}".asResString())
+                is Resource.Error -> showSnackBar(resp.message!!)
+                else -> showSnackBar("Checkliste editiert: ${check.name}".asResString())
             }
         }
     }

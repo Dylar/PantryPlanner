@@ -8,19 +8,19 @@ import de.bitb.pantryplaner.ui.base.comps.ResString
 abstract class BaseViewModel : ViewModel() {
 
     lateinit var updateWidgets: () -> Unit  //TODO deprecated or fix it
-    lateinit var navigate: (Int) -> Unit
-    lateinit var navigateBack: () -> Unit
-    lateinit var navigateBackTo: (Int) -> Unit
     open fun isBackable(): Boolean = true
 
-    private val _snackbarMessage = MutableLiveData<ResString?>(null)
-    val snackbarMessage: LiveData<ResString?> get() = _snackbarMessage
-    fun showSnackbar(message: ResString) {
-        _snackbarMessage.value = message
+    private val _navigation = MutableLiveData<NavigateEvent>()
+    private val _snackbarMessage = MutableLiveData<ResString>()
+    val navigation: LiveData<NavigateEvent> get() = _navigation
+    val snackBarMessage: LiveData<ResString> get() = _snackbarMessage
+
+    fun navigate(event: NavigateEvent) {
+        _navigation.value = event
     }
 
-    fun clearSnackBar() {
-        _snackbarMessage.value = null
+    fun showSnackBar(message: ResString) {
+        _snackbarMessage.value = message
     }
 
 }

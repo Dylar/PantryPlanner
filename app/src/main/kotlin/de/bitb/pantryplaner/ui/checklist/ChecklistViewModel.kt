@@ -19,6 +19,7 @@ import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseViewModel
+import de.bitb.pantryplaner.ui.base.NavigateEvent
 import de.bitb.pantryplaner.ui.base.comps.asResString
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
@@ -122,9 +123,9 @@ class ChecklistViewModel @Inject constructor(
         viewModelScope.launch {
             val resp = checkUseCases.removeItemsUC(checkListId, listOf(item.uuid))
             when {
-                resp is Resource.Error -> showSnackbar(resp.message!!)
-                resp.data == true -> showSnackbar("Item entfernt: ${item.name}".asResString()).also { updateWidgets() }
-                else -> showSnackbar("Item nicht entfernt: ${item.name}".asResString())
+                resp is Resource.Error -> showSnackBar(resp.message!!)
+                resp.data == true -> showSnackBar("Item entfernt: ${item.name}".asResString()).also { updateWidgets() }
+                else -> showSnackBar("Item nicht entfernt: ${item.name}".asResString())
             }
         }
     }
@@ -132,7 +133,7 @@ class ChecklistViewModel @Inject constructor(
     fun checkItem(itemId: String) {
         viewModelScope.launch {
             when (val resp = checkUseCases.checkItemUC(checkListId, itemId)) {
-                is Resource.Error -> showSnackbar(resp.message!!)
+                is Resource.Error -> showSnackBar(resp.message!!)
                 else -> updateWidgets()
             }
         }
@@ -141,8 +142,8 @@ class ChecklistViewModel @Inject constructor(
     fun editCategory(previousCategory: String, newCategory: String, color: Color) {
         viewModelScope.launch {
             when (val resp = itemUseCases.editCategoryUC(previousCategory, newCategory, color)) {
-                is Resource.Error -> showSnackbar(resp.message!!)
-                else -> showSnackbar("Kategorie editiert".asResString()).also { updateWidgets() }
+                is Resource.Error -> showSnackBar(resp.message!!)
+                else -> showSnackBar("Kategorie editiert".asResString()).also { updateWidgets() }
             }
         }
     }
@@ -150,10 +151,10 @@ class ChecklistViewModel @Inject constructor(
     fun finishChecklist() {
         viewModelScope.launch {
             when (val resp = checkUseCases.finishChecklistUC(checkListId)) {
-                is Resource.Error -> showSnackbar(resp.message!!)
+                is Resource.Error -> showSnackBar(resp.message!!)
                 else -> {
-                    showSnackbar("Erledigt".asResString())
-                    navigateBack()
+                    showSnackBar("Erledigt".asResString())
+                    navigate(NavigateEvent.NavigateBack)
                 }
             }
         }
@@ -163,7 +164,7 @@ class ChecklistViewModel @Inject constructor(
         viewModelScope.launch {
             val resp = checkUseCases.setItemAmountUC(checkListId, itemId, amount)
             if (resp is Resource.Error) {
-                showSnackbar(resp.message!!)
+                showSnackBar(resp.message!!)
             }
         }
     }
@@ -171,7 +172,7 @@ class ChecklistViewModel @Inject constructor(
     fun setSharedWith(users: List<User>) {
         viewModelScope.launch {
             when (val resp = checkUseCases.setSharedWithUC(checkListId, users)) {
-                is Resource.Error -> showSnackbar(resp.message!!)
+                is Resource.Error -> showSnackBar(resp.message!!)
                 else -> updateWidgets()
             }
         }
@@ -180,7 +181,7 @@ class ChecklistViewModel @Inject constructor(
     fun changeStock(stock: Stock) {
         viewModelScope.launch {
             when (val resp = checkUseCases.setStockWithUC(checkListId, stock.uuid)) {
-                is Resource.Error -> showSnackbar(resp.message!!)
+                is Resource.Error -> showSnackBar(resp.message!!)
                 else -> updateWidgets()
             }
         }

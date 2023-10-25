@@ -66,8 +66,8 @@ class ProfileViewModel @Inject constructor(
     fun disconnectUser(user: User) {
         viewModelScope.launch {
             when (val resp = userUseCases.disconnectUserUC(user)) {
-                is Resource.Error -> showSnackbar(resp.message!!)
-                else -> showSnackbar("Benutzer entfernt: ${user.fullName}".asResString())
+                is Resource.Error -> showSnackBar(resp.message!!)
+                else -> showSnackBar("Benutzer entfernt: ${user.fullName}".asResString())
             }
         }
     }
@@ -75,8 +75,8 @@ class ProfileViewModel @Inject constructor(
     fun addStock(stock: Stock) {
         viewModelScope.launch {
             when (val resp = stockUseCases.addStockUC(stock)) {
-                is Resource.Error -> showSnackbar(resp.message!!)
-                else -> showSnackbar("Lager hinzugefügt: ${stock.name}".asResString())
+                is Resource.Error -> showSnackBar(resp.message!!)
+                else -> showSnackBar("Lager hinzugefügt: ${stock.name}".asResString())
             }
         }
     }
@@ -84,8 +84,8 @@ class ProfileViewModel @Inject constructor(
     fun removeStock(stock: Stock) {
         viewModelScope.launch {
             when (val resp = stockUseCases.deleteStockUC(stock)) {
-                is Resource.Error -> showSnackbar(resp.message!!)
-                else -> showSnackbar("Lager entfernt: ${stock.name}".asResString())
+                is Resource.Error -> showSnackBar(resp.message!!)
+                else -> showSnackBar("Lager entfernt: ${stock.name}".asResString())
             }
         }
     }
@@ -93,8 +93,8 @@ class ProfileViewModel @Inject constructor(
     fun editStock(stock: Stock) {
         viewModelScope.launch {
             when (val resp = stockUseCases.editStockUC(stock)) {
-                is Resource.Error -> showSnackbar(resp.message!!)
-                else -> showSnackbar("Lager editiert: ${stock.name}".asResString())
+                is Resource.Error -> showSnackBar(resp.message!!)
+                else -> showSnackBar("Lager editiert: ${stock.name}".asResString())
             }
         }
     }
@@ -102,8 +102,8 @@ class ProfileViewModel @Inject constructor(
     fun connectUser(email: String) {
         viewModelScope.launch {
             val res = userUseCases.connectUserUC(email)
-            if (res is Resource.Error) showSnackbar(res.message!!)
-            else showSnackbar("Benutzer hinzugefügt".asResString())
+            if (res is Resource.Error) showSnackBar(res.message!!)
+            else showSnackBar("Benutzer hinzugefügt".asResString())
         }
     }
 

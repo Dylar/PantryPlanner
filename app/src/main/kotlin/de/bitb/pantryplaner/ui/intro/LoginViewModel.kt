@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.ui.base.BaseViewModel
+import de.bitb.pantryplaner.ui.base.NavigateEvent
 import de.bitb.pantryplaner.usecase.UserUseCases
 import de.bitb.pantryplaner.usecase.user.LoginResponse
 import kotlinx.coroutines.launch
@@ -30,7 +31,7 @@ class LoginViewModel @Inject constructor(
         isLoading = true
         viewModelScope.launch {
             val result = userUseCases.loginUC(email, pw)
-            if (result is Resource.Success) navigate(R.id.login_to_overview)
+            if (result is Resource.Success) navigate(NavigateEvent.Navigate(R.id.login_to_overview))
             else error = result.data
             isLoading = false
         }

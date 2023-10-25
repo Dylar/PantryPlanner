@@ -58,4 +58,4 @@ fun getParentTag(parent: String): TestTag {
     return tag
 }
 
-fun waitForIt(seconds: Int = 4) = runBlocking { delay(seconds * 1000L) }
+fun sleepFor(seconds: Int = 4) = runBlocking { delay(seconds * 1000L) }

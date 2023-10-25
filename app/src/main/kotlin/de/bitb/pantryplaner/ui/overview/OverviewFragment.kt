@@ -80,7 +80,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
 
         val modelResp by viewModel.overviewModel.observeAsState(null)
         Scaffold(
-            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+            snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
             topBar = { buildAppBar() },
             content = { buildContent(it, modelResp) },
             floatingActionButton = { buildFab(modelResp) },

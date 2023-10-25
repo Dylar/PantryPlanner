@@ -56,7 +56,7 @@ class LoginFragment : BaseFragment<LoginViewModel>() {
     @Composable
     override fun screenContent() {
         Scaffold(
-            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+            snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
             topBar = { buildAppBar() },
             floatingActionButton = { buildFab() }
         ) { innerPadding -> buildContent(innerPadding) }

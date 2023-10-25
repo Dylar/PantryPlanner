@@ -52,7 +52,7 @@ class RegisterFragment : BaseFragment<RegisterViewModel>() {
     @Composable
     override fun screenContent() {
         Scaffold(
-            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+            snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
             topBar = { buildAppbar() },
             floatingActionButton = { buildFab() }
         ) { innerPadding -> buildContent(innerPadding) }

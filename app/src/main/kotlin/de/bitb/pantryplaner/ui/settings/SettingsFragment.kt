@@ -46,7 +46,7 @@ class SettingsFragment : BaseFragment<SettingsViewModel>() {
     @Composable
     override fun screenContent() {
         Scaffold(
-            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+            snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
             topBar = { buildAppBar() },
             content = { buildContent(it) },
         )
@@ -112,11 +112,11 @@ class SettingsFragment : BaseFragment<SettingsViewModel>() {
                 checked = settings.darkMode != false,
                 onChange = { viewModel.saveSettings(settings.copy(darkMode = it)) },
             )
-            PreferenceSwitch(
-                PreferenceItem("Bestand aktualisieren", "Benachrichtigung aktivieren?"),
-                checked = settings.refreshAlert,
-                onChange = { viewModel.saveSettings(settings.copy(refreshAlert = it)) },
-            )
+//            PreferenceSwitch( //TODO fix this
+//                PreferenceItem("Bestand aktualisieren", "Benachrichtigung aktivieren?"),
+//                checked = settings.refreshAlert,
+//                onChange = { viewModel.saveSettings(settings.copy(refreshAlert = it)) },
+//            )
             Button(
                 modifier = Modifier
                     .testTag(SettingsPageTag.LogoutButton)

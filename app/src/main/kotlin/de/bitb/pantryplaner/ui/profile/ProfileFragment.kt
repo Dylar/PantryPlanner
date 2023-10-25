@@ -79,7 +79,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
         showAddStockDialog = remember { mutableStateOf(false) }
         showAddUserDialog = remember { mutableStateOf(false) }
         Scaffold(
-            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+            snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
             topBar = { buildAppBar() },
             floatingActionButton = { buildFab() },
             content = { buildContent(it) },

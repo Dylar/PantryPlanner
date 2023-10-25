@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import androidx.annotation.IdRes
+import androidx.annotation.NavigationRes
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
@@ -14,6 +16,12 @@ fun Activity.openAppSettings() {
         Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
         Uri.fromParts("package", packageName, null)
     ).also(::startActivity)
+}
+
+sealed class NavigateEvent {
+    object NavigateBack : NavigateEvent()
+    data class Navigate(@IdRes val route: Int) : NavigateEvent()
+    data class NavigateTo(@IdRes val route: Int) : NavigateEvent()
 }
 
 fun Fragment.naviToSettings() {

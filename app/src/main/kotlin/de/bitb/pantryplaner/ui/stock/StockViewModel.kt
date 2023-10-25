@@ -91,8 +91,8 @@ class StockViewModel @Inject constructor(
     fun addStock(stock: Stock) {
         viewModelScope.launch {
             when (val resp = stockUseCases.addStockUC(stock)) {
-                is Resource.Error -> showSnackbar(resp.message!!)
-                else -> showSnackbar("Lager hinzugefügt: ${stock.name}".asResString())
+                is Resource.Error -> showSnackBar(resp.message!!)
+                else -> showSnackBar("Lager hinzugefügt: ${stock.name}".asResString())
             }
         }
     }
@@ -103,10 +103,10 @@ class StockViewModel @Inject constructor(
             val addStockResp = stockUseCases.addEditStockItemUC(stock, stockItem)
             val createItemResp = itemUseCases.createItemUC(item)
             when {
-                createItemResp is Resource.Error -> showSnackbar(createItemResp.message!!)
-                addStockResp is Resource.Error -> showSnackbar(addStockResp.message!!)
-                createItemResp.data == true -> showSnackbar("Item hinzugefügt: $name".asResString()).also { updateWidgets() }
-                else -> showSnackbar("Item gibt es schon: $name".asResString())
+                createItemResp is Resource.Error -> showSnackBar(createItemResp.message!!)
+                addStockResp is Resource.Error -> showSnackBar(addStockResp.message!!)
+                createItemResp.data == true -> showSnackBar("Item hinzugefügt: $name".asResString()).also { updateWidgets() }
+                else -> showSnackBar("Item gibt es schon: $name".asResString())
             }
         }
     }
@@ -115,9 +115,9 @@ class StockViewModel @Inject constructor(
         viewModelScope.launch {
             val deleteItemResp = itemUseCases.deleteItemUC(item)
             when {
-                deleteItemResp is Resource.Error -> showSnackbar(deleteItemResp.message!!)
-                deleteItemResp.data == true -> showSnackbar("Item entfernt: ${item.name}".asResString()).also { updateWidgets() }
-                else -> showSnackbar("Item nicht entfernt: ${item.name}".asResString())
+                deleteItemResp is Resource.Error -> showSnackBar(deleteItemResp.message!!)
+                deleteItemResp.data == true -> showSnackBar("Item entfernt: ${item.name}".asResString()).also { updateWidgets() }
+                else -> showSnackBar("Item nicht entfernt: ${item.name}".asResString())
             }
         }
     }
@@ -127,9 +127,9 @@ class StockViewModel @Inject constructor(
             val editItemResp = itemUseCases.editItemUC(item)
             val editStockItemResp = stockUseCases.addEditStockItemUC(stock, stockItem)
             when {
-                editStockItemResp is Resource.Error -> showSnackbar(editStockItemResp.message!!)
-                editItemResp is Resource.Error -> showSnackbar(editItemResp.message!!)
-                else -> showSnackbar("Item editiert".asResString()).also { updateWidgets() }
+                editStockItemResp is Resource.Error -> showSnackBar(editStockItemResp.message!!)
+                editItemResp is Resource.Error -> showSnackBar(editItemResp.message!!)
+                else -> showSnackBar("Item editiert".asResString()).also { updateWidgets() }
             }
         }
     }
@@ -137,8 +137,8 @@ class StockViewModel @Inject constructor(
     fun editCategory(previousCategory: String, newCategory: String, color: Color) {
         viewModelScope.launch {
             when (val resp = itemUseCases.editCategoryUC(previousCategory, newCategory, color)) {
-                is Resource.Error -> showSnackbar(resp.message!!)
-                else -> showSnackbar("Kategorie editiert".asResString()).also { updateWidgets() }
+                is Resource.Error -> showSnackBar(resp.message!!)
+                else -> showSnackBar("Kategorie editiert".asResString()).also { updateWidgets() }
             }
         }
     }
@@ -147,7 +147,7 @@ class StockViewModel @Inject constructor(
         viewModelScope.launch {
             val editStockItemResp = stockUseCases.addEditStockItemUC(stock, item, amount = amount)
             if (editStockItemResp is Resource.Error) {
-                showSnackbar(editStockItemResp.message!!)
+                showSnackBar(editStockItemResp.message!!)
             }
         }
     }
@@ -155,7 +155,7 @@ class StockViewModel @Inject constructor(
     fun setSharedWith(stock: Stock, users: List<User>) {
         viewModelScope.launch {
             when (val resp = stockUseCases.editStockUC(stock, sharedWith = users.map { it.uuid })) {
-                is Resource.Error -> showSnackbar(resp.message!!)
+                is Resource.Error -> showSnackBar(resp.message!!)
                 else -> updateWidgets()
             }
         }

@@ -3,9 +3,11 @@ package de.bitb.pantryplaner.ui.intro
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.bitb.pantryplaner.R
+import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.atLeast
 import de.bitb.pantryplaner.ui.base.BaseViewModel
+import de.bitb.pantryplaner.ui.base.NavigateEvent
 import de.bitb.pantryplaner.ui.base.comps.asResString
 import de.bitb.pantryplaner.usecase.UserUseCases
 import de.bitb.pantryplaner.usecase.item.DataLoadResponse
@@ -24,19 +26,19 @@ class SplashViewModel @Inject constructor(
         viewModelScope.launch {
             val userResp = atLeast(SPLASH_TIMER) { itemUseCases.loadDataUC() }
             when {
-                userResp is Resource.Error -> showSnackbar(userResp.message!!)
+                userResp is Resource.Error -> showSnackBar(userResp.message!!)
                 userResp.data is DataLoadResponse.DataLoaded -> {
-                    navigate(R.id.splash_to_overview)
+                    navigate(NavigateEvent.Navigate(R.id.splash_to_overview))
                     if (naviToRefresh) {
-                        navigate(R.id.overview_to_refresh)
+                        navigate(NavigateEvent.Navigate(R.id.overview_to_refresh))
                     }
                 }
 
                 userResp.data is DataLoadResponse.NotLoggedIn -> {
-                    navigate(R.id.splash_to_login)
+                    navigate(NavigateEvent.Navigate(R.id.splash_to_login))
                 }
 
-                else -> showSnackbar("Daten konnten nicht geladen werden".asResString())
+                else -> showSnackBar("Daten konnten nicht geladen werden".asResString())
             }
         }
     }

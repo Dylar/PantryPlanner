@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var settingsRepo: SettingsRepository
-    fun settings(): Flow<Resource<Settings>> = settingsRepo.getSettings()
+    fun settingsFlow(): Flow<Resource<Settings>> = settingsRepo.getSettings()
 
     private val navHostFragment by lazy {
         supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment

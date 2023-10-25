@@ -52,7 +52,7 @@ class ReleaseNotesFragment : BaseFragment<ReleaseNotesViewModel>() {
     @Composable
     override fun screenContent() {
         Scaffold(
-            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+            snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
             topBar = {
                 TopAppBar(
                     modifier = Modifier.testTag(APPBAR_TAG),

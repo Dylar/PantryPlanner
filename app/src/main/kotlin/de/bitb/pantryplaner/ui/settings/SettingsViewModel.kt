@@ -8,6 +8,7 @@ import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.SettingsRepository
 import de.bitb.pantryplaner.data.model.Settings
 import de.bitb.pantryplaner.ui.base.BaseViewModel
+import de.bitb.pantryplaner.ui.base.NavigateEvent
 import de.bitb.pantryplaner.ui.base.comps.asResString
 import de.bitb.pantryplaner.usecase.UserUseCases
 import kotlinx.coroutines.launch
@@ -30,10 +31,10 @@ class SettingsViewModel @Inject constructor(
     fun logout() {
         viewModelScope.launch {
             when (val resp = userUC.logoutUC()) {
-                is Resource.Error -> showSnackbar(resp.message!!)
+                is Resource.Error -> showSnackBar(resp.message!!)
                 else -> {
-                    showSnackbar("Benutzer abgemeldet".asResString())
-                    navigate(R.id.settings_to_login)
+                    showSnackBar("Benutzer abgemeldet".asResString())
+                    navigate(NavigateEvent.Navigate(R.id.settings_to_login))
                 }
             }
         }
