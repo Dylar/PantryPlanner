@@ -86,7 +86,7 @@ class RefreshViewModel @Inject constructor(
                 .filter { it.value.isNotEmpty() }
 
             Resource.Success(RefreshModel(stocks.first().items.associateBy { it.uuid }, items))
-        }.asLiveData()
+        }.asLiveData(viewModelScope.coroutineContext)
 
     fun clearItemAmount(itemId: String) {
 //        viewModelScope.launch {

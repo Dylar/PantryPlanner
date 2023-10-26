@@ -6,6 +6,7 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.ItemRepository
 import de.bitb.pantryplaner.data.StockRepository
@@ -61,6 +62,7 @@ class StockViewModel @Inject constructor(
     val stockModel: LiveData<Resource<StockModel>> = filterBy
         .debounce { if (!INSTANT_SEARCH && _isSearching.value) 1000L else 0L }
         .flatMapLatest {
+            Logger.printLog("VM STOCK filter" to it)
             combine(
                 stockRepo.getStocks(),
                 itemRepo.getItems(filterBy = it),
@@ -86,7 +88,7 @@ class StockViewModel @Inject constructor(
             }
         }
         .onEach { _isSearching.update { false } }
-        .asLiveData()
+        .asLiveData(viewModelScope.coroutineContext)
 
     fun addStock(stock: Stock) {
         viewModelScope.launch {
@@ -97,14 +99,12 @@ class StockViewModel @Inject constructor(
         }
     }
 
-    fun addItem(stock: Stock, item: Item, stockItem: StockItem) {
+    fun addItem(item: Item) {
         val name = item.name
         viewModelScope.launch {
-            val addStockResp = stockUseCases.addEditStockItemUC(stock, stockItem)
             val createItemResp = itemUseCases.createItemUC(item)
             when {
                 createItemResp is Resource.Error -> showSnackBar(createItemResp.message!!)
-                addStockResp is Resource.Error -> showSnackBar(addStockResp.message!!)
                 createItemResp.data == true -> showSnackBar("Item hinzugefügt: $name".asResString()).also { updateWidgets() }
                 else -> showSnackBar("Item gibt es schon: $name".asResString())
             }
@@ -122,13 +122,10 @@ class StockViewModel @Inject constructor(
         }
     }
 
-    fun editItem(stock: Stock, stockItem: StockItem, item: Item) {
+    fun editItem(item: Item) {
         viewModelScope.launch {
-            val editItemResp = itemUseCases.editItemUC(item)
-            val editStockItemResp = stockUseCases.addEditStockItemUC(stock, stockItem)
-            when {
-                editStockItemResp is Resource.Error -> showSnackBar(editStockItemResp.message!!)
-                editItemResp is Resource.Error -> showSnackBar(editItemResp.message!!)
+            when (val editItemResp = itemUseCases.editItemUC(item)) {
+                is Resource.Error -> showSnackBar(editItemResp.message!!)
                 else -> showSnackBar("Item editiert".asResString()).also { updateWidgets() }
             }
         }

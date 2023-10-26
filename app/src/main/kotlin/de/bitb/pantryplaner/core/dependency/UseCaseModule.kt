@@ -51,15 +51,15 @@ object UsecaseModule {
     @Provides
     @Singleton
     fun provideItemUseCases(
+        settingsRepo: SettingsRepository,
         userRepo: UserRepository,
         itemRepo: ItemRepository,
-        stockRepo: StockRepository,
     ): ItemUseCases {
         return ItemUseCases(
             createItemUC = CreateItemUC(userRepo, itemRepo),
             deleteItemUC = DeleteItemUC(userRepo, itemRepo),
             editItemUC = EditItemUC(userRepo, itemRepo),
-            editCategoryUC = EditCategoryUC(itemRepo, stockRepo),
+            editCategoryUC = EditCategoryUC(settingsRepo, itemRepo),
             uncheckAllItemsUC = UncheckAllItemsUC(itemRepo),
         )
     }

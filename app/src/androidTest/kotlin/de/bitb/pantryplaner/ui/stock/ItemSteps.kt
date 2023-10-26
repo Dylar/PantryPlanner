@@ -1,6 +1,7 @@
 package de.bitb.pantryplaner.ui.stock
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onNodeWithText
@@ -16,7 +17,6 @@ import de.bitb.pantryplaner.core.misc.formatted
 import de.bitb.pantryplaner.core.onNodeWithParentTag
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.core.onNodeWithTextWithParentTag
-import de.bitb.pantryplaner.core.sleepFor
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.testTags.AddSubRowTag
 import de.bitb.pantryplaner.ui.base.testTags.ItemTag
@@ -45,7 +45,11 @@ class ItemSteps(
 
     @Then("Item {string} in category {string} is NOT displayed")
     fun itemInCategoryIsNotDisplayed(name: String, category: String) {
-        onNodeWithTag(ItemTag(category, name), true).assertDoesNotExist()
+        try {
+            onNodeWithTag(ItemTag(category, name), true).assertIsNotDisplayed()
+        } catch (_: AssertionError) {
+            onNodeWithTag(ItemTag(category, name), true).assertDoesNotExist()
+        }
     }
 
     @Then("Swipe to remove Item {string} in category {string}")

@@ -69,7 +69,7 @@ class SelectItemsViewModel @Inject constructor(
             }
         }
         .onEach { _isSearching.update { false } }
-        .asLiveData()
+        .asLiveData(viewModelScope.coroutineContext)
 
     val checkedItems = MutableStateFlow(listOf<String>())
 

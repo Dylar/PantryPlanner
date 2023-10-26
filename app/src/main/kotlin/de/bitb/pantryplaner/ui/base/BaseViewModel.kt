@@ -12,8 +12,8 @@ abstract class BaseViewModel : ViewModel() {
 
     private val _navigation = MutableLiveData<NavigateEvent>()
     private val _snackbarMessage = MutableLiveData<ResString>()
-    val navigation: LiveData<NavigateEvent> get() = _navigation
-    val snackBarMessage: LiveData<ResString> get() = _snackbarMessage
+    val navigationEvents: LiveData<NavigateEvent> get() = _navigation
+    val snackBarEvents: LiveData<ResString> get() = _snackbarMessage
 
     fun navigate(event: NavigateEvent) {
         _navigation.value = event

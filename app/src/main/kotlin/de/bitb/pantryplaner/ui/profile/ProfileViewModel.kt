@@ -61,7 +61,7 @@ class ProfileViewModel @Inject constructor(
                         )
                     }
                 }
-            }.asLiveData()
+            }.asLiveData(viewModelScope.coroutineContext)
 
     fun disconnectUser(user: User) {
         viewModelScope.launch {

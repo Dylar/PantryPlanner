@@ -1,6 +1,7 @@
 package de.bitb.pantryplaner.core.misc
 
 import android.content.Context
+import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.delay
 import java.text.DecimalFormat
 import java.time.LocalDate
@@ -93,3 +94,5 @@ fun <K, V> Map<K, List<V>>.removeDuplicatesFromLists(): Map<K, List<V>> {
     }
     return map
 }
+
+fun Int.asColor(): Color = Color(this)

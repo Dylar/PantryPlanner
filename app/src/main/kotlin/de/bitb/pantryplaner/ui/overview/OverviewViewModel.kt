@@ -58,7 +58,7 @@ class OverviewViewModel @Inject constructor(
                 )
             }
         }
-    }.asLiveData()
+    }.asLiveData(viewModelScope.coroutineContext)
 
     fun addChecklist(check: Checklist) {
         viewModelScope.launch {

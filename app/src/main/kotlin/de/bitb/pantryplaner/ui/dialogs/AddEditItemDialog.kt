@@ -14,7 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -26,27 +25,24 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.data.model.Item
-import de.bitb.pantryplaner.data.model.StockItem
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.comps.buildCategoryDropDown
 import de.bitb.pantryplaner.ui.base.comps.buildUserDropDown
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.AddEditItemDialogTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
-import de.bitb.pantryplaner.ui.comps.AddSubRow
 
 @Composable
 fun useAddItemDialog(
     showDialog: MutableState<Boolean>,
     categorys: List<String>,
     users: List<User>,
-    onEdit: (StockItem, Item, Boolean) -> Unit,
+    onEdit: (Item, Boolean) -> Unit,
 ) {
     val item = Item()
     useDialog(
         showDialog,
         "Item erstellen", "Hinzufügen",
-        item.toStockItem(),
         item,
         categorys,
         users,
@@ -58,23 +54,21 @@ fun useAddItemDialog(
 @Composable
 fun useEditItemDialog(
     showDialog: MutableState<Boolean>,
-    stockItem: StockItem,
     item: Item,
     categorys: List<String>,
     users: List<User>,
     user: User,
-    onEdit: (StockItem, Item, Boolean) -> Unit,
+    onEdit: (Item, Boolean) -> Unit,
 ) {
     val isCreator = user.uuid == item.creator
     useDialog(
         showDialog,
         "Item bearbeiten", "Speichern",
-        stockItem,
         item,
         categorys,
         users,
         isCreator,
-    ) { si, i, _ -> onEdit(si, i, true) }
+    ) { i, _ -> onEdit(i, true) }
 }
 
 @Composable
@@ -82,24 +76,22 @@ private fun useDialog(
     showDialog: MutableState<Boolean>,
     title: String,
     confirmButton: String,
-    stockItem: StockItem,
     item: Item,
     categorys: List<String>,
     users: List<User>,
     isCreator: Boolean,
-    onConfirm: (StockItem, Item, Boolean) -> Unit,
+    onConfirm: (Item, Boolean) -> Unit,
 ) {
     if (showDialog.value) {
         AddEditItemDialog(
             title = title,
             confirmButton = confirmButton,
-            stockItem = stockItem,
             item = item,
             categorys = categorys,
             users = users,
             isCreator = isCreator,
-            onConfirm = { si, i, close ->
-                onConfirm(si, i, close)
+            onConfirm = { i, close ->
+                onConfirm(i, close)
                 showDialog.value = false
             },
             onDismiss = { showDialog.value = false },
@@ -111,12 +103,11 @@ private fun useDialog(
 private fun AddEditItemDialog(
     title: String,
     confirmButton: String,
-    stockItem: StockItem,
     item: Item,
     categorys: List<String>,
     users: List<User>,
     isCreator: Boolean,
-    onConfirm: (StockItem, Item, Boolean) -> Unit,
+    onConfirm: (Item, Boolean) -> Unit,
     onDismiss: () -> Unit,
 ) {
 //    val isStarted = remember { mutableStateOf(true) }
@@ -136,18 +127,13 @@ private fun AddEditItemDialog(
         val selected = users.filter { item.sharedWith.contains(it.uuid) }
         mutableStateOf(selected)
     }
-    val freshUntil = remember { mutableLongStateOf(stockItem.freshUntil) }
-    val remindAfter = remember { mutableLongStateOf(stockItem.remindAfter) }
+//    val freshUntil = remember { mutableLongStateOf(stockItem.freshUntil) }
+//    val remindAfter = remember { mutableLongStateOf(stockItem.remindAfter) }
 
     fun copyItem() = item.copy(
         name = name.text,
         category = category.value.text,
         sharedWith = selectedUser.value.map { it.uuid }.toList(),
-    )
-
-    fun copyStockItem() = stockItem.copy(
-        freshUntil = freshUntil.longValue,
-        remindAfter = remindAfter.longValue,
     )
 
     AlertDialog(
@@ -169,25 +155,25 @@ private fun AddEditItemDialog(
                     onValueChange = { name = it },
                     keyboardActions = KeyboardActions(
                         onDone = {
-                            onConfirm(copyStockItem(), copyItem(), false)
+                            onConfirm(copyItem(), false)
                             name = TextFieldValue()
                         },
                     ),
                 )
                 buildCategoryDropDown(category, categorys, canChange = isCreator)
                 buildUserDropDown("Item wird nicht geteilt", users, selectedUser)
-                OutlinedComp {
-                    Text("MHD", modifier = Modifier.padding(4.dp))
-                    AddSubRow(freshUntil.longValue.toDouble()) {
-                        freshUntil.longValue = it.toLong()
-                    }
-                }
-                OutlinedComp {
-                    Text("Erinnerung", modifier = Modifier.padding(4.dp))
-                    AddSubRow(remindAfter.longValue.toDouble()) {
-                        remindAfter.longValue = it.toLong()
-                    }
-                }
+//                OutlinedComp { //TODO fix me
+//                    Text("MHD", modifier = Modifier.padding(4.dp))
+//                    AddSubRow(freshUntil.longValue.toDouble()) {
+//                        freshUntil.longValue = it.toLong()
+//                    }
+//                }
+//                OutlinedComp {
+//                    Text("Erinnerung", modifier = Modifier.padding(4.dp))
+//                    AddSubRow(remindAfter.longValue.toDouble()) {
+//                        remindAfter.longValue = it.toLong()
+//                    }
+//                }
             }
 //            LaunchedEffect(Unit) {
 //                if (isStarted.value) {
@@ -199,7 +185,7 @@ private fun AddEditItemDialog(
         confirmButton = {
             Button(
                 modifier = Modifier.testTag(AddEditItemDialogTag.ConfirmButton),
-                onClick = { onConfirm(copyStockItem(), copyItem(), true) },
+                onClick = { onConfirm(copyItem(), true) },
                 content = { Text(confirmButton) }
             )
         },

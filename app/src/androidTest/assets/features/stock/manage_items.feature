@@ -48,11 +48,11 @@ Feature: StockPage Items management
     And   Item "SharedItem" in category "SharedCategory" is NOT displayed
 
   Scenario: Remove all Items
-    And   Swipe to remove Item "SelectItem" in category "SelectCategory"
+    When  Swipe to remove Item "CreatorItem" in category "CreatorCategory"
     And   Tap on Confirm
     And   Swipe to remove Item "SharedItem" in category "SharedCategory"
     And   Tap on Confirm
-    When  Swipe to remove Item "CreatorItem" in category "CreatorCategory"
+    And   Swipe to remove Item "SelectItem" in category "SelectCategory"
     And   Tap on Confirm
     Then  Item "CreatorItem" in category "CreatorCategory" is NOT displayed
     And   Item "SharedItem" in category "SharedCategory" is NOT displayed

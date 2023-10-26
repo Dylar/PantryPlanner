@@ -273,8 +273,8 @@ class StockFragment : BaseFragment<StockViewModel>() {
                             showAddItemDialog,
                             categorys,
                             users,
-                        ) { stockItem, item, close ->
-                            viewModel.addItem(stock, item, stockItem)
+                        ) { item, close ->
+                            viewModel.addItem(item)
                             if (close) showAddItemDialog.value = false
                         }
 
@@ -282,11 +282,6 @@ class StockFragment : BaseFragment<StockViewModel>() {
                             modifier = Modifier.testTag(StockPageTag.StockPage(stock.name)),
                             verticalArrangement = Arrangement.Top
                         ) {
-                            if (items.isEmpty()) {
-                                EmptyListComp(getString(R.string.no_items))
-                                return@HorizontalPager
-                            }
-
                             val selectedUser = remember(stock) {
                                 mutableStateOf(allUser.filter { stock.sharedWith.contains(it.uuid) })
                             }
@@ -298,13 +293,16 @@ class StockFragment : BaseFragment<StockViewModel>() {
                             ) {
                                 viewModel.setSharedWith(stock, it)
                             }
+
+                            if (items.isEmpty()) {
+                                EmptyListComp(getString(R.string.no_items))
+                                return@HorizontalPager
+                            }
                             GridListLayout(
                                 innerPadding,
                                 showGridLayout,
                                 items,
-                                {
-                                    stock.items.firstOrNull()?.color ?: BaseColors.FireRed
-                                }, //TODO color?
+                                { BaseColors.FireRed }, //TODO color?
                                 viewModel::editCategory
                             ) { _, item ->
                                 listItem(
@@ -335,16 +333,15 @@ class StockFragment : BaseFragment<StockViewModel>() {
         val showEditDialog = remember { mutableStateOf(false) }
         useEditItemDialog(
             showEditDialog,
-            stockItem,
             item,
             categorys,
             users,
             user,
-        ) { si, i, _ -> viewModel.editItem(stock, si, i) }
+        ) { i, _ -> viewModel.editItem(i) }
 
         dissmissItem(
             item.name,
-            stockItem.color,
+            BaseColors.FireRed, //TODO color?
             onSwipe = { viewModel.deleteItem(item) },
             onLongClick = { showEditDialog.value = true },
         ) { stockItem(stock, item, stockItem) }
@@ -355,6 +352,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
         val filter = viewModel.filterBy.collectAsState(null)
         val text = highlightedText(item.name, filter.value?.searchTerm ?: "")
 
+        Logger.printLog("FRAG stock buildItem" to ItemTag(item.category, item.name))
         Column(
             modifier = Modifier
                 .fillMaxWidth()

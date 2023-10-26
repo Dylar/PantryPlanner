@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
+import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.data.model.Filter
@@ -190,6 +191,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
             ) {
+                Logger.printLog("" to "FRAG buildContent")
                 val model = checkModel.data
                 val checklist = model.checklist!!
                 val items = model.items!!
@@ -221,22 +223,19 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                     viewModel.setSharedWith(it)
                 }
                 if (items.isEmpty()) {
+                    Logger.printLog("FRAG buildItem" to "EMPTY")
                     EmptyListComp(getString(R.string.no_items))
                 } else {
                     GridListLayout(
                         innerPadding,
                         showGridLayout,
                         items,
-                        {
-                            stocks.firstOrNull()?.items?.firstOrNull()?.color
-                                ?: BaseColors.LightGray
-                        }, // TODO color?
+                        { BaseColors.FireRed }, //TODO color?
                         viewModel::editCategory
                     ) { _, item ->
                         checkListItem(
                             checklist,
                             item,
-                            stocks.first(),
                         )
                     }
                 }
@@ -248,16 +247,15 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
     private fun checkListItem(
         checklist: Checklist,
         item: Item,
-        stock: Stock,
     ) {
         val checkItem = checklist.items.first { it.uuid == item.uuid }
-        val stockItem = stock.items.firstOrNull { it.uuid == item.uuid } ?: item.toStockItem()
         dissmissItem(
             item.name,
-            stockItem.color,
+            BaseColors.FireRed, //TODO color?
             onSwipe = { viewModel.removeItem(item) },
             onClick = { viewModel.checkItem(item.uuid) },
         ) {
+            Logger.printLog("FRAG buildItem" to ItemTag(item.category, item.name))
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -268,7 +266,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 SelectItemHeader(
                     item,
                     checkItem.checked,
-                    stockItem.color,
+                    BaseColors.FireRed, //TODO color?
                     true,
                     viewModel::checkItem
                 )

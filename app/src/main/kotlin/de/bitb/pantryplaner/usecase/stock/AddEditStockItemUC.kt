@@ -19,10 +19,9 @@ class AddEditStockItemUC(
     suspend operator fun invoke(
         stock: Stock,
         stockItem: StockItem,
-        color: Color = stockItem.color,
         amount: String = stockItem.amount.toString(),
-        freshUntil: Long = stockItem.freshUntil,
-        remindAfter: Long = stockItem.remindAfter,
+//        freshUntil: Long = stockItem.freshUntil,
+//        remindAfter: Long = stockItem.remindAfter,
     ): Resource<Unit> {
         return tryIt(
             onError = {
@@ -42,10 +41,9 @@ class AddEditStockItemUC(
                 val amountDouble = amount.replace(",", ".").toDouble()
 
                 val updatedItem = stockItem.copy(
-                    colorHex = color.toArgb(),
                     amount = amountDouble,
-                    freshUntil = freshUntil,
-                    remindAfter = remindAfter,
+//                    freshUntil = freshUntil,
+//                    remindAfter = remindAfter,
                 )
                 stock.items
                     .find { it.uuid == stockItem.uuid }

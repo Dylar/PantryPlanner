@@ -18,7 +18,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import de.bitb.pantryplaner.core.MainActivity
-import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Settings
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
@@ -73,7 +72,7 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
     abstract fun screenContent()
 
     private fun observeNavigateEvent() {
-        viewModel.navigation.observe(viewLifecycleOwner) { event ->
+        viewModel.navigationEvents.observe(viewLifecycleOwner) { event ->
             when (event) {
                 NavigateEvent.NavigateBack -> navController.popBackStack()
                 is NavigateEvent.Navigate -> navController.navigate(event.route)
@@ -83,7 +82,7 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
     }
 
     private fun observeSnackBarEvent() {
-        viewModel.snackBarMessage.observe(viewLifecycleOwner) { showSnackBar(it) }
+        viewModel.snackBarEvents.observe(viewLifecycleOwner) { showSnackBar(it) }
     }
 
     fun showSnackBar(msg: ResString) {

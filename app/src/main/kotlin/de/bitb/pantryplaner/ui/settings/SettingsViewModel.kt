@@ -20,7 +20,7 @@ class SettingsViewModel @Inject constructor(
     private val userUC: UserUseCases,
 ) : BaseViewModel() {
 
-    val settings = settingsRepo.getSettings().asLiveData()
+    val settings = settingsRepo.getSettings().asLiveData(viewModelScope.coroutineContext)
 
     fun saveSettings(settings: Settings) {
         viewModelScope.launch {

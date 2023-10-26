@@ -46,6 +46,7 @@ import androidx.fragment.app.viewModels
 import com.google.zxing.WriterException
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
+import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.User
@@ -325,9 +326,12 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
                     )
                 }
             }
+            Logger.printLog("StockList" to "GOGO")
             if (stocks.isEmpty()) {
+                Logger.printLog("StockList" to "empty")
                 items(1) { EmptyListComp(getString(R.string.no_stocks)) }
             } else {
+                Logger.printLog("StockList" to "build")
                 items(stocks.size) { buildStock(users, stocks[it]) }
             }
         }
@@ -346,6 +350,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
             }
         )
 
+        Logger.printLog("Stock" to stock)
         dissmissItem(
             stock.name,
             BaseColors.FireRed,

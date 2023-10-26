@@ -21,31 +21,26 @@ data class Stock(
 data class StockItem(
     val uuid: String = "",
     var amount: Double = 1.0,
-    val colorHex: Int = BaseColors.LightGray.toArgb(),
     var updatedAt: String = "",
-    var freshUntil: Long = 0,
-    var remindAfter: Long = 0,
 ) {
-    @get:Exclude
-    val color: Color
-        get() = Color(colorHex)
 
     @get:Exclude
     val updateDate: LocalDateTime
         get() = parseDateTimeString(updatedAt)
 
+    //TODO fix this all
     @get:Exclude
     val freshUntilDate: LocalDate
-        get() = LocalDate.now().minusDays(freshUntil)
+        get() = LocalDate.now()//.minusDays(freshUntil)
 
-    fun isFresh(finishDay: LocalDate): Boolean = freshUntil == 0L ||
+    fun isFresh(finishDay: LocalDate): Boolean = //freshUntil == 0L ||
             (amount != 0.0 && finishDay.isAfter(freshUntilDate))
 
     @get:Exclude
     val remindAfterDate: LocalDate
-        get() = LocalDate.now().minusDays(remindAfter)
+        get() = LocalDate.now()//.minusDays(remindAfter)
 
-    fun remindIt(finishDay: LocalDate): Boolean = remindAfter != 0L &&
+    fun remindIt(finishDay: LocalDate): Boolean = //remindAfter != 0L &&
             amount == 0.0 && finishDay.isBefore(remindAfterDate)
 
     fun isAlertable(finishDay: LocalDate): Boolean = (!isFresh(finishDay) || remindIt(finishDay))

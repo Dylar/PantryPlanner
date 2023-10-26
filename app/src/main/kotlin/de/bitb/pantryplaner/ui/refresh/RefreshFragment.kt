@@ -168,7 +168,7 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
                     innerPadding,
                     showGridLayout,
                     model.items!!,
-                    { stockItem.values.first().color }, //TODO color?
+                    { BaseColors.FireRed }, //TODO color?
                 ) { header, item -> listItem(header, stockItem[item.uuid]!!, item) }
             }
         }
@@ -187,7 +187,7 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
     private fun RefreshItem(stockItem: StockItem, item: Item) {
         clearItem(
             item.name,
-            stockItem.color,
+            BaseColors.FireRed, //TODO color?
             onSwipe = {
 //                viewModel.clearItemAmount(item)  TODO fix this whole page
             },
@@ -226,7 +226,7 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
         val checkedItems = viewModel.checkedItems.collectAsState()
         Box(modifier = Modifier.padding(2.dp)) {
             Card(
-                border = BorderStroke(2.dp, stockItem.color),
+                border = BorderStroke(2.dp, BaseColors.FireRed), //TODO color? -> fix this page
                 modifier = Modifier
                     .fillMaxWidth()
                     .combinedClickable(onClick = { viewModel.checkItem(item.uuid) }),
@@ -234,7 +234,7 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
                 SelectItemHeader(
                     item,
                     checkedItems.value.contains(item.uuid),
-                    stockItem.color,
+                    BaseColors.FireRed, //TODO color? -> fix this page
                     checkItem = viewModel::checkItem
                 )
             }
