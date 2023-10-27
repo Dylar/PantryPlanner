@@ -2,16 +2,15 @@ package de.bitb.pantryplaner.ui.dialogs
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.QrCodeScanner
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SmallFloatingActionButton
-import androidx.compose.material3.Text
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
+import androidx.compose.material.IconButton
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -84,9 +83,8 @@ private fun AddUserDialog(
                     ),
                 )
 
-                SmallFloatingActionButton(
+                IconButton(
                     modifier = Modifier.testTag(AddUserDialogTag.ScanButton),
-                    shape = RoundedCornerShape(12.dp),
                     onClick = {
                         onDismiss()
                         onScanOption()

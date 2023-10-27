@@ -13,19 +13,17 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.Card
+import androidx.compose.material.ExtendedFloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.GridOff
 import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -72,14 +70,13 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
 
         val model by viewModel.refreshModel.observeAsState(null)
         Scaffold(
-            snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
+            scaffoldState = scaffoldState,
             topBar = { buildAppBar() },
             content = { buildContent(it, model) },
             floatingActionButton = { buildFab(model) }
         )
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun buildAppBar() {
         TopAppBar(
@@ -226,6 +223,7 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
         val checkedItems = viewModel.checkedItems.collectAsState()
         Box(modifier = Modifier.padding(2.dp)) {
             Card(
+                elevation = 4.dp,
                 border = BorderStroke(2.dp, BaseColors.FireRed), //TODO color? -> fix this page
                 modifier = Modifier
                     .fillMaxWidth()

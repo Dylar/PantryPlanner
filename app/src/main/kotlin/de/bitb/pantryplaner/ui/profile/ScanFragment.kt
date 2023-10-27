@@ -6,11 +6,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -40,7 +38,6 @@ class ScanFragment : BaseFragment<ScanViewModel>(), PermissionHandler by Permiss
 
     override val viewModel: ScanViewModel by viewModels()
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun screenContent() {
         val cameraPermissionResultLauncher = rememberLauncherForActivityResult(
@@ -54,7 +51,7 @@ class ScanFragment : BaseFragment<ScanViewModel>(), PermissionHandler by Permiss
         )
 
         Scaffold(
-            snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
+            scaffoldState = scaffoldState,
             topBar = {
                 TopAppBar(
                     modifier = Modifier.testTag(ScanPageTag.AppBar),

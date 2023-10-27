@@ -102,11 +102,6 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.2'
     implementation 'androidx.preference:preference-ktx:1.2.1'
 
-    // Material
-    implementation 'androidx.compose.material3:material3:1.1.2'
-    implementation "androidx.compose.material:material-icons-extended:1.5.4"
-    implementation 'androidx.compose.material:material-icons-core:1.5.4'
-
     // Navigation
     implementation 'androidx.navigation:navigation-fragment-ktx:2.7.4'
     implementation 'androidx.navigation:navigation-ui-ktx:2.7.4'
@@ -124,11 +119,13 @@ dependencies {
     implementation "androidx.navigation:navigation-compose:2.7.4"
     implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
     implementation "androidx.compose.ui:ui:1.5.4"
-    implementation "androidx.compose.animation:animation:1.5.4"
-    implementation "androidx.compose.material:material:1.5.4"
     implementation "androidx.compose.ui:ui-tooling-preview:1.5.4"
-    implementation 'androidx.compose.foundation:foundation:1.5.4'
+    implementation "androidx.compose.animation:animation:1.5.4"
     implementation 'androidx.compose.runtime:runtime-livedata:1.5.4'
+    implementation "androidx.compose.material:material:1.5.4"
+    implementation "androidx.compose.material:material-icons-extended:1.5.4"
+    implementation 'androidx.compose.material:material-icons-core:1.5.4'
+    implementation 'androidx.compose.foundation:foundation:1.5.4'
     kapt "androidx.compose.compiler:compiler:1.5.3"
 
     // Dagger - Hilt

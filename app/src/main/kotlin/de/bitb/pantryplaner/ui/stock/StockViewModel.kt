@@ -6,7 +6,6 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.ItemRepository
 import de.bitb.pantryplaner.data.StockRepository
@@ -62,7 +61,6 @@ class StockViewModel @Inject constructor(
     val stockModel: LiveData<Resource<StockModel>> = filterBy
         .debounce { if (!INSTANT_SEARCH && _isSearching.value) 1000L else 0L }
         .flatMapLatest {
-            Logger.printLog("VM STOCK filter" to it)
             combine(
                 stockRepo.getStocks(),
                 itemRepo.getItems(filterBy = it),

@@ -3,7 +3,6 @@ package de.bitb.pantryplaner.ui.intro
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.bitb.pantryplaner.R
-import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.atLeast
 import de.bitb.pantryplaner.ui.base.BaseViewModel

@@ -10,6 +10,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.ExtendedFloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.GridOff
@@ -18,16 +24,8 @@ import androidx.compose.material.icons.filled.SavedSearch
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material.Tab
+import androidx.compose.material.TabRow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -45,7 +43,6 @@ import androidx.compose.ui.unit.sp
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
-import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
@@ -110,7 +107,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
 
         val modelResp by viewModel.stockModel.observeAsState()
         Scaffold(
-            snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
+            scaffoldState = scaffoldState,
             topBar = { buildAppBar(filter) },
             content = { buildContent(it, modelResp) },
             floatingActionButton = { buildFab(modelResp) }
@@ -128,7 +125,6 @@ class StockFragment : BaseFragment<StockViewModel>() {
         }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun buildAppBar(filter: Filter) {
         TopAppBar(
@@ -352,7 +348,6 @@ class StockFragment : BaseFragment<StockViewModel>() {
         val filter = viewModel.filterBy.collectAsState(null)
         val text = highlightedText(item.name, filter.value?.searchTerm ?: "")
 
-        Logger.printLog("FRAG stock buildItem" to ItemTag(item.category, item.name))
         Column(
             modifier = Modifier
                 .fillMaxWidth()

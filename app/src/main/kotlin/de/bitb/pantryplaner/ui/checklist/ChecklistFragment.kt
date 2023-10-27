@@ -7,22 +7,18 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExtendedFloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.GridOff
 import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Check
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SmallFloatingActionButton
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -37,12 +33,10 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
-import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
-import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
@@ -85,7 +79,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
         val checkModel by viewModel.checkModel.observeAsState(null)
         Scaffold(
             modifier = Modifier.testTag(ChecklistPageTag.ChecklistPage),
-            snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
+            scaffoldState = scaffoldState,
             topBar = { buildAppBar(checkModel) },
             content = { buildContent(it, checkModel) },
             floatingActionButton = { buildFab() },
@@ -116,7 +110,6 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
         }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun buildAppBar(checkModel: Resource<CheckModel>?) {
         TopAppBar(
@@ -157,19 +150,21 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.Center,
         ) {
-            SmallFloatingActionButton(
+            ExtendedFloatingActionButton(
                 modifier = Modifier.testTag(ChecklistPageTag.AddItemButton),
                 onClick = { naviChecklistToItems(viewModel.checkListId) },
-                shape = RoundedCornerShape(12.dp),
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Add,
-                    contentDescription = "add FAB",
-                )
-            }
+                text = { Text(text = "Item") },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Rounded.Add,
+                        contentDescription = "add FAB",
+                    )
+                },
+            )
             Spacer(modifier = Modifier.height(8.dp))
             ExtendedFloatingActionButton(
                 modifier = Modifier.testTag(ChecklistPageTag.FinishButton),
+                onClick = { showFinishDialog.value = true },
                 text = { Text(text = "Erledigen") },
                 icon = {
                     Icon(
@@ -177,7 +172,6 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                         contentDescription = "Finish FAB",
                     )
                 },
-                onClick = { showFinishDialog.value = true },
             )
         }
     }
@@ -191,7 +185,6 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
             ) {
-                Logger.printLog("" to "FRAG buildContent")
                 val model = checkModel.data
                 val checklist = model.checklist!!
                 val items = model.items!!
@@ -223,7 +216,6 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                     viewModel.setSharedWith(it)
                 }
                 if (items.isEmpty()) {
-                    Logger.printLog("FRAG buildItem" to "EMPTY")
                     EmptyListComp(getString(R.string.no_items))
                 } else {
                     GridListLayout(
@@ -255,7 +247,6 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
             onSwipe = { viewModel.removeItem(item) },
             onClick = { viewModel.checkItem(item.uuid) },
         ) {
-            Logger.printLog("FRAG buildItem" to ItemTag(item.category, item.name))
             Column(
                 modifier = Modifier
                     .fillMaxWidth()

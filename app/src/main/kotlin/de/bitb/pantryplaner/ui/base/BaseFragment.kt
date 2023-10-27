@@ -6,7 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,7 +29,7 @@ import kotlinx.coroutines.launch
 abstract class BaseFragment<T : BaseViewModel> : Fragment() {
 
     val navController by lazy { NavHostFragment.findNavController(this) }
-    lateinit var snackBarHostState: SnackbarHostState
+    lateinit var scaffoldState: ScaffoldState
     abstract val viewModel: T
 
     private fun settingsFlow() = (activity as MainActivity).settingsFlow()
@@ -45,7 +46,7 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                snackBarHostState = remember { SnackbarHostState() }
+                scaffoldState = rememberScaffoldState()
                 var settingsResp by remember { mutableStateOf<Resource<Settings>?>(null) }
                 LaunchedEffect(Unit) { settingsFlow().collect { settingsResp = it } }
 
@@ -87,8 +88,8 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
 
     fun showSnackBar(msg: ResString) {
         lifecycleScope.launch {
-            if (::snackBarHostState.isInitialized)
-                snackBarHostState.showSnackbar(
+            if (::scaffoldState.isInitialized)
+                scaffoldState.snackbarHostState.showSnackbar(
                     message = msg.asString(resources::getString),
 //                    actionLabel = "Do something"
                 )

@@ -16,19 +16,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material.ExtendedFloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.rounded.HomeWork
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -46,7 +44,6 @@ import androidx.fragment.app.viewModels
 import com.google.zxing.WriterException
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
-import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.User
@@ -80,7 +77,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
         showAddStockDialog = remember { mutableStateOf(false) }
         showAddUserDialog = remember { mutableStateOf(false) }
         Scaffold(
-            snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
+            scaffoldState = scaffoldState,
             topBar = { buildAppBar() },
             floatingActionButton = { buildFab() },
             content = { buildContent(it) },
@@ -97,7 +94,6 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
         }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun buildAppBar() {
         TopAppBar(
@@ -196,8 +192,8 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
 
     @Composable
     private fun QrCodeImage(uuid: String) {
-        val black = MaterialTheme.colorScheme.background
-        val white = MaterialTheme.colorScheme.onBackground
+        val black = MaterialTheme.colors.background
+        val white = MaterialTheme.colors.onBackground
         return AndroidView(
             modifier = Modifier.testTag(ProfilePageTag.QRLabel),
             factory = { context ->
@@ -326,12 +322,9 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
                     )
                 }
             }
-            Logger.printLog("StockList" to "GOGO")
             if (stocks.isEmpty()) {
-                Logger.printLog("StockList" to "empty")
                 items(1) { EmptyListComp(getString(R.string.no_stocks)) }
             } else {
-                Logger.printLog("StockList" to "build")
                 items(stocks.size) { buildStock(users, stocks[it]) }
             }
         }
@@ -350,7 +343,6 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
             }
         )
 
-        Logger.printLog("Stock" to stock)
         dissmissItem(
             stock.name,
             BaseColors.FireRed,

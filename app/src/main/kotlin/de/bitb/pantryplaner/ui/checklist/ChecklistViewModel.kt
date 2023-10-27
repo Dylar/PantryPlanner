@@ -6,7 +6,6 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.castOnError
 import de.bitb.pantryplaner.data.CheckRepository
@@ -70,9 +69,7 @@ class ChecklistViewModel @Inject constructor(
                 if (checkResp is Resource.Error) return@flatMapLatest MutableStateFlow(checkResp.castTo())
                 val checklist = checkResp.data!!
                 val ids = checklist.items.map { it.uuid }
-                Logger.printLog("VM CHECK start" to ids)
                 val itemsFlow = filterBy.flatMapLatest { filter ->
-                    Logger.printLog("VM CHCK itemsFlow" to ids)
                     itemRepo.getItems(ids, filter)
                         .map { itemResp ->
                             castOnError(itemResp) {
@@ -108,12 +105,6 @@ class ChecklistViewModel @Inject constructor(
                                     list.filter { it.uuid in ids }
                                 }?.filterValues { it.isNotEmpty() }
 
-                            Logger.printLog(
-                                "VM CHECK checklist" to checklist,
-                                "VM CHECK items" to ids,
-                                "VM CHECK items" to items.data,
-                                "VM CHECK filteredItems" to filteredItems
-                            )
                             Resource.Success(
                                 CheckModel(
                                     checklist,

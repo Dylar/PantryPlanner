@@ -12,15 +12,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.TextFieldDefaults.textFieldColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TextFieldDefaults.colors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -47,8 +47,7 @@ fun AddSubRow(
     onChange: (String) -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -92,7 +91,7 @@ fun AddSubRow(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun EditText(
     textState: MutableState<TextFieldValue>,
@@ -109,7 +108,7 @@ fun EditText(
         textStyle = TextStyle.Default.copy(
             fontSize = 16.sp,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onBackground,
+            color = MaterialTheme.colors.onBackground,
         ),
         maxLines = 1,
         interactionSource = interactionSource,
@@ -123,11 +122,10 @@ fun EditText(
             }
         },
     ) { innerTextField ->
-        TextFieldDefaults.DecorationBox(
+        TextFieldDefaults.TextFieldDecorationBox(
             value = textState.value.text,
-            colors = colors(
-                focusedContainerColor = MaterialTheme.colorScheme.background,
-                unfocusedContainerColor = MaterialTheme.colorScheme.background,
+            colors = textFieldColors(
+                backgroundColor = MaterialTheme.colors.background,
             ),
             visualTransformation = VisualTransformation.None,
             innerTextField = innerTextField,

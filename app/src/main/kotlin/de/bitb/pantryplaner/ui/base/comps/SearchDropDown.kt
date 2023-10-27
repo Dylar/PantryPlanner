@@ -10,16 +10,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.material.Card
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ExposedDropdownMenuBox
+import androidx.compose.material.ExposedDropdownMenuDefaults
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material3.Card
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -117,7 +117,7 @@ fun buildStockDropDown(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun <T> SearchDropDown(
     hint: String,
@@ -159,7 +159,7 @@ private fun <T> SearchDropDown(
             onValueChange = { selectedState.value = it },
             modifier = Modifier
                 .fillMaxWidth()
-                .menuAnchor()
+//                .menuAnchor()
                 .testTag(SearchDropDownTag(hint)),
             label = { Text(hint) },
             colors = ExposedDropdownMenuDefaults.textFieldColors(),
@@ -182,7 +182,7 @@ private fun <T> SearchDropDown(
                         .background(BaseColors.FireRed.copy(alpha = .5f))
                         .testTag(DropDownItemTag(addText)),
                     onClick = { expanded = false },
-                    text = { Text(text = addText) },
+                    content = { Text(text = addText) },
                 )
             }
 
@@ -206,7 +206,7 @@ private fun <T> SearchDropDown(
                         onConfirm(mappedOption)
                         expanded = false
                     },
-                    text = { Text(text = mappedOption) },
+                    content = { Text(text = mappedOption) },
                 )
             }
         }

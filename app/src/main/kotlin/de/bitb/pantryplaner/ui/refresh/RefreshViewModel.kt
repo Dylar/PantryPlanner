@@ -88,7 +88,7 @@ class RefreshViewModel @Inject constructor(
             Resource.Success(RefreshModel(stocks.first().items.associateBy { it.uuid }, items))
         }.asLiveData(viewModelScope.coroutineContext)
 
-    fun clearItemAmount(itemId: String) {
+    fun clearItemAmount(itemId: String) { // TODO do we need?
 //        viewModelScope.launch {
 //            val resp = stockUseCases.editStockItemUC(itemId, "0") //TODO fix this page
 //            if (resp is Resource.Error) showSnackbar(resp.message!!)
