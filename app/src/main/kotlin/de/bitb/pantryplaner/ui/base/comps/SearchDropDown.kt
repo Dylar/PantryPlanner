@@ -179,7 +179,7 @@ private fun <T> SearchDropDown(
                 DropdownMenuItem(
                     modifier = Modifier
                         .padding(2.dp)
-                        .background(BaseColors.FireRed.copy(alpha = .5f))
+//                        .background(BaseColors.FireRed.copy(alpha = .5f))
                         .testTag(DropDownItemTag(addText)),
                     onClick = { expanded = false },
                     content = { Text(text = addText) },
@@ -191,7 +191,7 @@ private fun <T> SearchDropDown(
                 DropdownMenuItem(
                     modifier = Modifier
                         .padding(2.dp)
-                        .background(BaseColors.FireRed.copy(alpha = .5f))
+//                        .background(BaseColors.FireRed.copy(alpha = .5f))
                         .testTag(DropDownItemTag(mappedOption)),
                     onClick = {
                         selectedState.value =

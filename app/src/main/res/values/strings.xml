@@ -12,7 +12,8 @@
     <string name="overview_title">Übersicht</string>
     <string name="no_checklists">Keine Listen vorhanden</string>
 
-    <string name="items_title">Bestand</string>
+    <string name="select_items_title">Item Auswahl</string>
+    <string name="stock_title">Bestand</string>
     <string name="no_items">Keine Items vorhanden</string>
 
     <string name="no_check">Nichts zum abchecken</string>

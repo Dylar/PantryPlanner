@@ -165,7 +165,7 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
                     innerPadding,
                     showGridLayout,
                     model.items!!,
-                    { BaseColors.FireRed }, //TODO color?
+                    { BaseColors.FireRed }, //TODO color? -> fix this page
                 ) { header, item -> listItem(header, stockItem[item.uuid]!!, item) }
             }
         }
@@ -184,7 +184,7 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
     private fun RefreshItem(stockItem: StockItem, item: Item) {
         clearItem(
             item.name,
-            BaseColors.FireRed, //TODO color?
+            BaseColors.FireRed, //TODO color? -> fix this page
             onSwipe = {
 //                viewModel.clearItemAmount(item)  TODO fix this whole page
             },

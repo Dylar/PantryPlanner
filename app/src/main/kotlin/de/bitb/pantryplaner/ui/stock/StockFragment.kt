@@ -14,6 +14,8 @@ import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Tab
+import androidx.compose.material.TabRow
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -24,8 +26,6 @@ import androidx.compose.material.icons.filled.SavedSearch
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.Tab
-import androidx.compose.material.TabRow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -36,6 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -59,7 +60,6 @@ import de.bitb.pantryplaner.ui.base.comps.buildUserDropDown
 import de.bitb.pantryplaner.ui.base.comps.dissmissItem
 import de.bitb.pantryplaner.ui.base.comps.onBack
 import de.bitb.pantryplaner.ui.base.highlightedText
-import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.ItemTag
 import de.bitb.pantryplaner.ui.base.testTags.StockPageTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
@@ -137,7 +137,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
                     filter.searchTerm,
                     viewModel::search,
                 )
-                else Text(getString(R.string.items_title))
+                else Text(getString(R.string.stock_title))
             },
             actions = {
                 IconButton(
@@ -182,7 +182,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
         ) {
             ExtendedFloatingActionButton(
                 modifier = Modifier.testTag(StockPageTag.NewStockButton),
-                text = { Text(text = "Lager anlegen") },
+                text = { Text(text = "Lager") },
                 icon = {
                     Icon(
                         imageVector = Icons.Rounded.Add,
@@ -219,6 +219,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
             modelResp is Resource.Error -> ErrorScreen(modelResp.message!!.asString())
             else -> {
                 val model = modelResp.data
+                val settings = model.settings!!
                 val stocks = model.stocks!!
                 val items = model.items!!
                 val categorys = items.keys.toList()
@@ -298,15 +299,17 @@ class StockFragment : BaseFragment<StockViewModel>() {
                                 innerPadding,
                                 showGridLayout,
                                 items,
-                                { BaseColors.FireRed }, //TODO color?
+                                settings::categoryColor,
                                 viewModel::editCategory
                             ) { _, item ->
+                                val color = settings.categoryColor(item)
                                 listItem(
                                     stock,
                                     item,
                                     categorys,
                                     users,
                                     user,
+                                    color,
                                 )
                             }
                         }
@@ -323,6 +326,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
         categorys: List<String>,
         users: List<User>,
         user: User,
+        color: Color,
     ) {
         val stockItem = stock.items.firstOrNull { it.uuid == item.uuid }
             ?: item.toStockItem()
@@ -337,7 +341,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
 
         dissmissItem(
             item.name,
-            BaseColors.FireRed, //TODO color?
+            color,
             onSwipe = { viewModel.deleteItem(item) },
             onLongClick = { showEditDialog.value = true },
         ) { stockItem(stock, item, stockItem) }

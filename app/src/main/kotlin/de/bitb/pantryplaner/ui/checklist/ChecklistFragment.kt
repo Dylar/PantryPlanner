@@ -28,6 +28,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.viewModels
@@ -47,7 +48,6 @@ import de.bitb.pantryplaner.ui.base.comps.buildStockDropDown
 import de.bitb.pantryplaner.ui.base.comps.buildUserDropDown
 import de.bitb.pantryplaner.ui.base.comps.dissmissItem
 import de.bitb.pantryplaner.ui.base.naviChecklistToItems
-import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.ChecklistPageTag
 import de.bitb.pantryplaner.ui.base.testTags.ItemTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
@@ -151,18 +151,6 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
             verticalArrangement = Arrangement.Center,
         ) {
             ExtendedFloatingActionButton(
-                modifier = Modifier.testTag(ChecklistPageTag.AddItemButton),
-                onClick = { naviChecklistToItems(viewModel.checkListId) },
-                text = { Text(text = "Item") },
-                icon = {
-                    Icon(
-                        imageVector = Icons.Rounded.Add,
-                        contentDescription = "add FAB",
-                    )
-                },
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            ExtendedFloatingActionButton(
                 modifier = Modifier.testTag(ChecklistPageTag.FinishButton),
                 onClick = { showFinishDialog.value = true },
                 text = { Text(text = "Erledigen") },
@@ -170,6 +158,18 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                     Icon(
                         imageVector = Icons.Rounded.Check,
                         contentDescription = "Finish FAB",
+                    )
+                },
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            ExtendedFloatingActionButton(
+                modifier = Modifier.testTag(ChecklistPageTag.AddItemButton),
+                onClick = { naviChecklistToItems(viewModel.checkListId) },
+                text = { Text(text = "Item") },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Rounded.Add,
+                        contentDescription = "add FAB",
                     )
                 },
             )
@@ -186,6 +186,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 verticalArrangement = Arrangement.Center,
             ) {
                 val model = checkModel.data
+                val settings = model.settings!!
                 val checklist = model.checklist!!
                 val items = model.items!!
                 val stocks = model.stocks!!
@@ -222,12 +223,14 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                         innerPadding,
                         showGridLayout,
                         items,
-                        { BaseColors.FireRed }, //TODO color?
+                        settings::categoryColor,
                         viewModel::editCategory
                     ) { _, item ->
+                        val color = settings.categoryColor(item)
                         checkListItem(
                             checklist,
                             item,
+                            color,
                         )
                     }
                 }
@@ -239,11 +242,12 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
     private fun checkListItem(
         checklist: Checklist,
         item: Item,
+        color: Color,
     ) {
         val checkItem = checklist.items.first { it.uuid == item.uuid }
         dissmissItem(
             item.name,
-            BaseColors.FireRed, //TODO color?
+            color,
             onSwipe = { viewModel.removeItem(item) },
             onClick = { viewModel.checkItem(item.uuid) },
         ) {
@@ -257,7 +261,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 SelectItemHeader(
                     item,
                     checkItem.checked,
-                    BaseColors.FireRed, //TODO color?
+                    color,
                     true,
                     viewModel::checkItem
                 )

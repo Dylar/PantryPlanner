@@ -122,7 +122,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
             ExtendedFloatingActionButton(
                 modifier = Modifier.testTag(ProfilePageTag.NewStockButton),
                 onClick = { showAddStockDialog.value = true },
-                text = { Text(text = "Lager anlegen") },
+                text = { Text(text = "Lager") },
                 icon = {
                     Icon(
                         imageVector = Icons.Rounded.HomeWork,
@@ -264,7 +264,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
     private fun buildUser(user: User) {
         dissmissItem(
             user.fullName,
-            BaseColors.FireRed,
+            BaseColors.LightGray,
             onSwipe = { viewModel.disconnectUser(user) },
         ) {
             Box(
@@ -345,7 +345,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
 
         dissmissItem(
             stock.name,
-            BaseColors.FireRed,
+            BaseColors.LightGray,
             onSwipe = { viewModel.removeStock(stock) },
             onLongClick = { showEditDialog.value = true }
         ) {

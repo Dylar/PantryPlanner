@@ -1,6 +1,7 @@
 package de.bitb.pantryplaner.usecase.stock
 
 import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.capitalizeFirstCharacter
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.StockRepository
 import de.bitb.pantryplaner.data.model.Stock
@@ -12,7 +13,8 @@ class AddStockUC(
         return tryIt(
             onError = { Resource.Error(it, false) },
             onTry = {
-                val saveResp = stockRepo.addStock(stock)
+                val saveResp =
+                    stockRepo.addStock(stock.copy(name = stock.name.capitalizeFirstCharacter()))
                 if (saveResp is Resource.Error) {
                     return@tryIt saveResp.castTo(false)
                 }

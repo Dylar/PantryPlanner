@@ -7,10 +7,12 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.ItemRepository
+import de.bitb.pantryplaner.data.SettingsRepository
 import de.bitb.pantryplaner.data.UserDataExt
 import de.bitb.pantryplaner.data.UserRepository
 import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
+import de.bitb.pantryplaner.data.model.Settings
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseViewModel
 import de.bitb.pantryplaner.ui.base.NavigateEvent
@@ -29,17 +31,19 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class ItemsModel(
+    val settings: Settings?,
     val items: Map<String, List<Item>>?,
     val connectedUser: List<User>?,
 ) {
     val isLoading: Boolean
-        get() = items == null || connectedUser == null
+        get() = settings == null || items == null || connectedUser == null
 }
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class SelectItemsViewModel @Inject constructor(
     itemRepo: ItemRepository,
+    private val settingsRepo: SettingsRepository,
     override val userRepo: UserRepository,
     private val checkUseCases: ChecklistUseCases,
 ) : BaseViewModel(), UserDataExt {
@@ -53,15 +57,18 @@ class SelectItemsViewModel @Inject constructor(
         .debounce { if (!INSTANT_SEARCH && _isSearching.value) 1000L else 0L }
         .flatMapLatest { filter ->
             combine(
+                settingsRepo.getSettings(),
                 itemRepo.getItems(filterBy = filter),
                 getConnectedUsers().asFlow(),
-            ) { items, users ->
+            ) { settings, items, users ->
                 when {
+                    settings is Resource.Error -> settings.castTo()
                     items is Resource.Error -> items.castTo()
                     users is Resource.Error -> users.castTo()
                     else -> Resource.Success(
                         ItemsModel(
-                            items.data!!.groupBy { it.category },
+                            settings.data,
+                            items.data?.groupBy { it.category },
                             users.data,
                         ),
                     )

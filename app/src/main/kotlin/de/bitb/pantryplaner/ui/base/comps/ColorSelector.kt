@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Circle
 import androidx.compose.runtime.Composable
@@ -49,7 +50,8 @@ fun Circle(
         contentDescription = "color cycle",
         modifier = Modifier
             .background(
-                if (isSelected) BaseColors.Black.copy(alpha = .4f) else BaseColors.Transparent,
+                if (isSelected) MaterialTheme.colors.onBackground.copy(alpha = .4f)
+                else BaseColors.Transparent,
                 shape = CircleShape,
             )
             .padding(4.dp)

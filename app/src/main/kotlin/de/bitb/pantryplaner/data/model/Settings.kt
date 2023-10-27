@@ -1,5 +1,8 @@
 package de.bitb.pantryplaner.data.model
 
+import androidx.compose.ui.graphics.Color
+import de.bitb.pantryplaner.core.misc.asColor
+import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import java.util.UUID
 
 data class Settings(
@@ -10,6 +13,9 @@ data class Settings(
     val freshUntil: Map<String, Long> = emptyMap(),
     val remindAfter: Map<String, Long> = emptyMap(),
 ) {
+    fun categoryColor(item: Item): Color {
+        return categoryColors[item.category]?.asColor() ?: BaseColors.LightGray
+    }
 //    fun freshUntilDate(itemId: String): LocalDate {
 //       return LocalDate.now().minusDays(freshUntil[itemId] ?: 0L)
 //    } //TODO make this

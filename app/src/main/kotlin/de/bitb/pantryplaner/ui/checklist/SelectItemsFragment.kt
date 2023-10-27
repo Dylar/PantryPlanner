@@ -31,6 +31,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.viewModels
@@ -135,7 +136,7 @@ class SelectItemsFragment : BaseFragment<SelectItemsViewModel>() {
                     filter.searchTerm,
                     viewModel::search,
                 )
-                else Text(getString(R.string.items_title))
+                else Text(getString(R.string.stock_title))
             },
             actions = {
                 IconButton(
@@ -200,6 +201,7 @@ class SelectItemsFragment : BaseFragment<SelectItemsViewModel>() {
             itemsModel?.data?.isLoading != false -> LoadingIndicator()
             else -> {
                 val model = itemsModel!!.data!!
+                val settings = model.settings!!
                 val items = model.items
 
                 if (items?.isEmpty() != false) {
@@ -209,18 +211,21 @@ class SelectItemsFragment : BaseFragment<SelectItemsViewModel>() {
                         innerPadding,
                         showGridLayout,
                         items,
-                        { BaseColors.LightGray }, //TODO color?
-                    ) { _, item -> listItem(item) }
+                        settings::categoryColor,
+                    ) { _, item ->
+                        val color = settings.categoryColor(item)
+                        listItem(item,color)
+                    }
                 }
             }
         }
     }
 
     @Composable
-    private fun listItem(item: Item) {
+    private fun listItem(item: Item, color: Color) {
         Card(
             elevation = 4.dp,
-            border = BorderStroke(2.dp, BaseColors.FireRed),
+            border = BorderStroke(2.dp, color),
             modifier = Modifier
                 .testTag(ItemTag(item.category, item.name))
                 .fillMaxWidth()
@@ -230,7 +235,8 @@ class SelectItemsFragment : BaseFragment<SelectItemsViewModel>() {
             SelectItemHeader(
                 item,
                 checkedItems.value.contains(item.uuid),
-                checkItem = viewModel::checkItem
+                color = color,
+                checkItem = viewModel::checkItem,
             )
         }
     }
