@@ -26,7 +26,7 @@ class FireUserService(
 
     override suspend fun isUserLoggedIn(): Resource<Boolean> {
         return tryIt {
-            val user = fireAuth.currentUser
+            val user = fireAuth.currentUser //TODO user infos into firestore
             Resource.Success(user != null)
         }
     }

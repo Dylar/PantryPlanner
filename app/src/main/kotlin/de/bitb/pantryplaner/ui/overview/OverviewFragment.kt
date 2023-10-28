@@ -126,7 +126,6 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
                     modifier = Modifier.testTag(OverviewPageTag.NewChecklistButton),
                     text = { Text(text = "Checklist") },
                     onClick = { showAddDialog.value = true },
-                    shape = RoundedCornerShape(12.dp),
                     icon = {
                         Icon(
                             imageVector = Icons.Rounded.Add,

@@ -7,6 +7,7 @@ plugins {
     id 'com.google.firebase.crashlytics'
 }
 
+//TODO to kts
 android {
     namespace 'de.bitb.pantryplaner'
     defaultConfig {
@@ -87,6 +88,8 @@ android {
 }
 
 dependencies {
+    //TODO admob?
+
     // QR Scanner
     implementation 'com.github.yuriy-budiyev:code-scanner:2.3.2'
     implementation 'com.github.androidmads:QRGenerator:1.0.1'

@@ -17,6 +17,7 @@ data class Checklist(
     val creator: String = "",
     val stock: String = "",
     val sharedWith: List<String> = listOf(),
+    // TODO categorys?
 ) {
     @get:Exclude
     val progress: String
@@ -72,6 +73,7 @@ data class CheckItem(
 //    val items: List<String>,
 //)
 //
+// TODO Receipe page show items you need (red) and which you have (green)
 //data class RecipeList(
 //    val uuid: String,
 //    val name: String,

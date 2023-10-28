@@ -8,10 +8,15 @@ import java.util.UUID
 data class Item(
     val uuid: String = UUID.randomUUID().toString(),
     val name: String = "",
-    val category: String = "", // TODO category as obj
+    val category: String = "",
     val creator: String = "",
     val createdAt: String = "",
     val sharedWith: List<String> = listOf(),
+//    val tags:List<String> = listOf() // TODO tags for search etc
+    // TODO price (history)
+    // TODO pic for this (at first URL from Inet)
+    // TODO pic to stock place (where can i find it at this stock)
+    // TODO pic to market place (where can i find it at which market)
 ) {
     @get:Exclude
     val createDate: LocalDateTime

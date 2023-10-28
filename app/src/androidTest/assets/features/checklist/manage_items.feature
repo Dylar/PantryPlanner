@@ -66,3 +66,29 @@ Feature: ChecklistPage Items management
     And   On Back
     And   Tap on Checklist "CreatorChecklist"
     And   Item "SharedItem" in category "SharedCategory" has amount 0.0
+
+#  Scenario: Search Item #TODO its broken ....
+#    When  Tap on AddItemButton
+#    And   Tap SearchBar on SelectItemPage
+#    And   Input search "CreatorItem"
+#    Then  Item "CreatorItem" in category "CreatorCategory" is displayed
+#    And   Item "SharedItem" in category "SharedCategory" is NOT displayed
+#    And   Item "SelectItem" in category "SelectCategory" is NOT displayed
+#    Then  Input search "SharedItem"
+#    And   Item "CreatorItem" in category "CreatorCategory" is NOT displayed
+#    And   Item "SharedItem" in category "SharedCategory" is displayed
+#    And   Item "SelectItem" in category "SelectCategory" is NOT displayed
+#    Then  Input search "Item"
+#    And   Item "CreatorItem" in category "CreatorCategory" is displayed
+#    And   Item "SharedItem" in category "SharedCategory" is displayed
+#    And   Item "SelectItem" in category "SelectCategory" is displayed
+#    Then  Input search "NOItem"
+#    And   Item "CreatorItem" in category "CreatorCategory" is NOT displayed
+#    And   Item "SharedItem" in category "SharedCategory" is NOT displayed
+#    And   Item "SelectItem" in category "SelectCategory" is NOT displayed
+#    And   No Items displayed
+#    Then  Tap on AddItemButton
+#    And   On Back
+#    And   Item "CreatorItem" in category "CreatorCategory" is displayed
+#    And   Item "SharedItem" in category "SharedCategory" is displayed
+#    And   Item "SelectItem" in category "SelectCategory" is displayed

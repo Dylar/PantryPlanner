@@ -3,8 +3,8 @@ package de.bitb.pantryplaner.ui.dialog
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTextReplacement
 import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.hasTextInHierarchy
 import de.bitb.pantryplaner.core.onNodeWithTag
@@ -40,8 +40,7 @@ class AddEditChecklistDialogSteps(
 
     @And("Input {string} as Checklist name")
     fun inputAsChecklistName(input: String) {
-        onNodeWithTag(AddEditChecklistDialogTag.NameLabel).performTextClearance()
-        onNodeWithTag(AddEditChecklistDialogTag.NameLabel).performTextInput(input)
+        onNodeWithTag(AddEditChecklistDialogTag.NameLabel).performTextReplacement(input)
         waitForIdle()
     }
 

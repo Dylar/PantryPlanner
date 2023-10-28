@@ -10,21 +10,29 @@ Feature: StockPage Items management
   Scenario: Create a new Item
     When  Tap on NewItemButton
     And   AddEditItemDialog is displayed
-    And   "ItemDialog" shared with none
     And   Input "NewItem" as Item name
     And   Input "NewCategory" as Item category
-    And   "ItemDialog" open dropdown "Mit Benutzer teilen"
-    And   Select dropdown option "Mohammed Lee"
-#   Change MHD and Reminder
+    And   "ItemDialog" shared with "Mohammed Lee"
+    And   "ItemDialog" shared with "Andre Option"
+    And   "ItemDialog" unshare with "Mohammed Lee"
+    And   "ItemDialog" unshare with "Andre Option"
+    And   "ItemDialog" shared with none
+#   TODO Change MHD and Reminder
     And   Tap on CreateItemButton
     Then  Item "NewItem" in category "NewCategory" is displayed
     And   LongPress on Item "NewItem" in category "NewCategory"
     And   Item name is "NewItem"
     And   Item category is "NewCategory"
+    And   "ItemDialog" shared with none
+    And   "ItemDialog" open dropdown "Mit Benutzer teilen"
+    And   Select dropdown option "Mohammed Lee"
     And   "ItemDialog" shared with "Mohammed Lee"
+    And   Tap on CreateItemButton
     Then  On Back
     And   Tap on StockButton
     And   Item "NewItem" in category "NewCategory" is displayed
+    And   LongPress on Item "NewItem" in category "NewCategory"
+    And   "ItemDialog" shared with "Mohammed Lee"
 
   Scenario: Try to remove a Item, but cancel confirmation
     When  Swipe to remove Item "CreatorItem" in category "CreatorCategory"
@@ -97,7 +105,7 @@ Feature: StockPage Items management
     And   Item "EditItem" in category "EditCategory" is displayed
 
   Scenario: Search Item
-    When  Tap on SearchBar
+    When  Tap SearchBar on StockPage
     And   Input search "CreatorItem"
     Then  Item "CreatorItem" in category "CreatorCategory" is displayed
     And   Item "SharedItem" in category "SharedCategory" is NOT displayed

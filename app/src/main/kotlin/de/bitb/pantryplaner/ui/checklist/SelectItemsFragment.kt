@@ -48,7 +48,6 @@ import de.bitb.pantryplaner.ui.base.comps.GridListLayout
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
 import de.bitb.pantryplaner.ui.base.comps.SearchBar
 import de.bitb.pantryplaner.ui.base.comps.onBack
-import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.ItemTag
 import de.bitb.pantryplaner.ui.base.testTags.SelectItemsPageTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag

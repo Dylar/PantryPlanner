@@ -46,6 +46,7 @@ fun useAddItemDialog(
         item,
         categorys,
         users,
+        users.map { it.uuid },
         true,
         onEdit
     )
@@ -67,6 +68,7 @@ fun useEditItemDialog(
         item,
         categorys,
         users,
+        item.sharedWith,
         isCreator,
     ) { i, _ -> onEdit(i, true) }
 }
@@ -79,6 +81,7 @@ private fun useDialog(
     item: Item,
     categorys: List<String>,
     users: List<User>,
+    sharedWith: List<String>,
     isCreator: Boolean,
     onConfirm: (Item, Boolean) -> Unit,
 ) {
@@ -89,6 +92,7 @@ private fun useDialog(
             item = item,
             categorys = categorys,
             users = users,
+            sharedWith = sharedWith,
             isCreator = isCreator,
             onConfirm = { i, close ->
                 onConfirm(i, close)
@@ -106,6 +110,7 @@ private fun AddEditItemDialog(
     item: Item,
     categorys: List<String>,
     users: List<User>,
+    sharedWith: List<String>,
     isCreator: Boolean,
     onConfirm: (Item, Boolean) -> Unit,
     onDismiss: () -> Unit,
@@ -124,7 +129,7 @@ private fun AddEditItemDialog(
 
     val category = remember { mutableStateOf(TextFieldValue(item.category)) }
     val selectedUser = remember {
-        val selected = users.filter { item.sharedWith.contains(it.uuid) }
+        val selected = users.filter { sharedWith.contains(it.uuid) }
         mutableStateOf(selected)
     }
 //    val freshUntil = remember { mutableLongStateOf(stockItem.freshUntil) }

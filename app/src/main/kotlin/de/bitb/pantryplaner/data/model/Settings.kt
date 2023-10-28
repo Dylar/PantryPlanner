@@ -12,6 +12,7 @@ data class Settings(
     val categoryColors: MutableMap<String, Int> = mutableMapOf(),
     val freshUntil: Map<String, Long> = emptyMap(),
     val remindAfter: Map<String, Long> = emptyMap(),
+    // TODO setting for showing small info (like User without Name etc)
 ) {
     fun categoryColor(item: Item): Color {
         return categoryColors[item.category]?.asColor() ?: BaseColors.LightGray

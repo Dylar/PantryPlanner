@@ -151,6 +151,7 @@ class ChecklistViewModel @Inject constructor(
     }
 
     fun checkItem(itemId: String) {
+         //TODO track when items are checked (For sorting if item is at the beginning of the market or in the back)
         viewModelScope.launch {
             when (val resp = checkUseCases.checkItemUC(checkListId, itemId)) {
                 is Resource.Error -> showSnackBar(resp.message!!)

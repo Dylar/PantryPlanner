@@ -198,7 +198,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
                 Spacer(modifier = Modifier.height(8.dp))
                 ExtendedFloatingActionButton(
                     modifier = Modifier.testTag(StockPageTag.NewItemButton),
-                    text = { Text(text = "Neues Item") },
+                    text = { Text(text = "Item") },
                     icon = {
                         Icon(
                             imageVector = Icons.Rounded.Add,
@@ -251,7 +251,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
                     ) {
                         val scope = rememberCoroutineScope()
                         stocks.map { it.name }.forEachIndexed { index, title ->
-                            Tab(
+                            Tab( //TODO long press to delete
                                 modifier = Modifier.testTag(StockPageTag.StockTabTag(title)),
                                 text = { Text(title) },
                                 selected = pagerState.currentPage == index,
