@@ -33,7 +33,11 @@ class ConnectUserUC(
 
             user.connectedUser.add(newUserId)
             val saveUserResp = userRepo.saveUser(user)
-            if (saveUserResp is Resource.Error) saveUserResp.castTo()
+            if (saveUserResp is Resource.Error) return@tryIt saveUserResp.castTo()
+
+            newUser.connectedUser.add(user.uuid)
+            val saveNewUserResp = userRepo.saveUser(newUser)
+            if (saveNewUserResp is Resource.Error) saveNewUserResp.castTo()
             else Resource.Success()
         }
     }

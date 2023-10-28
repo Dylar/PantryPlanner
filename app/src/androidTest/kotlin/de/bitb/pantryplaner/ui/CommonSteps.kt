@@ -38,12 +38,13 @@ class CommonSteps(
 
     @Then("Tap on allow permission")
     fun tapOnAllowPermission() {
-        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-
-        val allowButton = device.findObject(UiSelector().text("WHILE USING THE APP"))
-        if (allowButton.exists()) {
-            allowButton.click()
-        }
-        waitForIdle()
+        performTapOnAllowPermission()
     }
+}
+
+fun ComposeTestRule.performTapOnAllowPermission() {
+    val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+    val allowButton = device.findObject(UiSelector().text("WHILE USING THE APP"))
+    if (allowButton.exists()) allowButton.click()
+    waitForIdle()
 }

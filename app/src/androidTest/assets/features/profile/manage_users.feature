@@ -32,3 +32,31 @@ Feature: ProfilePage User management
     When  Swipe to remove User "Mohammed Lee"
     And   Tap on Confirm
     Then  User "Mohammed Lee" is NOT displayed
+
+  Scenario Outline: Connect a new User via <Method> and see if other user is connected too
+    # logout and login other user
+    Given Tap on SettingsButton
+    And   Tap on LogoutButton
+    And   Tap on Confirm
+    And   Login with email "excludie@yellow.to" and password "1Password!"
+    And   Tap on ProfileButton
+    And   User "Peter Lustig" is NOT displayed
+    And   User "Mohammed Lee" is NOT displayed
+    And   User "Andre Option" is NOT displayed
+  # connect user
+    When  Tap on AddUserButton
+    And   Connect User "peter@lustig.to" via <Method>
+    And   User "Peter Lustig" is displayed
+  # logout and login user
+    Then  Tap on SettingsButton
+    And   Tap on LogoutButton
+    And   Tap on Confirm
+    And   Login with email "peter@lustig.to" and password "1Password!"
+    And   Tap on ProfileButton
+    And   User "Excludie Yellow" is displayed
+
+    Examples:
+      | Method |
+      | Email  |
+      | Scan   |
+

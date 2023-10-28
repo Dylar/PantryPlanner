@@ -23,15 +23,19 @@ class ScanPageSteps(
     }
 
     @When("Scan {string}")
-    fun tapOnAddUserButton(scan: String) {
-        scenarioData.scenario?.onActivity { activity ->
-            val fragManger = activity.supportFragmentManager
-            val navFrag = (fragManger.findFragmentById(R.id.nav_host_fragment) as NavHostFragment)
-            val scanFrag = navFrag.childFragmentManager.fragments.first() as ScanFragment
-            scanFrag.viewModel.onScan(scan)
-        }
+    fun performScan(scan: String) {
+        scenarioData.scanText(scan)
         waitForIdle()
     }
 
+}
+
+fun ScenarioData.scanText(scan: String) {
+    scenario?.onActivity { activity ->
+        val fragManger = activity.supportFragmentManager
+        val navFrag = (fragManger.findFragmentById(R.id.nav_host_fragment) as NavHostFragment)
+        val scanFrag = navFrag.childFragmentManager.fragments.first() as ScanFragment
+        scanFrag.viewModel.onScan(scan)
+    }
 }
 

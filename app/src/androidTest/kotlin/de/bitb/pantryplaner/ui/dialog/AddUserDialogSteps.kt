@@ -8,6 +8,8 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.testTags.AddUserDialogTag
+import de.bitb.pantryplaner.ui.performTapOnAllowPermission
+import de.bitb.pantryplaner.ui.profile.scanText
 import io.cucumber.java.en.And
 import io.cucumber.java.en.Then
 
@@ -23,7 +25,7 @@ class AddUserDialogSteps(
     }
 
     @And("Input {string} as User email")
-    fun inputAsStockName(input: String) {
+    fun inputEmail(input: String) {
         onNodeWithTag(AddUserDialogTag.EmailLabel).performTextReplacement(input)
         waitForIdle()
     }
@@ -37,6 +39,21 @@ class AddUserDialogSteps(
     @And("Tap on ScanButton")
     fun tapOnScanButton() {
         onNodeWithTag(AddUserDialogTag.ScanButton).performClick()
+        waitForIdle()
+    }
+
+    @And("Connect User {string} via Email")
+    fun connectUserViaEmail(email: String) {
+        inputEmail(email)
+        tapOnConnectUserButton()
+        waitForIdle()
+    }
+
+    @And("Connect User {string} via Scan")
+    fun connectUserViaScan(email: String) {
+        tapOnScanButton()
+        performTapOnAllowPermission()
+        scenarioData.scanText(email)
         waitForIdle()
     }
 
