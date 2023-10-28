@@ -1,0 +1,10 @@
+{
+  "uuid": "item666",
+  "name": "UnsharedItem",
+  "category": "UnsharedCategory",
+  "creator": "user666",
+  "createdAt": "2022-01-01T12:00:00Z",
+  "sharedWith": [
+    "check321"
+  ]
+}

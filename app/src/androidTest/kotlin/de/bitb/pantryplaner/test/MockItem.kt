@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.flowOf
 fun parseItemCreator(): Item = parsePOKO("item_creator")
 fun parseItemShared(): Item = parsePOKO("item_shared")
 fun parseItemSelect(): Item = parsePOKO("item_select")
+fun parseItemUnshared(): Item = parsePOKO("item_unshared")
 
 @OptIn(ExperimentalCoroutinesApi::class)
 fun ItemRemoteDao.mockItemDao(
@@ -24,6 +25,12 @@ fun ItemRemoteDao.mockItemDao(
         (listOf(item.creator) + item.sharedWith)
     }
 
+    coEvery { getItems(any()) }.answers {
+        val itemIds = firstArg<List<String>>()
+        allFlow.flatMapLatest { items ->
+            MutableStateFlow(Resource.Success(items.filter { itemIds.contains(it.uuid) }))
+        }
+    }
     coEvery { getItems(any(), any()) }.answers {
         val userId = firstArg<String>()
         val itemIds = secondArg<List<String>?>()
@@ -64,8 +71,10 @@ fun ItemRemoteDao.mockErrorItemDao(
     deleteItemError: Resource.Error<Boolean>? = null,
     saveItemError: Resource.Error<Unit>? = null,
 ) {
-    if (getItemsError != null)
+    if (getItemsError != null) {
+        coEvery { getItems(any()) }.answers { flowOf(getItemsError) }
         coEvery { getItems(any(), any()) }.answers { flowOf(getItemsError) }
+    }
     if (addItemError != null)
         coEvery { addItem(any()) }.answers { addItemError }
     if (deleteItemError != null)

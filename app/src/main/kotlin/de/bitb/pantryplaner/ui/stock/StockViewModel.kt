@@ -68,7 +68,7 @@ class StockViewModel @Inject constructor(
             combine(
                 settingsRepo.getSettings(),
                 stockRepo.getStocks(),
-                itemRepo.getItems(filterBy = it),
+                itemRepo.getUserItems(filterBy = it),
                 getConnectedUsers().asFlow(),
                 userRepo.getUser(),
             ) { settings, stocks, items, users, user ->

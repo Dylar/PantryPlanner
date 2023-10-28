@@ -3,14 +3,9 @@
   "name": "SharedChecklist",
   "items": [
     {
-      "uuid": "item123",
-      "checked": true,
-      "amount": 1.0
-    },
-    {
-      "uuid": "item321",
+      "uuid": "item666",
       "checked": false,
-      "amount": 2.0
+      "amount": 6.66
     }
   ],
   "finishedAt": "",

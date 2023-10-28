@@ -19,7 +19,7 @@ class EditCategoryUC(
         color: Color,
     ): Resource<Unit> {
         return tryIt {
-            val itemsResp = itemRepo.getItems().first()
+            val itemsResp = itemRepo.getUserItems().first()
             if (itemsResp is Resource.Error) return@tryIt itemsResp.castTo()
 
             val settingsResp = settingsRepo.getSettings().first()

@@ -13,7 +13,8 @@ import kotlinx.coroutines.flow.map
 
 interface ItemRepository {
     fun getItem(id: String): Flow<Resource<Item>>
-    fun getItems(ids: List<String>? = null, filterBy: Filter? = null): Flow<Resource<List<Item>>>
+    fun getItems(ids: List<String>, filterBy: Filter? = null): Flow<Resource<List<Item>>>
+    fun getUserItems(ids: List<String>? = null, filterBy: Filter? = null): Flow<Resource<List<Item>>>
 
     suspend fun getAllItems(ids: List<String>?): Resource<List<Item>>
 
@@ -37,12 +38,38 @@ class ItemRepositoryImpl(
     }
 
     override fun getItems(
+        ids: List<String>,
+        filterBy: Filter?,
+    ): Flow<Resource<List<Item>>> {
+        return remoteDB
+            .getItems(ids)
+            .map { resp -> // TODO make this "generic" (see below)
+                castOnError(resp) {
+                    val items = resp.data
+                    items?.sortedBy { it.name }
+                    items?.sortedBy { it.category } //TODO sort?
+                    val groupedItems = items
+                        ?.filter {
+                            filterBy == null ||
+                                    (!filterBy.filterByTerm && !filterBy.filterByColor) ||
+                                    (filterBy.filterByTerm && it.name.contains(filterBy.searchTerm))
+//                                    (filterBy.filterByColor && it.color == filterBy.color) // TODO ?
+                        }
+//                        ?.groupBy { it.category }
+//                        ?.toSortedMap { a1, a2 -> a1.compareTo(a2) }
+//                        ?: emptyMap()
+                    Resource.Success(groupedItems)
+                }
+            }
+    }
+
+    override fun getUserItems(
         ids: List<String>?,
         filterBy: Filter?,
     ): Flow<Resource<List<Item>>> {
         return remoteDB
             .getItems(localDB.getUser(), ids)
-            .map { resp ->
+            .map { resp -> // TODO make this "generic" (see above)
                 castOnError(resp) {
                     val items = resp.data
                     items?.sortedBy { it.name }

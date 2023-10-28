@@ -73,9 +73,9 @@ class ChecklistViewModel @Inject constructor(
             .flatMapLatest { checkResp ->
                 if (checkResp is Resource.Error) return@flatMapLatest MutableStateFlow(checkResp.castTo())
                 val checklist = checkResp.data!!
-                val ids = checklist.items.map { it.uuid }
+                val itemIds = checklist.items.map { it.uuid }
                 val itemsFlow = filterBy.flatMapLatest { filter ->
-                    itemRepo.getItems(ids, filter)
+                    itemRepo.getItems(itemIds, filter)
                         .map { itemResp ->
                             castOnError(itemResp) {
                                 val newMap = itemResp.data
@@ -116,7 +116,7 @@ class ChecklistViewModel @Inject constructor(
                             //TODO just in test?
                             val filteredItems = //items.data
                                 items.data?.mapValues { (_, list) ->
-                                    list.filter { it.uuid in ids }
+                                    list.filter { it.uuid in itemIds }
                                 }?.filterValues { it.isNotEmpty() }
 
 //                            items.data TODO maybe this?

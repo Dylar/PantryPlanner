@@ -1,11 +1,15 @@
 package de.bitb.pantryplaner.data.source
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.snapshots
 import de.bitb.pantryplaner.BuildConfig
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.model.Item
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 
 class FireItemService(
@@ -22,6 +26,19 @@ class FireItemService(
 
     private fun sharedCollection(id: String) =
         collection.whereArrayContains("sharedWith", id)
+
+    override fun getItems(
+        ids: List<String>,
+    ): Flow<Resource<List<Item>>> {
+        if (ids.isEmpty()) {
+            return flowOf(Resource.Success(emptyList()))
+        }
+
+        return collection
+            .whereIn("uuid", ids)
+            .snapshots()
+            .map { tryIt { Resource.Success(it.toObjects(Item::class.java)) } }
+    }
 
     override fun getItems(
         userId: String,

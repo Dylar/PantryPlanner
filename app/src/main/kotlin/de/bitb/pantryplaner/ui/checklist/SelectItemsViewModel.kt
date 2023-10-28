@@ -58,7 +58,7 @@ class SelectItemsViewModel @Inject constructor(
         .flatMapLatest { filter ->
             combine(
                 settingsRepo.getSettings(),
-                itemRepo.getItems(filterBy = filter),
+                itemRepo.getUserItems(filterBy = filter),
                 getConnectedUsers().asFlow(),
             ) { settings, items, users ->
                 when {

@@ -12,7 +12,7 @@ class UncheckAllItemsUC(
 ) {
     suspend operator fun invoke(color: Color): Resource<Unit> {
         return tryIt {
-            val getItemsResp = itemRepo.getItems().first()
+            val getItemsResp = itemRepo.getUserItems().first()
             if (getItemsResp is Resource.Error) return@tryIt getItemsResp.castTo()
 
             val itemsMap = getItemsResp.data?.groupBy { it.category } ?: mapOf()
