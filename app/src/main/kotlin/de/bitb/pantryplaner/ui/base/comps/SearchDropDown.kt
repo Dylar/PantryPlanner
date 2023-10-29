@@ -1,6 +1,5 @@
 package de.bitb.pantryplaner.ui.base.comps
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -36,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.User
-import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.DropDownItemTag
 import de.bitb.pantryplaner.ui.base.testTags.SearchDropDownTag
 import de.bitb.pantryplaner.ui.base.testTags.SharedWithTag

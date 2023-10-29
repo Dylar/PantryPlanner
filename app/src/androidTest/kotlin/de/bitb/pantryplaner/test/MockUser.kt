@@ -1,6 +1,5 @@
 package de.bitb.pantryplaner.test
 
-import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.asResourceError
 import de.bitb.pantryplaner.core.parsePOKO

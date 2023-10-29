@@ -1,4 +1,4 @@
-Feature: Un/Finish checklist
+Feature: ChecklistPage Un/Finish checklist
 
   Background:
     Given Init default Mocks

@@ -6,7 +6,6 @@ import androidx.compose.ui.test.performTextReplacement
 import androidx.test.espresso.Espresso
 import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.onNodeWithTag
-import de.bitb.pantryplaner.core.sleepFor
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.testTags.SearchBarTag
 import de.bitb.pantryplaner.ui.base.testTags.SelectItemsPageTag
@@ -32,11 +31,9 @@ class SearchBarSteps(
 
     @Then("Input search {string}")
     fun inputSearch(search: String) {
-        sleepFor()
         onNodeWithTag(SearchBarTag).performTextReplacement(search)
         Espresso.closeSoftKeyboard()
         waitForIdle()
-        sleepFor()
     }
 
 }

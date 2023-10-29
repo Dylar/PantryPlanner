@@ -21,7 +21,7 @@ class FireSettingsService(
             .document(BuildConfig.FLAVOR)
             .collection("settings")
 
-    override fun getSettings(userId:String): Flow<Resource<Settings>> {
+    override fun getSettings(userId: String): Flow<Resource<Settings>> {
         return collection
             .whereEqualTo("uuid", userId)
             .snapshots()

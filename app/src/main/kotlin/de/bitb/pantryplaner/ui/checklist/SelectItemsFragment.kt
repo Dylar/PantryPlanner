@@ -213,7 +213,7 @@ class SelectItemsFragment : BaseFragment<SelectItemsViewModel>() {
                         settings::categoryColor,
                     ) { _, item ->
                         val color = settings.categoryColor(item)
-                        listItem(item,color)
+                        listItem(item, color)
                     }
                 }
             }

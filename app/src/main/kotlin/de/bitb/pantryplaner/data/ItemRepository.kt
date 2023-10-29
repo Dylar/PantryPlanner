@@ -14,7 +14,10 @@ import kotlinx.coroutines.flow.map
 interface ItemRepository {
     fun getItem(id: String): Flow<Resource<Item>>
     fun getItems(ids: List<String>, filterBy: Filter? = null): Flow<Resource<List<Item>>>
-    fun getUserItems(ids: List<String>? = null, filterBy: Filter? = null): Flow<Resource<List<Item>>>
+    fun getUserItems(
+        ids: List<String>? = null,
+        filterBy: Filter? = null
+    ): Flow<Resource<List<Item>>>
 
     suspend fun getAllItems(ids: List<String>?): Resource<List<Item>>
 

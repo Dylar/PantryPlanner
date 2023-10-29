@@ -39,7 +39,7 @@ fun ItemRemoteDao.mockItemDao(
         allFlow.flatMapLatest { items ->
             flow.apply {
                 value = Resource.Success(
-                    if (itemIds == null) items
+                    if (itemIds == null) items.filter { it.sharedWith(userId) }
                     else items.filter { itemIds.contains(it.uuid) && it.sharedWith(userId) }
                 )
             }

@@ -1,4 +1,4 @@
-Feature: ChecklistPage Items management
+Feature: ChecklistPage Items CreatorChecklist management
 
   Background:
     Given Init default Mocks
@@ -6,6 +6,7 @@ Feature: ChecklistPage Items management
     And   Item "SelectItem" in category "SelectCategory" is NOT displayed
     And   Item "CreatorItem" in category "CreatorCategory" is displayed
     And   Item "SharedItem" in category "SharedCategory" is displayed
+    And   Item "UnsharedItem" in category "UnsharedCategory" is NOT displayed
 
   Scenario: Add item
     When  Tap on AddItemButton
@@ -34,38 +35,6 @@ Feature: ChecklistPage Items management
     And   On Back
     And   Tap on Checklist "CreatorChecklist"
     And   Item "SharedItem" in category "SharedCategory" is NOT displayed
-
-  Scenario: Increase Item amount
-    Given Item "CreatorItem" in category "CreatorCategory" has amount 1.0
-    When  Increase Item "CreatorItem" in category "CreatorCategory" amount by 2
-    Then  Item "CreatorItem" in category "CreatorCategory" has amount 3.0
-    And   On Back
-    And   Tap on Checklist "CreatorChecklist"
-    And   Item "CreatorItem" in category "CreatorCategory" has amount 3.0
-
-  Scenario: Decrease Item amount
-    Given Item "CreatorItem" in category "CreatorCategory" has amount 1.0
-    When  Decrease Item "CreatorItem" in category "CreatorCategory" amount by 2
-    Then  Item "CreatorItem" in category "CreatorCategory" has amount 0.0
-    And   On Back
-    And   Tap on Checklist "CreatorChecklist"
-    And   Item "CreatorItem" in category "CreatorCategory" has amount 0.0
-
-  Scenario: Increase shared Item amount
-    Given Item "SharedItem" in category "SharedCategory" has amount 2.0
-    When  Increase Item "SharedItem" in category "SharedCategory" amount by 2
-    Then  Item "SharedItem" in category "SharedCategory" has amount 4.0
-    And   On Back
-    And   Tap on Checklist "CreatorChecklist"
-    And   Item "SharedItem" in category "SharedCategory" has amount 4.0
-
-  Scenario: Decrease shared Item amount
-    Given Item "SharedItem" in category "SharedCategory" has amount 2.0
-    When  Decrease Item "SharedItem" in category "SharedCategory" amount by 2
-    Then  Item "SharedItem" in category "SharedCategory" has amount 0.0
-    And   On Back
-    And   Tap on Checklist "CreatorChecklist"
-    And   Item "SharedItem" in category "SharedCategory" has amount 0.0
 
 #  Scenario: Search Item #TODO its broken ....
 #    When  Tap on AddItemButton

@@ -13,3 +13,5 @@ Feature: StockPage Stock management
     And   Input "NewStock" as Stock name
     And   Tap on CreateStockButton
     Then  Tab "NewStock" is displayed
+
+    #TODO remove stock here

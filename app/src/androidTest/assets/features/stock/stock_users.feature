@@ -5,7 +5,7 @@ Feature: StockPage User management
     And   Start on StockPage
     And   Tab "CreatorStock" is displayed
     And   Tab "SharedStock" is displayed
-
+#TODO load unknown user just to see them
   Scenario: Share CreatorStock with User
     Given "StockPage CreatorStock" shared with none
     When  "StockPage CreatorStock" open dropdown "Mit Benutzer teilen"

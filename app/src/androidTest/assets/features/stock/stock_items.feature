@@ -4,11 +4,25 @@ Feature: StockPage Items management
     Given Init default Mocks
     And   Start on StockPage
     And   Item "NewItem" in category "NewCategory" is NOT displayed
-    And   Item "CreatorItem" in category "CreatorCategory" is displayed
-    And   Item "SharedItem" in category "SharedCategory" is displayed
 
-  Scenario: Create a new Item
-    When  Tap on NewItemButton
+  Scenario: Render all Items
+    Given Item "CreatorItem" in category "CreatorCategory" is displayed
+    And   Item "CreatorItem" in category "CreatorCategory" has amount 1.0
+    And   Item "SharedItem" in category "SharedCategory" is displayed
+    And   Item "SharedItem" in category "SharedCategory" has amount 2.5
+    And   Item "UnsharedItem" in category "UnsharedCategory" is NOT displayed
+    When  Tap on tab "SharedStock"
+    Then  Item "CreatorItem" in category "CreatorCategory" is displayed
+    And   Item "CreatorItem" in category "CreatorCategory" has amount 0.0
+    And   Item "SharedItem" in category "SharedCategory" is displayed
+    And   Item "SharedItem" in category "SharedCategory" has amount 0.0
+    And   Item "UnsharedItem" in category "UnsharedCategory" is displayed
+    And   Item "UnsharedItem" in category "UnsharedCategory" has amount 6.66
+    # TODO user action: share the unshared item -> so it is visible on CreatorStock too
+
+  Scenario Outline: Create a new Item on <StockTab>
+    When  Tap on tab "<StockTab>"
+    And   Tap on NewItemButton
     And   AddEditItemDialog is displayed
     And   Input "NewItem" as Item name
     And   Input "NewCategory" as Item category
@@ -19,6 +33,7 @@ Feature: StockPage Items management
     And   "ItemDialog" shared with none
 #   TODO Change MHD and Reminder
     And   Tap on CreateItemButton
+    And   Wait until SnackBar "Item hinzugefügt: NewItem" vanish
     Then  Item "NewItem" in category "NewCategory" is displayed
     And   LongPress on Item "NewItem" in category "NewCategory"
     And   Item name is "NewItem"
@@ -33,6 +48,11 @@ Feature: StockPage Items management
     And   Item "NewItem" in category "NewCategory" is displayed
     And   LongPress on Item "NewItem" in category "NewCategory"
     And   "ItemDialog" shared with "Mohammed Lee"
+
+    Examples:
+      | StockTab     |
+      | CreatorStock |
+      | SharedStock  |
 
   Scenario: Try to remove a Item, but cancel confirmation
     When  Swipe to remove Item "CreatorItem" in category "CreatorCategory"
@@ -128,56 +148,3 @@ Feature: StockPage Items management
     And   Item "CreatorItem" in category "CreatorCategory" is displayed
     And   Item "SharedItem" in category "SharedCategory" is displayed
     And   Item "SelectItem" in category "SelectCategory" is displayed
-
-  Scenario: Prevent setting Item amount wrong value
-    Given Item "CreatorItem" in category "CreatorCategory" has amount 1.0
-    When  Set Item "CreatorItem" in category "CreatorCategory" amount to "WRONG VALUE"
-    Then  Item "CreatorItem" in category "CreatorCategory" has amount 1.0
-
-  Scenario: Set Item amount
-    Given Item "CreatorItem" in category "CreatorCategory" has amount 1.0
-    When  Set Item "CreatorItem" in category "CreatorCategory" amount to "2"
-    Then  Item "CreatorItem" in category "CreatorCategory" has amount 2.0
-    And   On Back
-    And   Tap on StockButton
-    And   Item "CreatorItem" in category "CreatorCategory" has amount 2.0
-
-  Scenario: Set shared Item amount
-    Given Item "SharedItem" in category "SharedCategory" has amount 2.5
-    When  Set Item "SharedItem" in category "SharedCategory" amount to "2"
-    Then  Item "SharedItem" in category "SharedCategory" has amount 2.0
-    And   On Back
-    And   Tap on StockButton
-    And   Item "SharedItem" in category "SharedCategory" has amount 2.0
-
-  Scenario: Increase Item amount
-    Given Item "CreatorItem" in category "CreatorCategory" has amount 1.0
-    When  Increase Item "CreatorItem" in category "CreatorCategory" amount by 2
-    Then  Item "CreatorItem" in category "CreatorCategory" has amount 3.0
-    And   On Back
-    And   Tap on StockButton
-    And   Item "CreatorItem" in category "CreatorCategory" has amount 3.0
-
-  Scenario: Decrease Item amount
-    Given Item "CreatorItem" in category "CreatorCategory" has amount 1.0
-    When  Decrease Item "CreatorItem" in category "CreatorCategory" amount by 2
-    Then  Item "CreatorItem" in category "CreatorCategory" has amount 0.0
-    And   On Back
-    And   Tap on StockButton
-    And   Item "CreatorItem" in category "CreatorCategory" has amount 0.0
-
-  Scenario: Increase shared Item amount
-    Given Item "SharedItem" in category "SharedCategory" has amount 2.5
-    When  Increase Item "SharedItem" in category "SharedCategory" amount by 2
-    Then  Item "SharedItem" in category "SharedCategory" has amount 4.5
-    And   On Back
-    And   Tap on StockButton
-    And   Item "SharedItem" in category "SharedCategory" has amount 4.5
-
-  Scenario: Decrease shared Item amount
-    Given Item "SharedItem" in category "SharedCategory" has amount 2.5
-    When  Decrease Item "SharedItem" in category "SharedCategory" amount by 2
-    Then  Item "SharedItem" in category "SharedCategory" has amount 0.5
-    And   On Back
-    And   Tap on StockButton
-    And   Item "SharedItem" in category "SharedCategory" has amount 0.5

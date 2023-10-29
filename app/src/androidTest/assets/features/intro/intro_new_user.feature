@@ -1,4 +1,4 @@
-Feature: Create new User
+Feature: Intro Create new User
 
   Background:
     Given Init default Mocks

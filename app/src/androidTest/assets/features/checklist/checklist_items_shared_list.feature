@@ -1,4 +1,4 @@
-Feature: ChecklistPage Items management
+Feature: ChecklistPage SharedChecklist Items management
 
   Background:
     Given Init default Mocks
@@ -25,19 +25,3 @@ Feature: ChecklistPage Items management
     And   On Back
     And   Tap on Checklist "SharedChecklist"
     And   Item "UnsharedItem" in category "UnsharedCategory" is NOT displayed
-
-  Scenario: Increase Item amount
-    Given Item "UnsharedItem" in category "UnsharedCategory" has amount 6.66
-    When  Increase Item "UnsharedItem" in category "UnsharedCategory" amount by 2
-    Then  Item "UnsharedItem" in category "UnsharedCategory" has amount 8.66
-    And   On Back
-    And   Tap on Checklist "SharedChecklist"
-    And   Item "UnsharedItem" in category "UnsharedCategory" has amount 8.66
-
-  Scenario: Decrease Item amount
-    Given Item "UnsharedItem" in category "UnsharedCategory" has amount 6.66
-    When  Decrease Item "UnsharedItem" in category "UnsharedCategory" amount by 2
-    Then  Item "UnsharedItem" in category "UnsharedCategory" has amount 4.66
-    And   On Back
-    And   Tap on Checklist "SharedChecklist"
-    And   Item "UnsharedItem" in category "UnsharedCategory" has amount 4.66

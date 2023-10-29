@@ -36,6 +36,15 @@ class CommonSteps(
         onNodeWithText(message).assertIsDisplayed()
     }
 
+    @OptIn(ExperimentalTestApi::class)
+    @Then("Wait until SnackBar {string} vanish")
+    fun waitUntilSnackBarVanish(message: String) {
+        waitUntilAtLeastOneExists(hasText(message), 15000)
+        onNodeWithText(message).assertIsDisplayed()
+        waitUntilDoesNotExist(hasText(message), 15000)
+        onNodeWithText(message).assertDoesNotExist()
+    }
+
     @Then("Tap on allow permission")
     fun tapOnAllowPermission() {
         performTapOnAllowPermission()

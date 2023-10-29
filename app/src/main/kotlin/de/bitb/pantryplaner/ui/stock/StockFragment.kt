@@ -47,6 +47,7 @@ import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
+import de.bitb.pantryplaner.data.model.Settings
 import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.StockItem
 import de.bitb.pantryplaner.data.model.User
@@ -220,14 +221,14 @@ class StockFragment : BaseFragment<StockViewModel>() {
             else -> {
                 val model = modelResp.data
                 val settings = model.settings!!
-                val stocks = model.stocks!!
                 val items = model.items!!
                 val categorys = items.keys.toList()
+                val stocks = model.stocks!!
                 val users = model.connectedUser ?: listOf()
                 val user = model.user!!
+                val allUser = users + listOf(user)
 
                 val pagerState = rememberPagerState { stocks.size }
-                val allUser = users + listOf(user)
 
                 useAddStockDialog(
                     showAddStockDialog,
@@ -265,54 +266,16 @@ class StockFragment : BaseFragment<StockViewModel>() {
                     }
                     HorizontalPager(state = pagerState) { page ->
                         val stock = stocks[page]
-
-                        useAddItemDialog(
-                            showAddItemDialog,
+                        StockPage(
+                            innerPadding,
+                            settings,
+                            stock,
+                            items[stock.uuid] ?: emptyList(),
                             categorys,
+                            allUser,
                             users,
-                        ) { item, close ->
-                            viewModel.addItem(item)
-                            if (close) showAddItemDialog.value = false
-                        }
-
-                        Column(
-                            modifier = Modifier.testTag(StockPageTag.StockPage(stock.name)),
-                            verticalArrangement = Arrangement.Top
-                        ) {
-                            val selectedUser = remember(stock) {
-                                mutableStateOf(allUser.filter { stock.sharedWith.contains(it.uuid) })
-                            }
-                            buildUserDropDown(
-                                "Lager wird nicht geteilt",
-                                users,
-                                selectedUser,
-                                canChange = stock.creator == user.uuid,
-                            ) {
-                                viewModel.setSharedWith(stock, it)
-                            }
-
-                            if (items.isEmpty()) {
-                                EmptyListComp(getString(R.string.no_items))
-                                return@HorizontalPager
-                            }
-                            GridListLayout(
-                                innerPadding,
-                                showGridLayout,
-                                items,
-                                settings::categoryColor,
-                                viewModel::editCategory
-                            ) { _, item ->
-                                val color = settings.categoryColor(item)
-                                listItem(
-                                    stock,
-                                    item,
-                                    categorys,
-                                    users,
-                                    user,
-                                    color,
-                                )
-                            }
-                        }
+                            user,
+                        )
                     }
                 }
             }
@@ -320,7 +283,69 @@ class StockFragment : BaseFragment<StockViewModel>() {
     }
 
     @Composable
-    private fun listItem(
+    private fun StockPage(
+        innerPadding: PaddingValues,
+        settings: Settings,
+        stock: Stock,
+        items: List<Item>,
+        categorys: List<String>,
+        allUser: List<User>,
+        users: List<User>,
+        user: User,
+    ) {
+
+        useAddItemDialog(
+            showAddItemDialog,
+            categorys,
+            users,
+        ) { item, close ->
+            viewModel.addItem(item)
+            if (close) showAddItemDialog.value = false
+        }
+        Column(
+            modifier = Modifier.testTag(StockPageTag.StockPage(stock.name)),
+            verticalArrangement = Arrangement.Top
+        ) {
+            val selectedUser = remember(stock) {
+                mutableStateOf(allUser.filter { stock.sharedWith.contains(it.uuid) })
+            }
+            buildUserDropDown(
+                "Lager wird nicht geteilt",
+                users,
+                selectedUser,
+                canChange = stock.creator == user.uuid,
+            ) {
+                viewModel.setSharedWith(stock, it)
+            }
+
+            if (items.isEmpty()) {
+                EmptyListComp(getString(R.string.no_items))
+                return
+            }
+
+            val mapItems = items.groupBy { it.category }
+            GridListLayout(
+                innerPadding,
+                showGridLayout,
+                mapItems,
+                settings::categoryColor,
+                viewModel::editCategory
+            ) { _, item ->
+                val color = settings.categoryColor(item)
+                ListItem(
+                    stock,
+                    item,
+                    categorys,
+                    users,
+                    user,
+                    color,
+                )
+            }
+        }
+    }
+
+    @Composable
+    private fun ListItem(
         stock: Stock,
         item: Item,
         categorys: List<String>,
@@ -344,11 +369,11 @@ class StockFragment : BaseFragment<StockViewModel>() {
             color,
             onSwipe = { viewModel.deleteItem(item) },
             onLongClick = { showEditDialog.value = true },
-        ) { stockItem(stock, item, stockItem) }
+        ) { StockItem(stock, item, stockItem) }
     }
 
     @Composable
-    private fun stockItem(stock: Stock, item: Item, stockItem: StockItem) {
+    private fun StockItem(stock: Stock, item: Item, stockItem: StockItem) {
         val filter = viewModel.filterBy.collectAsState(null)
         val text = highlightedText(item.name, filter.value?.searchTerm ?: "")
 

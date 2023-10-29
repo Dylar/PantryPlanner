@@ -69,7 +69,8 @@ class ScreenWidget : GlanceAppWidget() {
             dependencies =
                 EntryPointAccessors.fromApplication(context, ScreenWidgetEntryPoint::class.java)
             items =
-                itemRepo.getUserItems(filterBy = filterBy.value).first().data!!.groupBy { it.category }
+                itemRepo.getUserItems(filterBy = filterBy.value)
+                    .first().data!!.groupBy { it.category }
             updateAll(context)
         }
     }

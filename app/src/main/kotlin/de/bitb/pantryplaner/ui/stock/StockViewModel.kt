@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -48,12 +49,12 @@ data class StockModel(
         get() = settings == null || stocks == null || items == null || connectedUser == null || user == null
 }
 
-@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+@OptIn(FlowPreview::class)
 @HiltViewModel
 class StockViewModel @Inject constructor(
     itemRepo: ItemRepository,
     stockRepo: StockRepository,
-    private val settingsRepo: SettingsRepository,
+    settingsRepo: SettingsRepository,
     override val userRepo: UserRepository,
     private val itemUseCases: ItemUseCases,
     private val stockUseCases: StockUseCases,
@@ -62,38 +63,73 @@ class StockViewModel @Inject constructor(
     val isSearching = _isSearching.asStateFlow()
 
     val filterBy = MutableStateFlow(Filter())
-    val stockModel: LiveData<Resource<StockModel>> = filterBy
-        .debounce { if (!INSTANT_SEARCH && _isSearching.value) 1000L else 0L }
-        .flatMapLatest {
-            combine(
-                settingsRepo.getSettings(),
-                stockRepo.getStocks(),
-                itemRepo.getUserItems(filterBy = it),
-                getConnectedUsers().asFlow(),
-                userRepo.getUser(),
-            ) { settings, stocks, items, users, user ->
+
+    @Suppress("UNCHECKED_CAST")
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val stockModel: LiveData<Resource<StockModel>> =
+        combine(
+            filterBy.debounce { if (!INSTANT_SEARCH && _isSearching.value) 1000L else 0L },
+            settingsRepo.getSettings(),
+            stockRepo.getStocks(),
+            getConnectedUsers().asFlow(),
+            userRepo.getUser(),
+        ) { filter, settings, stocks, users, user -> listOf(filter, settings, stocks, users, user) }
+            .flatMapLatest { params ->
+                // load everything
+                val filter = params[0] as Filter
+                val settingsResp = params[1] as Resource<Settings>
+                val stocksResp = params[2] as Resource<List<Stock>>
+                val usersResp = params[3] as Resource<List<User>>
+                val userResp = params[4] as Resource<User>
                 when {
-                    settings is Resource.Error -> settings.castTo()
-                    stocks is Resource.Error -> stocks.castTo()
-                    items is Resource.Error -> items.castTo()
-                    users is Resource.Error -> users.castTo()
-                    user is Resource.Error -> user.castTo()
-                    else -> Resource.Success(
-                        StockModel(
-                            settings.data,
-                            stocks.data,
-                            items.data
-                                ?.filter { item -> item.sharedWith(user.data!!.uuid) }
-                                ?.groupBy { item -> item.category },
-                            users.data,
-                            user.data,
-                        ),
-                    )
+                    settingsResp is Resource.Error -> flowOf(settingsResp.castTo())
+                    stocksResp is Resource.Error -> flowOf(stocksResp.castTo())
+                    usersResp is Resource.Error -> flowOf(usersResp.castTo())
+                    userResp is Resource.Error -> flowOf(userResp.castTo())
+                    else -> {
+                        // assemble stock info
+                        val stocks = stocksResp.data!!
+                        val stockItems = stocks.associateBy({ it.uuid }, { it.items })
+                        val stocksItemsIds =
+                            stocks.asSequence()
+                                .map { it.items }.flatten()
+                                .filter { it.amount > 0.0 }
+                                .map { it.uuid }.toList()
+                        combine(
+                            // load items
+                            itemRepo.getItems(stocksItemsIds, filter),
+                            itemRepo.getUserItems(filterBy = filter),
+                        ) { stocksItems, userItemsResp ->
+                            when {
+                                stocksItems is Resource.Error -> stocksItems.castTo()
+                                userItemsResp is Resource.Error -> userItemsResp.castTo()
+                                else -> {
+                                    val userItems = userItemsResp.data!!
+                                    val items = stockItems.mapValues { (_, value) ->
+                                        (userItems + value // add all items to stockItems
+                                            .asSequence()
+                                            .distinctBy { it.uuid }
+                                            .filter { it.amount > 0.0 } // show unshared items only with amount
+                                            .map { stockItem -> stocksItems.data!!.find { it.uuid == stockItem.uuid }!! })
+                                            .sortedBy { it.name }
+                                    }
+                                    Resource.Success(
+                                        StockModel(
+                                            settingsResp.data,
+                                            stocksResp.data,
+                                            items,
+                                            usersResp.data,
+                                            userResp.data,
+                                        ),
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
             }
-        }
-        .onEach { _isSearching.update { false } }
-        .asLiveData(viewModelScope.coroutineContext)
+            .onEach { _isSearching.update { false } }
+            .asLiveData(viewModelScope.coroutineContext)
 
     fun addStock(stock: Stock) {
         viewModelScope.launch {
@@ -136,9 +172,17 @@ class StockViewModel @Inject constructor(
         }
     }
 
-    fun editCategory(previousCategory: String, newCategory: String, color: Color) {
+    fun editCategory(
+        previousCategory: String,
+        newCategory: String,
+        color: Color
+    ) {
         viewModelScope.launch {
-            when (val resp = itemUseCases.editCategoryUC(previousCategory, newCategory, color)) {
+            when (val resp = itemUseCases.editCategoryUC(
+                previousCategory,
+                newCategory,
+                color
+            )) {
                 is Resource.Error -> showSnackBar(resp.message!!)
                 else -> showSnackBar("Kategorie editiert".asResString()).also { updateWidgets() }
             }
@@ -147,7 +191,8 @@ class StockViewModel @Inject constructor(
 
     fun changeItemAmount(stock: Stock, item: StockItem, amount: String) {
         viewModelScope.launch {
-            val editStockItemResp = stockUseCases.addEditStockItemUC(stock, item, amount = amount)
+            val editStockItemResp =
+                stockUseCases.addEditStockItemUC(stock, item, amount = amount)
             if (editStockItemResp is Resource.Error) {
                 showSnackBar(editStockItemResp.message!!)
             }
@@ -156,7 +201,9 @@ class StockViewModel @Inject constructor(
 
     fun setSharedWith(stock: Stock, users: List<User>) {
         viewModelScope.launch {
-            when (val resp = stockUseCases.editStockUC(stock, sharedWith = users.map { it.uuid })) {
+            when (val resp = stockUseCases.editStockUC(
+                stock,
+                sharedWith = users.map { it.uuid })) {
                 is Resource.Error -> showSnackBar(resp.message!!)
                 else -> updateWidgets()
             }

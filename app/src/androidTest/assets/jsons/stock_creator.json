@@ -20,6 +20,14 @@
       "updatedAt": "2023-09-30T14:20:00",
       "freshUntil": 2,
       "remindAfter": 5
+    },
+    {
+      "uuid": "item666",
+      "amount": 0.0,
+      "colorHex": -3355444,
+      "updatedAt": "2023-09-30T14:20:00",
+      "freshUntil": 2,
+      "remindAfter": 5
     }
   ]
 }

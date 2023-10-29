@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -214,6 +213,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
     private fun checkListItem(stocks: List<Stock>, checklist: Checklist, users: List<User>) {
         val showUnfinishDialog = remember { mutableStateOf(false) }
         if (showUnfinishDialog.value) {
+            //TODO open checklist in "finished" mode
             ConfirmDialog(
                 "Checklist öffnen?",
                 "Checkliste ist schon erledigt, möchtest Sie sie wieder öffnen und die Items aus dem Bestand entfernen?",
