@@ -17,7 +17,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.TextFieldDefaults.textFieldColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
@@ -35,6 +34,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.formatted
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.AddSubRowTag
@@ -52,7 +52,10 @@ fun AddSubRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         val amountState =
-            remember { mutableStateOf(TextFieldValue(amount.formatted)) }
+            remember {
+                val value = amount.formatted
+                mutableStateOf(TextFieldValue(value, selection = TextRange(value.length)))
+            }
 
         IconButton(
             modifier = Modifier
@@ -104,7 +107,7 @@ fun EditText(
             .testTag(AddSubRowTag.AmountText)
             .padding(2.dp)
             .width(60.dp)
-            .background(BaseColors.Transparent),
+            .background(MaterialTheme.colors.background),
         textStyle = TextStyle.Default.copy(
             fontSize = 16.sp,
             textAlign = TextAlign.Center,
@@ -114,6 +117,7 @@ fun EditText(
         interactionSource = interactionSource,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         onValueChange = { field ->
+            Logger.printLog("value" to field.text)
             val sanitizedInput = field.text.replace(",", ".")
             val pattern = "^\\d{0,5}(\\.\\d{0,2})?$|^.\\d{1,2}$".toRegex()
             if (sanitizedInput.matches(pattern)) {
@@ -124,9 +128,6 @@ fun EditText(
     ) { innerTextField ->
         TextFieldDefaults.TextFieldDecorationBox(
             value = textState.value.text,
-            colors = textFieldColors(
-                backgroundColor = MaterialTheme.colors.background,
-            ),
             visualTransformation = VisualTransformation.None,
             innerTextField = innerTextField,
             singleLine = true,

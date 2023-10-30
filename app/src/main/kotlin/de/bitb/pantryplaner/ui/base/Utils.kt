@@ -1,15 +1,17 @@
 package de.bitb.pantryplaner.ui.base
 
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
-import de.bitb.pantryplaner.ui.base.styles.BaseColors
 
 fun highlightedText(
     text: String,
     highlighted: String,
+    textColor: Color,
+    backgroundColor: Color,
 ): AnnotatedString {
     val occurrences = findAllOccurrences(text, highlighted)
 
@@ -27,8 +29,9 @@ fun highlightedText(
                 }
                 withStyle(
                     style = SpanStyle(
+                        color = textColor,
+                        background = backgroundColor,
                         textDecoration = TextDecoration.Underline,
-                        background = BaseColors.DarkGreen,
                     )
                 ) {
                     append(text.substring(startIndex, endIndex))

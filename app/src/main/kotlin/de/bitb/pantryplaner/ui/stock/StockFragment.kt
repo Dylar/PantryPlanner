@@ -64,6 +64,7 @@ import de.bitb.pantryplaner.ui.base.comps.buildUserDropDown
 import de.bitb.pantryplaner.ui.base.comps.dissmissItem
 import de.bitb.pantryplaner.ui.base.comps.onBack
 import de.bitb.pantryplaner.ui.base.highlightedText
+import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.ItemTag
 import de.bitb.pantryplaner.ui.base.testTags.StockPageTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
@@ -391,7 +392,12 @@ class StockFragment : BaseFragment<StockViewModel>() {
     @Composable
     private fun StockItem(isShared: Boolean, stock: Stock, item: Item, stockItem: StockItem) {
         val filter = viewModel.filterBy.collectAsState(null)
-        val text = highlightedText(item.name, filter.value?.searchTerm ?: "")
+        val text = highlightedText(
+            item.name,
+            filter.value?.searchTerm ?: "",
+            BaseColors.AdultBlue,
+            BaseColors.SunYellow,
+        )
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -420,7 +426,6 @@ class StockFragment : BaseFragment<StockViewModel>() {
                         contentDescription = null,
                     )
             }
-
 
             AddSubRow(stockItem.amount) { viewModel.changeItemAmount(stock, stockItem, it) }
         }
