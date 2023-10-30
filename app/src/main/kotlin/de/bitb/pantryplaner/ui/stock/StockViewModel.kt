@@ -108,9 +108,9 @@ class StockViewModel @Inject constructor(
                                     val items = stockItems.mapValues { (_, value) ->
                                         (userItems + value // add all items to stockItems
                                             .asSequence()
-                                            .distinctBy { it.uuid }
                                             .filter { it.amount > 0.0 } // show unshared items only with amount
-                                            .map { stockItem -> stocksItems.data!!.find { it.uuid == stockItem.uuid }!! })
+                                            .mapNotNull { stockItem -> stocksItems.data?.find { it.uuid == stockItem.uuid } })
+                                            .distinctBy { it.uuid }
                                             .sortedBy { it.name }
                                     }
                                     Resource.Success(

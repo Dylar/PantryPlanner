@@ -33,7 +33,6 @@ Feature: StockPage Items management
     And   "ItemDialog" shared with none
 #   TODO Change MHD and Reminder
     And   Tap on CreateItemButton
-    And   Wait until SnackBar "Item hinzugefügt: NewItem" vanish
     Then  Item "NewItem" in category "NewCategory" is displayed
     And   LongPress on Item "NewItem" in category "NewCategory"
     And   Item name is "NewItem"
@@ -68,18 +67,24 @@ Feature: StockPage Items management
     And   Item "CreatorItem" in category "CreatorCategory" is NOT displayed
 
   Scenario: Remove a shared Item
-    When  Swipe to remove Item "SharedItem" in category "SharedCategory"
+    Given Swipe to remove Item "SharedItem" in category "SharedCategory"
     And   Tap on Confirm
+    And   Item "SharedItem" in category "SharedCategory" is displayed
+    When  Set Item "SharedItem" in category "SharedCategory" amount to "0"
     Then  Item "SharedItem" in category "SharedCategory" is NOT displayed
     And   On Back
     And   Tap on StockButton
     And   Item "SharedItem" in category "SharedCategory" is NOT displayed
 
   Scenario: Remove all Items
-    When  Swipe to remove Item "CreatorItem" in category "CreatorCategory"
+    When  Disable SnackBars
+    And   Set Item "CreatorItem" in category "CreatorCategory" amount to "0"
+    And   Swipe to remove Item "CreatorItem" in category "CreatorCategory"
     And   Tap on Confirm
+    And   Set Item "SharedItem" in category "SharedCategory" amount to "0"
     And   Swipe to remove Item "SharedItem" in category "SharedCategory"
     And   Tap on Confirm
+    And   Set Item "SelectItem" in category "SelectCategory" amount to "0"
     And   Swipe to remove Item "SelectItem" in category "SelectCategory"
     And   Tap on Confirm
     Then  Item "CreatorItem" in category "CreatorCategory" is NOT displayed

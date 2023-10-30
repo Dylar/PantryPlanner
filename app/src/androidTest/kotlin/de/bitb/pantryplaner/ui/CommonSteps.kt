@@ -12,6 +12,7 @@ import androidx.test.uiautomator.UiSelector
 import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.test.ScenarioData
+import de.bitb.pantryplaner.ui.base.SNACKBARS_ENABLED
 import io.cucumber.java.en.Then
 
 @HiltAndroidTest
@@ -34,6 +35,11 @@ class CommonSteps(
     fun snackBarShown(message: String) {
         waitUntilAtLeastOneExists(hasText(message), 15000)
         onNodeWithText(message).assertIsDisplayed()
+    }
+
+    @Then("Disable SnackBars")
+    fun disableSnackBars() {
+        SNACKBARS_ENABLED = false
     }
 
     @OptIn(ExperimentalTestApi::class)

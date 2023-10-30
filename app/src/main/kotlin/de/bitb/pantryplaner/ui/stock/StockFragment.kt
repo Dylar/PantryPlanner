@@ -376,7 +376,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
     private fun StockItem(stock: Stock, item: Item, stockItem: StockItem) {
         val filter = viewModel.filterBy.collectAsState(null)
         val text = highlightedText(item.name, filter.value?.searchTerm ?: "")
-
+        // TODO show unshared icon if not shared
         Column(
             modifier = Modifier
                 .fillMaxWidth()

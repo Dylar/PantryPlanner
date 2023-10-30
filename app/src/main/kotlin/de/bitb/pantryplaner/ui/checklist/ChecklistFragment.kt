@@ -258,7 +258,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Center,
             ) {
-                SelectItemHeader(
+                SelectItemHeader( // TODO show unshared icon if not shared
                     item,
                     checkItem.checked,
                     color,

@@ -26,6 +26,9 @@ import de.bitb.pantryplaner.ui.base.comps.ResString
 import de.bitb.pantryplaner.ui.base.styles.PantryAppTheme
 import kotlinx.coroutines.launch
 
+// TODO just for now
+var SNACKBARS_ENABLED = true
+
 abstract class BaseFragment<T : BaseViewModel> : Fragment() {
 
     val navController by lazy { NavHostFragment.findNavController(this) }
@@ -87,12 +90,14 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
     }
 
     fun showSnackBar(msg: ResString) {
-        lifecycleScope.launch {
-            if (::scaffoldState.isInitialized)
-                scaffoldState.snackbarHostState.showSnackbar(
-                    message = msg.asString(resources::getString),
+        if (SNACKBARS_ENABLED) {
+            lifecycleScope.launch {
+                if (::scaffoldState.isInitialized)
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        message = msg.asString(resources::getString),
 //                    actionLabel = "Do something"
-                )
+                    )
+            }
         }
     }
 
