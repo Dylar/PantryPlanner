@@ -131,6 +131,11 @@ class StockViewModel @Inject constructor(
             .onEach { _isSearching.update { false } }
             .asLiveData(viewModelScope.coroutineContext)
 
+    fun search(text: String) {
+        _isSearching.value = true
+        filterBy.value = filterBy.value.copy(searchTerm = text)
+    }
+
     fun addStock(stock: Stock) {
         viewModelScope.launch {
             when (val resp = stockUseCases.addStockUC(stock)) {
@@ -210,9 +215,13 @@ class StockViewModel @Inject constructor(
         }
     }
 
-    fun search(text: String) {
-        _isSearching.value = true
-        filterBy.value = filterBy.value.copy(searchTerm = text)
+    fun shareItem(item: Item) {
+        viewModelScope.launch {
+            when (val resp = itemUseCases.shareItemUC(item)) {
+                is Resource.Error -> showSnackBar(resp.message!!)
+                else -> updateWidgets()
+            }
+        }
     }
 
 }

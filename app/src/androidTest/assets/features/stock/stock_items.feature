@@ -18,7 +18,10 @@ Feature: StockPage Items management
     And   Item "SharedItem" in category "SharedCategory" has amount 0.0
     And   Item "UnsharedItem" in category "UnsharedCategory" is displayed
     And   Item "UnsharedItem" in category "UnsharedCategory" has amount 6.66
-    # TODO user action: share the unshared item -> so it is visible on CreatorStock too
+    When  LongPress on Item "UnsharedItem" in category "UnsharedCategory"
+    And   Tap on Confirm
+    And   Tap on tab "CreatorStock"
+    And   Item "UnsharedItem" in category "UnsharedCategory" is displayed
 
   Scenario Outline: Create a new Item on <StockTab>
     When  Tap on tab "<StockTab>"

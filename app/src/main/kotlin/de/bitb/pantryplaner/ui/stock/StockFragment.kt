@@ -4,10 +4,12 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.ExtendedFloatingActionButton
@@ -22,6 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.GridOff
 import androidx.compose.material.icons.filled.GridOn
+import androidx.compose.material.icons.filled.LinkOff
 import androidx.compose.material.icons.filled.SavedSearch
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.FilterList
@@ -355,28 +358,40 @@ class StockFragment : BaseFragment<StockViewModel>() {
     ) {
         val stockItem = stock.items.firstOrNull { it.uuid == item.uuid }
             ?: item.toStockItem()
-        val showEditDialog = remember { mutableStateOf(false) }
-        useEditItemDialog(
-            showEditDialog,
-            item,
-            categorys,
-            users,
-            user,
-        ) { i, _ -> viewModel.editItem(i) }
+        val showActionDialog = remember { mutableStateOf(false) }
+        val isShared = item.sharedWith(user.uuid)
+        if (isShared) {
+            useEditItemDialog(
+                showActionDialog,
+                item,
+                categorys,
+                users,
+                user,
+            ) { i, _ -> viewModel.editItem(i) }
+        } else {
+            ConfirmDialog(
+                "Item hinzufügen",
+                "Möchten Sie das Item ihrer Liste hinzufügen?",
+                onConfirm = {
+                    showActionDialog.value = false
+                    viewModel.shareItem(item)
+                },
+                onDismiss = { showActionDialog.value = false },
+            )
+        }
 
         dissmissItem(
             item.name,
             color,
             onSwipe = { viewModel.deleteItem(item) },
-            onLongClick = { showEditDialog.value = true },
-        ) { StockItem(stock, item, stockItem) }
+            onLongClick = { showActionDialog.value = true },
+        ) { StockItem(isShared, stock, item, stockItem) }
     }
 
     @Composable
-    private fun StockItem(stock: Stock, item: Item, stockItem: StockItem) {
+    private fun StockItem(isShared: Boolean, stock: Stock, item: Item, stockItem: StockItem) {
         val filter = viewModel.filterBy.collectAsState(null)
         val text = highlightedText(item.name, filter.value?.searchTerm ?: "")
-        // TODO show unshared icon if not shared
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -384,14 +399,28 @@ class StockFragment : BaseFragment<StockViewModel>() {
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Center,
         ) {
-            Text(
-                text,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 4.dp),
-                fontSize = 16.sp,
-                textAlign = TextAlign.Start
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(horizontal = 12.dp, vertical = 4.dp),
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Start
+                )
+                if (!isShared)
+                    Icon(
+                        Icons.Filled.LinkOff,
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .size(18.dp),
+                        contentDescription = null,
+                    )
+            }
+
 
             AddSubRow(stockItem.amount) { viewModel.changeItemAmount(stock, stockItem, it) }
         }
