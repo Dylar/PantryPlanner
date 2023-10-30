@@ -370,15 +370,17 @@ class StockFragment : BaseFragment<StockViewModel>() {
                 user,
             ) { i, _ -> viewModel.editItem(i) }
         } else {
-            ConfirmDialog(
-                "Item hinzufügen",
-                "Möchten Sie das Item ihrer Liste hinzufügen?",
-                onConfirm = {
-                    showActionDialog.value = false
-                    viewModel.shareItem(item)
-                },
-                onDismiss = { showActionDialog.value = false },
-            )
+            if (showActionDialog.value) {
+                ConfirmDialog(
+                    "Item hinzufügen",
+                    "Möchten Sie das Item ihrer Liste hinzufügen?",
+                    onConfirm = {
+                        showActionDialog.value = false
+                        viewModel.shareItem(item)
+                    },
+                    onDismiss = { showActionDialog.value = false },
+                )
+            }
         }
 
         dissmissItem(

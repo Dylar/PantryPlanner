@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.rounded.HomeWork
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -192,8 +193,10 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
 
     @Composable
     private fun QrCodeImage(uuid: String) {
+        //TODO why on mode toggle no recompose?
         val black = MaterialTheme.colors.background
         val white = MaterialTheme.colors.onBackground
+
         return AndroidView(
             modifier = Modifier.testTag(ProfilePageTag.QRLabel),
             factory = { context ->

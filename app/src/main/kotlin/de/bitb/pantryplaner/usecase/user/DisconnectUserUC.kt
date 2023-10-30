@@ -10,6 +10,7 @@ class DisconnectUserUC(
     private val userRepo: UserRepository,
 ) {
     suspend operator fun invoke(removeUser: User): Resource<Unit> {
+        // TODO disconnect both ?
         return tryIt {
             val userResp = userRepo.getUser().first()
             if (userResp is Resource.Error) {
