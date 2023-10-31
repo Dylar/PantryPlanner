@@ -12,7 +12,7 @@ class SettingsRepository(
     private val localDB: LocalDatabase,
 ) {
 
-    fun getAppVersion(): Resource<String> {
+    suspend fun getAppVersion(): Resource<String> {
         return remoteService.getAppVersion()
     }
 

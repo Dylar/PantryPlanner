@@ -1,6 +1,7 @@
 package de.bitb.pantryplaner.core.misc
 
 import androidx.annotation.StringRes
+import de.bitb.pantryplaner.BuildConfig
 import de.bitb.pantryplaner.core.misc.Logger.logCrashlytics
 import de.bitb.pantryplaner.ui.base.comps.ResString
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,15 +38,14 @@ fun <T> Throwable.asResourceError(data: T? = null): Resource.Error<T> = Resource
 
 suspend fun <T> tryIt(
     errorValue: T? = null,
-    onError: suspend (Exception) -> Resource<T>? = { _ -> null },
+    onError: suspend (Exception) -> Resource<T> = { e -> e.asResourceError(errorValue) },
     onTry: suspend () -> Resource<T>,
 ): Resource<T> = try {
     onTry()
 } catch (e: Exception) {
-    e.printStackTrace()
+    if (BuildConfig.DEBUG) e.printStackTrace()
     logCrashlytics(e)
-    onError(e) ?: e.asResourceError(errorValue)
-//    throw e
+    onError(e)
 }
 
 suspend fun <T, E> castOnError(

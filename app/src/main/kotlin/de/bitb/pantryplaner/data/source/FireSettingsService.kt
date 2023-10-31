@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 
 class FireSettingsService(
-    fireConfig: FirebaseRemoteConfig,
+    private val fireConfig: FirebaseRemoteConfig,
     private val firestore: FirebaseFirestore,
 ) : SettingsRemoteDao {
 
@@ -23,8 +23,14 @@ class FireSettingsService(
             .document(BuildConfig.FLAVOR)
             .collection("settings")
 
-    override fun getAppVersion(): Resource<String> {
-        return Resource.Success(BuildConfig.VERSION_NAME) //TODO make real
+    override suspend fun getAppVersion(): Resource<String> {
+        return tryIt {
+            fireConfig.fetchAndActivate().await()
+            val version = fireConfig.getString("app_version")
+            Resource.Success( // $PROJECT_LOCATION/$MODULE/
+                version.ifEmpty { BuildConfig.VERSION_NAME }
+            )
+        }
     }
 
     override fun getSettings(userId: String): Flow<Resource<Settings>> {

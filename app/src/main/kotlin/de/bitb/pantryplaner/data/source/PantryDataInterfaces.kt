@@ -36,7 +36,7 @@ class PantryRemoteService(
     SettingsRemoteDao by settingsService
 
 interface SettingsRemoteDao {
-    fun getAppVersion(): Resource<String>
+    suspend fun getAppVersion(): Resource<String>
     fun getSettings(userId: String): Flow<Resource<Settings>>
     suspend fun saveSettings(settings: Settings): Resource<Unit>
 }

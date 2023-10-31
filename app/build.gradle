@@ -66,19 +66,16 @@ android {
     productFlavors {
         dev {
             dimension "env"
-            versionNameSuffix "-dev"
             applicationIdSuffix ".dev"
             resValue "string", "app_name", "PantryPlaner DEV"
         }
         stage {
             dimension "env"
-            versionNameSuffix "-stage"
             applicationIdSuffix ".stage"
             resValue "string", "app_name", "PantryPlaner STAGE"
         }
         prod {
             dimension "env"
-            versionNameSuffix "-prod"
             resValue "string", "app_name", "PantryPlaner"
         }
     }
