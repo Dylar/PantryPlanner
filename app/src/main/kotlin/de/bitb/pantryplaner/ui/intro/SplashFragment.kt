@@ -23,19 +23,36 @@ import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.NotifyManager.ACTION_REFRESH_PAGE
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
+import de.bitb.pantryplaner.ui.dialogs.NewAppVersionDialog
 
 @AndroidEntryPoint
 class SplashFragment : BaseFragment<SplashViewModel>() {
     override val viewModel: SplashViewModel by viewModels()
 
+    private val naviToRefresh
+        get() = activity?.intent?.action == ACTION_REFRESH_PAGE
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val naviToRefresh = activity?.intent?.action == ACTION_REFRESH_PAGE
         viewModel.loadData(naviToRefresh)
     }
 
     @Composable
     override fun screenContent() {
+        if (viewModel.showNewAppDialog.value) {
+            NewAppVersionDialog(
+                onConfirm = {
+//                   TODO  viewModel.navi to bitrise new app
+                    viewModel.loadData(naviToRefresh, ignoreNewVersion = true)
+                    viewModel.showNewAppDialog.value = false
+                },
+                onDismiss = {
+                    viewModel.loadData(naviToRefresh, ignoreNewVersion = true)
+                    viewModel.showNewAppDialog.value = false
+                }
+            )
+        }
+
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,

@@ -5,6 +5,12 @@ sealed class ConfirmDialogTag : TestTag {
     object DismissButton : ConfirmDialogTag()
 }
 
+sealed class NewAppVersionDialogTag : TestTag {
+    object DialogTag : NewAppVersionDialogTag()
+    object ConfirmButton : NewAppVersionDialogTag()
+    object CancelButton : NewAppVersionDialogTag()
+}
+
 sealed class AddUserDialogTag : TestTag {
     object DialogTag : AddUserDialogTag()
     object EmailLabel : AddUserDialogTag()

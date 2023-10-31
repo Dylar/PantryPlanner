@@ -11,9 +11,11 @@ import kotlinx.coroutines.flow.flowOf
 fun parseSettings(): Settings = parsePOKO("settings")
 
 fun SettingsRemoteDao.mockSettingsDao(
-    settings: Settings = Settings()
+    settings: Settings = Settings(),
+    version: String = "0.0-dev"
 ) {
     val flow = MutableStateFlow(Resource.Success(settings))
+    coEvery { getAppVersion() }.answers { Resource.Success(version) }
     coEvery { getSettings(any()) }.answers { flow }
     coEvery { saveSettings(any()) }.answers {
         val saveSetting = firstArg<Settings>()

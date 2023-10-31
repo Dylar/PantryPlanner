@@ -2,6 +2,7 @@ package de.bitb.pantryplaner.data.source
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.snapshots
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import de.bitb.pantryplaner.BuildConfig
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.tryIt
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 
 class FireSettingsService(
+    fireConfig: FirebaseRemoteConfig,
     private val firestore: FirebaseFirestore,
 ) : SettingsRemoteDao {
 
@@ -20,6 +22,10 @@ class FireSettingsService(
             .collection("stage")
             .document(BuildConfig.FLAVOR)
             .collection("settings")
+
+    override fun getAppVersion(): Resource<String> {
+        return Resource.Success(BuildConfig.VERSION_NAME) //TODO make real
+    }
 
     override fun getSettings(userId: String): Flow<Resource<Settings>> {
         return collection

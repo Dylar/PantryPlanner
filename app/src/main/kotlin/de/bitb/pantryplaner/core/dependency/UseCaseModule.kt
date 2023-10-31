@@ -24,10 +24,11 @@ object UsecaseModule {
     @Provides
     @Singleton
     fun provideUserUseCases(
+        settingsRepo: SettingsRepository,
         userRepo: UserRepository,
     ): UserUseCases {
         return UserUseCases(
-            loadDataUC = LoadDataUC(userRepo),
+            loadDataUC = LoadDataUC(settingsRepo, userRepo),
             loginUC = LoginUC(userRepo),
             logoutUC = LogoutUC(userRepo),
             registerUC = RegisterUC(userRepo),

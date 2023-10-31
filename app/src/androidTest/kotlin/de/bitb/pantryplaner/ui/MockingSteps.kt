@@ -44,6 +44,11 @@ class MockingSteps(
         remoteService.mockChecklistDao()
     }
 
+    @Given("Mock App Version {string}")
+    fun mockAppVersion(version: String) {
+        remoteService.mockSettingsDao(version = version)
+    }
+
     @Given("Init default Mocks")
     fun initDefaultMocks() {
         initMocks()

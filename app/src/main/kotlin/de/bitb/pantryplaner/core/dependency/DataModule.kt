@@ -5,6 +5,7 @@ import android.content.Context
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,13 +35,14 @@ object DataModule {
     @Singleton
     fun provideRemoteDatabase(app: Application): RemoteService {
         FirebaseApp.initializeApp(app)
-        val fireData = FirebaseFirestore.getInstance()
         val fireAuth = FirebaseAuth.getInstance()
-        val settingsService = FireSettingsService(fireData)
-        val userService = FireUserService(fireData, fireAuth)
-        val itemService = FireItemService(fireData)
-        val checkService = FireCheckService(fireData)
-        val stockItemService = FireStockService(fireData)
+        val fireConfig = FirebaseRemoteConfig.getInstance()
+        val fireStore = FirebaseFirestore.getInstance()
+        val settingsService = FireSettingsService(fireConfig, fireStore)
+        val userService = FireUserService(fireStore, fireAuth)
+        val itemService = FireItemService(fireStore)
+        val checkService = FireCheckService(fireStore)
+        val stockItemService = FireStockService(fireStore)
 
         return PantryRemoteService(
             settingsService,

@@ -1,5 +1,6 @@
 package de.bitb.pantryplaner.ui.intro
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.bitb.pantryplaner.R
@@ -9,7 +10,7 @@ import de.bitb.pantryplaner.ui.base.BaseViewModel
 import de.bitb.pantryplaner.ui.base.NavigateEvent
 import de.bitb.pantryplaner.ui.base.comps.asResString
 import de.bitb.pantryplaner.usecase.UserUseCases
-import de.bitb.pantryplaner.usecase.item.DataLoadResponse
+import de.bitb.pantryplaner.usecase.user.DataLoadResponse
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,9 +22,11 @@ class SplashViewModel @Inject constructor(
     private val itemUseCases: UserUseCases,
 ) : BaseViewModel() {
 
-    fun loadData(naviToRefresh: Boolean) {
+    val showNewAppDialog = mutableStateOf(false)
+
+    fun loadData(naviToRefresh: Boolean, ignoreNewVersion: Boolean = false) {
         viewModelScope.launch {
-            val userResp = atLeast(SPLASH_TIMER) { itemUseCases.loadDataUC() }
+            val userResp = atLeast(SPLASH_TIMER) { itemUseCases.loadDataUC(ignoreNewVersion) }
             when {
                 userResp is Resource.Error -> showSnackBar(userResp.message!!)
                 userResp.data is DataLoadResponse.DataLoaded -> {
@@ -35,6 +38,10 @@ class SplashViewModel @Inject constructor(
 
                 userResp.data is DataLoadResponse.NotLoggedIn -> {
                     navigate(NavigateEvent.Navigate(R.id.splash_to_login))
+                }
+
+                userResp.data is DataLoadResponse.NewAppVersion -> {
+                    showNewAppDialog.value = true
                 }
 
                 else -> showSnackBar("Daten konnten nicht geladen werden".asResString())
