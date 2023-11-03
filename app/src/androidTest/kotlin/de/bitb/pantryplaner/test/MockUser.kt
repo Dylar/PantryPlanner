@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import java.util.Locale
 
 const val defaultPW = "1Password!"
 fun parseUser(): User = parsePOKO("user_peter_lustig")
@@ -68,9 +67,9 @@ fun UserRemoteDao.mockUserDao(
         }
     }
     coEvery { getUserByEmail(any()) }.answers {
-        val email = firstArg<String>().lowercase(Locale.ROOT)
+        val email = firstArg<String>().lowercase()
         val allFlowValue = allFlowValue()
-        val user = allFlowValue.firstOrNull { it.email.lowercase(Locale.ROOT) == email }
+        val user = allFlowValue.firstOrNull { it.email.lowercase() == email }
         Resource.Success(user)
     }
     coEvery { saveUser(any()) }.answers {

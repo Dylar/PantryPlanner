@@ -2,9 +2,7 @@ package de.bitb.pantryplaner.core
 
 import android.app.Application
 import android.os.Bundle
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.fragment.NavHostFragment
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
@@ -31,24 +29,27 @@ class MainActivity : AppCompatActivity() {
     lateinit var settingsRepo: SettingsRepository
     fun settingsFlow(): Flow<Resource<Settings>> = settingsRepo.getSettings()
 
-    private val navHostFragment by lazy {
-        supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-    }
+//    val navHostFragment by lazy {
+//        supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setupNavigation()
+//        setupNavigation()
     }
 
-    override fun onSupportNavigateUp(): Boolean =
-        navHostFragment.navController.navigateUp() || super.onSupportNavigateUp()
+//    override fun onSupportNavigateUp(): Boolean {
+//        Logger.printLog("" to "onSupportNavigateUp")
+//        return navHostFragment.navController.navigateUp() || super.onSupportNavigateUp()
+//    }
 
-    private fun setupNavigation() {
-        onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                navHostFragment.navController.navigateUp()
-            }
-        })
-    }
+//    private fun setupNavigation() {
+//        onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
+//            override fun handleOnBackPressed() {
+//                Logger.printLog("" to "handleOnBackPressed")
+//                navHostFragment.navController.navigateUp()
+//            }
+//        })
+//    }
 }

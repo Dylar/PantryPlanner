@@ -12,7 +12,7 @@ fun parseSettings(): Settings = parsePOKO("settings")
 
 fun SettingsRemoteDao.mockSettingsDao(
     settings: Settings = Settings(),
-    version: String = "0.0-dev"
+    version: String = "0.0"
 ) {
     val flow = MutableStateFlow(Resource.Success(settings))
     coEvery { getAppVersion() }.answers { Resource.Success(version) }

@@ -10,7 +10,6 @@ import de.bitb.pantryplaner.data.source.RemoteService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import java.util.Locale
 
 interface ItemRepository {
     fun getItem(id: String): Flow<Resource<Item>>
@@ -56,8 +55,8 @@ class ItemRepositoryImpl(
                         ?.filter {
                             filterBy == null ||
                                     (!filterBy.filterByTerm && !filterBy.filterByColor) ||
-                                    (filterBy.filterByTerm && it.name.lowercase(Locale.ROOT)
-                                        .contains(filterBy.searchTerm.lowercase(Locale.ROOT)))
+                                    (filterBy.filterByTerm && it.name.lowercase()
+                                        .contains(filterBy.searchTerm.lowercase()))
 //                                    (filterBy.filterByColor && it.color == filterBy.color) // TODO ?
                         }
 //                        ?.groupBy { it.category }
@@ -83,8 +82,8 @@ class ItemRepositoryImpl(
                         ?.filter {
                             filterBy == null ||
                                     (!filterBy.filterByTerm && !filterBy.filterByColor) ||
-                                    (filterBy.filterByTerm && it.name.lowercase(Locale.ROOT)
-                                        .contains(filterBy.searchTerm.lowercase(Locale.ROOT)))
+                                    (filterBy.filterByTerm && it.name.lowercase()
+                                        .contains(filterBy.searchTerm.lowercase()))
 //                                    (filterBy.filterByColor && it.color == filterBy.color) // TODO ?
                         }
 //                        ?.groupBy { it.category }

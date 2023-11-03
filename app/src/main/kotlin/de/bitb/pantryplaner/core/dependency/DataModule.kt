@@ -6,6 +6,7 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,6 +45,11 @@ object DataModule {
         val checkService = FireCheckService(fireStore)
         val stockItemService = FireStockService(fireStore)
 
+        fireConfig.setConfigSettingsAsync(
+            FirebaseRemoteConfigSettings.Builder()
+                .setMinimumFetchIntervalInSeconds(300) // 5 minutes
+                .build()
+        )
         return PantryRemoteService(
             settingsService,
             userService,

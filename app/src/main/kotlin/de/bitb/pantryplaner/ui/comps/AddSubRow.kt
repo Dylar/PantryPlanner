@@ -34,7 +34,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.formatted
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.AddSubRowTag
@@ -117,7 +116,6 @@ fun EditText(
         interactionSource = interactionSource,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         onValueChange = { field ->
-            Logger.printLog("value" to field.text)
             val sanitizedInput = field.text.replace(",", ".")
             val pattern = "^\\d{0,5}(\\.\\d{0,2})?$|^.\\d{1,2}$".toRegex()
             if (sanitizedInput.matches(pattern)) {

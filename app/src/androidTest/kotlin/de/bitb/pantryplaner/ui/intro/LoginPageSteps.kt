@@ -19,7 +19,9 @@ class LoginPageSteps(
 ) : ComposeTestRule by scenarioData.composeRule {
 
     @Then("LoginPage rendered")
-    fun renderLoginPage() = assertLoginPageRendered()
+    fun renderLoginPage() {
+        assertLoginPageRendered()
+    }
 
     @When("Login with email {string} and password {string}")
     fun loginUser(email: String, password: String) {
