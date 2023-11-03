@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
-import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.data.model.Settings
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
@@ -80,7 +80,7 @@ class SettingsFragment : BaseFragment<SettingsViewModel>() {
     private fun buildContent(innerPadding: PaddingValues) {
         val settings by viewModel.settings.observeAsState(null)
         when (settings) {
-            is Resource.Error -> ErrorScreen(settings!!.message!!.asString())
+            is Result.Error -> ErrorScreen(settings!!.message!!.asString())
             null -> LoadingIndicator()
             else -> SettingsPage(innerPadding, settings!!.data!!)
         }

@@ -1,7 +1,7 @@
 package de.bitb.pantryplaner.test
 
 import de.bitb.pantryplaner.core.createFlows
-import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.core.parsePOKO
 import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.source.StockRemoteDao
@@ -21,7 +21,7 @@ fun StockRemoteDao.mockStockDao(
 
     coEvery { getStocks(any()) }.answers {
         val uuid = firstArg<String>()
-        val flow = stocksFlows[uuid] ?: MutableStateFlow(Resource.Success(emptyList()))
+        val flow = stocksFlows[uuid] ?: MutableStateFlow(Result.Success(emptyList()))
         stocksFlows[uuid] = flow
         flow
     }
@@ -30,10 +30,10 @@ fun StockRemoteDao.mockStockDao(
         val userId = addStock.creator
 
         val flow = stocksFlows[userId]
-            ?: MutableStateFlow(Resource.Success(emptyList()))
-        flow.value = Resource.Success(listOf(addStock, *flow.value.data!!.toTypedArray()))
+            ?: MutableStateFlow(Result.Success(emptyList()))
+        flow.value = Result.Success(listOf(addStock, *flow.value.data!!.toTypedArray()))
         stocksFlows[userId] = flow
-        Resource.Success(true)
+        Result.Success(true)
     }
 
     coEvery { deleteStock(any()) }.answers {
@@ -41,11 +41,11 @@ fun StockRemoteDao.mockStockDao(
         val userId = deleteStock.creator
 
         val flow = stocksFlows[userId]
-            ?: MutableStateFlow(Resource.Success(emptyList()))
-        flow.value = Resource.Success(flow.value.data!!.subtract(setOf(deleteStock)).toList())
+            ?: MutableStateFlow(Result.Success(emptyList()))
+        flow.value = Result.Success(flow.value.data!!.subtract(setOf(deleteStock)).toList())
         stocksFlows[userId] = flow
 
-        Resource.Success(true)
+        Result.Success(true)
     }
 
     coEvery { saveStocks(any()) }.answers {
@@ -54,19 +54,19 @@ fun StockRemoteDao.mockStockDao(
             val newList = flow.value.data!!.toMutableList()
                 .apply { replaceAll { stock -> saveStocks[stock.uuid] ?: stock } }
                 .filter { it.creator == userId || it.sharedWith.contains(userId) }
-            flow.value = Resource.Success(newList)
+            flow.value = Result.Success(newList)
         }
 
-        Resource.Success()
+        Result.Success()
     }
 }
 
 // TODO test errors
 fun StockRemoteDao.mockErrorStockDao(
-    getStocksError: Resource.Error<List<Stock>>? = null,
-    addStockError: Resource.Error<Boolean>? = null,
-    deleteStockError: Resource.Error<Boolean>? = null,
-    saveStockError: Resource.Error<Unit>? = null,
+    getStocksError: Result.Error<List<Stock>>? = null,
+    addStockError: Result.Error<Boolean>? = null,
+    deleteStockError: Result.Error<Boolean>? = null,
+    saveStockError: Result.Error<Unit>? = null,
 ) {
     if (getStocksError != null)
         coEvery { getStocks(any()) }.answers { flowOf(getStocksError) }

@@ -44,7 +44,7 @@ import androidx.fragment.app.viewModels
 import com.google.zxing.WriterException
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
-import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseFragment
@@ -88,7 +88,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
     private fun buildContent(paddingValues: PaddingValues) {
         val model by viewModel.profileModel.observeAsState(null)
         when {
-            model is Resource.Error -> ErrorScreen(model!!.message!!.asString())
+            model is Result.Error -> ErrorScreen(model!!.message!!.asString())
             model?.data?.isLoading != false -> LoadingIndicator()
             else -> UserDetails(paddingValues, model!!.data!!)
         }

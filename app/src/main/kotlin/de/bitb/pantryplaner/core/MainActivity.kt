@@ -7,7 +7,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 import de.bitb.pantryplaner.R
-import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.data.SettingsRepository
 import de.bitb.pantryplaner.data.model.Settings
 import kotlinx.coroutines.flow.Flow
@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var settingsRepo: SettingsRepository
-    fun settingsFlow(): Flow<Resource<Settings>> = settingsRepo.getSettings()
+    fun settingsFlow(): Flow<Result<Settings>> = settingsRepo.getSettings()
 
 //    val navHostFragment by lazy {
 //        supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment

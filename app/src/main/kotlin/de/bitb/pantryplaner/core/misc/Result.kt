@@ -6,17 +6,20 @@ import de.bitb.pantryplaner.core.misc.Logger.logCrashlytics
 import de.bitb.pantryplaner.ui.base.comps.ResString
 import kotlinx.coroutines.flow.MutableStateFlow
 
-sealed class Resource<T>(val data: T? = null, val message: ResString? = null) {
+fun <T> Int.asError(): Result.Error<T> = Result.Error(this)
+fun <T> String.asError(): Result.Error<T> = Result.Error(this)
+fun <T> Boolean.asError(): Result.Error<T> = Result.Error(this.toString())
+fun <T> Throwable.asError(data: T? = null): Result.Error<T> = Result.Error(this, data)
 
-    class Success<T>(data: T?) : Resource<T>(data) {
+sealed class Result<T>(val data: T? = null, val message: ResString? = null) {
+
+    class Success<T>(data: T?) : Result<T>(data) {
         constructor() : this(null)
     }
 
-    class Error<T>(message: ResString, data: T? = null) : Resource<T>(data, message) {
+    class Error<T>(message: ResString, data: T? = null) : Result<T>(data, message) {
         constructor(e: Throwable, data: T? = null) : this(e.message ?: e.toString(), data)
-        constructor(message: String, data: T? = null)
-                : this(ResString.DynamicString(message), data)
-
+        constructor(message: String, data: T? = null) : this(ResString.DynamicString(message), data)
         constructor(@StringRes stringId: Int, data: T? = null)
                 : this(ResString.ResourceString(stringId), data)
 
@@ -31,16 +34,11 @@ sealed class Resource<T>(val data: T? = null, val message: ResString? = null) {
         get() = data != null
 }
 
-fun <T> Int.asResourceError(): Resource.Error<T> = Resource.Error(this)
-fun <T> String.asResourceError(): Resource.Error<T> = Resource.Error(this)
-fun <T> Boolean.asResourceError(): Resource.Error<T> = Resource.Error(this.toString())
-fun <T> Throwable.asResourceError(data: T? = null): Resource.Error<T> = Resource.Error(this, data)
-
 suspend fun <T> tryIt(
     errorValue: T? = null,
-    onError: suspend (Exception) -> Resource<T> = { e -> e.asResourceError(errorValue) },
-    onTry: suspend () -> Resource<T>,
-): Resource<T> = try {
+    onError: suspend (Exception) -> Result<T> = { e -> e.asError(errorValue) },
+    onTry: suspend () -> Result<T>,
+): Result<T> = try {
     onTry()
 } catch (e: Exception) {
     if (BuildConfig.DEBUG) e.printStackTrace()
@@ -49,8 +47,8 @@ suspend fun <T> tryIt(
 }
 
 suspend fun <T, E> castOnError(
-    resp: Resource<E>,
-    func: suspend () -> Resource<T>,
-): Resource<T> =
-    if (resp is Resource.Error) resp.castTo()
+    resp: Result<E>,
+    func: suspend () -> Result<T>,
+): Result<T> =
+    if (resp is Result.Error) resp.castTo()
     else tryIt { func() }

@@ -6,7 +6,7 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.data.ItemRepository
 import de.bitb.pantryplaner.data.SettingsRepository
 import de.bitb.pantryplaner.data.StockRepository
@@ -66,7 +66,7 @@ class StockViewModel @Inject constructor(
 
     @Suppress("UNCHECKED_CAST")
     @OptIn(ExperimentalCoroutinesApi::class)
-    val stockModel: LiveData<Resource<StockModel>> =
+    val stockModel: LiveData<Result<StockModel>> =
         combine(
             filterBy.debounce { if (!INSTANT_SEARCH && _isSearching.value) 1000L else 0L },
             settingsRepo.getSettings(),
@@ -77,15 +77,15 @@ class StockViewModel @Inject constructor(
             .flatMapLatest { params ->
                 // load everything
                 val filter = params[0] as Filter
-                val settingsResp = params[1] as Resource<Settings>
-                val stocksResp = params[2] as Resource<List<Stock>>
-                val usersResp = params[3] as Resource<List<User>>
-                val userResp = params[4] as Resource<User>
+                val settingsResp = params[1] as Result<Settings>
+                val stocksResp = params[2] as Result<List<Stock>>
+                val usersResp = params[3] as Result<List<User>>
+                val userResp = params[4] as Result<User>
                 when {
-                    settingsResp is Resource.Error -> flowOf(settingsResp.castTo())
-                    stocksResp is Resource.Error -> flowOf(stocksResp.castTo())
-                    usersResp is Resource.Error -> flowOf(usersResp.castTo())
-                    userResp is Resource.Error -> flowOf(userResp.castTo())
+                    settingsResp is Result.Error -> flowOf(settingsResp.castTo())
+                    stocksResp is Result.Error -> flowOf(stocksResp.castTo())
+                    usersResp is Result.Error -> flowOf(usersResp.castTo())
+                    userResp is Result.Error -> flowOf(userResp.castTo())
                     else -> {
                         // assemble stock info
                         val stocks = stocksResp.data!!
@@ -101,8 +101,8 @@ class StockViewModel @Inject constructor(
                             itemRepo.getUserItems(filterBy = filter),
                         ) { stocksItems, userItemsResp ->
                             when {
-                                stocksItems is Resource.Error -> stocksItems.castTo()
-                                userItemsResp is Resource.Error -> userItemsResp.castTo()
+                                stocksItems is Result.Error -> stocksItems.castTo()
+                                userItemsResp is Result.Error -> userItemsResp.castTo()
                                 else -> {
                                     val userItems = userItemsResp.data!!
                                     val items = stockItems.mapValues { (_, value) ->
@@ -113,7 +113,7 @@ class StockViewModel @Inject constructor(
                                             .distinctBy { it.uuid }
                                             .sortedBy { it.name }
                                     }
-                                    Resource.Success(
+                                    Result.Success(
                                         StockModel(
                                             settingsResp.data,
                                             stocksResp.data,
@@ -139,7 +139,7 @@ class StockViewModel @Inject constructor(
     fun addStock(stock: Stock) {
         viewModelScope.launch {
             when (val resp = stockUseCases.addStockUC(stock)) {
-                is Resource.Error -> showSnackBar(resp.message!!)
+                is Result.Error -> showSnackBar(resp.message!!)
                 else -> showSnackBar("Lager hinzugefügt: ${stock.name}".asResString())
             }
         }
@@ -150,7 +150,7 @@ class StockViewModel @Inject constructor(
         viewModelScope.launch {
             val createItemResp = itemUseCases.createItemUC(item)
             when {
-                createItemResp is Resource.Error -> showSnackBar(createItemResp.message!!)
+                createItemResp is Result.Error -> showSnackBar(createItemResp.message!!)
                 createItemResp.data == true -> showSnackBar("Item hinzugefügt: $name".asResString()).also { updateWidgets() }
                 else -> showSnackBar("Item gibt es schon: $name".asResString())
             }
@@ -161,7 +161,7 @@ class StockViewModel @Inject constructor(
         viewModelScope.launch {
             val deleteItemResp = itemUseCases.deleteItemUC(item)
             when {
-                deleteItemResp is Resource.Error -> showSnackBar(deleteItemResp.message!!)
+                deleteItemResp is Result.Error -> showSnackBar(deleteItemResp.message!!)
                 deleteItemResp.data == true -> showSnackBar("Item entfernt: ${item.name}".asResString()).also { updateWidgets() }
                 else -> showSnackBar("Item nicht entfernt: ${item.name}".asResString())
             }
@@ -171,7 +171,7 @@ class StockViewModel @Inject constructor(
     fun editItem(item: Item) {
         viewModelScope.launch {
             when (val editItemResp = itemUseCases.editItemUC(item)) {
-                is Resource.Error -> showSnackBar(editItemResp.message!!)
+                is Result.Error -> showSnackBar(editItemResp.message!!)
                 else -> showSnackBar("Item editiert".asResString()).also { updateWidgets() }
             }
         }
@@ -188,7 +188,7 @@ class StockViewModel @Inject constructor(
                 newCategory,
                 color
             )) {
-                is Resource.Error -> showSnackBar(resp.message!!)
+                is Result.Error -> showSnackBar(resp.message!!)
                 else -> showSnackBar("Kategorie editiert".asResString()).also { updateWidgets() }
             }
         }
@@ -198,7 +198,7 @@ class StockViewModel @Inject constructor(
         viewModelScope.launch {
             val editStockItemResp =
                 stockUseCases.addEditStockItemUC(stock, item, amount = amount)
-            if (editStockItemResp is Resource.Error) {
+            if (editStockItemResp is Result.Error) {
                 showSnackBar(editStockItemResp.message!!)
             }
         }
@@ -209,7 +209,7 @@ class StockViewModel @Inject constructor(
             when (val resp = stockUseCases.editStockUC(
                 stock,
                 sharedWith = users.map { it.uuid })) {
-                is Resource.Error -> showSnackBar(resp.message!!)
+                is Result.Error -> showSnackBar(resp.message!!)
                 else -> updateWidgets()
             }
         }
@@ -218,7 +218,7 @@ class StockViewModel @Inject constructor(
     fun shareItem(item: Item) {
         viewModelScope.launch {
             when (val resp = itemUseCases.shareItemUC(item)) {
-                is Resource.Error -> showSnackBar(resp.message!!)
+                is Result.Error -> showSnackBar(resp.message!!)
                 else -> updateWidgets()
             }
         }

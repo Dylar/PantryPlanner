@@ -1,7 +1,7 @@
 package de.bitb.pantryplaner.usecase.stock
 
-import de.bitb.pantryplaner.core.misc.Resource
-import de.bitb.pantryplaner.core.misc.asResourceError
+import de.bitb.pantryplaner.core.misc.Result
+import de.bitb.pantryplaner.core.misc.asError
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.StockRepository
 import de.bitb.pantryplaner.data.UserRepository
@@ -20,22 +20,22 @@ class AddEditStockItemUC(
         amount: String = stockItem.amount.toString(),
 //        freshUntil: Long = stockItem.freshUntil,
 //        remindAfter: Long = stockItem.remindAfter,
-    ): Resource<Unit> {
+    ): Result<Unit> {
         return tryIt(
             onError = {
                 when (it) {
                     is NumberFormatException -> {
                         if (amount.isEmpty()) {
-                            Resource.Success()
-                        } else "Not a number error".asResourceError()
+                            Result.Success()
+                        } else "Not a number error".asError()
                     }
 
-                    else -> Resource.Error(it)
+                    else -> Result.Error(it)
                 }
             },
             onTry = {
                 val user = userRepo.getUser().first()
-                if (user is Resource.Error) return@tryIt user.castTo()
+                if (user is Result.Error) return@tryIt user.castTo()
                 val amountDouble = amount.replace(",", ".").toDouble()
 
                 val updatedItem = stockItem.copy(

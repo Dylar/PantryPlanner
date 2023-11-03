@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.bitb.pantryplaner.R
-import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.ui.base.BaseViewModel
 import de.bitb.pantryplaner.ui.base.NavigateEvent
 import de.bitb.pantryplaner.usecase.UserUseCases
@@ -34,7 +34,7 @@ class RegisterViewModel @Inject constructor(
         isLoading = true
         viewModelScope.launch {
             val result = userUseCases.registerUC(firstName, lastName, email, pw1, pw2)
-            if (result is Resource.Error) error = result.data
+            if (result is Result.Error) error = result.data
             else navigate(NavigateEvent.Navigate(R.id.register_to_overview))
             isLoading = false
         }

@@ -2,7 +2,7 @@ package de.bitb.pantryplaner.usecase.item
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.core.misc.capitalizeFirstCharacter
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.ItemRepository
@@ -17,13 +17,13 @@ class EditCategoryUC(
         oldCategory: String,
         newCategory: String,
         color: Color,
-    ): Resource<Unit> {
+    ): Result<Unit> {
         return tryIt {
             val itemsResp = itemRepo.getUserItems().first()
-            if (itemsResp is Resource.Error) return@tryIt itemsResp.castTo()
+            if (itemsResp is Result.Error) return@tryIt itemsResp.castTo()
 
             val settingsResp = settingsRepo.getSettings().first()
-            if (settingsResp is Resource.Error) return@tryIt settingsResp.castTo()
+            if (settingsResp is Result.Error) return@tryIt settingsResp.castTo()
 
             val newCat = newCategory.capitalizeFirstCharacter()
             val oldCat = oldCategory.capitalizeFirstCharacter()
@@ -42,7 +42,7 @@ class EditCategoryUC(
 
             if (items.isNotEmpty()) {
                 val saveResp = itemRepo.saveItems(items)
-                if (saveResp is Resource.Error) return@tryIt saveResp
+                if (saveResp is Result.Error) return@tryIt saveResp
             }
 
             settingsRepo.saveSettings(settings)

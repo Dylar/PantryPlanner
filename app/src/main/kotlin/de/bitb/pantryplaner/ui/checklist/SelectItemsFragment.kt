@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
-import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.BaseFragment
@@ -196,7 +196,7 @@ class SelectItemsFragment : BaseFragment<SelectItemsViewModel>() {
     private fun buildContent(innerPadding: PaddingValues) {
         val itemsModel by viewModel.itemsModel.observeAsState()
         when {
-            itemsModel is Resource.Error -> ErrorScreen(itemsModel!!.message!!.asString())
+            itemsModel is Result.Error -> ErrorScreen(itemsModel!!.message!!.asString())
             itemsModel?.data?.isLoading != false -> LoadingIndicator()
             else -> {
                 val model = itemsModel!!.data!!

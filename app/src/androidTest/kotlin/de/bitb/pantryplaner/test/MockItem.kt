@@ -1,7 +1,7 @@
 package de.bitb.pantryplaner.test
 
 import de.bitb.pantryplaner.core.createFlows
-import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.core.parsePOKO
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.data.source.ItemRemoteDao
@@ -28,17 +28,17 @@ fun ItemRemoteDao.mockItemDao(
     coEvery { getItems(any()) }.answers {
         val itemIds = firstArg<List<String>>()
         allFlow.flatMapLatest { items ->
-            MutableStateFlow(Resource.Success(items.filter { itemIds.contains(it.uuid) }))
+            MutableStateFlow(Result.Success(items.filter { itemIds.contains(it.uuid) }))
         }
     }
     coEvery { getItems(any(), any()) }.answers {
         val userId = firstArg<String>()
         val itemIds = secondArg<List<String>?>()
-        val flow = itemsFlows[userId] ?: MutableStateFlow(Resource.Success(emptyList()))
+        val flow = itemsFlows[userId] ?: MutableStateFlow(Result.Success(emptyList()))
         itemsFlows[userId] = flow
         allFlow.flatMapLatest { items ->
             flow.apply {
-                value = Resource.Success(
+                value = Result.Success(
                     if (itemIds == null) items.filter { it.sharedWith(userId) }
                     else items.filter { itemIds.contains(it.uuid) && it.sharedWith(userId) }
                 )
@@ -48,28 +48,28 @@ fun ItemRemoteDao.mockItemDao(
     coEvery { addItem(any()) }.answers {
         val addItem = firstArg<Item>()
         allFlow.value = allFlow.value + listOf(addItem)
-        Resource.Success(true)
+        Result.Success(true)
     }
 
     coEvery { deleteItem(any()) }.answers {
         val deleteItem = firstArg<Item>()
         allFlow.value = allFlow.value - setOf(deleteItem)
-        Resource.Success(true)
+        Result.Success(true)
     }
 
     coEvery { saveItems(any()) }.answers {
         val saveItems = firstArg<List<Item>>().associateBy { it.uuid }
         allFlow.value = allFlow.value.map { saveItems[it.uuid] ?: it }
-        Resource.Success()
+        Result.Success()
     }
 }
 
 // TODO test errors
 fun ItemRemoteDao.mockErrorItemDao(
-    getItemsError: Resource.Error<List<Item>>? = null,
-    addItemError: Resource.Error<Boolean>? = null,
-    deleteItemError: Resource.Error<Boolean>? = null,
-    saveItemError: Resource.Error<Unit>? = null,
+    getItemsError: Result.Error<List<Item>>? = null,
+    addItemError: Result.Error<Boolean>? = null,
+    deleteItemError: Result.Error<Boolean>? = null,
+    saveItemError: Result.Error<Unit>? = null,
 ) {
     if (getItemsError != null) {
         coEvery { getItems(any()) }.answers { flowOf(getItemsError) }

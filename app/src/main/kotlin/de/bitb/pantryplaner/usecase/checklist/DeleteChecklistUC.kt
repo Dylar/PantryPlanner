@@ -1,6 +1,6 @@
 package de.bitb.pantryplaner.usecase.checklist
 
-import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.CheckRepository
 import de.bitb.pantryplaner.data.UserRepository
@@ -11,12 +11,12 @@ class DeleteChecklistUC(
     private val userRepo: UserRepository,
     private val checkRepo: CheckRepository,
 ) {
-    suspend operator fun invoke(check: Checklist): Resource<Boolean> {
+    suspend operator fun invoke(check: Checklist): Result<Boolean> {
         return tryIt(
-            onError = { Resource.Error(it, false) },
+            onError = { Result.Error(it, false) },
             onTry = {
                 val userResp = userRepo.getUser().first()
-                if (userResp is Resource.Error) return@tryIt userResp.castTo(false)
+                if (userResp is Result.Error) return@tryIt userResp.castTo(false)
 
                 val user = userResp.data?.uuid
                 if (user == check.creator) {
@@ -24,7 +24,7 @@ class DeleteChecklistUC(
                 } else {
                     val newList = check.sharedWith.subtract(setOf(user!!))
                     checkRepo.saveChecklist(check.copy(sharedWith = newList.toList()))
-                    Resource.Success(true)
+                    Result.Success(true)
                 }
             },
         )

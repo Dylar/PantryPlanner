@@ -1,7 +1,7 @@
 package de.bitb.pantryplaner.usecase.checklist
 
-import de.bitb.pantryplaner.core.misc.Resource
-import de.bitb.pantryplaner.core.misc.asResourceError
+import de.bitb.pantryplaner.core.misc.Result
+import de.bitb.pantryplaner.core.misc.asError
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.CheckRepository
 import de.bitb.pantryplaner.data.UserRepository
@@ -12,18 +12,18 @@ class SaveChecklistUC(
     private val userRepo: UserRepository,
     private val checkRepo: CheckRepository,
 ) {
-    suspend operator fun invoke(checklist: Checklist): Resource<Boolean> {
+    suspend operator fun invoke(checklist: Checklist): Result<Boolean> {
         return tryIt(
-            onError = { Resource.Error(it, false) },
+            onError = { Result.Error(it, false) },
             onTry = {
                 val user = userRepo.getUser().first()
-                if (user is Resource.Error) return@tryIt user.castTo()
+                if (user is Result.Error) return@tryIt user.castTo()
                 if (user.data!!.uuid != checklist.creator)
-                    return@tryIt "Nur der Ersteller kann die Checklist ändern".asResourceError()
+                    return@tryIt "Nur der Ersteller kann die Checklist ändern".asError()
 
                 val saveResp = checkRepo.saveChecklist(checklist)
-                if (saveResp is Resource.Error) return@tryIt saveResp.castTo(false)
-                else Resource.Success(true)
+                if (saveResp is Result.Error) return@tryIt saveResp.castTo(false)
+                else Result.Success(true)
             },
         )
     }

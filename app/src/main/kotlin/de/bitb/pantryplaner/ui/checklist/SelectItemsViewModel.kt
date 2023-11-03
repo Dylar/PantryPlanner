@@ -5,7 +5,7 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.data.ItemRepository
 import de.bitb.pantryplaner.data.SettingsRepository
 import de.bitb.pantryplaner.data.UserDataExt
@@ -53,7 +53,7 @@ class SelectItemsViewModel @Inject constructor(
     val isSearching = _isSearching.asStateFlow()
 
     val filterBy = MutableStateFlow(Filter())
-    val itemsModel: LiveData<Resource<ItemsModel>> = filterBy
+    val itemsModel: LiveData<Result<ItemsModel>> = filterBy
         .debounce { if (!INSTANT_SEARCH && _isSearching.value) 1000L else 0L }
         .flatMapLatest { filter ->
             combine(
@@ -62,10 +62,10 @@ class SelectItemsViewModel @Inject constructor(
                 getConnectedUsers().asFlow(),
             ) { settings, items, users ->
                 when {
-                    settings is Resource.Error -> settings.castTo()
-                    items is Resource.Error -> items.castTo()
-                    users is Resource.Error -> users.castTo()
-                    else -> Resource.Success(
+                    settings is Result.Error -> settings.castTo()
+                    items is Result.Error -> items.castTo()
+                    users is Result.Error -> users.castTo()
+                    else -> Result.Success(
                         ItemsModel(
                             settings.data,
                             items.data?.groupBy { it.category },
@@ -100,7 +100,7 @@ class SelectItemsViewModel @Inject constructor(
         viewModelScope.launch {
             when (val resp =
                 checkUseCases.addItemsUC(fromChecklistId!!, checkedItems.value)) {
-                is Resource.Error -> showSnackBar(resp.message!!)
+                is Result.Error -> showSnackBar(resp.message!!)
                 else -> navigate(NavigateEvent.NavigateBack)
             }
         }

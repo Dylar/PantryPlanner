@@ -3,7 +3,7 @@ package de.bitb.pantryplaner.data.source
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.snapshots
 import de.bitb.pantryplaner.BuildConfig
-import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.model.Item
 import kotlinx.coroutines.flow.Flow
@@ -28,25 +28,25 @@ class FireItemService(
 
     override fun getItems(
         ids: List<String>,
-    ): Flow<Resource<List<Item>>> {
+    ): Flow<Result<List<Item>>> {
         if (ids.isEmpty()) {
-            return flowOf(Resource.Success(emptyList()))
+            return flowOf(Result.Success(emptyList()))
         }
 
         return collection
             .whereIn("uuid", ids)
             .snapshots()
-            .map { tryIt { Resource.Success(it.toObjects(Item::class.java)) } }
+            .map { tryIt { Result.Success(it.toObjects(Item::class.java)) } }
     }
 
     override fun getItems(
         userId: String,
         ids: List<String>?,
-    ): Flow<Resource<List<Item>>> {
+    ): Flow<Result<List<Item>>> {
         return getOwnedOrShared(userId, ids, ::ownerCollection, ::sharedCollection)
     }
 
-    override suspend fun saveItems(items: List<Item>): Resource<Unit> {
+    override suspend fun saveItems(items: List<Item>): Result<Unit> {
         return tryIt {
             firestore.batch().apply {
                 collection
@@ -58,11 +58,11 @@ class FireItemService(
                     }
                 commit()
             }
-            Resource.Success()
+            Result.Success()
         }
     }
 
-    override suspend fun addItem(item: Item): Resource<Boolean> {
+    override suspend fun addItem(item: Item): Result<Boolean> {
         return tryIt {
             val querySnapshot = collection
                 .whereEqualTo("uuid", item.uuid)
@@ -70,24 +70,24 @@ class FireItemService(
 
             if (querySnapshot.isEmpty) {
                 collection.add(item).await()
-                Resource.Success(true)
+                Result.Success(true)
             } else {
-                Resource.Success(false)
+                Result.Success(false)
             }
         }
     }
 
-    override suspend fun deleteItem(item: Item): Resource<Boolean> {
+    override suspend fun deleteItem(item: Item): Result<Boolean> {
         return tryIt {
             val querySnapshot = collection
                 .whereEqualTo("uuid", item.uuid)
                 .get().await()
 
             if (querySnapshot.isEmpty) {
-                Resource.Success(false)
+                Result.Success(false)
             } else {
                 querySnapshot.documents.first().reference.delete().await()
-                Resource.Success(true)
+                Result.Success(true)
             }
         }
     }

@@ -4,7 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.bitb.pantryplaner.R
-import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.core.misc.atLeast
 import de.bitb.pantryplaner.data.SettingsRepository
 import de.bitb.pantryplaner.ui.base.BaseViewModel
@@ -30,7 +30,7 @@ class SplashViewModel @Inject constructor(
         viewModelScope.launch {
             val userResp = atLeast(SPLASH_TIMER) { itemUseCases.loadDataUC(ignoreNewVersion) }
             when {
-                userResp is Resource.Error -> showSnackBar(userResp.message!!)
+                userResp is Result.Error -> showSnackBar(userResp.message!!)
                 userResp.data is DataLoadResponse.DataLoaded -> {
                     navigate(NavigateEvent.Navigate(R.id.splash_to_overview))
 //                    if (naviToRefresh) { //TODO fix whole page
@@ -54,8 +54,8 @@ class SplashViewModel @Inject constructor(
     fun loadNewApp() {
         viewModelScope.launch {
             when (val url = settingsRepo.getAppDownloadURL()) {
-                is Resource.Success -> navigate(NavigateEvent.NavigateToUrl(url.data!!))
-                is Resource.Error -> showSnackBar(url.message!!)
+                is Result.Success -> navigate(NavigateEvent.NavigateToUrl(url.data!!))
+                is Result.Error -> showSnackBar(url.message!!)
             }
         }
     }

@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
-import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
@@ -111,7 +111,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
     }
 
     @Composable
-    private fun buildAppBar(checkModel: Resource<CheckModel>?) {
+    private fun buildAppBar(checkModel: Result<CheckModel>?) {
         TopAppBar(
             modifier = Modifier.testTag(ChecklistPageTag.AppBar),
             title = {
@@ -177,10 +177,10 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
     }
 
     @Composable
-    private fun buildContent(innerPadding: PaddingValues, checkModel: Resource<CheckModel>?) {
+    private fun buildContent(innerPadding: PaddingValues, checkModel: Result<CheckModel>?) {
         when {
             checkModel?.data?.isLoading != false -> LoadingIndicator()
-            checkModel is Resource.Error -> ErrorScreen(checkModel.message!!.asString())
+            checkModel is Result.Error -> ErrorScreen(checkModel.message!!.asString())
             else -> Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,

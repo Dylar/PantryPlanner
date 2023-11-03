@@ -1,7 +1,7 @@
 package de.bitb.pantryplaner.test
 
 import de.bitb.pantryplaner.core.createFlows
-import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.core.parsePOKO
 import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.data.source.CheckRemoteDao
@@ -26,12 +26,12 @@ fun CheckRemoteDao.mockChecklistDao(
         val userId = firstArg<String>()
         val uuids = secondArg<List<String>?>()
 
-        val flow = checksFlows[userId] ?: MutableStateFlow(Resource.Success(emptyList()))
+        val flow = checksFlows[userId] ?: MutableStateFlow(Result.Success(emptyList()))
         checksFlows[userId] = flow
 
         allFlow.flatMapLatest { checksList ->
             flow.apply {
-                value = Resource.Success(
+                value = Result.Success(
                     checksList
                         .filter { uuids?.contains(it.uuid) ?: true }
                         .filter { it.creator == userId || it.sharedWith.contains(userId) }
@@ -42,29 +42,29 @@ fun CheckRemoteDao.mockChecklistDao(
     coEvery { addChecklist(any()) }.answers {
         val addChecklist = firstArg<Checklist>()
         allFlow.value = allFlow.value + listOf(addChecklist)
-        Resource.Success(true)
+        Result.Success(true)
     }
 
     coEvery { deleteChecklist(any()) }.answers {
         val deleteChecklist = firstArg<Checklist>()
         allFlow.value = allFlow.value - setOf(deleteChecklist)
-        Resource.Success(true)
+        Result.Success(true)
     }
 
     coEvery { saveChecklist(any()) }.answers {
         val saveChecklist = firstArg<Checklist>()
         allFlow.value = allFlow.value
             .map { if (it.uuid == saveChecklist.uuid) saveChecklist else it }
-        Resource.Success()
+        Result.Success()
     }
 }
 
 // TODO test errors
 fun CheckRemoteDao.mockErrorChecklistDao(
-    getChecklistsError: Resource.Error<List<Checklist>>? = null,
-    addChecklistError: Resource.Error<Boolean>? = null,
-    deleteChecklistError: Resource.Error<Boolean>? = null,
-    saveChecklistError: Resource.Error<Unit>? = null,
+    getChecklistsError: Result.Error<List<Checklist>>? = null,
+    addChecklistError: Result.Error<Boolean>? = null,
+    deleteChecklistError: Result.Error<Boolean>? = null,
+    saveChecklistError: Result.Error<Unit>? = null,
 ) {
     if (getChecklistsError != null)
         coEvery { getCheckLists(any(), any()) }.answers { flowOf(getChecklistsError) }
