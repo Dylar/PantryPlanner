@@ -1,7 +1,7 @@
 package de.bitb.pantryplaner.usecase.user
 
 import de.bitb.pantryplaner.R
-import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.data.UserRepository
 import de.bitb.pantryplaner.ui.base.comps.ResString
 import de.bitb.pantryplaner.ui.base.comps.asResString
@@ -15,15 +15,15 @@ sealed class LoginResponse(val message: ResString) {
 
     object PwEmpty : LoginResponse(R.string.pw_is_empty.asResString())
     object UserNotFound : LoginResponse(R.string.user_not_found.asResString())
-    class ErrorThrown<T>(error: Resource.Error<T>) :
+    class ErrorThrown<T>(error: Result.Error<T>) :
         LoginResponse(error.message ?: ResString.DynamicString("Error thrown"))
 
-    val asError: Resource<LoginResponse>
-        get() = Resource.Error(message, this)
+    val asError: Result<LoginResponse>
+        get() = Result.Error(message, this)
 }
 
-fun <T> Resource.Error<T>.asError(): Resource<LoginResponse> {
-    return Resource.Error(message!!, LoginResponse.ErrorThrown(this))
+fun <T> Result.Error<T>.asError(): Result<LoginResponse> {
+    return Result.Error(message!!, LoginResponse.ErrorThrown(this))
 }
 
 class LoginUC(
@@ -32,20 +32,20 @@ class LoginUC(
     suspend operator fun invoke(
         email: String,
         pw: String,
-    ): Resource<LoginResponse> {
+    ): Result<LoginResponse> {
         val isValid = isValid(email, pw)
         if (isValid != null) {
             return isValid.asError
         }
 
         val loginUserResp = userRepo.loginUser(email, pw)
-        if (loginUserResp is Resource.Error) return loginUserResp.asError()
+        if (loginUserResp is Result.Error) return loginUserResp.asError()
 
         if (!loginUserResp.hasData) {
             return LoginResponse.UserNotFound.asError
         }
 
-        return Resource.Success(LoginResponse.LoggedIn())
+        return Result.Success(LoginResponse.LoggedIn())
     }
 
     private fun isValid(email: String, pw: String): LoginResponse? {

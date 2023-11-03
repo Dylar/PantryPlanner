@@ -2,7 +2,7 @@ package de.bitb.pantryplaner.data.source
 
 import com.google.firebase.firestore.FirebaseFirestore
 import de.bitb.pantryplaner.BuildConfig
-import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.model.Stock
 import kotlinx.coroutines.flow.Flow
@@ -25,7 +25,7 @@ class FireStockService(
 
     override fun getStocks(
         userId: String,
-    ): Flow<Resource<List<Stock>>> {
+    ): Flow<Result<List<Stock>>> {
         return getOwnedOrShared(
             userId,
             ownerCollection = ::ownerCollection,
@@ -33,7 +33,7 @@ class FireStockService(
         )
     }
 
-    override suspend fun addStock(stock: Stock): Resource<Boolean> {
+    override suspend fun addStock(stock: Stock): Result<Boolean> {
         return tryIt {
             val querySnapshot = collection
                 .whereEqualTo("uuid", stock.uuid)
@@ -41,29 +41,29 @@ class FireStockService(
 
             if (querySnapshot.isEmpty) {
                 collection.add(stock).await()
-                Resource.Success(true)
+                Result.Success(true)
             } else {
-                Resource.Success(false)
+                Result.Success(false)
             }
         }
     }
 
-    override suspend fun deleteStock(stock: Stock): Resource<Boolean> {
+    override suspend fun deleteStock(stock: Stock): Result<Boolean> {
         return tryIt {
             val querySnapshot = collection
                 .whereEqualTo("uuid", stock.uuid)
                 .get().await()
 
             if (querySnapshot.isEmpty) {
-                Resource.Success(false)
+                Result.Success(false)
             } else {
                 querySnapshot.documents.first().reference.delete().await()
-                Resource.Success(true)
+                Result.Success(true)
             }
         }
     }
 
-    override suspend fun saveStocks(stocks: List<Stock>): Resource<Unit> {
+    override suspend fun saveStocks(stocks: List<Stock>): Result<Unit> {
         return tryIt {
             firestore.batch().apply {
                 collection
@@ -75,7 +75,7 @@ class FireStockService(
                     }
                 commit()
             }
-            Resource.Success()
+            Result.Success()
         }
     }
 

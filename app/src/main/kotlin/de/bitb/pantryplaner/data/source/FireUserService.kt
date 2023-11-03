@@ -4,8 +4,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.snapshots
 import de.bitb.pantryplaner.BuildConfig
-import de.bitb.pantryplaner.core.misc.Resource
-import de.bitb.pantryplaner.core.misc.asResourceError
+import de.bitb.pantryplaner.core.misc.Result
+import de.bitb.pantryplaner.core.misc.asError
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.model.User
 import kotlinx.coroutines.flow.Flow
@@ -24,66 +24,66 @@ class FireUserService(
             .document(BuildConfig.FLAVOR)
             .collection("user")
 
-    override suspend fun isUserLoggedIn(): Resource<Boolean> {
+    override suspend fun isUserLoggedIn(): Result<Boolean> {
         return tryIt {
             val user = fireAuth.currentUser //TODO user infos into firestore
-            Resource.Success(user != null)
+            Result.Success(user != null)
         }
     }
 
-    override suspend fun registerUser(email: String, pw: String): Resource<Unit> {
+    override suspend fun registerUser(email: String, pw: String): Result<Unit> {
         return tryIt {
             val authResult = fireAuth.createUserWithEmailAndPassword(email, pw).await()
-            if (authResult.user != null) Resource.Success()
-            else "Not registered".asResourceError()
+            if (authResult.user != null) Result.Success()
+            else "Not registered".asError()
         }
     }
 
-    override suspend fun loginUser(email: String, pw: String): Resource<Boolean> {
+    override suspend fun loginUser(email: String, pw: String): Result<Boolean> {
         return tryIt(false) {
             val authResult = fireAuth.signInWithEmailAndPassword(email, pw).await()
-            Resource.Success(authResult.user != null)
+            Result.Success(authResult.user != null)
         }
     }
 
-    override suspend fun logoutUser(): Resource<Unit> {
+    override suspend fun logoutUser(): Result<Unit> {
         return tryIt {
             fireAuth.signOut()
-            Resource.Success()
+            Result.Success()
         }
     }
 
-    override fun getUser(uuids: List<String>): Flow<Resource<List<User>>> {
+    override fun getUser(uuids: List<String>): Flow<Result<List<User>>> {
         return try {
             return collection
                 .whereIn("uuid", uuids)
                 .snapshots()
                 .map {
                     val user = it.toObjects(User::class.java)
-                    Resource.Success(user)
+                    Result.Success(user)
                 }
         } catch (e: Exception) {
-            MutableStateFlow(e.asResourceError())
+            MutableStateFlow(e.asError())
         }
     }
 
-    override suspend fun getUserByEmail(email: String): Resource<User> {
+    override suspend fun getUserByEmail(email: String): Result<User> {
         return tryIt {
             val snap = collection
                 .whereEqualTo("email", email)
                 .get().await()
-            Resource.Success(snap.toObjects(User::class.java).firstOrNull())
+            Result.Success(snap.toObjects(User::class.java).firstOrNull())
         }
     }
 
-    override suspend fun saveUser(user: User): Resource<Unit> {
+    override suspend fun saveUser(user: User): Result<Unit> {
         return tryIt {
             collection
                 .whereEqualTo("uuid", user.uuid)
                 .get().await()
                 .documents.firstOrNull()
                 ?.reference?.set(user) ?: collection.add(user)
-            Resource.Success()
+            Result.Success()
         }
     }
 }

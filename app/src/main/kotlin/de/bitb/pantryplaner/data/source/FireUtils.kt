@@ -2,8 +2,8 @@ package de.bitb.pantryplaner.data.source
 
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.snapshots
-import de.bitb.pantryplaner.core.misc.Resource
-import de.bitb.pantryplaner.core.misc.asResourceError
+import de.bitb.pantryplaner.core.misc.Result
+import de.bitb.pantryplaner.core.misc.asError
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -14,10 +14,10 @@ inline fun <reified T> getOwnedOrShared(
     ids: List<String>? = null,
     ownerCollection: (String) -> Query,
     sharedCollection: (String) -> Query,
-): Flow<Resource<List<T>>> {
+): Flow<Result<List<T>>> {
     return try {
         if (ids?.isEmpty() == true) {
-            return MutableStateFlow(Resource.Success(emptyList()))
+            return MutableStateFlow(Result.Success(emptyList()))
         }
 
         val ownerQuery =
@@ -32,9 +32,9 @@ inline fun <reified T> getOwnedOrShared(
             ownerQuery.snapshots().map { it.toObjects(T::class.java) },
             sharedQuery.snapshots().map { it.toObjects(T::class.java) }
         ) { owner, shared ->
-            Resource.Success(setOf(*owner.toTypedArray(), *shared.toTypedArray()).toList())
+            Result.Success(setOf(*owner.toTypedArray(), *shared.toTypedArray()).toList())
         }
     } catch (e: Exception) {
-        MutableStateFlow(e.asResourceError(emptyList()))
+        MutableStateFlow(e.asError(emptyList()))
     }
 }

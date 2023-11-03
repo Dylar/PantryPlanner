@@ -8,7 +8,7 @@ import android.content.Intent
 import android.os.Build
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.BuildConfig
-import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.usecase.AlertUseCases
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -62,7 +62,7 @@ class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         CoroutineScope(Dispatchers.IO).launch {
             val showNotification = alertUseCases.refreshAlertUC()
-            if (showNotification is Resource.Success && showNotification.data == true) {
+            if (showNotification is Result.Success && showNotification.data == true) {
                 NotifyManager.showNotification(context)
             }
         }

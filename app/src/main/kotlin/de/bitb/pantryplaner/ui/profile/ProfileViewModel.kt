@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.data.StockRepository
 import de.bitb.pantryplaner.data.UserRepository
 import de.bitb.pantryplaner.data.model.Stock
@@ -38,10 +38,10 @@ class ProfileViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val profileModel: LiveData<Resource<ProfileModel>> =
+    val profileModel: LiveData<Result<ProfileModel>> =
         userRepo.getUser()
             .flatMapLatest { userResp ->
-                if (userResp is Resource.Error)
+                if (userResp is Result.Error)
                     return@flatMapLatest MutableStateFlow(userResp.castTo<ProfileModel>())
 
                 val user = userResp.data!!
@@ -50,9 +50,9 @@ class ProfileViewModel @Inject constructor(
                     stockRepo.getStocks(),
                 ) { usersResp, StockResp ->
                     when {
-                        usersResp is Resource.Error -> usersResp.castTo()
-                        StockResp is Resource.Error -> StockResp.castTo()
-                        else -> Resource.Success(
+                        usersResp is Result.Error -> usersResp.castTo()
+                        StockResp is Result.Error -> StockResp.castTo()
+                        else -> Result.Success(
                             ProfileModel(
                                 user,
                                 usersResp.data,
@@ -66,7 +66,7 @@ class ProfileViewModel @Inject constructor(
     fun disconnectUser(user: User) {
         viewModelScope.launch {
             when (val resp = userUseCases.disconnectUserUC(user)) {
-                is Resource.Error -> showSnackBar(resp.message!!)
+                is Result.Error -> showSnackBar(resp.message!!)
                 else -> showSnackBar("Benutzer entfernt: ${user.fullName}".asResString())
             }
         }
@@ -75,7 +75,7 @@ class ProfileViewModel @Inject constructor(
     fun addStock(stock: Stock) {
         viewModelScope.launch {
             when (val resp = stockUseCases.addStockUC(stock)) {
-                is Resource.Error -> showSnackBar(resp.message!!)
+                is Result.Error -> showSnackBar(resp.message!!)
                 else -> showSnackBar("Lager hinzugefügt: ${stock.name}".asResString())
             }
         }
@@ -84,7 +84,7 @@ class ProfileViewModel @Inject constructor(
     fun removeStock(stock: Stock) {
         viewModelScope.launch {
             when (val resp = stockUseCases.deleteStockUC(stock)) {
-                is Resource.Error -> showSnackBar(resp.message!!)
+                is Result.Error -> showSnackBar(resp.message!!)
                 else -> showSnackBar("Lager entfernt: ${stock.name}".asResString())
             }
         }
@@ -93,7 +93,7 @@ class ProfileViewModel @Inject constructor(
     fun editStock(stock: Stock) {
         viewModelScope.launch {
             when (val resp = stockUseCases.editStockUC(stock)) {
-                is Resource.Error -> showSnackBar(resp.message!!)
+                is Result.Error -> showSnackBar(resp.message!!)
                 else -> showSnackBar("Lager editiert: ${stock.name}".asResString())
             }
         }
@@ -102,7 +102,7 @@ class ProfileViewModel @Inject constructor(
     fun connectUser(email: String) {
         viewModelScope.launch {
             val res = userUseCases.connectUserUC(email)
-            if (res is Resource.Error) showSnackBar(res.message!!)
+            if (res is Result.Error) showSnackBar(res.message!!)
             else showSnackBar("Benutzer hinzugefügt".asResString())
         }
     }

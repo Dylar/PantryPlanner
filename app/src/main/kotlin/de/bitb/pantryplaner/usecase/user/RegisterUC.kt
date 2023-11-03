@@ -1,7 +1,7 @@
 package de.bitb.pantryplaner.usecase.user
 
 import de.bitb.pantryplaner.R
-import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.data.UserRepository
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.comps.ResString
@@ -27,11 +27,11 @@ sealed class RegisterResponse(val message: ResString) {
         object PWMissingSpecialCharacter : PWError(R.string.pw_missing_special.asResString())
     }
 
-    class ErrorThrown<T>(error: Resource.Error<T>) :
+    class ErrorThrown<T>(error: Result.Error<T>) :
         RegisterResponse(error.message ?: ResString.DynamicString("Error thrown"))
 
-    val asError: Resource<RegisterResponse>
-        get() = Resource.Error(message, this)
+    val asError: Result<RegisterResponse>
+        get() = Result.Error(message, this)
 }
 
 class RegisterUC(
@@ -43,7 +43,7 @@ class RegisterUC(
         email: String,
         pw1: String,
         pw2: String,
-    ): Resource<RegisterResponse> {
+    ): Result<RegisterResponse> {
         val isValid = isValid(firstName, lastName, email, pw1, pw2)
         if (isValid != null) {
             return isValid.asError
@@ -57,9 +57,9 @@ class RegisterUC(
         )
 
         val registerResp = userRepo.registerUser(user, pw1)
-        if (registerResp is Resource.Error) return RegisterResponse.ErrorThrown(registerResp).asError
+        if (registerResp is Result.Error) return RegisterResponse.ErrorThrown(registerResp).asError
 
-        return Resource.Success(RegisterResponse.Registered)
+        return Result.Success(RegisterResponse.Registered)
     }
 
     private fun isValid(

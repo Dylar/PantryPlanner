@@ -2,7 +2,7 @@ package de.bitb.pantryplaner.data.source
 
 import com.google.firebase.firestore.FirebaseFirestore
 import de.bitb.pantryplaner.BuildConfig
-import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.model.Checklist
 import kotlinx.coroutines.flow.Flow
@@ -26,22 +26,22 @@ class FireCheckService(
     override fun getCheckLists(
         userId: String,
         ids: List<String>?,
-    ): Flow<Resource<List<Checklist>>> {
+    ): Flow<Result<List<Checklist>>> {
         return getOwnedOrShared(userId, ids, ::ownerCollection, ::sharedCollection)
     }
 
-    override suspend fun saveChecklist(check: Checklist): Resource<Unit> {
+    override suspend fun saveChecklist(check: Checklist): Result<Unit> {
         return tryIt {
             checkCollection
                 .whereEqualTo("uuid", check.uuid)
                 .get().await()
                 .documents.first()
                 .reference.set(check)
-            Resource.Success()
+            Result.Success()
         }
     }
 
-    override suspend fun addChecklist(check: Checklist): Resource<Boolean> {
+    override suspend fun addChecklist(check: Checklist): Result<Boolean> {
         return tryIt {
             val querySnapshot = checkCollection
                 .whereEqualTo("uuid", check.uuid)
@@ -49,24 +49,24 @@ class FireCheckService(
 
             if (querySnapshot.isEmpty) {
                 checkCollection.add(check).await()
-                Resource.Success(true)
+                Result.Success(true)
             } else {
-                Resource.Success(false)
+                Result.Success(false)
             }
         }
     }
 
-    override suspend fun deleteChecklist(check: Checklist): Resource<Boolean> {
+    override suspend fun deleteChecklist(check: Checklist): Result<Boolean> {
         return tryIt {
             val querySnapshot = checkCollection
                 .whereEqualTo("uuid", check.uuid)
                 .get().await()
 
             if (querySnapshot.isEmpty) {
-                Resource.Success(false)
+                Result.Success(false)
             } else {
                 querySnapshot.documents.first().reference.delete().await()
-                Resource.Success(true)
+                Result.Success(true)
             }
         }
     }

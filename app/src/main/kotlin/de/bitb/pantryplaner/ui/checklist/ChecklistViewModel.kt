@@ -6,7 +6,7 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.core.misc.castOnError
 import de.bitb.pantryplaner.data.CheckRepository
 import de.bitb.pantryplaner.data.ItemRepository
@@ -62,7 +62,7 @@ class ChecklistViewModel @Inject constructor(
 
     val filterBy = MutableStateFlow(Filter())
 
-    lateinit var checkModel: LiveData<Resource<CheckModel>>
+    lateinit var checkModel: LiveData<Result<CheckModel>>
 
     lateinit var checkListId: String
 
@@ -71,7 +71,7 @@ class ChecklistViewModel @Inject constructor(
         checkListId = uuid
         checkModel = checkRepo.getCheckList(checkListId)
             .flatMapLatest { checkResp ->
-                if (checkResp is Resource.Error) return@flatMapLatest MutableStateFlow(checkResp.castTo())
+                if (checkResp is Result.Error) return@flatMapLatest MutableStateFlow(checkResp.castTo())
                 val checklist = checkResp.data!!
                 val itemIds = checklist.items.map { it.uuid }
                 val itemsFlow = filterBy.flatMapLatest { filter ->
@@ -86,7 +86,7 @@ class ChecklistViewModel @Inject constructor(
                                                 .find { it.uuid == item.uuid }?.checked ?: false
                                         }
                                     } ?: mutableMapOf()
-                                Resource.Success(newMap)
+                                Result.Success(newMap)
                             }
                         }
                 }
@@ -98,20 +98,20 @@ class ChecklistViewModel @Inject constructor(
                     itemsFlow,
                     stockRepo.getStocks(),
                 ) { params ->
-                    val settings = params[0] as Resource<Settings>
-                    val user = params[1] as Resource<User>
-                    val users = params[2] as Resource<List<User>>
-                    val sharedUsers = params[3] as Resource<List<User>>
-                    val items = params[4] as Resource<Map<String, List<Item>>>
-                    val stocks = params[5] as Resource<List<Stock>>
+                    val settings = params[0] as Result<Settings>
+                    val user = params[1] as Result<User>
+                    val users = params[2] as Result<List<User>>
+                    val sharedUsers = params[3] as Result<List<User>>
+                    val items = params[4] as Result<Map<String, List<Item>>>
+                    val stocks = params[5] as Result<List<Stock>>
 
                     when {
-                        settings is Resource.Error -> settings.castTo()
-                        user is Resource.Error -> user.castTo()
-                        users is Resource.Error -> users.castTo()
-                        sharedUsers is Resource.Error -> sharedUsers.castTo()
-                        items is Resource.Error -> items.castTo()
-                        stocks is Resource.Error -> stocks.castTo()
+                        settings is Result.Error -> settings.castTo()
+                        user is Result.Error -> user.castTo()
+                        users is Result.Error -> users.castTo()
+                        sharedUsers is Result.Error -> sharedUsers.castTo()
+                        items is Result.Error -> items.castTo()
+                        stocks is Result.Error -> stocks.castTo()
                         else -> {
                             //TODO just in test?
                             val filteredItems = //items.data
@@ -122,7 +122,7 @@ class ChecklistViewModel @Inject constructor(
 //                            items.data TODO maybe this?
 //                                ?.filter { item -> item.sharedWith(user.data!!.uuid) }
 //                                ?.groupBy { item -> item.category },
-                            Resource.Success(
+                            Result.Success(
                                 CheckModel(
                                     settings.data,
                                     checklist,
@@ -143,7 +143,7 @@ class ChecklistViewModel @Inject constructor(
         viewModelScope.launch {
             val resp = checkUseCases.removeItemsUC(checkListId, listOf(item.uuid))
             when {
-                resp is Resource.Error -> showSnackBar(resp.message!!)
+                resp is Result.Error -> showSnackBar(resp.message!!)
                 resp.data == true -> showSnackBar("Item entfernt: ${item.name}".asResString()).also { updateWidgets() }
                 else -> showSnackBar("Item nicht entfernt: ${item.name}".asResString())
             }
@@ -154,7 +154,7 @@ class ChecklistViewModel @Inject constructor(
         //TODO track when items are checked (For sorting if item is at the beginning of the market or in the back)
         viewModelScope.launch {
             when (val resp = checkUseCases.checkItemUC(checkListId, itemId)) {
-                is Resource.Error -> showSnackBar(resp.message!!)
+                is Result.Error -> showSnackBar(resp.message!!)
                 else -> updateWidgets()
             }
         }
@@ -163,7 +163,7 @@ class ChecklistViewModel @Inject constructor(
     fun editCategory(previousCategory: String, newCategory: String, color: Color) {
         viewModelScope.launch {
             when (val resp = itemUseCases.editCategoryUC(previousCategory, newCategory, color)) {
-                is Resource.Error -> showSnackBar(resp.message!!)
+                is Result.Error -> showSnackBar(resp.message!!)
                 else -> showSnackBar("Kategorie editiert".asResString()).also { updateWidgets() }
             }
         }
@@ -172,7 +172,7 @@ class ChecklistViewModel @Inject constructor(
     fun finishChecklist() {
         viewModelScope.launch {
             when (val resp = checkUseCases.finishChecklistUC(checkListId)) {
-                is Resource.Error -> showSnackBar(resp.message!!)
+                is Result.Error -> showSnackBar(resp.message!!)
                 else -> {
                     showSnackBar("Erledigt".asResString())
                     navigate(NavigateEvent.NavigateBack)
@@ -184,7 +184,7 @@ class ChecklistViewModel @Inject constructor(
     fun changeItemAmount(itemId: String, amount: String) {
         viewModelScope.launch {
             val resp = checkUseCases.setItemAmountUC(checkListId, itemId, amount)
-            if (resp is Resource.Error) {
+            if (resp is Result.Error) {
                 showSnackBar(resp.message!!)
             }
         }
@@ -193,7 +193,7 @@ class ChecklistViewModel @Inject constructor(
     fun setSharedWith(users: List<User>) {
         viewModelScope.launch {
             when (val resp = checkUseCases.setSharedWithUC(checkListId, users)) {
-                is Resource.Error -> showSnackBar(resp.message!!)
+                is Result.Error -> showSnackBar(resp.message!!)
                 else -> updateWidgets()
             }
         }
@@ -202,7 +202,7 @@ class ChecklistViewModel @Inject constructor(
     fun changeStock(stock: Stock) {
         viewModelScope.launch {
             when (val resp = checkUseCases.setStockWithUC(checkListId, stock.uuid)) {
-                is Resource.Error -> showSnackBar(resp.message!!)
+                is Result.Error -> showSnackBar(resp.message!!)
                 else -> updateWidgets()
             }
         }

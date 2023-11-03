@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.sp
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
-import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.core.misc.formatted
 import de.bitb.pantryplaner.core.misc.parseDateString
 import de.bitb.pantryplaner.data.model.Item
@@ -97,10 +97,10 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
     }
 
     @Composable
-    private fun buildFab(modelResp: Resource<RefreshModel>?) {
+    private fun buildFab(modelResp: Result<RefreshModel>?) {
         val model = modelResp?.data
         if (modelResp == null ||
-            modelResp is Resource.Error ||
+            modelResp is Result.Error ||
             !modelResp.hasData ||
             model?.isLoading != false
         ) return
@@ -135,7 +135,7 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
 
             if (showAddToDialog.value) {
                 val users = viewModel.getConnectedUsers().observeAsState()
-                if (users.value is Resource.Success) {
+                if (users.value is Result.Success) {
                     useAddChecklistDialog(
                         showDialog = showAddToDialog, users = users.value!!.data!!,
                         emptyList(), //TODO fix this page...
@@ -152,11 +152,11 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
     @Composable
     private fun buildContent(
         innerPadding: PaddingValues,
-        modelResp: Resource<RefreshModel>?,
+        modelResp: Result<RefreshModel>?,
     ) {
         when {
             modelResp?.data?.isLoading != false -> LoadingIndicator()
-            modelResp is Resource.Error -> ErrorScreen(modelResp.message!!.asString())
+            modelResp is Result.Error -> ErrorScreen(modelResp.message!!.asString())
             modelResp.data.items?.isEmpty() == true -> EmptyListComp(getString(R.string.no_items))
             else -> {
                 val model = modelResp.data

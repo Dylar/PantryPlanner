@@ -47,7 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
-import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.data.model.Settings
@@ -180,7 +180,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
     }
 
     @Composable
-    private fun buildFab(modelResp: Resource<StockModel>?) {
+    private fun buildFab(modelResp: Result<StockModel>?) {
         Column(
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.Center,
@@ -196,7 +196,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
                 },
                 onClick = { showAddStockDialog.value = true },
             )
-            if (modelResp !is Resource.Error &&
+            if (modelResp !is Result.Error &&
                 modelResp?.data?.isLoading == false &&
                 modelResp.data.stocks?.isNotEmpty() != false
             ) {
@@ -218,10 +218,10 @@ class StockFragment : BaseFragment<StockViewModel>() {
 
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    private fun buildContent(innerPadding: PaddingValues, modelResp: Resource<StockModel>?) {
+    private fun buildContent(innerPadding: PaddingValues, modelResp: Result<StockModel>?) {
         when {
             modelResp?.data?.isLoading != false -> LoadingIndicator()
-            modelResp is Resource.Error -> ErrorScreen(modelResp.message!!.asString())
+            modelResp is Result.Error -> ErrorScreen(modelResp.message!!.asString())
             else -> {
                 val model = modelResp.data
                 val settings = model.settings!!

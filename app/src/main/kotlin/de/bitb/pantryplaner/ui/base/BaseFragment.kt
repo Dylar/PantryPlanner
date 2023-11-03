@@ -19,7 +19,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import de.bitb.pantryplaner.core.MainActivity
-import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.data.model.Settings
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.ResString
@@ -50,11 +50,11 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 scaffoldState = rememberScaffoldState()
-                var settingsResp by remember { mutableStateOf<Resource<Settings>?>(null) }
+                var settingsResp by remember { mutableStateOf<Result<Settings>?>(null) }
                 LaunchedEffect(Unit) { settingsFlow().collect { settingsResp = it } }
 
                 when (settingsResp) {
-                    is Resource.Error<*> -> ErrorScreen(errorText = settingsResp!!.message!!.asString())
+                    is Result.Error<*> -> ErrorScreen(errorText = settingsResp!!.message!!.asString())
                     else -> {
                         val settings = settingsResp?.data
                         val darkMode =

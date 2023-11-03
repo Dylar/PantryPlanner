@@ -1,7 +1,7 @@
 package de.bitb.pantryplaner.usecase.alert
 
-import de.bitb.pantryplaner.core.misc.Resource
-import de.bitb.pantryplaner.core.misc.asResourceError
+import de.bitb.pantryplaner.core.misc.Result
+import de.bitb.pantryplaner.core.misc.asError
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.CheckRepository
 import de.bitb.pantryplaner.data.SettingsRepository
@@ -13,19 +13,19 @@ class RefreshAlertUC(
     private val checkRepo: CheckRepository,
     private val stockRepo: StockRepository,
 ) {
-    suspend operator fun invoke(): Resource<Boolean> {
+    suspend operator fun invoke(): Result<Boolean> {
         return tryIt(
-            onError = { it.asResourceError(false) },
+            onError = { it.asError(false) },
             onTry = {
                 val settings = settingsRepo.getSettings().first()
-                if (settings is Resource.Error) return@tryIt settings.castTo(false)
-                if (settings.data?.refreshAlert != true) return@tryIt Resource.Success(false)
+                if (settings is Result.Error) return@tryIt settings.castTo(false)
+                if (settings.data?.refreshAlert != true) return@tryIt Result.Success(false)
 
                 val checkResp = checkRepo.getCheckLists().first()
-                if (checkResp is Resource.Error) return@tryIt checkResp.castTo(false)
+                if (checkResp is Result.Error) return@tryIt checkResp.castTo(false)
 
                 val stockResp = stockRepo.getStocks().first()
-                if (stockResp is Resource.Error) return@tryIt stockResp.castTo(false)
+                if (stockResp is Result.Error) return@tryIt stockResp.castTo(false)
 
                 val allLists = checkResp.data!!
                 val unfinishedItems = allLists
@@ -51,7 +51,7 @@ class RefreshAlertUC(
                     }
                     .flatten()
                     .toSet()
-                    .let { Resource.Success(it.isNotEmpty()) }
+                    .let { Result.Success(it.isNotEmpty()) }
             }
         )
     }

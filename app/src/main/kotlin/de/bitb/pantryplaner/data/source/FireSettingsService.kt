@@ -4,7 +4,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.snapshots
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import de.bitb.pantryplaner.BuildConfig
-import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.model.Settings
 import kotlinx.coroutines.flow.Flow
@@ -28,34 +28,34 @@ class FireSettingsService(
         return fireConfig.getString("${key}_${BuildConfig.FLAVOR.uppercase()}")
     }
 
-    override suspend fun getAppVersion(): Resource<String> {
+    override suspend fun getAppVersion(): Result<String> {
         return tryIt {
             val version = getConfigValue("app_version")
-            Resource.Success(version.ifEmpty { BuildConfig.VERSION_NAME })
+            Result.Success(version.ifEmpty { BuildConfig.VERSION_NAME })
         }
     }
 
-    override suspend fun getAppDownloadURL(): Resource<String> {
+    override suspend fun getAppDownloadURL(): Result<String> {
         return tryIt {
             val version = getConfigValue("app_download_url")
-            Resource.Success(version.ifEmpty { "https://www.youtube.com/watch?v=xvFZjo5PgG0" })
+            Result.Success(version.ifEmpty { "https://www.youtube.com/watch?v=xvFZjo5PgG0" })
         }
     }
 
-    override fun getSettings(userId: String): Flow<Resource<Settings>> {
+    override fun getSettings(userId: String): Flow<Result<Settings>> {
         return collection
             .whereEqualTo("uuid", userId)
             .snapshots()
             .map {
                 tryIt {
                     val obj = it.toObjects(Settings::class.java).firstOrNull() ?: Settings(userId)
-                    Resource.Success(obj)
+                    Result.Success(obj)
                 }
             }
             .distinctUntilChanged()
     }
 
-    override suspend fun saveSettings(settings: Settings): Resource<Unit> {
+    override suspend fun saveSettings(settings: Settings): Result<Unit> {
         return tryIt {
             val ref = collection
                 .whereEqualTo("uuid", settings.uuid)
@@ -63,7 +63,7 @@ class FireSettingsService(
                 .documents.firstOrNull()
             if (ref == null) collection.document().set(settings)
             else ref.reference.set(settings)
-            Resource.Success()
+            Result.Success()
         }
     }
 }

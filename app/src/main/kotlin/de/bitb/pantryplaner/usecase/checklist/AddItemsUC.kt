@@ -1,7 +1,7 @@
 package de.bitb.pantryplaner.usecase.checklist
 
-import de.bitb.pantryplaner.core.misc.Resource
-import de.bitb.pantryplaner.core.misc.asResourceError
+import de.bitb.pantryplaner.core.misc.Result
+import de.bitb.pantryplaner.core.misc.asError
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.CheckRepository
 import de.bitb.pantryplaner.data.model.CheckItem
@@ -10,16 +10,16 @@ import kotlinx.coroutines.flow.first
 class AddItemsUC(
     private val checkRepo: CheckRepository,
 ) {
-    suspend operator fun invoke(checkId: String, itemIds: List<String>): Resource<Boolean> {
+    suspend operator fun invoke(checkId: String, itemIds: List<String>): Result<Boolean> {
         return tryIt(
-            onError = { Resource.Error(it, false) },
+            onError = { Result.Error(it, false) },
             onTry = {
                 if (itemIds.isEmpty()) {
-                    return@tryIt "Keine Items ausgewählt".asResourceError()
+                    return@tryIt "Keine Items ausgewählt".asError()
                 }
 
                 val getResp = checkRepo.getCheckLists(listOf(checkId)).first()
-                if (getResp is Resource.Error) {
+                if (getResp is Result.Error) {
                     return@tryIt getResp.castTo(false)
                 }
 
@@ -36,10 +36,10 @@ class AddItemsUC(
                 )
 
                 val saveResp = checkRepo.saveChecklist(saveChecklist)
-                if (saveResp is Resource.Error) {
+                if (saveResp is Result.Error) {
                     return@tryIt saveResp.castTo(false)
                 }
-                Resource.Success(true)
+                Result.Success(true)
             },
         )
     }

@@ -1,7 +1,7 @@
 package de.bitb.pantryplaner.test
 
-import de.bitb.pantryplaner.core.misc.Resource
-import de.bitb.pantryplaner.core.misc.asResourceError
+import de.bitb.pantryplaner.core.misc.Result
+import de.bitb.pantryplaner.core.misc.asError
 import de.bitb.pantryplaner.core.parsePOKO
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.data.source.UserRemoteDao
@@ -31,15 +31,15 @@ fun UserRemoteDao.mockUserDao(
     fun allFlowValue() = allFlow.replayCache.first()
 
     var loggedInWith: String? = null
-    coEvery { isUserLoggedIn() }.answers { Resource.Success(loggedInWith != null) }
+    coEvery { isUserLoggedIn() }.answers { Result.Success(loggedInWith != null) }
     coEvery { registerUser(any(), any()) }.answers {
         val email = firstArg<String>()
         val pw = secondArg<String>()
         val userExists = allFlowValue().firstOrNull { it.email == email } != null
-        if (userExists) return@answers "User exists".asResourceError()
+        if (userExists) return@answers "User exists".asError()
         emailPwMap[email] = pw
         loggedInWith = email
-        Resource.Success()
+        Result.Success()
     }
     coEvery { loginUser(any(), any()) }.answers {
         val email = firstArg<String>()
@@ -47,17 +47,17 @@ fun UserRemoteDao.mockUserDao(
         if (emailPwMap[email] == pw) {
             loggedInWith = email
         }
-        Resource.Success(loggedInWith != null)
+        Result.Success(loggedInWith != null)
     }
     coEvery { logoutUser() }.answers {
         loggedInWith = null
-        Resource.Success()
+        Result.Success()
     }
     coEvery { getUser(any()) }.answers {
         val uuids = firstArg<List<String>>()
         allFlow.flatMapLatest { users ->
             val user = allFlowValue().first { it.email == loggedInWith }
-            MutableStateFlow(Resource.Success(
+            MutableStateFlow(Result.Success(
                 if (uuids.size == 1 && uuids.first() == user.uuid) {
                     users.filter { it.uuid == user.uuid }
                 } else {
@@ -70,7 +70,7 @@ fun UserRemoteDao.mockUserDao(
         val email = firstArg<String>().lowercase()
         val allFlowValue = allFlowValue()
         val user = allFlowValue.firstOrNull { it.email.lowercase() == email }
-        Resource.Success(user)
+        Result.Success(user)
     }
     coEvery { saveUser(any()) }.answers {
         val saveUser = firstArg<User>()
@@ -82,19 +82,19 @@ fun UserRemoteDao.mockUserDao(
                 else oldData + saveUser
             )
         }
-        Resource.Success()
+        Result.Success()
     }
 }
 
 // TODO test errors
 fun UserRemoteDao.mockErrorUserDao(
-    isLoggedInError: Resource.Error<Boolean>? = null,
-    registerError: Resource.Error<Unit>? = null,
-    loginError: Resource.Error<Boolean>? = null,
-    logoutError: Resource.Error<Unit>? = null,
-    getUserError: Resource.Error<List<User>>? = null,
-    getUserByEmailError: Resource.Error<User>? = null,
-    saveUserError: Resource.Error<Unit>? = null,
+    isLoggedInError: Result.Error<Boolean>? = null,
+    registerError: Result.Error<Unit>? = null,
+    loginError: Result.Error<Boolean>? = null,
+    logoutError: Result.Error<Unit>? = null,
+    getUserError: Result.Error<List<User>>? = null,
+    getUserByEmailError: Result.Error<User>? = null,
+    saveUserError: Result.Error<Unit>? = null,
 ) {
     if (isLoggedInError != null)
         coEvery { isUserLoggedIn() }.answers { isLoggedInError }

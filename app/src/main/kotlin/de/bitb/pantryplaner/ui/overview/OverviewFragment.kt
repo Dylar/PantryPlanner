@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
-import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.User
@@ -112,12 +112,12 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
     }
 
     @Composable
-    private fun buildFab(modelResp: Resource<OverviewModel>?) {
+    private fun buildFab(modelResp: Result<OverviewModel>?) {
         Column(
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.Center,
         ) {
-            if (modelResp !is Resource.Error &&
+            if (modelResp !is Result.Error &&
                 modelResp?.data?.isLoading == false &&
                 modelResp.data.stocks?.isNotEmpty() != false
             ) {
@@ -152,9 +152,9 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
     }
 
     @Composable
-    private fun buildContent(innerPadding: PaddingValues, modelResp: Resource<OverviewModel>?) {
+    private fun buildContent(innerPadding: PaddingValues, modelResp: Result<OverviewModel>?) {
         when {
-            modelResp is Resource.Error -> ErrorScreen(modelResp.message!!.asString())
+            modelResp is Result.Error -> ErrorScreen(modelResp.message!!.asString())
             modelResp?.data?.isLoading != false -> LoadingIndicator()
             else -> {
                 val model = modelResp.data

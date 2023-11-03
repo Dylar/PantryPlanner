@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.core.misc.formatDateString
 import de.bitb.pantryplaner.core.misc.removeDuplicatesFromLists
 import de.bitb.pantryplaner.data.CheckRepository
@@ -47,14 +47,14 @@ class RefreshViewModel @Inject constructor(
 
     val checkedItems = MutableStateFlow(listOf<String>())
 
-    val refreshModel: LiveData<Resource<RefreshModel>> =
+    val refreshModel: LiveData<Result<RefreshModel>> =
         combine(
 //            itemRepo.getItems(), // just to update when amount changed (TODO do we need this after stock model?)
             checkRepo.getCheckLists(),
             stockRepo.getStocks(),
         ) { checkResp, stockResp ->
-            if (checkResp is Resource.Error) return@combine checkResp.castTo()
-            if (stockResp is Resource.Error) return@combine stockResp.castTo()
+            if (checkResp is Result.Error) return@combine checkResp.castTo()
+            if (stockResp is Result.Error) return@combine stockResp.castTo()
 
             val allLists = checkResp.data!!
             val unfinishedItems = allLists
@@ -70,7 +70,7 @@ class RefreshViewModel @Inject constructor(
                 .map { check ->
                     val ids = check.items.map { it.uuid }
                     val itemResp = itemRepo.getAllItems(ids)
-                    if (itemResp is Resource.Error) return@combine itemResp.castTo()
+                    if (itemResp is Result.Error) return@combine itemResp.castTo()
 
                     val finishDay = check.finishDate.toLocalDate()
                     formatDateString(finishDay) to itemResp.data!!.filter { item ->
@@ -85,7 +85,7 @@ class RefreshViewModel @Inject constructor(
                 .removeDuplicatesFromLists()
                 .filter { it.value.isNotEmpty() }
 
-            Resource.Success(RefreshModel(stocks.first().items.associateBy { it.uuid }, items))
+            Result.Success(RefreshModel(stocks.first().items.associateBy { it.uuid }, items))
         }.asLiveData(viewModelScope.coroutineContext)
 
     fun clearItemAmount(itemId: String) { // TODO do we need?
@@ -109,7 +109,7 @@ class RefreshViewModel @Inject constructor(
         viewModelScope.launch {
             when (val resp =
                 checkUseCases.createChecklistUC(checklist)) {
-                is Resource.Error -> showSnackBar(resp.message!!)
+                is Result.Error -> showSnackBar(resp.message!!)
                 else -> navigate(NavigateEvent.NavigateBack)
             }
         }

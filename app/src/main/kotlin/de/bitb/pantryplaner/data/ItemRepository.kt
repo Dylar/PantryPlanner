@@ -1,6 +1,6 @@
 package de.bitb.pantryplaner.data
 
-import de.bitb.pantryplaner.core.misc.Resource
+import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.core.misc.castOnError
 import de.bitb.pantryplaner.core.misc.formatDateNow
 import de.bitb.pantryplaner.data.model.Filter
@@ -12,30 +12,30 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 interface ItemRepository {
-    fun getItem(id: String): Flow<Resource<Item>>
-    fun getItems(ids: List<String>, filterBy: Filter? = null): Flow<Resource<List<Item>>>
+    fun getItem(id: String): Flow<Result<Item>>
+    fun getItems(ids: List<String>, filterBy: Filter? = null): Flow<Result<List<Item>>>
     fun getUserItems(
         ids: List<String>? = null,
         filterBy: Filter? = null
-    ): Flow<Resource<List<Item>>>
+    ): Flow<Result<List<Item>>>
 
-    suspend fun getAllItems(ids: List<String>?): Resource<List<Item>>
+    suspend fun getAllItems(ids: List<String>?): Result<List<Item>>
 
-    suspend fun addItem(item: Item): Resource<Boolean>
-    suspend fun deleteItem(item: Item): Resource<Boolean>
-    suspend fun saveItems(items: List<Item>): Resource<Unit>
+    suspend fun addItem(item: Item): Result<Boolean>
+    suspend fun deleteItem(item: Item): Result<Boolean>
+    suspend fun saveItems(items: List<Item>): Result<Unit>
 }
 
 class ItemRepositoryImpl(
     private val remoteDB: RemoteService,
     private val localDB: LocalDatabase,
 ) : ItemRepository {
-    override fun getItem(id: String): Flow<Resource<Item>> {
+    override fun getItem(id: String): Flow<Result<Item>> {
         return remoteDB
             .getItems(localDB.getUser(), listOf(id))
             .map { resp ->
                 castOnError(resp) {
-                    Resource.Success(resp.data?.first())
+                    Result.Success(resp.data?.first())
                 }
             }
     }
@@ -43,7 +43,7 @@ class ItemRepositoryImpl(
     override fun getItems(
         ids: List<String>,
         filterBy: Filter?,
-    ): Flow<Resource<List<Item>>> {
+    ): Flow<Result<List<Item>>> {
         return remoteDB
             .getItems(ids)
             .map { resp -> // TODO make this "generic" (see below)
@@ -62,7 +62,7 @@ class ItemRepositoryImpl(
 //                        ?.groupBy { it.category }
 //                        ?.toSortedMap { a1, a2 -> a1.compareTo(a2) }
 //                        ?: emptyMap()
-                    Resource.Success(groupedItems)
+                    Result.Success(groupedItems)
                 }
             }
     }
@@ -70,7 +70,7 @@ class ItemRepositoryImpl(
     override fun getUserItems(
         ids: List<String>?,
         filterBy: Filter?,
-    ): Flow<Resource<List<Item>>> {
+    ): Flow<Result<List<Item>>> {
         return remoteDB
             .getItems(localDB.getUser(), ids)
             .map { resp -> // TODO make this "generic" (see above)
@@ -89,12 +89,12 @@ class ItemRepositoryImpl(
 //                        ?.groupBy { it.category }
 //                        ?.toSortedMap { a1, a2 -> a1.compareTo(a2) }
 //                        ?: emptyMap()
-                    Resource.Success(groupedItems)
+                    Result.Success(groupedItems)
                 }
             }
     }
 
-    override suspend fun getAllItems(ids: List<String>?): Resource<List<Item>> {
+    override suspend fun getAllItems(ids: List<String>?): Result<List<Item>> {
         return remoteDB
             .getItems(localDB.getUser(), ids)
             .map { resp ->
@@ -102,20 +102,20 @@ class ItemRepositoryImpl(
                     val items = resp.data
                     items?.sortedBy { it.name } //TODO sort?
                     items?.sortedBy { it.category }
-                    Resource.Success(items)
+                    Result.Success(items)
                 }
             }.first()
     }
 
-    override suspend fun addItem(item: Item): Resource<Boolean> {
+    override suspend fun addItem(item: Item): Result<Boolean> {
         val now = formatDateNow()
         val user = localDB.getUser()
         return remoteDB.addItem(item.copy(creator = user, createdAt = now))
     }
 
-    override suspend fun deleteItem(item: Item): Resource<Boolean> =
+    override suspend fun deleteItem(item: Item): Result<Boolean> =
         remoteDB.deleteItem(item)
 
-    override suspend fun saveItems(items: List<Item>): Resource<Unit> =
+    override suspend fun saveItems(items: List<Item>): Result<Unit> =
         remoteDB.saveItems(items)
 }
