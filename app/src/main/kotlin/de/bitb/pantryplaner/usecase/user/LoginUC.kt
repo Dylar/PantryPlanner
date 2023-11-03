@@ -2,6 +2,7 @@ package de.bitb.pantryplaner.usecase.user
 
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Result
+import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.UserRepository
 import de.bitb.pantryplaner.ui.base.comps.ResString
 import de.bitb.pantryplaner.ui.base.comps.asResString
@@ -33,19 +34,19 @@ class LoginUC(
         email: String,
         pw: String,
     ): Result<LoginResponse> {
-        val isValid = isValid(email, pw)
-        if (isValid != null) {
-            return isValid.asError
+        return tryIt {
+            val isValid = isValid(email, pw)
+            if (isValid != null) return@tryIt isValid.asError
+
+            val loginUserResp = userRepo.loginUser(email, pw)
+            if (loginUserResp is Result.Error) return@tryIt loginUserResp.asError()
+
+            if (!loginUserResp.hasData) {
+                return@tryIt LoginResponse.UserNotFound.asError
+            }
+
+            Result.Success(LoginResponse.LoggedIn())
         }
-
-        val loginUserResp = userRepo.loginUser(email, pw)
-        if (loginUserResp is Result.Error) return loginUserResp.asError()
-
-        if (!loginUserResp.hasData) {
-            return LoginResponse.UserNotFound.asError
-        }
-
-        return Result.Success(LoginResponse.LoggedIn())
     }
 
     private fun isValid(email: String, pw: String): LoginResponse? {

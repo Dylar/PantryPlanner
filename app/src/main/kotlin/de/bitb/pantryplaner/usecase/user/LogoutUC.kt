@@ -9,10 +9,6 @@ class LogoutUC(
 ) {
     suspend operator fun invoke(): Result<Unit> {
         return tryIt {
-//            val logoutResp = userRepo.logoutUser()
-//            if (logoutResp is Resource.Error) {
-//                return@tryIt logoutResp
-//            }
             userRepo.logoutUser()
         }
     }

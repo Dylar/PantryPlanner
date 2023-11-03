@@ -8,6 +8,7 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.launchActivity
 import dagger.hilt.android.testing.HiltTestApplication
 import de.bitb.pantryplaner.core.MainActivity
+import de.bitb.pantryplaner.ui.base.SNACKBARS_ENABLED
 import io.cucumber.android.runner.CucumberAndroidJUnitRunner
 import io.cucumber.java.After
 import io.cucumber.junit.CucumberOptions
@@ -40,7 +41,10 @@ class ScenarioData {
     var scenario: ActivityScenario<MainActivity>? = null
 
     @After
-    fun close() = scenario?.close()
+    fun close(): Unit? {
+        SNACKBARS_ENABLED = true
+        return scenario?.close()
+    }
 
     fun launch(intent: Intent? = null) {
         scenario = launchActivity<MainActivity>(intent)

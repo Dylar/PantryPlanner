@@ -17,7 +17,6 @@ import de.bitb.pantryplaner.usecase.item.DeleteItemUC
 import de.bitb.pantryplaner.usecase.item.EditCategoryUC
 import de.bitb.pantryplaner.usecase.item.EditItemUC
 import de.bitb.pantryplaner.usecase.item.ShareItemUC
-import de.bitb.pantryplaner.usecase.item.UncheckAllItemsUC
 import de.bitb.pantryplaner.usecase.stock.AddEditStockItemUC
 import de.bitb.pantryplaner.usecase.stock.AddStockUC
 import de.bitb.pantryplaner.usecase.stock.DeleteStockUC
@@ -48,7 +47,6 @@ data class ItemUseCases(
     val editItemUC: EditItemUC,
     val editCategoryUC: EditCategoryUC,
     val shareItemUC: ShareItemUC,
-    val uncheckAllItemsUC: UncheckAllItemsUC,
 )
 
 data class StockUseCases(

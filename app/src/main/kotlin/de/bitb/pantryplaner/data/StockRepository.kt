@@ -28,7 +28,11 @@ class StockRepository(
         return remoteDB.deleteStock(stock)
     }
 
-    suspend fun saveStocks(stocks: List<Stock>): Result<Unit> {
+    suspend fun saveStock(stock: Stock): Result<Unit> {
+        return saveStocks(listOf(stock))
+    }
+
+    private suspend fun saveStocks(stocks: List<Stock>): Result<Unit> {
         return remoteDB.saveStocks(stocks)
     }
 

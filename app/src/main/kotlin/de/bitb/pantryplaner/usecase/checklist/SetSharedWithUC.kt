@@ -16,13 +16,12 @@ class SetSharedWithUC(
         return tryIt(
             onError = { Result.Error(it, false) },
             onTry = {
-                val getResp = checkRepo.getCheckLists(listOf(checkId)).first()
+                val getResp = checkRepo.getCheckList(checkId).first()
                 if (getResp is Result.Error) {
                     return@tryIt getResp.castTo(false)
                 }
 
-                val checklist = getResp.data!!.first()
-
+                val checklist = getResp.data!!
                 val user = userRepo.getUser().first()
                 if (user is Result.Error) return@tryIt user.castTo()
                 if (user.data!!.uuid != checklist.creator)
@@ -31,7 +30,7 @@ class SetSharedWithUC(
                 val saveChecklist = checklist.copy(sharedWith = sharedWith.map { it.uuid })
                 val saveResp = checkRepo.saveChecklist(saveChecklist)
                 if (saveResp is Result.Error) return@tryIt saveResp.castTo(false)
-                else Result.Success(true)
+                Result.Success(true)
             },
         )
     }

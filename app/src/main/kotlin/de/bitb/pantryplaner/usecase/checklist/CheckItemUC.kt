@@ -10,18 +10,13 @@ class CheckItemUC(
 ) {
     suspend operator fun invoke(checkId: String, itemId: String): Result<Unit> {
         return tryIt {
-            val getResp = checkRepo.getCheckLists(listOf(checkId)).first()
+            val getResp = checkRepo.getCheckList(checkId).first()
             if (getResp is Result.Error) return@tryIt getResp.castTo()
 
-            val checklist = getResp.data!!.first()
-            val items = checklist.items.toMutableList()
-            val item = items.first { it.uuid == itemId }
+            val checklist = getResp.data!!
+            val item = checklist.items.first { it.uuid == itemId }
             item.checked = !item.checked
-
-            val saveResp = checkRepo.saveChecklist(checklist)
-            if (saveResp is Result.Error) return@tryIt saveResp.castTo()
-
-            Result.Success()
+            checkRepo.saveChecklist(checklist)
         }
     }
 }

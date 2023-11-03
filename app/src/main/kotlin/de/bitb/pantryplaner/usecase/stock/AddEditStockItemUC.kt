@@ -48,7 +48,7 @@ class AddEditStockItemUC(
                     ?.let { stock.items[stock.items.indexOf(it)] = updatedItem }
                     ?: stock.items.add(updatedItem)
 
-                stockRepo.saveStocks(listOf(stock))
+                stockRepo.saveStock(stock)
             },
         )
     }

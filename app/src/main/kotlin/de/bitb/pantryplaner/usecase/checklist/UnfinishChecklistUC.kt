@@ -38,7 +38,7 @@ class UnfinishChecklistUC(
                 }
             }
 
-            stockRepo.saveStocks(listOf(stock))
+            stockRepo.saveStock(stock)
         }
     }
 }

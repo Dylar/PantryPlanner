@@ -5,6 +5,7 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.test.defaultPW
 import de.bitb.pantryplaner.test.parseUser
+import de.bitb.pantryplaner.ui.base.SNACKBARS_ENABLED
 import de.bitb.pantryplaner.ui.checklist.assertChecklistPageRendered
 import de.bitb.pantryplaner.ui.intro.SPLASH_TIMER
 import de.bitb.pantryplaner.ui.intro.assertLoginPageRendered
