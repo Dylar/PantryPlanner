@@ -2,7 +2,6 @@ package de.bitb.pantryplaner.usecase.user
 
 import de.bitb.pantryplaner.BuildConfig
 import de.bitb.pantryplaner.R
-import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.SettingsRepository

@@ -18,7 +18,7 @@
             android:id="@+id/splash_to_overview"
             app:destination="@id/overviewFragment"
             app:popUpTo="@+id/nav_graph"
-            app:popUpToInclusive="true"  />
+            app:popUpToInclusive="true" />
 
         <!--TODO fix this page-->
         <action

@@ -16,7 +16,6 @@ import de.bitb.pantryplaner.usecase.item.CreateItemUC
 import de.bitb.pantryplaner.usecase.item.DeleteItemUC
 import de.bitb.pantryplaner.usecase.item.EditCategoryUC
 import de.bitb.pantryplaner.usecase.item.EditItemUC
-import de.bitb.pantryplaner.usecase.user.LoadDataUC
 import de.bitb.pantryplaner.usecase.item.ShareItemUC
 import de.bitb.pantryplaner.usecase.item.UncheckAllItemsUC
 import de.bitb.pantryplaner.usecase.stock.AddEditStockItemUC
@@ -25,6 +24,7 @@ import de.bitb.pantryplaner.usecase.stock.DeleteStockUC
 import de.bitb.pantryplaner.usecase.stock.EditStockUC
 import de.bitb.pantryplaner.usecase.user.ConnectUserUC
 import de.bitb.pantryplaner.usecase.user.DisconnectUserUC
+import de.bitb.pantryplaner.usecase.user.LoadDataUC
 import de.bitb.pantryplaner.usecase.user.LoginUC
 import de.bitb.pantryplaner.usecase.user.LogoutUC
 import de.bitb.pantryplaner.usecase.user.RegisterUC

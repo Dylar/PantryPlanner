@@ -39,7 +39,6 @@ import de.bitb.pantryplaner.ui.base.testTags.DropDownItemTag
 import de.bitb.pantryplaner.ui.base.testTags.SearchDropDownTag
 import de.bitb.pantryplaner.ui.base.testTags.SharedWithTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
-import java.util.Locale
 
 @Composable
 fun buildCategoryDropDown(

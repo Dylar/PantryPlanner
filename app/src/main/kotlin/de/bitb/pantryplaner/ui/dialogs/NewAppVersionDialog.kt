@@ -7,7 +7,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import de.bitb.pantryplaner.ui.base.testTags.ConfirmDialogTag
 import de.bitb.pantryplaner.ui.base.testTags.NewAppVersionDialogTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 

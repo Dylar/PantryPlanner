@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import java.util.Locale
 
 const val defaultPW = "1Password!"
 fun parseUser(): User = parsePOKO("user_peter_lustig")

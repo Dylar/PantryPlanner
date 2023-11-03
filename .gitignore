@@ -1,3 +1,5 @@
+scripts/updateVersion.sh
+
 # Built application files
 *.apk
 *.aar

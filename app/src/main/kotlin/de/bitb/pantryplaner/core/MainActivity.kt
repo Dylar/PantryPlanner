@@ -2,14 +2,11 @@ package de.bitb.pantryplaner.core
 
 import android.app.Application
 import android.os.Bundle
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.fragment.NavHostFragment
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 import de.bitb.pantryplaner.R
-import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.data.SettingsRepository
 import de.bitb.pantryplaner.data.model.Settings
