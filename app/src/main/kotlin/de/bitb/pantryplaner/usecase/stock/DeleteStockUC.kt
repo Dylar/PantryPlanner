@@ -23,7 +23,7 @@ class DeleteStockUC(
                     stockRepo.deleteStock(stock)
                 } else {
                     val newList = stock.sharedWith.subtract(setOf(user!!))
-                    stockRepo.saveStocks(listOf(stock.copy(sharedWith = newList.toList())))
+                    stockRepo.saveStock(stock.copy(sharedWith = newList.toList()))
                     Result.Success(true)
                 }
             },

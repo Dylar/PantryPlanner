@@ -24,12 +24,10 @@ class EditStockUC(
                 if (user is Result.Error) return@tryIt user.castTo()
                 if (user.data!!.uuid != stock.creator)
                     return@tryIt "Nur der Ersteller kann das Lager ändern".asError()
-                stockRepo.saveStocks(
-                    listOf(
-                        stock.copy(
-                            name = name.capitalizeFirstCharacter(),
-                            sharedWith = sharedWith,
-                        )
+                stockRepo.saveStock(
+                    stock.copy(
+                        name = name.capitalizeFirstCharacter(),
+                        sharedWith = sharedWith,
                     )
                 )
             },

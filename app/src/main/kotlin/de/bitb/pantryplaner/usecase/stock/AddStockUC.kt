@@ -15,9 +15,7 @@ class AddStockUC(
             onTry = {
                 val saveResp =
                     stockRepo.addStock(stock.copy(name = stock.name.capitalizeFirstCharacter()))
-                if (saveResp is Result.Error) {
-                    return@tryIt saveResp.castTo(false)
-                }
+                if (saveResp is Result.Error) return@tryIt saveResp.castTo(false)
                 Result.Success(true)
             },
         )

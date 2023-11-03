@@ -40,7 +40,7 @@ class RefreshAlertUC(
                     .filter { it.finished }
                     .map { check ->
                         val finishDay = check.finishDate.toLocalDate()
-                        //TODO do for each stock? whatever... haha you need to fix everything with refresh/alert
+                        //TODO fix this page ..... do for each stock? whatever... haha you need to fix everything with refresh/alert
                         val stockItems = stockResp.data!!.first().items.associateBy { it.uuid }
                         stockItems.values
                             .filter { stockItem ->

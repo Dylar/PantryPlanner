@@ -18,9 +18,8 @@ class SetItemAmountUC(
             onError = {
                 when (it) {
                     is NumberFormatException -> {
-                        if (amount.isEmpty()) {
-                            Result.Success()
-                        } else "Not a number error".asError()
+                        if (amount.isEmpty()) Result.Success()
+                        else "Not a number error".asError()
                     }
 
                     else -> Result.Error(it, false)

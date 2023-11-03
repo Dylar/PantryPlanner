@@ -62,7 +62,6 @@ object UsecaseModule {
             editItemUC = EditItemUC(userRepo, itemRepo),
             editCategoryUC = EditCategoryUC(settingsRepo, itemRepo),
             shareItemUC = ShareItemUC(userRepo, itemRepo),
-            uncheckAllItemsUC = UncheckAllItemsUC(itemRepo),
         )
     }
 

@@ -2,6 +2,7 @@ package de.bitb.pantryplaner.usecase.user
 
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Result
+import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.UserRepository
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.comps.ResString
@@ -44,22 +45,24 @@ class RegisterUC(
         pw1: String,
         pw2: String,
     ): Result<RegisterResponse> {
-        val isValid = isValid(firstName, lastName, email, pw1, pw2)
-        if (isValid != null) {
-            return isValid.asError
+        return tryIt {
+            val isValid = isValid(firstName, lastName, email, pw1, pw2)
+            if (isValid != null) {
+                return@tryIt isValid.asError
+            }
+
+            val user = User(
+                firstName = firstName,
+                lastName = lastName,
+                email = email,
+                uuid = UUID.randomUUID().toString(),
+            )
+
+            val registerResp = userRepo.registerUser(user, pw1)
+            if (registerResp is Result.Error) return@tryIt RegisterResponse.ErrorThrown(registerResp).asError
+
+            return@tryIt Result.Success(RegisterResponse.Registered)
         }
-
-        val user = User(
-            firstName = firstName,
-            lastName = lastName,
-            email = email,
-            uuid = UUID.randomUUID().toString(),
-        )
-
-        val registerResp = userRepo.registerUser(user, pw1)
-        if (registerResp is Result.Error) return RegisterResponse.ErrorThrown(registerResp).asError
-
-        return Result.Success(RegisterResponse.Registered)
     }
 
     private fun isValid(

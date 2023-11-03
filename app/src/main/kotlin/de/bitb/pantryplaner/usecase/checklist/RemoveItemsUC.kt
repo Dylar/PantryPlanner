@@ -17,10 +17,10 @@ class RemoveItemsUC(
                     return@tryIt "Keine Items ausgewählt".asError()
                 }
 
-                val checkResp = checkRepo.getCheckLists(listOf(checkId)).first()
+                val checkResp = checkRepo.getCheckList(checkId).first()
                 if (checkResp is Result.Error) return@tryIt checkResp.castTo(false)
 
-                val checklist = checkResp.data!!.first()
+                val checklist = checkResp.data!!
                 val items = checklist.items.filter { !itemIds.contains(it.uuid) }.toMutableList()
 
                 val saveResp = checkRepo.saveChecklist(checklist.copy(items = items))
