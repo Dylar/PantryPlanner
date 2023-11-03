@@ -28,21 +28,21 @@ object RepositoryModule {
     fun provideUserRepository(
         remoteService: RemoteService,
         localDatabase: LocalDatabase,
-    ): UserRepository = UserRepositoryImpl(remoteService, localDatabase)
+    ): UserRepository = UserRepository(remoteService, localDatabase)
 
     @Provides
     @Singleton
     fun provideItemRepository(
         remoteService: RemoteService,
         localDatabase: LocalDatabase,
-    ): ItemRepository = ItemRepositoryImpl(remoteService, localDatabase)
+    ): ItemRepository = ItemRepository(remoteService, localDatabase)
 
     @Provides
     @Singleton
     fun provideCheckRepository(
         remoteService: RemoteService,
         localDatabase: LocalDatabase,
-    ): CheckRepository = CheckRepositoryImpl(remoteService, localDatabase)
+    ): CheckRepository = CheckRepository(remoteService, localDatabase)
 
     @Provides
     @Singleton

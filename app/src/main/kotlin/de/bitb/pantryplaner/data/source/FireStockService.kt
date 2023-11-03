@@ -78,48 +78,4 @@ class FireStockService(
             Result.Success()
         }
     }
-
-//    override suspend fun addStockItem(userId: String, item: StockItem): Resource<Boolean> {
-//        return tryIt {
-//            val querySnapshot = stockQuery(userId).get().await()
-//            val stockExists = querySnapshot.isEmpty
-//            val stock =
-//                if (stockExists) Stock(items = mutableListOf(), sharedWith = listOf(userId))
-//                else querySnapshot.first().toObject(Stock::class.java)
-//
-//            val contains = stock.items.firstOrNull { it.uuid == item.uuid } != null
-//            if (!contains) {
-//                stock.items.add(item)
-//                if (stockExists) {
-//                    stockCollection.add(stock)
-//                } else {
-//                    querySnapshot.documents.first().reference.set(stock)
-//                }
-//            }
-//            Resource.Success(contains)
-//        }
-//    }
-//
-//    override suspend fun deleteStockItem(userId: String, item: StockItem): Resource<Boolean> {
-//        return tryIt {
-//            val querySnapshot = stockQuery(userId).get().await()
-//            val stockExists = querySnapshot.isEmpty
-//            val stock =
-//                if (stockExists) Stock(items = mutableListOf(), sharedWith = listOf(userId))
-//                else querySnapshot.first().toObject(Stock::class.java)
-//
-//            val stockItem = stock.items.firstOrNull { it.uuid == item.uuid }
-//            val contains = stockItem != null
-//            if (contains) {
-//                stock.items.remove(stockItem)
-//                if (stockExists) {
-//                    stockCollection.add(stock)
-//                } else {
-//                    querySnapshot.documents.first().reference.set(stock)
-//                }
-//            }
-//            Resource.Success(contains)
-//        }
-//    }
-
 }
