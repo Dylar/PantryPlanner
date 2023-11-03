@@ -6,9 +6,13 @@ import android.net.Uri
 import android.provider.Settings
 import androidx.annotation.IdRes
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.NavHostFragment
 import de.bitb.pantryplaner.R
+import de.bitb.pantryplaner.ui.checklist.ChecklistViewModel
+import de.bitb.pantryplaner.ui.intro.LoginViewModel
+import de.bitb.pantryplaner.ui.overview.OverviewViewModel
+import de.bitb.pantryplaner.ui.profile.ProfileViewModel
+import de.bitb.pantryplaner.ui.settings.SettingsViewModel
+
 
 fun Activity.openAppSettings() {
     Intent(
@@ -17,51 +21,59 @@ fun Activity.openAppSettings() {
     ).also(::startActivity)
 }
 
-sealed class NavigateEvent {
+fun Activity.navigateToURL(url: String) {
+    Intent(Intent.ACTION_VIEW)
+        .apply { data = Uri.parse(url) }
+        .also(::startActivity)
+}
+
+sealed class NavigateEvent() {
     object NavigateBack : NavigateEvent()
     data class Navigate(@IdRes val route: Int) : NavigateEvent()
     data class NavigateTo(@IdRes val route: Int) : NavigateEvent()
+    data class NavigateToUrl(val url: String) : NavigateEvent()
 }
 
-fun Fragment.naviToSettings() {
-    NavHostFragment.findNavController(this).navigate(R.id.profile_to_settings)
+fun BaseFragment<SettingsViewModel>.naviSettingsToReleaseNotes() {
+    navController.navigate(R.id.settings_to_releasenotes)
 }
 
-fun Fragment.naviToProfile() {
-    NavHostFragment.findNavController(this).navigate(R.id.overview_to_profile)
+fun BaseFragment<ProfileViewModel>.naviToSettings() {
+    navController.navigate(R.id.profile_to_settings)
 }
 
-fun Fragment.naviToScan() {
-    NavHostFragment.findNavController(this).navigate(R.id.profile_to_scan)
+fun BaseFragment<ProfileViewModel>.naviToScan() {
+    navController.navigate(R.id.profile_to_scan)
 }
 
-fun Fragment.naviSettingsToReleaseNotes() {
-    NavHostFragment.findNavController(this).navigate(R.id.settings_to_releasenotes)
+fun BaseFragment<LoginViewModel>.naviLoginToReleaseNotes() {
+    navController.navigate(R.id.login_to_releasenotes)
 }
 
-fun Fragment.naviLoginToReleaseNotes() {
-    NavHostFragment.findNavController(this).navigate(R.id.login_to_releasenotes)
+fun BaseFragment<LoginViewModel>.naviToRegister() {
+    navController.navigate(R.id.login_to_register)
 }
 
-fun Fragment.naviToRegister() {
-    NavHostFragment.findNavController(this).navigate(R.id.login_to_register)
+fun BaseFragment<OverviewViewModel>.naviToRefresh() {
+    navController.navigate(R.id.overview_to_refresh)
 }
 
-fun Fragment.naviToRefresh() {
-    NavHostFragment.findNavController(this).navigate(R.id.overview_to_refresh)
+fun BaseFragment<OverviewViewModel>.naviToProfile() {
+    navController.navigate(R.id.overview_to_profile)
 }
 
-fun Fragment.naviOverviewToItems() {
-    NavHostFragment.findNavController(this).navigate(R.id.overview_to_stock)
+fun BaseFragment<OverviewViewModel>.naviToChecklist(uuid: String) {
+    navController
+        .navigate(R.id.overview_to_checklist, bundleOf(KEY_CHECKLIST_UUID to uuid))
 }
 
-fun Fragment.naviChecklistToItems(uuid: String) {
-    NavHostFragment.findNavController(this)
+fun BaseFragment<OverviewViewModel>.naviOverviewToItems() {
+    navController.navigate(R.id.overview_to_stock)
+}
+
+fun BaseFragment<ChecklistViewModel>.naviChecklistToItems(uuid: String) {
+    navController
         .navigate(R.id.checklist_to_select_items, bundleOf(KEY_CHECKLIST_UUID to uuid))
 }
 
-fun Fragment.naviToChecklist(uuid: String) {
-    NavHostFragment.findNavController(this)
-        .navigate(R.id.overview_to_checklist, bundleOf(KEY_CHECKLIST_UUID to uuid))
-}
 

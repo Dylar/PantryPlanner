@@ -17,7 +17,6 @@ class NewAppVersionDialogSteps(
 
     @Then("NewAppVersionDialog is displayed")
     fun newAppVersionDialogIsDisplayed() {
-        sleepFor()
         onNodeWithTag(NewAppVersionDialogTag.DialogTag).assertIsDisplayed()
         onNodeWithTag(NewAppVersionDialogTag.ConfirmButton).assertIsDisplayed()
         onNodeWithTag(NewAppVersionDialogTag.CancelButton).assertIsDisplayed()
@@ -25,7 +24,6 @@ class NewAppVersionDialogSteps(
 
     @Then("Tap on cancel NewAppVersionDialog")
     fun cancelNewAppVersionDialog() {
-        sleepFor()
         onNodeWithTag(NewAppVersionDialogTag.CancelButton).performClick()
     }
 

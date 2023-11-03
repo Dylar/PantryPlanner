@@ -81,6 +81,7 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
                 NavigateEvent.NavigateBack -> navController.popBackStack()
                 is NavigateEvent.Navigate -> navController.navigate(event.route)
                 is NavigateEvent.NavigateTo -> navController.popBackStack(event.route, false)
+                is NavigateEvent.NavigateToUrl -> activity?.navigateToURL(event.url)
             }
         }
     }

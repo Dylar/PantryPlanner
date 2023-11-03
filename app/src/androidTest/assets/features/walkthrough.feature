@@ -71,9 +71,9 @@ Feature: App walkthrough
     And   Tap on CreateItemButton
     Then  Item "NewItem" in category "NewCategory" is displayed
     # Change amount
-    When  Item "NewItem" in category "NewCategory" has amount 1.0
+    When  Item "NewItem" in category "NewCategory" has amount 0.0
     And   Increase Item "NewItem" in category "NewCategory" amount by 4
-    Then  Item "NewItem" in category "NewCategory" has amount 5.0
+    Then  Item "NewItem" in category "NewCategory" has amount 4.0
     # OverviewPage
     When  On Back
     Then  NewChecklistButton is displayed

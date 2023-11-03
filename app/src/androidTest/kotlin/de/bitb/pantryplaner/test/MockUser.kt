@@ -68,9 +68,9 @@ fun UserRemoteDao.mockUserDao(
         }
     }
     coEvery { getUserByEmail(any()) }.answers {
-        val email = firstArg<String>().lowercase(Locale.ROOT)
+        val email = firstArg<String>().lowercase()
         val allFlowValue = allFlowValue()
-        val user = allFlowValue.firstOrNull { it.email.lowercase(Locale.ROOT) == email }
+        val user = allFlowValue.firstOrNull { it.email.lowercase() == email }
         Resource.Success(user)
     }
     coEvery { saveUser(any()) }.answers {

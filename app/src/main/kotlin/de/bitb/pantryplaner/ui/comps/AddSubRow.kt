@@ -117,7 +117,6 @@ fun EditText(
         interactionSource = interactionSource,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         onValueChange = { field ->
-            Logger.printLog("value" to field.text)
             val sanitizedInput = field.text.replace(",", ".")
             val pattern = "^\\d{0,5}(\\.\\d{0,2})?$|^.\\d{1,2}$".toRegex()
             if (sanitizedInput.matches(pattern)) {

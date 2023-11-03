@@ -56,8 +56,8 @@ class ItemRepositoryImpl(
                         ?.filter {
                             filterBy == null ||
                                     (!filterBy.filterByTerm && !filterBy.filterByColor) ||
-                                    (filterBy.filterByTerm && it.name.lowercase(Locale.ROOT)
-                                        .contains(filterBy.searchTerm.lowercase(Locale.ROOT)))
+                                    (filterBy.filterByTerm && it.name.lowercase()
+                                        .contains(filterBy.searchTerm.lowercase()))
 //                                    (filterBy.filterByColor && it.color == filterBy.color) // TODO ?
                         }
 //                        ?.groupBy { it.category }
@@ -83,8 +83,8 @@ class ItemRepositoryImpl(
                         ?.filter {
                             filterBy == null ||
                                     (!filterBy.filterByTerm && !filterBy.filterByColor) ||
-                                    (filterBy.filterByTerm && it.name.lowercase(Locale.ROOT)
-                                        .contains(filterBy.searchTerm.lowercase(Locale.ROOT)))
+                                    (filterBy.filterByTerm && it.name.lowercase()
+                                        .contains(filterBy.searchTerm.lowercase()))
 //                                    (filterBy.filterByColor && it.color == filterBy.color) // TODO ?
                         }
 //                        ?.groupBy { it.category }

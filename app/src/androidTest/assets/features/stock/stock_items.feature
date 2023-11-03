@@ -81,11 +81,11 @@ Feature: StockPage Items management
 
   Scenario: Remove all Items
     When  Disable SnackBars
-    And   Set Item "CreatorItem" in category "CreatorCategory" amount to "0"
-    And   Swipe to remove Item "CreatorItem" in category "CreatorCategory"
-    And   Tap on Confirm
     And   Set Item "SharedItem" in category "SharedCategory" amount to "0"
     And   Swipe to remove Item "SharedItem" in category "SharedCategory"
+    And   Tap on Confirm
+    And   Set Item "CreatorItem" in category "CreatorCategory" amount to "0"
+    And   Swipe to remove Item "CreatorItem" in category "CreatorCategory"
     And   Tap on Confirm
     And   Set Item "SelectItem" in category "SelectCategory" amount to "0"
     And   Swipe to remove Item "SelectItem" in category "SelectCategory"

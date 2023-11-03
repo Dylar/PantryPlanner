@@ -129,18 +129,18 @@ private fun <T> SearchDropDown(
 ) {
     var expanded by remember { mutableStateOf(false) }
     val addText = "\"${selectedState.value.text}\" wird neu angelegt"
-    val input = selectedState.value.text.lowercase(Locale.ROOT)
+    val input = selectedState.value.text.lowercase()
     val opts = options
         .associateWith { optionMapper(it) }
         .asSequence()
         .filter {
-            val text = it.value.lowercase(Locale.ROOT)
+            val text = it.value.lowercase()
             if (text.isBlank()) false
             else input.isBlank() || text.contains(input)
         }
         .sortedBy {
             val text = it.value
-            !text.lowercase(Locale.ROOT).startsWith(input)
+            !text.lowercase().startsWith(input)
         }
 
     ExposedDropdownMenuBox(
@@ -172,7 +172,7 @@ private fun <T> SearchDropDown(
         ) {
             if (addUnknownOption &&
                 input.isNotBlank() &&
-                opts.none { it.value.lowercase(Locale.ROOT) == input }
+                opts.none { it.value.lowercase() == input }
             ) {
                 DropdownMenuItem(
                     modifier = Modifier

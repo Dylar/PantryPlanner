@@ -6,6 +6,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.onNodeWithTag
+import de.bitb.pantryplaner.core.sleepFor
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.test.defaultPW
 import de.bitb.pantryplaner.test.parseUser
@@ -19,7 +20,9 @@ class LoginPageSteps(
 ) : ComposeTestRule by scenarioData.composeRule {
 
     @Then("LoginPage rendered")
-    fun renderLoginPage() = assertLoginPageRendered()
+    fun renderLoginPage() {
+        assertLoginPageRendered()
+    }
 
     @When("Login with email {string} and password {string}")
     fun loginUser(email: String, password: String) {

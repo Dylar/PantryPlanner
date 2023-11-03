@@ -41,11 +41,7 @@ class SplashFragment : BaseFragment<SplashViewModel>() {
     override fun screenContent() {
         if (viewModel.showNewAppDialog.value) {
             NewAppVersionDialog(
-                onConfirm = {
-//                   TODO  viewModel.navi to bitrise new app
-                    viewModel.loadData(naviToRefresh, ignoreNewVersion = true)
-                    viewModel.showNewAppDialog.value = false
-                },
+                onConfirm = { viewModel.loadNewApp() },
                 onDismiss = {
                     viewModel.loadData(naviToRefresh, ignoreNewVersion = true)
                     viewModel.showNewAppDialog.value = false

@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Resource
 import de.bitb.pantryplaner.core.misc.atLeast
+import de.bitb.pantryplaner.data.SettingsRepository
 import de.bitb.pantryplaner.ui.base.BaseViewModel
 import de.bitb.pantryplaner.ui.base.NavigateEvent
 import de.bitb.pantryplaner.ui.base.comps.asResString
@@ -19,6 +20,7 @@ var SPLASH_TIMER = 1000L
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
+    private val settingsRepo: SettingsRepository,
     private val itemUseCases: UserUseCases,
 ) : BaseViewModel() {
 
@@ -31,9 +33,9 @@ class SplashViewModel @Inject constructor(
                 userResp is Resource.Error -> showSnackBar(userResp.message!!)
                 userResp.data is DataLoadResponse.DataLoaded -> {
                     navigate(NavigateEvent.Navigate(R.id.splash_to_overview))
-                    if (naviToRefresh) {
-                        navigate(NavigateEvent.Navigate(R.id.overview_to_refresh))
-                    }
+//                    if (naviToRefresh) { //TODO fix whole page
+//                        navigate(NavigateEvent.Navigate(R.id.overview_to_refresh))
+//                    }
                 }
 
                 userResp.data is DataLoadResponse.NotLoggedIn -> {
@@ -45,6 +47,15 @@ class SplashViewModel @Inject constructor(
                 }
 
                 else -> showSnackBar("Daten konnten nicht geladen werden".asResString())
+            }
+        }
+    }
+
+    fun loadNewApp() {
+        viewModelScope.launch {
+            when (val url = settingsRepo.getAppDownloadURL()) {
+                is Resource.Success -> navigate(NavigateEvent.NavigateToUrl(url.data!!))
+                is Resource.Error -> showSnackBar(url.message!!)
             }
         }
     }

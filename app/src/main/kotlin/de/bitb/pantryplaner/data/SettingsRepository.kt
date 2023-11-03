@@ -16,6 +16,10 @@ class SettingsRepository(
         return remoteService.getAppVersion()
     }
 
+    suspend fun getAppDownloadURL(): Resource<String> {
+        return remoteService.getAppDownloadURL()
+    }
+
     fun getSettings(): Flow<Resource<Settings>> {
         return remoteService.getSettings(localDB.getUser())
     }
