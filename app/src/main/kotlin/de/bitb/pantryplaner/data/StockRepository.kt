@@ -32,43 +32,4 @@ class StockRepository(
         return remoteDB.saveStocks(stocks)
     }
 
-//    fun getStockItems(
-//        userId: String? = null,
-//        items: List<String>? = null,
-//    ): Flow<Resource<Map<String, StockItem>>> {
-//        return remoteDB
-//            .getStock(userId ?: localDB.getUser())
-//            .map { resp ->
-//                castOnError(resp) {
-//                    val groupedItems = resp.data!!
-//                        .items
-//                        .filter { items?.contains(it.uuid) ?: true }
-//                        .groupBy { it.uuid }
-//                        .map { it.key to it.value.first() }
-//                        .toMap()
-//                    Resource.Success(groupedItems)
-//                }
-//            }
-//    }
-//
-//    suspend fun addItem(item: StockItem): Resource<Boolean> =
-//        remoteDB.addStockItem(localDB.getUser(), item.copy(updatedAt = formatDateNow()))
-//
-//    suspend fun deleteItem(item: StockItem): Resource<Boolean> =
-//        remoteDB.deleteStockItem(localDB.getUser(), item)
-//
-//    suspend fun saveItems(items: List<StockItem>): Resource<Unit> {
-//        return tryIt {
-//            val stockResp = remoteDB.getStocks(localDB.getUser()).first()
-//            if (stockResp is Resource.Error) return@tryIt stockResp.castTo()
-//            val updatedItems = items.map { it.copy(updatedAt = formatDateNow()) }
-//            val stock = stockResp.data!!
-//            val resultMap = stock.items.associateBy { it.uuid }.toMutableMap()
-//            updatedItems.forEach { item -> resultMap[item.uuid] = item }
-//            remoteDB.saveStock(
-//                localDB.getUser(),
-//                stock.copy(items = resultMap.values.toMutableList())
-//            )
-//        }
-//    }
 }

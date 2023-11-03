@@ -2,6 +2,39 @@ package de.bitb.pantryplaner.ui.base.styles
 
 import androidx.compose.ui.graphics.Color
 
+fun Int.asColor(): Color = Color(this)
+
+object BaseColors {
+    val Transparent = Color.Transparent
+    val White = Color(0xFFFFFFFF)
+    val Black = Color(0xFF000000)
+
+    val LightGray = Color(0xFFE0E0E0)
+
+    val AdultBlue = Color(0xff0B5394)
+    val LightGreen = Color(0xffe7ed9b)
+    val DarkGreen = Color(0xFF006400)
+    val BabyBlue = Color(0xff89CFF0)
+    val SunYellow = Color(0xFFFFFF00)
+    val ZergPurple = Color(0xffA259FF)
+    val FireRed = Color(0xFFFF4500)
+
+    val Green = Color(0xFF4CAF50)
+    val Red = Color(0xFFF44336)
+
+    val UnselectedColor = Black
+    val SelectableColors = listOf(
+        LightGray,
+        FireRed,
+        ZergPurple,
+        BabyBlue,
+        AdultBlue,
+        LightGreen,
+        DarkGreen,
+    )
+    val FilterColors = listOf(UnselectedColor, *SelectableColors.toTypedArray())
+}
+
 val Blue10 = Color(0xff001433)
 val Blue20 = Color(0xff002866)
 val Blue30 = Color(0xff003c99)
@@ -55,34 +88,3 @@ val GreenGrey50 = Color(0xFF52ad76)
 val GreenGrey60 = Color(0xFF74be92)
 val GreenGrey80 = Color(0xFFbadec8)
 val GreenGrey90 = Color(0xFFdcefe4)
-
-object BaseColors {
-    val Transparent = Color.Transparent
-    val White = Color(0xFFFFFFFF)
-    val Black = Color(0xFF000000)
-
-    val LightGray = Color(0xFFE0E0E0)
-
-    val AdultBlue = Color(0xff0B5394)
-    val LightGreen = Color(0xffe7ed9b)
-    val DarkGreen = Color(0xFF006400)
-    val BabyBlue = Color(0xff89CFF0)
-    val SunYellow = Color(0xFFFFFF00)
-    val ZergPurple = Color(0xffA259FF)
-    val FireRed = Color(0xFFFF4500)
-
-    val Green = Color(0xFF4CAF50)
-    val Red = Color(0xFFF44336)
-
-    val UnselectedColor = Black
-    val SelectableColors = listOf(
-        LightGray,
-        FireRed,
-        ZergPurple,
-        BabyBlue,
-        AdultBlue,
-        LightGreen,
-        DarkGreen,
-    )
-    val FilterColors = listOf(UnselectedColor, *SelectableColors.toTypedArray())
-}

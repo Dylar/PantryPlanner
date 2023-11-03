@@ -25,7 +25,7 @@ data class StockItem(
     val updateDate: LocalDateTime
         get() = parseDateTimeString(updatedAt)
 
-    //TODO fix this all
+    //TODO fix this page
     @get:Exclude
     val freshUntilDate: LocalDate
         get() = LocalDate.now()//.minusDays(freshUntil)

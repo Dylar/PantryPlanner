@@ -8,11 +8,7 @@ import android.content.Intent
 import android.os.Build
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.BuildConfig
-import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.usecase.AlertUseCases
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -20,7 +16,7 @@ object AlertManager {
     private const val ALARM_REQUEST_CODE = 77723666
 
     fun setRepeatingAlarm(context: Context) {
-        val isDev = BuildConfig.FLAVOR == "DEV"
+        val isDev = BuildConfig.DEBUG
 
         val calendar: Calendar = Calendar.getInstance()
         calendar.timeInMillis = System.currentTimeMillis()
@@ -60,11 +56,12 @@ class AlarmReceiver : BroadcastReceiver() {
     lateinit var alertUseCases: AlertUseCases
 
     override fun onReceive(context: Context, intent: Intent) {
-        CoroutineScope(Dispatchers.IO).launch {
-            val showNotification = alertUseCases.refreshAlertUC()
-            if (showNotification is Result.Success && showNotification.data == true) {
-                NotifyManager.showNotification(context)
-            }
-        }
+        //TODO fix this page
+//        CoroutineScope(Dispatchers.IO).launch {
+//            val showNotification = alertUseCases.refreshAlertUC()
+//            if (showNotification is Result.Success && showNotification.data == true) {
+//                NotifyManager.showNotification(context)
+//            }
+//        }
     }
 }

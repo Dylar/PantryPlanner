@@ -1,8 +1,8 @@
 package de.bitb.pantryplaner.data.model
 
 import androidx.compose.ui.graphics.Color
-import de.bitb.pantryplaner.core.misc.asColor
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
+import de.bitb.pantryplaner.ui.base.styles.asColor
 import java.util.UUID
 
 data class Settings(
@@ -19,7 +19,7 @@ data class Settings(
     }
 //    fun freshUntilDate(itemId: String): LocalDate {
 //       return LocalDate.now().minusDays(freshUntil[itemId] ?: 0L)
-//    } //TODO make this
+//    } //TODO fix this page
 //
 //    fun isFresh(finishDay: LocalDate): Boolean = freshUntil[uuid] == 0L ||
 //            (amount != 0.0 && finishDay.isAfter(freshUntilDate))

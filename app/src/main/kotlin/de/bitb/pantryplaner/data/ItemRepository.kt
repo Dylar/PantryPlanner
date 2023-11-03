@@ -11,111 +11,68 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
-interface ItemRepository {
-    fun getItem(id: String): Flow<Result<Item>>
-    fun getItems(ids: List<String>, filterBy: Filter? = null): Flow<Result<List<Item>>>
-    fun getUserItems(
-        ids: List<String>? = null,
-        filterBy: Filter? = null
-    ): Flow<Result<List<Item>>>
-
-    suspend fun getAllItems(ids: List<String>?): Result<List<Item>>
-
-    suspend fun addItem(item: Item): Result<Boolean>
-    suspend fun deleteItem(item: Item): Result<Boolean>
-    suspend fun saveItems(items: List<Item>): Result<Unit>
-}
-
-class ItemRepositoryImpl(
+class ItemRepository(
     private val remoteDB: RemoteService,
     private val localDB: LocalDatabase,
-) : ItemRepository {
-    override fun getItem(id: String): Flow<Result<Item>> {
-        return remoteDB
-            .getItems(localDB.getUser(), listOf(id))
-            .map { resp ->
-                castOnError(resp) {
-                    Result.Success(resp.data?.first())
-                }
+) {
+    fun getItem(id: String): Flow<Result<Item>> {
+        return remoteDB.getItems(localDB.getUser(), listOf(id)).map { resp ->
+            castOnError(resp) {
+                Result.Success(resp.data?.first())
             }
+        }
     }
 
-    override fun getItems(
+    fun getItems(
         ids: List<String>,
-        filterBy: Filter?,
-    ): Flow<Result<List<Item>>> {
-        return remoteDB
-            .getItems(ids)
-            .map { resp -> // TODO make this "generic" (see below)
-                castOnError(resp) {
-                    val items = resp.data
-                    items?.sortedBy { it.name }
-                    items?.sortedBy { it.category } //TODO sort?
-                    val groupedItems = items
-                        ?.filter {
-                            filterBy == null ||
-                                    (!filterBy.filterByTerm && !filterBy.filterByColor) ||
-                                    (filterBy.filterByTerm && it.name.lowercase()
-                                        .contains(filterBy.searchTerm.lowercase()))
-//                                    (filterBy.filterByColor && it.color == filterBy.color) // TODO ?
-                        }
-//                        ?.groupBy { it.category }
-//                        ?.toSortedMap { a1, a2 -> a1.compareTo(a2) }
-//                        ?: emptyMap()
-                    Result.Success(groupedItems)
-                }
+        filterBy: Filter? = null,
+    ): Flow<Result<List<Item>>> = remoteDB
+        .getItems(ids)
+        .map { resp -> filterList(resp, filterBy) }
+
+    fun getUserItems(
+        ids: List<String>? = null,
+        filterBy: Filter? = null,
+    ): Flow<Result<List<Item>>> = remoteDB
+        .getItems(localDB.getUser(), ids)
+        .map { resp -> filterList(resp, filterBy) }
+
+    suspend fun getAllItems(ids: List<String>? = null): Result<List<Item>> {
+        return remoteDB.getItems(localDB.getUser(), ids).map { resp ->
+            castOnError(resp) {
+                val items = resp.data
+                items?.sortedBy { it.name } //TODO sort?
+                items?.sortedBy { it.category }
+                Result.Success(items)
             }
+        }.first()
     }
 
-    override fun getUserItems(
-        ids: List<String>?,
+    private suspend fun filterList(
+        resp: Result<List<Item>>,
         filterBy: Filter?,
-    ): Flow<Result<List<Item>>> {
-        return remoteDB
-            .getItems(localDB.getUser(), ids)
-            .map { resp -> // TODO make this "generic" (see above)
-                castOnError(resp) {
-                    val items = resp.data
-                    items?.sortedBy { it.name }
-                    items?.sortedBy { it.category } //TODO sort?
-                    val groupedItems = items
-                        ?.filter {
-                            filterBy == null ||
-                                    (!filterBy.filterByTerm && !filterBy.filterByColor) ||
-                                    (filterBy.filterByTerm && it.name.lowercase()
-                                        .contains(filterBy.searchTerm.lowercase()))
-//                                    (filterBy.filterByColor && it.color == filterBy.color) // TODO ?
-                        }
-//                        ?.groupBy { it.category }
-//                        ?.toSortedMap { a1, a2 -> a1.compareTo(a2) }
-//                        ?: emptyMap()
-                    Result.Success(groupedItems)
-                }
-            }
+    ): Result<List<Item>> {
+        return castOnError(resp) {
+            val searchTerm = filterBy?.searchTerm?.lowercase() ?: ""
+            Result.Success(
+                resp.data
+                    ?.filter {
+                        filterBy == null ||
+                                (!filterBy.filterByTerm && !filterBy.filterByColor) ||
+                                (filterBy.filterByTerm && it.name.lowercase().contains(searchTerm))
+                    }
+                    ?.sortedBy { it.name },
+            )
+        }
     }
 
-    override suspend fun getAllItems(ids: List<String>?): Result<List<Item>> {
-        return remoteDB
-            .getItems(localDB.getUser(), ids)
-            .map { resp ->
-                castOnError(resp) {
-                    val items = resp.data
-                    items?.sortedBy { it.name } //TODO sort?
-                    items?.sortedBy { it.category }
-                    Result.Success(items)
-                }
-            }.first()
-    }
-
-    override suspend fun addItem(item: Item): Result<Boolean> {
+    suspend fun addItem(item: Item): Result<Boolean> {
         val now = formatDateNow()
         val user = localDB.getUser()
         return remoteDB.addItem(item.copy(creator = user, createdAt = now))
     }
 
-    override suspend fun deleteItem(item: Item): Result<Boolean> =
-        remoteDB.deleteItem(item)
+    suspend fun deleteItem(item: Item): Result<Boolean> = remoteDB.deleteItem(item)
 
-    override suspend fun saveItems(items: List<Item>): Result<Unit> =
-        remoteDB.saveItems(items)
+    suspend fun saveItems(items: List<Item>): Result<Unit> = remoteDB.saveItems(items)
 }
