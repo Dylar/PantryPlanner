@@ -1,6 +1,9 @@
 package de.bitb.pantryplaner.ui.dialogs
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.AlertDialog
@@ -59,41 +62,42 @@ private fun AddUserDialog(
     AlertDialog(
         modifier = Modifier.testTag(AddUserDialogTag.DialogTag),
         onDismissRequest = onDismiss,
-        title = { Text(title) },
         text = {
-            Row(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                OutlinedTextField(
-                    modifier = Modifier
-                        .testTag(AddUserDialogTag.EmailLabel)
-                        .weight(1f)
-                        .padding(end = 4.dp),
-                    singleLine = true,
-                    label = { Text(stringResource(R.string.user_email)) },
-                    value = email,
-                    onValueChange = { email = it },
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            onConfirm(email.text, false)
-                            email = TextFieldValue()
-                        },
-                    ),
-                )
-
-                IconButton(
-                    modifier = Modifier.testTag(AddUserDialogTag.ScanButton),
-                    onClick = {
-                        onDismiss()
-                        onScanOption()
-                    },
+            Column {
+                Text(title)
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier.padding(4.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Rounded.QrCodeScanner,
-                        contentDescription = "Scan User",
+                    OutlinedTextField(
+                        modifier = Modifier
+                            .testTag(AddUserDialogTag.EmailLabel)
+                            .weight(1f)
+                            .padding(end = 4.dp),
+                        singleLine = true,
+                        label = { Text(stringResource(R.string.user_email)) },
+                        value = email,
+                        onValueChange = { email = it },
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                onConfirm(email.text, false)
+                                email = TextFieldValue()
+                            },
+                        ),
                     )
+                    IconButton(
+                        modifier = Modifier.testTag(AddUserDialogTag.ScanButton),
+                        onClick = {
+                            onDismiss()
+                            onScanOption()
+                        },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.QrCodeScanner,
+                            contentDescription = "Scan User",
+                        )
+                    }
                 }
             }
         },

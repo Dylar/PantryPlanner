@@ -3,7 +3,9 @@ package de.bitb.pantryplaner.ui.dialogs
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -115,9 +117,6 @@ private fun AddEditItemDialog(
     onConfirm: (Item, Boolean) -> Unit,
     onDismiss: () -> Unit,
 ) {
-//    val isStarted = remember { mutableStateOf(true) }
-//    val focusRequester = remember { FocusRequester() }
-
     var name by remember {
         mutableStateOf(
             TextFieldValue(
@@ -144,14 +143,14 @@ private fun AddEditItemDialog(
     AlertDialog(
         modifier = Modifier.testTag(AddEditItemDialogTag.DialogTag),
         onDismissRequest = onDismiss,
-        title = { Text(title) },
         text = {
             Column {
+                Text(title)
+                Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
                     readOnly = !isCreator,
                     modifier = Modifier
                         .testTag(AddEditItemDialogTag.NameLabel)
-//                        .focusRequester(focusRequester)
                         .padding(4.dp)
                         .fillMaxWidth(),
                     singleLine = true,
@@ -167,7 +166,7 @@ private fun AddEditItemDialog(
                 )
                 buildCategoryDropDown(category, categorys, canChange = isCreator)
                 buildUserDropDown("Item wird nicht geteilt", users, selectedUser)
-//                OutlinedComp { //TODO fix me
+//                OutlinedComp { //TODO fix this page
 //                    Text("MHD", modifier = Modifier.padding(4.dp))
 //                    AddSubRow(freshUntil.longValue.toDouble()) {
 //                        freshUntil.longValue = it.toLong()
@@ -180,12 +179,6 @@ private fun AddEditItemDialog(
 //                    }
 //                }
             }
-//            LaunchedEffect(Unit) {
-//                if (isStarted.value) {
-//                    isStarted.value = false
-//                    focusRequester.requestFocus()
-//                }
-//            }
         },
         confirmButton = {
             Button(

@@ -1,5 +1,8 @@
 package de.bitb.pantryplaner.ui.dialogs
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
@@ -19,12 +22,15 @@ fun ConfirmDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(title) },
         text = {
-            Text(
-                msg,
-                modifier = Modifier.padding(vertical = 16.dp),
-            )
+            Column {
+                Text(title)
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    msg,
+                    modifier = Modifier.padding(vertical = 16.dp),
+                )
+            }
         },
         confirmButton = {
             Button(

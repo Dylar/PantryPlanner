@@ -1,6 +1,8 @@
 package de.bitb.pantryplaner.ui.dialogs
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.AlertDialog
@@ -44,12 +46,13 @@ fun EditCategoryDialog(
     val focusRequester = remember { FocusRequester() }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Edit category") },
         text = {
             Column {
+                Text("Edit category")
+                Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
                     modifier = Modifier
-                        .padding(vertical = 16.dp)
+                        .padding(4.dp)
                         .focusRequester(focusRequester),
                     singleLine = true,
                     label = { Text(stringResource(R.string.item_category)) },

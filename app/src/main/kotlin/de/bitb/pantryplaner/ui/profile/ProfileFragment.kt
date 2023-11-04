@@ -48,10 +48,10 @@ import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseFragment
+import de.bitb.pantryplaner.ui.base.comps.DissmissItem
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
-import de.bitb.pantryplaner.ui.base.comps.DissmissItem
 import de.bitb.pantryplaner.ui.base.comps.stickyGridHeader
 import de.bitb.pantryplaner.ui.base.naviToScan
 import de.bitb.pantryplaner.ui.base.naviToSettings
