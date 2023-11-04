@@ -7,10 +7,14 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Checkbox
 import androidx.compose.material.CheckboxDefaults
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LinkOff
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,11 +26,13 @@ import androidx.compose.ui.unit.sp
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.SelectItemHeaderTag
+import de.bitb.pantryplaner.ui.base.testTags.UnsharedIconTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 
 @Composable
 fun SelectItemHeader(
     item: Item,
+    isShared: Boolean,
     isChecked: Boolean,
     color: Color = BaseColors.LightGray,
     strikeChecked: Boolean = false,
@@ -63,5 +69,14 @@ fun SelectItemHeader(
             textAlign = TextAlign.Start,
             textDecoration = if (strikeChecked && isChecked) TextDecoration.LineThrough else TextDecoration.None
         )
+        if (!isShared)
+            Icon(
+                Icons.Filled.LinkOff,
+                modifier = Modifier
+                    .testTag(UnsharedIconTag)
+                    .padding(4.dp)
+                    .size(18.dp),
+                contentDescription = null,
+            )
     }
 }

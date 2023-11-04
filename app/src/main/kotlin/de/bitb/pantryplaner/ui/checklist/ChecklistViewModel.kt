@@ -46,6 +46,7 @@ data class CheckModel(
         get() = settings == null || checklist == null || items == null || stocks == null || user == null || connectedUser == null || sharedUser == null
 
     fun isCreator(): Boolean = user?.uuid == checklist?.creator
+    fun isSharedWith(item: Item): Boolean = item.sharedWith(user?.uuid ?: "")
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -202,6 +203,15 @@ class ChecklistViewModel @Inject constructor(
     fun changeStock(stock: Stock) {
         viewModelScope.launch {
             when (val resp = checkUseCases.setStockWithUC(checkListId, stock.uuid)) {
+                is Result.Error -> showSnackBar(resp.message!!)
+                else -> updateWidgets()
+            }
+        }
+    }
+
+    fun shareItem(item: Item) {
+        viewModelScope.launch {
+            when (val resp = itemUseCases.shareItemUC(item)) {
                 is Result.Error -> showSnackBar(resp.message!!)
                 else -> updateWidgets()
             }

@@ -213,7 +213,7 @@ class SelectItemsFragment : BaseFragment<SelectItemsViewModel>() {
                         settings::categoryColor,
                     ) { _, item ->
                         val color = settings.categoryColor(item)
-                        listItem(item, color)
+                        ListItem(item, color)
                     }
                 }
             }
@@ -221,7 +221,7 @@ class SelectItemsFragment : BaseFragment<SelectItemsViewModel>() {
     }
 
     @Composable
-    private fun listItem(item: Item, color: Color) {
+    private fun ListItem(item: Item, color: Color) {
         Card(
             elevation = 4.dp,
             border = BorderStroke(2.dp, color),
@@ -233,6 +233,7 @@ class SelectItemsFragment : BaseFragment<SelectItemsViewModel>() {
             val checkedItems = viewModel.checkedItems.collectAsState()
             SelectItemHeader(
                 item,
+                true,
                 checkedItems.value.contains(item.uuid),
                 color = color,
                 checkItem = viewModel::checkItem,

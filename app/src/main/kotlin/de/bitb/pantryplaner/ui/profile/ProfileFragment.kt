@@ -51,7 +51,7 @@ import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
-import de.bitb.pantryplaner.ui.base.comps.dissmissItem
+import de.bitb.pantryplaner.ui.base.comps.DissmissItem
 import de.bitb.pantryplaner.ui.base.comps.stickyGridHeader
 import de.bitb.pantryplaner.ui.base.naviToScan
 import de.bitb.pantryplaner.ui.base.naviToSettings
@@ -264,7 +264,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
 
     @Composable
     private fun buildUser(user: User) {
-        dissmissItem(
+        DissmissItem(
             user.fullName,
             BaseColors.LightGray,
             onSwipe = { viewModel.disconnectUser(user) },
@@ -345,7 +345,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
             }
         )
 
-        dissmissItem(
+        DissmissItem(
             stock.name,
             BaseColors.LightGray,
             onSwipe = { viewModel.removeStock(stock) },

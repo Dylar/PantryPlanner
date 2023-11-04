@@ -28,7 +28,7 @@ import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 
 @Composable
-fun dissmissItem(
+fun DissmissItem(
     name: String,
     color: Color,
     onSwipe: () -> Unit,

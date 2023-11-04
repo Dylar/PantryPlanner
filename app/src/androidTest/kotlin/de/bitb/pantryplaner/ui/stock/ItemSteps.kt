@@ -12,6 +12,7 @@ import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeRight
 import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.R
+import de.bitb.pantryplaner.core.assertNodeWithParentTagDoesNotExists
 import de.bitb.pantryplaner.core.getString
 import de.bitb.pantryplaner.core.hasTextInHierarchy
 import de.bitb.pantryplaner.core.misc.formatted
@@ -21,6 +22,7 @@ import de.bitb.pantryplaner.core.onNodeWithTextWithParentTag
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.testTags.AddSubRowTag
 import de.bitb.pantryplaner.ui.base.testTags.ItemTag
+import de.bitb.pantryplaner.ui.base.testTags.UnsharedIconTag
 import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
@@ -51,6 +53,24 @@ class ItemSteps(
         } catch (_: AssertionError) {
             onNodeWithTag(ItemTag(category, name), true).assertDoesNotExist()
         }
+    }
+
+    @Then("Item {string} in category {string} unshared icon is displayed")
+    fun itemInCategoryUnsharedIconIsDisplayed(name: String, category: String) {
+        onNodeWithParentTag(
+            ItemTag(category, name),
+            UnsharedIconTag,
+            true,
+        ).performScrollTo().assertIsDisplayed()
+    }
+
+    @Then("Item {string} in category {string} unshared icon is NOT displayed")
+    fun itemInCategoryUnsharedIconIsNotDisplayed(name: String, category: String) {
+        assertNodeWithParentTagDoesNotExists(
+            ItemTag(category, name),
+            UnsharedIconTag,
+            true,
+        )
     }
 
     @Then("Swipe to remove Item {string} in category {string}")

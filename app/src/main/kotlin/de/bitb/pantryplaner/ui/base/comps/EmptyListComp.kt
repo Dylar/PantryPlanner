@@ -17,7 +17,6 @@ fun EmptyListComp(text: String) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-//            modifier = Modifier.fillMaxSize(),
             text = text,
             textAlign = TextAlign.Center,
         )

@@ -45,7 +45,7 @@ import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.GridListLayout
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
-import de.bitb.pantryplaner.ui.base.comps.dissmissItem
+import de.bitb.pantryplaner.ui.base.comps.DissmissItem
 import de.bitb.pantryplaner.ui.base.naviOverviewToItems
 import de.bitb.pantryplaner.ui.base.naviToChecklist
 import de.bitb.pantryplaner.ui.base.naviToProfile
@@ -237,7 +237,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
             }
         )
 
-        dissmissItem(
+        DissmissItem(
             checklist.name,
             checklist.color,
             onSwipe = { viewModel.removeChecklist(checklist) },

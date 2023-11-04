@@ -25,3 +25,9 @@ Feature: ChecklistPage SharedChecklist Items management
     And   On Back
     And   Tap on Checklist "SharedChecklist"
     And   Item "UnsharedItem" in category "UnsharedCategory" is NOT displayed
+
+  Scenario: Share unshared Item
+    Given Item "UnsharedItem" in category "UnsharedCategory" unshared icon is displayed
+    When  LongPress on Item "UnsharedItem" in category "UnsharedCategory"
+    And   Tap on Confirm
+    Then  Item "UnsharedItem" in category "UnsharedCategory" unshared icon is NOT displayed
