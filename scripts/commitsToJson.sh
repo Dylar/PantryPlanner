@@ -1,58 +1,62 @@
 #!/bin/bash
 
-commit_format="\"%s\","
-commits=()
+commit_format='%s'
 
+# Function to process commits and create JSON objects
 process_commits() {
-    local param2="$1"
-    local commit_messages=("$2")
+  local tag="$1"
+  shift
+  local commit_messages=("$@")
 
-    if [ -z "$commit_messages" ]; then
-        return
-    fi
+  if [ ${#commit_messages[@]} -eq 0 ]; then
+    echo "{ \"version\": \"$tag\", \"commits\": [] }"
+    return
+  fi
 
-    local joined_commits="$(IFS=,; echo "${commit_messages[*]}")"
-    joined_commits="${joined_commits::${#joined_commits}-1}"
-    commits+=("{\n\"version\":\"$param2\",\n\"commits\":[\n$joined_commits\n]\n}")
+  # Sanitizing and joining commit messages
+  local sanitized_commits=()
+  for commit in "${commit_messages[@]}"; do
+    sanitized_commit=$(echo "$commit" | sed 's/"/\\"/g' | tr -d '\n')
+    sanitized_commits+=("\"$sanitized_commit\"")
+  done
+  local joined_commits=$(
+    IFS=,
+    echo "[${sanitized_commits[*]}]"
+  )
+
+  # Creating a JSON object for the tag
+  echo "{ \"version\": \"$tag\", \"commits\": $joined_commits }"
 }
 
 git fetch --all --tags
 tags=($(git tag -l --sort=-v:refname))
-tagsLength=${#tags[@]}-1
-for ((i=0; i<${#tags[@]}; i++))
-do
-    tag=${tags[i]}
 
-    if ((i == 0))
-    then # last commit to last tag
-        echo "NEW - last commit to last tag ($tag)"
-        process_commits "NEW" "$(git log "$tag"..HEAD --pretty=format:"$commit_format")"
-    fi
-    if ((i < tagsLength))
-    then # commits between tags
-        next_tag=${tags[i+1]}
-        echo "commits between tags ($tag to $next_tag)"
-        process_commits "$tag" "$(git log "$next_tag".."$tag" --pretty=format:"$commit_format")"
-    fi
-    if((i == tagsLength))
-    then # first tag to first commit
-        echo "first tag to first commit"
-        process_commits "$tag" "$(git log "$tag" --pretty=format:"$commit_format")"
-    fi
+commits_json=()
+
+if git log "${tags[0]}"..HEAD --pretty=format:"%s" | grep -q '.*'; then
+  # Get commits from the latest tag to HEAD
+  IFS=$'\n' read -r -d '' -a commits < <(git log "${tags[0]}"..HEAD --pretty=format:"$commit_format" && printf '\0')
+  commits_json+=("$(process_commits "NEW" "${commits[@]}")")
+fi
+
+for ((i = 0; i < ${#tags[@]}; i++)); do
+  tag=${tags[i]}
+  next_tag=${tags[i + 1]}
+
+  if ((i < ${#tags[@]} - 1)); then
+    # Get commits between this tag and the next
+    IFS=$'\n' read -r -d '' -a commits < <(git log "$next_tag".."$tag" --pretty=format:"$commit_format" && printf '\0')
+  else
+    # Get commits from the first tag to the initial commit
+    IFS=$'\n' read -r -d '' -a commits < <(git log "$tag" --pretty=format:"$commit_format" && printf '\0')
+  fi
+
+  commits_json+=("$(process_commits "$tag" "${commits[@]}")")
 done
 
-result=()
-first=true # comma between commits (but no trailing comma)
-for ((i=${#commits[@]}-1; i>=0; i--)); do
-    if [[ $first == true ]]; then
-      result=("${commits[$i]}")
-      first=false
-    else
-      result+=(",${commits[$i]}")
-    fi
-done
+# Reverse the array to get the oldest tags first
+printf -v joined '%s,' "${commits_json[@]}"
+joined="[${joined%,}]"
 
-all="[$(printf "%s\n" "${result[@]}")]"
-echo "$all" > releaseNotes.json
-#mv releaseNotes.json "$BITRISE_SOURCE_DIR"/app/src/main/assets
-mv releaseNotes.json ./app/src/main/assets
+echo "$joined" >releaseNotes.json
+mv releaseNotes.json ../app/src/main/assets

@@ -1,50 +1,264 @@
 [
   {
-    "version": "v0.0.12",
+    "version": "HEAD",
     "commits": [
-      "uncheck all items",
-      "check item",
-      "remove item",
-      "add item",
-      "init app",
-      "add gitignore",
-      "Initial commit"
-    ]
-  },
-  {
-    "version": "v0.0.25",
-    "commits": [
-      "sort by checked",
-      "remove item confirm dialog",
-      "fix gradle",
-      "fix gradle wrapper",
-      "remove swipe background red"
-    ]
-  },
-  {
-    "version": "v0.0.35",
-    "commits": [
-      "remove ticks on filtered color",
-      "stages firstore",
-      "loading screen",
       "clean",
-      "widget color filter",
-      "filter color",
-      "select item color",
-      "add colors",
-      "layouting",
-      "homescreen widget"
+      "app version downloadable",
+      "update realeasenotes script",
+      "clean dialogs layout",
+      "clean screens",
+      "test unshared icon visible",
+      "clean usecases",
+      "clean data layer",
+      "rename resource to result",
+      "app version downloadable"
     ]
   },
   {
-    "version": "v0.0.42",
+    "version": "v0.3.194",
     "commits": [
-      "app name per flavor",
-      "Show commit messages in info dialog",
-      "sticky header for widget",
-      "add sticky header",
-      "add application suffix",
-      "add categorys"
+      "clean code",
+      "clean dialogs layout",
+      "clean screens",
+      "test unshared icon visible",
+      "clean usecases",
+      "clean data layer",
+      "rename resource to result",
+      "asd",
+      "clean",
+      "app version downloadable"
+    ]
+  },
+  {
+    "version": "v0.3.187",
+    "commits": [
+      "load app version",
+      "new app version dialog"
+    ]
+  },
+  {
+    "version": "v0.3.178",
+    "commits": [
+      "fix share item button"
+    ]
+  },
+  {
+    "version": "v0.3.176",
+    "commits": [
+      "correct color for amount input field",
+      "share unshared item"
+    ]
+  },
+  {
+    "version": "v0.3.175",
+    "commits": [
+      "see unshared items only with amount",
+      "see unshared items in stock"
+    ]
+  },
+  {
+    "version": "v0.3.174",
+    "commits": [
+      "on connect User connect both",
+      "see unshared items in shared checklist",
+      "preset shared user on new item"
+    ]
+  },
+  {
+    "version": "v0.3.172",
+    "commits": [
+      "colors fixed",
+      "migrate material3 -> material1? 2?",
+      "category color on settings",
+      "navi as events",
+      "change color theme",
+      "darkmode in settings"
+    ]
+  },
+  {
+    "version": "v0.3.171",
+    "commits": [
+      "upgrade gradle",
+      "upgrade dependency",
+      "clean dependency"
+    ]
+  },
+  {
+    "version": "v0.3.170",
+    "commits": [
+      "Add User via scan",
+      "Add User via email dialog",
+      "remove User on ProfilePage test"
+    ]
+  },
+  {
+    "version": "v0.3.167",
+    "commits": [
+      "fix android 13 crash"
+    ]
+  },
+  {
+    "version": "v0.3.166",
+    "commits": [
+      "Merge pull request #2 from Dylar/feature/user",
+      "change Stock on ChecklistPage",
+      "Add Stock to Checklist",
+      "StockItems amount in/decreasable",
+      "Stock addable on StockPage",
+      "separate stockitem and item edit",
+      "No checklist text shown test",
+      "add notification permission",
+      "remove all items show no items displayed test",
+      "new user test",
+      "un/finish checklist test",
+      "add item to checklist test",
+      "in/decrease item amount test",
+      "stock user management",
+      "manage user test on ChecklistPage",
+      "checklist management on OverviewPage",
+      "item management + search test",
+      "fix focus on dialog",
+      "Item management test on StockPage",
+      "ItemPage split to ItemPage and StockPage WIP",
+      "share location tests",
+      "multiple dependency modules",
+      "llocation editable only for creator",
+      "location editable",
+      "location deletable",
+      "locations repo + adding location",
+      "Location test + create new Location dialog",
+      "define create new location feature",
+      "clean code",
+      "Gherkins testing",
+      "gradle upgrade",
+      "Gherkins init WIP",
+      "upgrade dependencies",
+      "color included again",
+      "in/decrease stock amount for checked stockItems only",
+      "item addable again",
+      "WIP stock model impl",
+      "only creator can delete checklist/items",
+      "show sharedWith in checklist",
+      "select user to share item/checklist",
+      "disconnect user",
+      "show connected user in profile",
+      "Scan page",
+      "User profile page",
+      "load checklist + items depending on user",
+      "logout",
+      "register + login",
+      "LoginPage + RegisterPage",
+      "init user"
+    ]
+  },
+  {
+    "version": "v0.2.136",
+    "commits": [
+      "Save checklist/items with uppercase first character",
+      "Settings page + repository"
+    ]
+  },
+  {
+    "version": "v0.2.135",
+    "commits": [
+      "clean",
+      "combine add and edit dialog",
+      "clean",
+      "notification tap navi to refresh page",
+      "add refresh page",
+      "add Alert + Notify"
+    ]
+  },
+  {
+    "version": "v0.1.133",
+    "commits": [
+      "Edit item with dropdown category"
+    ]
+  },
+  {
+    "version": "v0.1.130",
+    "commits": [
+      "Loadingindicator in searchbar"
+    ]
+  },
+  {
+    "version": "v0.1.129",
+    "commits": [
+      "Search result highlighted"
+    ]
+  },
+  {
+    "version": "v0.1.128",
+    "commits": [
+      "Add Searchbar",
+      "Sort items by checked"
+    ]
+  },
+  {
+    "version": "v0.1.127",
+    "commits": [
+      "New Layout Design"
+    ]
+  },
+  {
+    "version": "v0.1.126",
+    "commits": [
+      "Add Item: category with drop down"
+    ]
+  },
+  {
+    "version": "v0.1.125",
+    "commits": [
+      "header open/close-able",
+      "color on category"
+    ]
+  },
+  {
+    "version": "v0.1.124",
+    "commits": [
+      "on un/finish remove/add items from/to stock",
+      "item amount",
+      "fix layout + clean",
+      "widget deprecated",
+      "sorting into repository",
+      "fix release note script"
+    ]
+  },
+  {
+    "version": "v0.1.120",
+    "commits": [
+      "fix empty list text"
+    ]
+  },
+  {
+    "version": "v0.0.116",
+    "commits": [
+      "fix item check"
+    ]
+  },
+  {
+    "version": "v0.0.109",
+    "commits": [
+      "items checkable + checklist finishable",
+      "show items in checklist + items addable",
+      "checklist overview + items page"
+    ]
+  },
+  {
+    "version": "v0.0.107",
+    "commits": [
+      "item name editable",
+      "fix release notes",
+      "category layout",
+      "categorys editable",
+      "clean"
+    ]
+  },
+  {
+    "version": "v0.0.101",
+    "commits": [
+      "signing stage",
+      "add crashlytics"
     ]
   },
   {
@@ -63,46 +277,51 @@
     ]
   },
   {
-    "version": "v0.0.101",
+    "version": "v0.0.42",
     "commits": [
-      "signing stage",
-      "add crashlytics"
+      "app name per flavor",
+      "Show commit messages in info dialog",
+      "sticky header for widget",
+      "add sticky header",
+      "add application suffix",
+      "add categorys"
     ]
   },
   {
-    "version": "v0.0.107",
+    "version": "v0.0.35",
     "commits": [
-      "item name editable",
-      "fix release notes",
-      "category layout",
-      "categorys editable",
-      "clean"
+      "remove ticks on filtered color",
+      "stages firstore",
+      "loading screen",
+      "clean",
+      "widget color filter",
+      "filter color",
+      "select item color",
+      "add colors",
+      "layouting",
+      "homescreen widget"
     ]
   },
   {
-    "version": "v0.0.109",
+    "version": "v0.0.25",
     "commits": [
-      "items checkable + checklist finishable",
-      "show items in checklist + items addable",
-      "checklist overview + items page"
+      "sort by checked",
+      "remove item confirm dialog",
+      "fix gradle",
+      "fix gradle wrapper",
+      "remove swipe background red"
     ]
   },
   {
-    "version": "v0.0.116",
+    "version": "v0.0.12",
     "commits": [
-      "fix item check"
-    ]
-  },
-  {
-    "version": "v0.0.118",
-    "commits": [
-      "fix empty list text"
-    ]
-  },
-  {
-    "version": "NEW",
-    "commits": [
-      "fix release note script"
+      "uncheck all items",
+      "check item",
+      "remove item",
+      "add item",
+      "init app",
+      "add gitignore",
+      "Initial commit"
     ]
   }
 ]
