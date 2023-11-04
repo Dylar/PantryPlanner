@@ -8,7 +8,7 @@ import java.util.UUID
 data class Settings(
     val uuid: String = UUID.randomUUID().toString(),
     val darkMode: Boolean? = null,
-    val refreshAlert: Boolean = true,
+    val refreshAlert: Boolean = false,
     val categoryColors: MutableMap<String, Int> = mutableMapOf(),
     val freshUntil: Map<String, Long> = emptyMap(),
     val remindAfter: Map<String, Long> = emptyMap(),
