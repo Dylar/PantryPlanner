@@ -231,6 +231,7 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
             ) {
                 SelectItemHeader(
                     item,
+                    false,//TODO mach das jo...
                     checkedItems.value.contains(item.uuid),
                     BaseColors.FireRed, //TODO color? -> fix this page
                     checkItem = viewModel::checkItem

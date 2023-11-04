@@ -55,18 +55,19 @@ import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.StockItem
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseFragment
+import de.bitb.pantryplaner.ui.base.comps.DissmissItem
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.GridListLayout
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
 import de.bitb.pantryplaner.ui.base.comps.SearchBar
 import de.bitb.pantryplaner.ui.base.comps.buildUserDropDown
-import de.bitb.pantryplaner.ui.base.comps.dissmissItem
 import de.bitb.pantryplaner.ui.base.comps.onBack
 import de.bitb.pantryplaner.ui.base.highlightedText
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.ItemTag
 import de.bitb.pantryplaner.ui.base.testTags.StockPageTag
+import de.bitb.pantryplaner.ui.base.testTags.UnsharedIconTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.comps.AddSubRow
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
@@ -373,7 +374,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
             if (showActionDialog.value) {
                 ConfirmDialog(
                     "Item hinzufügen",
-                    "Möchten Sie das Item ihrer Liste hinzufügen?",
+                    "Möchten Sie das Item ihrem Item-Pool hinzufügen?",
                     onConfirm = {
                         showActionDialog.value = false
                         viewModel.shareItem(item)
@@ -383,7 +384,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
             }
         }
 
-        dissmissItem(
+        DissmissItem(
             item.name,
             color,
             onSwipe = { viewModel.deleteItem(item) },
@@ -423,6 +424,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
                     Icon(
                         Icons.Filled.LinkOff,
                         modifier = Modifier
+                            .testTag(UnsharedIconTag)
                             .padding(4.dp)
                             .size(18.dp),
                         contentDescription = null,

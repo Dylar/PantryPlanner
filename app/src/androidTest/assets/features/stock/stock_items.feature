@@ -5,7 +5,7 @@ Feature: StockPage Items management
     And   Start on StockPage
     And   Item "NewItem" in category "NewCategory" is NOT displayed
 
-  Scenario: Render all Items
+  Scenario: Render all Items and share unshared item
     Given Item "CreatorItem" in category "CreatorCategory" is displayed
     And   Item "CreatorItem" in category "CreatorCategory" has amount 1.0
     And   Item "SharedItem" in category "SharedCategory" is displayed
@@ -18,8 +18,10 @@ Feature: StockPage Items management
     And   Item "SharedItem" in category "SharedCategory" has amount 0.0
     And   Item "UnsharedItem" in category "UnsharedCategory" is displayed
     And   Item "UnsharedItem" in category "UnsharedCategory" has amount 6.66
+    And   Item "UnsharedItem" in category "UnsharedCategory" unshared icon is displayed
     When  LongPress on Item "UnsharedItem" in category "UnsharedCategory"
     And   Tap on Confirm
+    Then  Item "UnsharedItem" in category "UnsharedCategory" unshared icon is NOT displayed
     And   Tap on tab "CreatorStock"
     And   Item "UnsharedItem" in category "UnsharedCategory" is displayed
 

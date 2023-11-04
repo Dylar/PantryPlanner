@@ -10,3 +10,5 @@ sealed class AddSubRowTag : TestTag {
     object AmountText : AddSubRowTag()
     object MinusButton : AddSubRowTag()
 }
+
+object UnsharedIconTag : TestTag

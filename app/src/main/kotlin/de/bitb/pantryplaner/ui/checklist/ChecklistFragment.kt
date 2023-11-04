@@ -26,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,13 +41,13 @@ import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
+import de.bitb.pantryplaner.ui.base.comps.DissmissItem
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.GridListLayout
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
 import de.bitb.pantryplaner.ui.base.comps.buildStockDropDown
 import de.bitb.pantryplaner.ui.base.comps.buildUserDropDown
-import de.bitb.pantryplaner.ui.base.comps.dissmissItem
 import de.bitb.pantryplaner.ui.base.naviChecklistToItems
 import de.bitb.pantryplaner.ui.base.testTags.ChecklistPageTag
 import de.bitb.pantryplaner.ui.base.testTags.ItemTag
@@ -227,9 +228,10 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                         viewModel::editCategory
                     ) { _, item ->
                         val color = settings.categoryColor(item)
-                        checkListItem(
+                        CheckListItem(
                             checklist,
                             item,
+                            model.isSharedWith(item),
                             color,
                         )
                     }
@@ -239,17 +241,32 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
     }
 
     @Composable
-    private fun checkListItem(
+    private fun CheckListItem(
         checklist: Checklist,
         item: Item,
+        isShared: Boolean,
         color: Color,
     ) {
+        var showActionDialog by remember { mutableStateOf(true) }
+        if (showActionDialog) {
+            ConfirmDialog(
+                "Item hinzufügen",
+                "Möchten Sie das Item ihrem Item-Pool hinzufügen?",
+                onConfirm = {
+                    showActionDialog = false
+                    viewModel.shareItem(item)
+                },
+                onDismiss = { showActionDialog = false },
+            )
+        }
+
         val checkItem = checklist.items.first { it.uuid == item.uuid }
-        dissmissItem(
+        DissmissItem(
             item.name,
             color,
             onSwipe = { viewModel.removeItem(item) },
             onClick = { viewModel.checkItem(item.uuid) },
+            onLongClick = { showActionDialog = true },
         ) {
             Column(
                 modifier = Modifier
@@ -258,8 +275,9 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Center,
             ) {
-                SelectItemHeader( // TODO show unshared icon if not shared
+                SelectItemHeader(
                     item,
+                    isShared,
                     checkItem.checked,
                     color,
                     true,
