@@ -124,21 +124,21 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
             },
             actions = {
                 IconButton(
-                    onClick = { showGridLayout.value = !showGridLayout.value },
-                    modifier = Modifier.testTag(ChecklistPageTag.LayoutButton)
-                ) {
-                    Icon(
-                        imageVector = if (showGridLayout.value) Icons.Default.GridOff else Icons.Default.GridOn,
-                        contentDescription = "Layout button"
-                    )
-                }
-                IconButton(
                     onClick = { showFilterDialog.value = !showFilterDialog.value },
                     modifier = Modifier.testTag(ChecklistPageTag.FilterButton)
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.FilterList,
                         contentDescription = "Filter button"
+                    )
+                }
+                IconButton(
+                    onClick = { showGridLayout.value = !showGridLayout.value },
+                    modifier = Modifier.testTag(ChecklistPageTag.LayoutButton)
+                ) {
+                    Icon(
+                        imageVector = if (showGridLayout.value) Icons.Default.GridOff else Icons.Default.GridOn,
+                        contentDescription = "Layout button"
                     )
                 }
             }

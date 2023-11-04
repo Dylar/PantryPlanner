@@ -48,15 +48,15 @@ class ProfileViewModel @Inject constructor(
                 combine(
                     userRepo.getUser(user.connectedUser),
                     stockRepo.getStocks(),
-                ) { usersResp, StockResp ->
+                ) { usersResp, stockResp ->
                     when {
                         usersResp is Result.Error -> usersResp.castTo()
-                        StockResp is Result.Error -> StockResp.castTo()
+                        stockResp is Result.Error -> stockResp.castTo()
                         else -> Result.Success(
                             ProfileModel(
                                 user,
                                 usersResp.data,
-                                StockResp.data
+                                stockResp.data
                             )
                         )
                     }

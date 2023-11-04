@@ -158,21 +158,21 @@ class StockFragment : BaseFragment<StockViewModel>() {
 
                 if (!showSearchBar.value) {
                     IconButton(
-                        modifier = Modifier.testTag(StockPageTag.LayoutButton),
-                        onClick = { showGridLayout.value = !showGridLayout.value },
-                    ) {
-                        Icon(
-                            imageVector = if (showGridLayout.value) Icons.Default.GridOff else Icons.Default.GridOn,
-                            contentDescription = "Layout button"
-                        )
-                    }
-                    IconButton(
                         modifier = Modifier.testTag(StockPageTag.FilterButton),
                         onClick = { showFilterDialog.value = !showFilterDialog.value },
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.FilterList,
                             contentDescription = "Filter button"
+                        )
+                    }
+                    IconButton(
+                        modifier = Modifier.testTag(StockPageTag.LayoutButton),
+                        onClick = { showGridLayout.value = !showGridLayout.value },
+                    ) {
+                        Icon(
+                            imageVector = if (showGridLayout.value) Icons.Default.GridOff else Icons.Default.GridOn,
+                            contentDescription = "Layout button"
                         )
                     }
                 }

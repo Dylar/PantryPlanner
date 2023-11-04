@@ -41,11 +41,11 @@ import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseFragment
+import de.bitb.pantryplaner.ui.base.comps.DissmissItem
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.GridListLayout
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
-import de.bitb.pantryplaner.ui.base.comps.DissmissItem
 import de.bitb.pantryplaner.ui.base.naviOverviewToItems
 import de.bitb.pantryplaner.ui.base.naviToChecklist
 import de.bitb.pantryplaner.ui.base.naviToProfile
@@ -55,12 +55,6 @@ import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 import de.bitb.pantryplaner.ui.dialogs.useAddChecklistDialog
 import de.bitb.pantryplaner.ui.dialogs.useEditChecklistDialog
-
-@Preview(showBackground = true)
-@Composable
-private fun PreferenceCategoryPreview() {
-    OverviewFragment()
-}
 
 @AndroidEntryPoint
 class OverviewFragment : BaseFragment<OverviewViewModel>() {
@@ -90,21 +84,21 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
             title = { Text(getString(R.string.overview_title)) },
             actions = {
                 IconButton(
-                    onClick = ::naviToProfile,
-                    modifier = Modifier.testTag(OverviewPageTag.ProfileButton)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = "profile button"
-                    )
-                }
-                IconButton(
                     onClick = { showGridLayout.value = !showGridLayout.value },
                     modifier = Modifier.testTag(OverviewPageTag.LayoutButton)
                 ) {
                     Icon(
                         imageVector = if (showGridLayout.value) Icons.Default.GridOff else Icons.Default.GridOn,
                         contentDescription = "Layout button"
+                    )
+                }
+                IconButton(
+                    onClick = ::naviToProfile,
+                    modifier = Modifier.testTag(OverviewPageTag.ProfileButton)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "profile button"
                     )
                 }
             }
@@ -135,7 +129,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
-// TODO open multi adding -> add template or checklist -> no everything is a checklist ... or more FABs
+// TODO open multi adding -> add template or checklist -> no everything is a checklist ... or more FABs -> naviBar
 
             ExtendedFloatingActionButton(
                 modifier = Modifier.testTag(OverviewPageTag.StockButton),
