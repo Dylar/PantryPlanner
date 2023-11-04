@@ -247,7 +247,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
         isShared: Boolean,
         color: Color,
     ) {
-        var showActionDialog by remember { mutableStateOf(true) }
+        var showActionDialog by remember { mutableStateOf(false) }
         if (showActionDialog) {
             ConfirmDialog(
                 "Item hinzufügen",

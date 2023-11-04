@@ -1,6 +1,8 @@
 package de.bitb.pantryplaner.ui.dialogs
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.AlertDialog
@@ -89,9 +91,6 @@ private fun AddEditStockDialog(
     onConfirm: (Stock, Boolean) -> Unit,
     onDismiss: () -> Unit,
 ) {
-//    val isStarted = remember { mutableStateOf(true) }
-//    val focusRequester = remember { FocusRequester() }
-
     var name by remember {
         mutableStateOf(
             TextFieldValue(
@@ -114,14 +113,14 @@ private fun AddEditStockDialog(
     AlertDialog(
         modifier = Modifier.testTag(AddEditStockDialogTag.DialogTag),
         onDismissRequest = onDismiss,
-        title = { Text(title) },
         text = {
             Column {
+                Text(title)
+                Spacer(modifier = Modifier.height(16.dp))
                 OutlinedTextField(
                     modifier = Modifier
                         .testTag(AddEditStockDialogTag.NameLabel)
-//                        .focusRequester(focusRequester)
-                        .padding(horizontal = 16.dp),
+                        .padding(4.dp),
                     singleLine = true,
                     label = { Text(stringResource(R.string.item_name)) },
                     value = name,
@@ -135,13 +134,6 @@ private fun AddEditStockDialog(
                 )
                 buildUserDropDown("Lager wird nicht geteilt", users, selectedUser)
             }
-
-//            LaunchedEffect(Unit) {
-//                if (isStarted.value) {
-//                    isStarted.value = false
-//                    focusRequester.requestFocus()
-//                }
-//            }
         },
         confirmButton = {
             Button(
