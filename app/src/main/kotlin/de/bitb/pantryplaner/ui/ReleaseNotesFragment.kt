@@ -27,7 +27,7 @@ class ReleaseNotesViewModel : BaseViewModel() {
 
     fun loadPatchNotes(rawNotes: String) {
         //TODO load via usecase at the beginning
-        notes = Gson().fromJson(rawNotes, Array<ReleaseVersion>::class.java).toList().reversed()
+        notes = Gson().fromJson(rawNotes, Array<ReleaseVersion>::class.java).toList()
     }
 
 }
