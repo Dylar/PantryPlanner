@@ -32,7 +32,6 @@ Feature: App walkthrough
     # SettingsPage
     Then  SettingsPage rendered
     And   On Back
-    And   On Back
     # Create Checklist
     When  Tap on NewChecklistButton
     And   Input "NewChecklist" as Checklist name

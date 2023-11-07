@@ -31,6 +31,7 @@ import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
 import de.bitb.pantryplaner.ui.base.naviSettingsToReleaseNotes
 import de.bitb.pantryplaner.ui.base.testTags.SettingsPageTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
+import de.bitb.pantryplaner.ui.comps.buildBottomNavi
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 import de.bitb.pantryplaner.ui.dialogs.InfoDialog
 
@@ -46,6 +47,13 @@ class SettingsFragment : BaseFragment<SettingsViewModel>() {
         Scaffold(
             scaffoldState = scaffoldState,
             topBar = { buildAppBar() },
+            bottomBar = {
+                buildBottomNavi(
+                    overviewRoute = R.id.settings_to_overview,
+                    stockRoute = R.id.settings_to_stock,
+                    profileRoute = R.id.settings_to_profile,
+                )
+            },
             content = { buildContent(it) },
         )
     }

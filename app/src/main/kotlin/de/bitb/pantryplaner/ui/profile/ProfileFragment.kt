@@ -18,14 +18,12 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCodeScanner
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.rounded.HomeWork
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -54,12 +52,12 @@ import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
 import de.bitb.pantryplaner.ui.base.comps.stickyGridHeader
 import de.bitb.pantryplaner.ui.base.naviToScan
-import de.bitb.pantryplaner.ui.base.naviToSettings
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.ProfilePageTag
 import de.bitb.pantryplaner.ui.base.testTags.StockTag
 import de.bitb.pantryplaner.ui.base.testTags.UserTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
+import de.bitb.pantryplaner.ui.comps.buildBottomNavi
 import de.bitb.pantryplaner.ui.dialogs.useAddStockDialog
 import de.bitb.pantryplaner.ui.dialogs.useAddUserDialog
 import de.bitb.pantryplaner.ui.dialogs.useEditStockDialog
@@ -80,6 +78,13 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
             scaffoldState = scaffoldState,
             topBar = { buildAppBar() },
             floatingActionButton = { buildFab() },
+            bottomBar = {
+                buildBottomNavi(
+                    overviewRoute = R.id.profile_to_overview,
+                    stockRoute = R.id.profile_to_stock,
+                    settingsRoute = R.id.profile_to_settings,
+                )
+            },
             content = { buildContent(it) },
         )
     }
@@ -99,17 +104,6 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
         TopAppBar(
             modifier = Modifier.testTag(ProfilePageTag.AppBar),
             title = { Text(getString(R.string.profile_title)) },
-            actions = {
-                IconButton(
-                    onClick = ::naviToSettings,
-                    modifier = Modifier.testTag(ProfilePageTag.SettingsButton)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Settings,
-                        contentDescription = "settings button"
-                    )
-                }
-            },
         )
     }
 

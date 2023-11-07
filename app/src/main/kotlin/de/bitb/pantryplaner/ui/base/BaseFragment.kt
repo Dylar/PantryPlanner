@@ -18,7 +18,9 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
+import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.MainActivity
+import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.data.model.Settings
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
@@ -77,11 +79,13 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
 
     private fun observeNavigateEvent() {
         viewModel.navigationEvents.observe(viewLifecycleOwner) { event ->
+            if (event == null) return@observe
+            viewModel.clearNavi()
             when (event) {
-                NavigateEvent.NavigateBack -> navController.popBackStack()
-                is NavigateEvent.Navigate -> navController.navigate(event.route)
-                is NavigateEvent.NavigateTo -> navController.popBackStack(event.route, false)
-                is NavigateEvent.NavigateToUrl -> activity?.navigateToURL(event.url)
+                NaviEvent.NavigateBack -> navController.popBackStack()
+                is NaviEvent.Navigate -> navController.navigate(event.route)
+                is NaviEvent.NavigateTo -> navController.popBackStack(event.route, false)
+                is NaviEvent.NavigateToUrl -> activity?.navigateToURL(event.url)
             }
         }
     }

@@ -21,11 +21,11 @@
             app:popUpToInclusive="true" />
 
         <!--TODO fix this page-->
-        <action
-            android:id="@+id/overview_to_refresh"
-            app:destination="@id/refreshFragment"
-            app:popUpTo="@+id/overviewFragment"
-            app:popUpToInclusive="false" />
+        <!--        <action-->
+        <!--            android:id="@+id/overview_to_refresh"-->
+        <!--            app:destination="@id/refreshFragment"-->
+        <!--            app:popUpTo="@+id/overviewFragment"-->
+        <!--            app:popUpToInclusive="false" />-->
     </fragment>
 
     <fragment
@@ -40,7 +40,9 @@
             app:destination="@id/registerFragment" />
         <action
             android:id="@+id/login_to_overview"
-            app:destination="@id/overviewFragment" />
+            app:destination="@id/overviewFragment"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -49,36 +51,40 @@
         android:label="register">
         <action
             android:id="@+id/register_to_overview"
-            app:destination="@id/overviewFragment" />
+            app:destination="@id/overviewFragment"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
     </fragment>
+
+    <!--TODO fix this page-->
+    <!--    <fragment-->
+    <!--        android:id="@+id/refreshFragment"-->
+    <!--        android:name="de.bitb.pantryplaner.ui.refresh.RefreshFragment"-->
+    <!--        android:label="refresh" />-->
 
     <fragment
         android:id="@+id/overviewFragment"
         android:name="de.bitb.pantryplaner.ui.overview.OverviewFragment"
         android:label="overview">
         <action
-            android:id="@+id/overview_to_profile"
-            app:destination="@id/profileFragment" />
-        <action
             android:id="@+id/overview_to_stock"
             app:destination="@id/stockFragment" />
         <action
+            android:id="@+id/overview_to_profile"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/overview_to_settings"
+            app:destination="@id/settingsFragment" />
+
+        <action
             android:id="@+id/overview_to_checklist"
             app:destination="@id/checklistFragment" />
-        <action
-            android:id="@+id/overview_to_refresh"
-            app:destination="@id/refreshFragment" />
+
+        <!--TODO fix this page-->
+        <!--        <action-->
+        <!--            android:id="@+id/overview_to_refresh"-->
+        <!--            app:destination="@id/refreshFragment" />-->
     </fragment>
-
-    <fragment
-        android:id="@+id/stockFragment"
-        android:name="de.bitb.pantryplaner.ui.stock.StockFragment"
-        android:label="stock" />
-
-    <fragment
-        android:id="@+id/selectItemsFragment"
-        android:name="de.bitb.pantryplaner.ui.checklist.SelectItemsFragment"
-        android:label="selectItems" />
 
     <fragment
         android:id="@+id/checklistFragment"
@@ -90,20 +96,54 @@
     </fragment>
 
     <fragment
-        android:id="@+id/refreshFragment"
-        android:name="de.bitb.pantryplaner.ui.refresh.RefreshFragment"
-        android:label="refresh" />
+        android:id="@+id/selectItemsFragment"
+        android:name="de.bitb.pantryplaner.ui.checklist.SelectItemsFragment"
+        android:label="selectItems" />
+
+    <fragment
+        android:id="@+id/stockFragment"
+        android:name="de.bitb.pantryplaner.ui.stock.StockFragment"
+        android:label="stock">
+        <action
+            android:id="@+id/stock_to_overview"
+            app:destination="@id/overviewFragment"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/stock_to_profile"
+            app:destination="@id/profileFragment"
+            app:popUpTo="@+id/overviewFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/stock_to_settings"
+            app:destination="@id/settingsFragment"
+            app:popUpTo="@+id/overviewFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
 
     <fragment
         android:id="@+id/profileFragment"
         android:name="de.bitb.pantryplaner.ui.profile.ProfileFragment"
         android:label="profile">
         <action
-            android:id="@+id/profile_to_settings"
-            app:destination="@id/settingsFragment" />
-        <action
             android:id="@+id/profile_to_scan"
             app:destination="@id/scanFragment" />
+
+        <action
+            android:id="@+id/profile_to_overview"
+            app:destination="@id/overviewFragment"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/profile_to_stock"
+            app:destination="@id/stockFragment"
+            app:popUpTo="@+id/overviewFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/profile_to_settings"
+            app:destination="@id/settingsFragment"
+            app:popUpTo="@+id/overviewFragment"
+            app:popUpToInclusive="false" />
     </fragment>
 
     <fragment
@@ -115,6 +155,22 @@
         android:id="@+id/settingsFragment"
         android:name="de.bitb.pantryplaner.ui.settings.SettingsFragment"
         android:label="settings">
+        <action
+            android:id="@+id/settings_to_overview"
+            app:destination="@id/overviewFragment"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/settings_to_stock"
+            app:destination="@id/stockFragment"
+            app:popUpTo="@+id/overviewFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/settings_to_profile"
+            app:destination="@id/profileFragment"
+            app:popUpTo="@+id/overviewFragment"
+            app:popUpToInclusive="false" />
+
         <action
             android:id="@+id/settings_to_releasenotes"
             app:destination="@id/releaseNotesFragment" />

@@ -54,6 +54,7 @@ import de.bitb.pantryplaner.data.model.Settings
 import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.StockItem
 import de.bitb.pantryplaner.data.model.User
+import de.bitb.pantryplaner.data.model.groupByCategory
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.comps.DissmissItem
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
@@ -70,6 +71,7 @@ import de.bitb.pantryplaner.ui.base.testTags.StockPageTag
 import de.bitb.pantryplaner.ui.base.testTags.UnsharedIconTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.comps.AddSubRow
+import de.bitb.pantryplaner.ui.comps.buildBottomNavi
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 import de.bitb.pantryplaner.ui.dialogs.FilterDialog
 import de.bitb.pantryplaner.ui.dialogs.useAddItemDialog
@@ -116,7 +118,14 @@ class StockFragment : BaseFragment<StockViewModel>() {
             scaffoldState = scaffoldState,
             topBar = { buildAppBar(filter) },
             content = { buildContent(it, modelResp) },
-            floatingActionButton = { buildFab(modelResp) }
+            floatingActionButton = { buildFab(modelResp) },
+            bottomBar = {
+                buildBottomNavi(
+                    overviewRoute = R.id.stock_to_overview,
+                    profileRoute = R.id.stock_to_profile,
+                    settingsRoute = R.id.stock_to_settings,
+                )
+            }
         )
 
         if (showFilterDialog.value) {
@@ -328,11 +337,10 @@ class StockFragment : BaseFragment<StockViewModel>() {
                 return
             }
 
-            val mapItems = items.groupBy { it.category }
             GridListLayout(
                 innerPadding,
                 showGridLayout,
-                mapItems,
+                items.groupByCategory,
                 settings::categoryColor,
                 viewModel::editCategory
             ) { _, item ->

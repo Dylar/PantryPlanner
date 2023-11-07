@@ -6,6 +6,7 @@ import androidx.compose.ui.test.performClick
 import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
+import de.bitb.pantryplaner.ui.assertBottomNaviBar
 import de.bitb.pantryplaner.ui.base.testTags.ProfilePageTag
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
@@ -18,11 +19,6 @@ class ProfilePageSteps(
     @Then("ProfilePage rendered")
     fun renderProfilePage() {
         assertProfilePageRendered()
-    }
-
-    @When("Tap on SettingsButton")
-    fun tapOnSettingsButtonStep() {
-        tapOnSettingsButton()
     }
 
     @When("Tap on ProfilePage NewStockButton")
@@ -41,15 +37,10 @@ class ProfilePageSteps(
 
 fun ComposeTestRule.assertProfilePageRendered() {
     onNodeWithTag(ProfilePageTag.AppBar).assertIsDisplayed()
-    onNodeWithTag(ProfilePageTag.SettingsButton).assertIsDisplayed()
     onNodeWithTag(ProfilePageTag.QRInfo).assertIsDisplayed()
     onNodeWithTag(ProfilePageTag.QRLabel).assertIsDisplayed()
     onNodeWithTag(ProfilePageTag.NewStockButton).assertIsDisplayed()
     onNodeWithTag(ProfilePageTag.AddUserButton).assertIsDisplayed()
-}
-
-fun ComposeTestRule.tapOnSettingsButton() {
-    onNodeWithTag(ProfilePageTag.SettingsButton).performClick()
-    waitForIdle()
+    assertBottomNaviBar()
 }
 

@@ -50,4 +50,3 @@ fun ComposeTestRule.assertChecklistPageRendered() {
     onNodeWithTag(ChecklistPageTag.AddItemButton).assertIsDisplayed()
     onNodeWithTag(ChecklistPageTag.FinishButton).assertIsDisplayed()
 }
-

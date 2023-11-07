@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.ui.base.BaseViewModel
-import de.bitb.pantryplaner.ui.base.NavigateEvent
+import de.bitb.pantryplaner.ui.base.NaviEvent
 import de.bitb.pantryplaner.ui.base.comps.asResString
 import de.bitb.pantryplaner.usecase.UserUseCases
 import kotlinx.coroutines.launch
@@ -21,7 +21,7 @@ class ScanViewModel @Inject constructor(
             if (res is Result.Error) showSnackBar(res.message!!)
             else {
                 showSnackBar("Benutzer hinzugefügt".asResString())
-                navigate(NavigateEvent.NavigateBack)
+                navigate(NaviEvent.NavigateBack)
             }
         }
     }
