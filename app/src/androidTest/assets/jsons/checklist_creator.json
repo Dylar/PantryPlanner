@@ -18,5 +18,7 @@
   "updatedAt": "",
   "creator": "user123",
   "stock": "stock123",
-  "sharedWith": []
+  "sharedWith": [
+    "user321"
+  ]
 }

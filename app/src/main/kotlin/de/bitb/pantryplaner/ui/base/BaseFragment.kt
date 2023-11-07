@@ -18,9 +18,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
-import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.MainActivity
-import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.data.model.Settings
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen

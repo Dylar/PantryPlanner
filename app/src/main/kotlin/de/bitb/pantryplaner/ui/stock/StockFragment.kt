@@ -1,6 +1,7 @@
 package de.bitb.pantryplaner.ui.stock
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -37,10 +38,12 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -230,23 +233,21 @@ class StockFragment : BaseFragment<StockViewModel>() {
     @Composable
     private fun buildContent(innerPadding: PaddingValues, modelResp: Result<StockModel>?) {
         when {
-            modelResp?.data?.isLoading != false -> LoadingIndicator()
             modelResp is Result.Error -> ErrorScreen(modelResp.message!!.asString())
+            modelResp?.data?.isLoading != false -> LoadingIndicator()
             else -> {
                 val model = modelResp.data
                 val settings = model.settings!!
                 val items = model.items!!
                 val categorys = items.keys.toList()
                 val stocks = model.stocks!!
-                val users = model.connectedUser ?: listOf()
                 val user = model.user!!
-                val allUser = users + listOf(user)
-
-                val pagerState = rememberPagerState { stocks.size }
+                val connectedUser = model.connectedUser!!
+                val sharedUser = model.sharedUser!!
 
                 useAddStockDialog(
                     showAddStockDialog,
-                    users,
+                    connectedUser,
                     onEdit = { loc, close ->
                         viewModel.addStock(loc)
                         if (close) showAddStockDialog.value = false
@@ -261,12 +262,13 @@ class StockFragment : BaseFragment<StockViewModel>() {
                         return
                     }
 
+                    val pagerState = rememberPagerState { stocks.size }
                     TabRow(
                         selectedTabIndex = pagerState.currentPage,
                     ) {
                         val scope = rememberCoroutineScope()
                         stocks.map { it.name }.forEachIndexed { index, title ->
-                            Tab( //TODO long press to delete
+                            Tab(
                                 modifier = Modifier.testTag(StockPageTag.StockTabTag(title)),
                                 text = { Text(title) },
                                 selected = pagerState.currentPage == index,
@@ -274,7 +276,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
                                     scope.launch {
                                         pagerState.animateScrollToPage(index)
                                     }
-                                }
+                                },
                             )
                         }
                     }
@@ -284,11 +286,11 @@ class StockFragment : BaseFragment<StockViewModel>() {
                             innerPadding,
                             settings,
                             stock,
-                            items[stock.uuid] ?: emptyList(),
+                            items[stock.uuid].orEmpty(),
                             categorys,
-                            allUser,
-                            users,
                             user,
+                            connectedUser,
+                            sharedUser[stock.uuid].orEmpty(),
                         )
                     }
                 }
@@ -303,15 +305,15 @@ class StockFragment : BaseFragment<StockViewModel>() {
         stock: Stock,
         items: List<Item>,
         categorys: List<String>,
-        allUser: List<User>,
-        users: List<User>,
         user: User,
+        connectedUser: List<User>,
+        sharedUser: List<User>,
     ) {
 
         useAddItemDialog(
             showAddItemDialog,
             categorys,
-            users,
+            connectedUser,
         ) { item, close ->
             viewModel.addItem(item)
             if (close) showAddItemDialog.value = false
@@ -320,12 +322,10 @@ class StockFragment : BaseFragment<StockViewModel>() {
             modifier = Modifier.testTag(StockPageTag.StockPage(stock.name)),
             verticalArrangement = Arrangement.Top
         ) {
-            val selectedUser = remember(stock) {
-                mutableStateOf(allUser.filter { stock.sharedWith.contains(it.uuid) })
-            }
+            val selectedUser = remember(stock) { mutableStateOf(sharedUser) }
             buildUserDropDown(
                 "Lager wird nicht geteilt",
-                users,
+                connectedUser,
                 selectedUser,
                 canChange = stock.creator == user.uuid,
             ) {
@@ -349,8 +349,8 @@ class StockFragment : BaseFragment<StockViewModel>() {
                     stock,
                     item,
                     categorys,
-                    users,
                     user,
+                    connectedUser,
                     color,
                 )
             }
@@ -362,8 +362,8 @@ class StockFragment : BaseFragment<StockViewModel>() {
         stock: Stock,
         item: Item,
         categorys: List<String>,
-        users: List<User>,
         user: User,
+        users: List<User>,
         color: Color,
     ) {
         val stockItem = stock.items.firstOrNull { it.uuid == item.uuid }

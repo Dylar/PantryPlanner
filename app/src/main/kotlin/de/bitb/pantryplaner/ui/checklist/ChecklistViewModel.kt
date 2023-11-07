@@ -117,9 +117,10 @@ class ChecklistViewModel @Inject constructor(
                         else -> {
                             //TODO just in test?
                             val filteredItems = //items.data
-                                items.data?.mapValues { (_, list) ->
-                                    list.filter { it.uuid in itemIds }
-                                }?.filterValues { it.isNotEmpty() }
+                                items.data
+                                    ?.mapValues { (_, list) -> list.filter { it.uuid in itemIds } }
+                                    ?.filterValues { it.isNotEmpty() }
+                                    .orEmpty()
 
 //                            items.data TODO maybe this?
 //                                ?.filter { item -> item.sharedWith(user.data!!.uuid) }

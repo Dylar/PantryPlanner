@@ -180,8 +180,8 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
     @Composable
     private fun buildContent(innerPadding: PaddingValues, checkModel: Result<CheckModel>?) {
         when {
-            checkModel?.data?.isLoading != false -> LoadingIndicator()
             checkModel is Result.Error -> ErrorScreen(checkModel.message!!.asString())
+            checkModel?.data?.isLoading != false -> LoadingIndicator()
             else -> Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
@@ -194,12 +194,8 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 val connectedUsers = model.connectedUser!!
 
                 val selectedUser = remember { mutableStateOf(model.sharedUser!!) }
-                val selectedStock = remember {
-                    mutableStateOf(stocks
-                        .firstOrNull { it.uuid == checklist.stock }
-                        ?: stocks.first()
-                    )
-                }
+                val selectedStock =
+                    remember { mutableStateOf(stocks.first { it.uuid == checklist.stock }) }
 
                 val canChange = model.isCreator()
                 buildStockDropDown(

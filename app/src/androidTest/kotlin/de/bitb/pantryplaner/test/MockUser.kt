@@ -61,7 +61,7 @@ fun UserRemoteDao.mockUserDao(
                 if (uuids.size == 1 && uuids.first() == user.uuid) {
                     users.filter { it.uuid == user.uuid }
                 } else {
-                    users.filter { uuids.contains(it.uuid) && user.connectedUser.contains(it.uuid) }
+                    users.filter { uuids.contains(it.uuid) }
                 }
             ))
         }

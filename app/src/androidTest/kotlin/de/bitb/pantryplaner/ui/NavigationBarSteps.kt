@@ -47,7 +47,7 @@ fun ComposeTestRule.assertBottomNaviBar() {
 }
 
 fun ComposeTestRule.tapOnOverviewButton() {
-    onNodeWithTag(BottomNaviTag.ProfileButton).performClick()
+    onNodeWithTag(BottomNaviTag.OverviewButton).performClick()
     waitForIdle()
 }
 

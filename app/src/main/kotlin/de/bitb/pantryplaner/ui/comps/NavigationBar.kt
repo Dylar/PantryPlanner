@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.ui.base.BaseFragment
@@ -39,25 +40,25 @@ fun BaseFragment<*>.buildBottomNavi(
         listOf(
             BottomItemInfo(
                 BottomNaviTag.OverviewButton,
-                "Übersicht",
+                stringResource(id = R.string.overview_title),
                 Icons.Rounded.Checklist,
                 overviewRoute?.let { NaviEvent.Navigate(it) },
             ),
             BottomItemInfo(
                 BottomNaviTag.StockButton,
-                "Bestand",
+                stringResource(id = R.string.stock_title),
                 Icons.Rounded.HomeWork,
                 stockRoute?.let { NaviEvent.Navigate(it) },
             ),
             BottomItemInfo(
                 BottomNaviTag.ProfileButton,
-                "Profil",
+                stringResource(id = R.string.profile_title),
                 Icons.Rounded.Person,
                 profileRoute?.let { NaviEvent.Navigate(it) },
             ),
             BottomItemInfo(
                 BottomNaviTag.SettingsButton,
-                "Einstellungen",
+                stringResource(id = R.string.settings_title),
                 Icons.Rounded.Settings,
                 settingsRoute?.let { NaviEvent.Navigate(it) },
             ),

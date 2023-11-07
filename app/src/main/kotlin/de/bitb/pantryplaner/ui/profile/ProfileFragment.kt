@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -153,11 +154,6 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
             ) {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.Center,
-                ) { QrCodeImage(model.user!!.email) }
-                Box(
-                    modifier = Modifier
                         .padding(horizontal = 16.dp)
                         .testTag(ProfilePageTag.QRInfo),
                     contentAlignment = Alignment.Center,
@@ -178,6 +174,11 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
                         textAlign = TextAlign.Center,
                     )
                 }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center,
+                ) { QrCodeImage(model.user!!.email) }
                 ConnectedUserList(model.connectedUser!!)
                 StockList(model.connectedUser, model.stocks!!)
             }
@@ -219,7 +220,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
             },
         )
         LazyVerticalGrid(
-            GridCells.Fixed(if (connectedUser.size == 1) 1 else 2),
+            GridCells.Fixed(if (connectedUser.size <= 1) 1 else 2),
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.Top,
             horizontalArrangement = Arrangement.Center,
@@ -243,6 +244,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
 //                                    end = Offset(size.width, verticalOffset)
 //                                )
 //                            },
+                        textDecoration = TextDecoration.Underline,
                         textAlign = TextAlign.Center,
                     )
                 }
@@ -290,7 +292,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
             },
         )
         LazyVerticalGrid(
-            GridCells.Fixed(if (stocks.size == 1) 1 else 2),
+            GridCells.Fixed(if (stocks.size <= 1) 1 else 2),
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.Top,
             horizontalArrangement = Arrangement.Center,
@@ -314,6 +316,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
 //                                    end = Offset(size.width, verticalOffset)
 //                                )
 //                            },
+                        textDecoration = TextDecoration.Underline,
                         textAlign = TextAlign.Center,
                     )
                 }

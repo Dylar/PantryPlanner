@@ -40,19 +40,21 @@ class OverviewViewModel @Inject constructor(
         stockRepo.getStocks(),
         checkRepo.getCheckLists(),
         getConnectedUsers().asFlow(),
-    ) { stocks, checklists, users ->
+    ) { stocksResp, checklistsResp, usersResp ->
         when {
-            stocks is Result.Error -> stocks.castTo()
-            checklists is Result.Error -> checklists.castTo()
-            users is Result.Error -> users.castTo()
+            stocksResp is Result.Error -> stocksResp.castTo()
+            checklistsResp is Result.Error -> checklistsResp.castTo()
+            usersResp is Result.Error -> usersResp.castTo()
             else -> {
-                val groupedChecklists = checklists.data
+                val stocks = stocksResp.data
+                val groupedChecklists = checklistsResp.data
+                    ?.filter { check -> stocks?.any { check.stock == it.uuid } ?: false }
                     ?.groupBy { it.finished }
-                    ?.toSortedMap { a1, a2 -> a1.compareTo(a2) }
+                    ?.toSortedMap()
                 Result.Success(
                     OverviewModel(
-                        stocks.data!!,
-                        users.data,
+                        stocks,
+                        usersResp.data,
                         groupedChecklists,
                     )
                 )

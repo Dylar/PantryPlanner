@@ -155,8 +155,8 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
         modelResp: Result<RefreshModel>?,
     ) {
         when {
-            modelResp?.data?.isLoading != false -> LoadingIndicator()
             modelResp is Result.Error -> ErrorScreen(modelResp.message!!.asString())
+            modelResp?.data?.isLoading != false -> LoadingIndicator()
             modelResp.data.items?.isEmpty() == true -> EmptyListComp(getString(R.string.no_items))
             else -> {
                 val model = modelResp.data
