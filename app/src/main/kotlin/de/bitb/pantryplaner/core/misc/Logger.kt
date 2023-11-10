@@ -25,11 +25,11 @@ object Logger {
     @Suppress("unused")
     fun printTimer(msg: String) {
         val inMillis = (System.currentTimeMillis() - time).toDouble()
-        printLog("Start Timer" to "$msg (TIME: $inMillis)")
+        log("Start Timer" to "$msg (TIME: $inMillis)")
     }
 
     @SuppressWarnings("FunctionCouldBePrivate")
-    fun printLog(vararg params: Pair<String, *>, level: PrintLevel = PrintLevel.SYSTEM) {
+    fun log(vararg params: Pair<String, *>, level: PrintLevel = PrintLevel.SYSTEM) {
         val log = createLog(*params)
         printMessage(
             "\n${LOG_BORDER_TOP}" +

@@ -42,7 +42,7 @@ fun ConfirmDialog(
         dismissButton = {
             Button(
                 modifier = Modifier.testTag(ConfirmDialogTag.DismissButton),
-                onClick = onDismiss,
+                onClick = { onDismiss() },
                 content = { Text("ABBRECHEN") }
             )
         }

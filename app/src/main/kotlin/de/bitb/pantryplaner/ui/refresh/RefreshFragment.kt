@@ -45,12 +45,12 @@ import de.bitb.pantryplaner.core.misc.parseDateString
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.data.model.StockItem
 import de.bitb.pantryplaner.ui.base.BaseFragment
+import de.bitb.pantryplaner.ui.base.comps.ClearItem
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.GridListLayout
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
 import de.bitb.pantryplaner.ui.base.comps.asResString
-import de.bitb.pantryplaner.ui.base.comps.clearItem
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.RefreshPageTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
@@ -155,8 +155,8 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
         modelResp: Result<RefreshModel>?,
     ) {
         when {
-            modelResp?.data?.isLoading != false -> LoadingIndicator()
             modelResp is Result.Error -> ErrorScreen(modelResp.message!!.asString())
+            modelResp?.data?.isLoading != false -> LoadingIndicator()
             modelResp.data.items?.isEmpty() == true -> EmptyListComp(getString(R.string.no_items))
             else -> {
                 val model = modelResp.data
@@ -182,7 +182,7 @@ class RefreshFragment : BaseFragment<RefreshViewModel>() {
 
     @Composable
     private fun RefreshItem(stockItem: StockItem, item: Item) {
-        clearItem(
+        ClearItem(
             item.name,
             BaseColors.FireRed, //TODO color? -> fix this page
             onSwipe = {

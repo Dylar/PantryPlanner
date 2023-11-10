@@ -18,9 +18,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.GridOff
 import androidx.compose.material.icons.filled.GridOn
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.FormatListBulleted
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -40,17 +38,16 @@ import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseFragment
-import de.bitb.pantryplaner.ui.base.comps.DissmissItem
+import de.bitb.pantryplaner.ui.base.comps.DismissItem
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.GridListLayout
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
-import de.bitb.pantryplaner.ui.base.naviOverviewToItems
 import de.bitb.pantryplaner.ui.base.naviToChecklist
-import de.bitb.pantryplaner.ui.base.naviToProfile
 import de.bitb.pantryplaner.ui.base.testTags.ChecklistTag
 import de.bitb.pantryplaner.ui.base.testTags.OverviewPageTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
+import de.bitb.pantryplaner.ui.comps.buildBottomNavi
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 import de.bitb.pantryplaner.ui.dialogs.useAddChecklistDialog
 import de.bitb.pantryplaner.ui.dialogs.useEditChecklistDialog
@@ -73,6 +70,13 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
             topBar = { buildAppBar() },
             content = { buildContent(it, modelResp) },
             floatingActionButton = { buildFab(modelResp) },
+            bottomBar = {
+                buildBottomNavi(
+                    stockRoute = R.id.overview_to_stock,
+                    profileRoute = R.id.overview_to_profile,
+                    settingsRoute = R.id.overview_to_settings,
+                )
+            }
         )
     }
 
@@ -89,15 +93,6 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
                     Icon(
                         imageVector = if (showGridLayout.value) Icons.Default.GridOff else Icons.Default.GridOn,
                         contentDescription = "Layout button"
-                    )
-                }
-                IconButton(
-                    onClick = ::naviToProfile,
-                    modifier = Modifier.testTag(OverviewPageTag.ProfileButton)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = "profile button"
                     )
                 }
             }
@@ -129,18 +124,6 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
             }
 
 // TODO open multi adding -> add template or checklist -> no everything is a checklist ... or more FABs -> naviBar
-
-            ExtendedFloatingActionButton(
-                modifier = Modifier.testTag(OverviewPageTag.StockButton),
-                text = { Text(text = "Bestand") },
-                icon = {
-                    Icon(
-                        imageVector = Icons.Rounded.FormatListBulleted,
-                        contentDescription = "To stock FAB",
-                    )
-                },
-                onClick = ::naviOverviewToItems,
-            )
         }
     }
 
@@ -196,14 +179,14 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
                         showGridLayout,
                         checkLists.mapKeys { if (it.key) "Erledigt" else "Checklist" },
                         { it.color },
-                    ) { _, item -> checkListItem(stocks, item, users) }
+                    ) { _, item -> CheckListItem(stocks, item, users) }
                 }
             }
         }
     }
 
     @Composable
-    private fun checkListItem(stocks: List<Stock>, checklist: Checklist, users: List<User>) {
+    private fun CheckListItem(stocks: List<Stock>, checklist: Checklist, users: List<User>) {
         val showUnfinishDialog = remember { mutableStateOf(false) }
         if (showUnfinishDialog.value) {
             //TODO open checklist in "finished" mode
@@ -230,7 +213,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
             }
         )
 
-        DissmissItem(
+        DismissItem(
             checklist.name,
             checklist.color,
             onSwipe = { viewModel.removeChecklist(checklist) },

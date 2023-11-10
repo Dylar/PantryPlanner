@@ -27,11 +27,11 @@ fun Activity.navigateToURL(url: String) {
         .also(::startActivity)
 }
 
-sealed class NavigateEvent() {
-    object NavigateBack : NavigateEvent()
-    data class Navigate(@IdRes val route: Int) : NavigateEvent()
-    data class NavigateTo(@IdRes val route: Int) : NavigateEvent()
-    data class NavigateToUrl(val url: String) : NavigateEvent()
+sealed class NaviEvent {
+    object NavigateBack : NaviEvent()
+    data class Navigate(@IdRes val route: Int) : NaviEvent()
+    data class NavigateTo(@IdRes val route: Int) : NaviEvent()
+    data class NavigateToUrl(val url: String) : NaviEvent()
 }
 
 fun BaseFragment<SettingsViewModel>.naviSettingsToReleaseNotes() {
@@ -52,10 +52,6 @@ fun BaseFragment<LoginViewModel>.naviLoginToReleaseNotes() {
 
 fun BaseFragment<LoginViewModel>.naviToRegister() {
     navController.navigate(R.id.login_to_register)
-}
-
-fun BaseFragment<OverviewViewModel>.naviToRefresh() {
-    navController.navigate(R.id.overview_to_refresh)
 }
 
 fun BaseFragment<OverviewViewModel>.naviToProfile() {

@@ -22,7 +22,7 @@ import de.bitb.pantryplaner.ui.base.styles.BaseColors
 fun CircleRow(
     selectedCircle: MutableState<Color>,
     selectableColors: List<Color>,
-) {
+) { //TODO color picker
     Row(
         modifier = Modifier
             .padding(vertical = 8.dp)

@@ -29,10 +29,8 @@ sealed class RegisterPageTag : TestTag {
 
 sealed class OverviewPageTag : TestTag {
     object AppBar : OverviewPageTag()
-    object ProfileButton : OverviewPageTag()
     object LayoutButton : OverviewPageTag()
     object NewChecklistButton : OverviewPageTag()
-    object StockButton : OverviewPageTag()
 }
 
 sealed class StockPageTag : TestTag {
@@ -71,7 +69,6 @@ sealed class RefreshPageTag : TestTag {
 
 sealed class ProfilePageTag : TestTag {
     object AppBar : ProfilePageTag()
-    object SettingsButton : ProfilePageTag()
     object QRInfo : ProfilePageTag()
     object QRLabel : ProfilePageTag()
     object NewStockButton : ProfilePageTag()

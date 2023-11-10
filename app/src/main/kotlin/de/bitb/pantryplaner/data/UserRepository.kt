@@ -67,8 +67,7 @@ class UserRepository(
         else remoteDB.getUser(uuids)
             .map { resp ->
                 if (resp is Result.Error) return@map resp.castTo()
-                if (resp.data?.isEmpty() != false) return@map "Benutzer nicht gefunden: $uuids".asError()
-                else Result.Success(resp.data)
+                else Result.Success(resp.data.orEmpty())
             }
     }
 

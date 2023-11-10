@@ -18,14 +18,12 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCodeScanner
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.rounded.HomeWork
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -37,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -48,18 +47,18 @@ import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseFragment
-import de.bitb.pantryplaner.ui.base.comps.DissmissItem
+import de.bitb.pantryplaner.ui.base.comps.DismissItem
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
 import de.bitb.pantryplaner.ui.base.comps.stickyGridHeader
 import de.bitb.pantryplaner.ui.base.naviToScan
-import de.bitb.pantryplaner.ui.base.naviToSettings
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.ProfilePageTag
 import de.bitb.pantryplaner.ui.base.testTags.StockTag
 import de.bitb.pantryplaner.ui.base.testTags.UserTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
+import de.bitb.pantryplaner.ui.comps.buildBottomNavi
 import de.bitb.pantryplaner.ui.dialogs.useAddStockDialog
 import de.bitb.pantryplaner.ui.dialogs.useAddUserDialog
 import de.bitb.pantryplaner.ui.dialogs.useEditStockDialog
@@ -80,6 +79,13 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
             scaffoldState = scaffoldState,
             topBar = { buildAppBar() },
             floatingActionButton = { buildFab() },
+            bottomBar = {
+                buildBottomNavi(
+                    overviewRoute = R.id.profile_to_overview,
+                    stockRoute = R.id.profile_to_stock,
+                    settingsRoute = R.id.profile_to_settings,
+                )
+            },
             content = { buildContent(it) },
         )
     }
@@ -99,17 +105,6 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
         TopAppBar(
             modifier = Modifier.testTag(ProfilePageTag.AppBar),
             title = { Text(getString(R.string.profile_title)) },
-            actions = {
-                IconButton(
-                    onClick = ::naviToSettings,
-                    modifier = Modifier.testTag(ProfilePageTag.SettingsButton)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Settings,
-                        contentDescription = "settings button"
-                    )
-                }
-            },
         )
     }
 
@@ -159,11 +154,6 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
             ) {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.Center,
-                ) { QrCodeImage(model.user!!.email) }
-                Box(
-                    modifier = Modifier
                         .padding(horizontal = 16.dp)
                         .testTag(ProfilePageTag.QRInfo),
                     contentAlignment = Alignment.Center,
@@ -184,6 +174,11 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
                         textAlign = TextAlign.Center,
                     )
                 }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center,
+                ) { QrCodeImage(model.user!!.email) }
                 ConnectedUserList(model.connectedUser!!)
                 StockList(model.connectedUser, model.stocks!!)
             }
@@ -225,7 +220,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
             },
         )
         LazyVerticalGrid(
-            GridCells.Fixed(if (connectedUser.size == 1) 1 else 2),
+            GridCells.Fixed(if (connectedUser.size <= 1) 1 else 2),
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.Top,
             horizontalArrangement = Arrangement.Center,
@@ -249,6 +244,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
 //                                    end = Offset(size.width, verticalOffset)
 //                                )
 //                            },
+                        textDecoration = TextDecoration.Underline,
                         textAlign = TextAlign.Center,
                     )
                 }
@@ -264,7 +260,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
 
     @Composable
     private fun buildUser(user: User) {
-        DissmissItem(
+        DismissItem(
             user.fullName,
             BaseColors.LightGray,
             onSwipe = { viewModel.disconnectUser(user) },
@@ -296,7 +292,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
             },
         )
         LazyVerticalGrid(
-            GridCells.Fixed(if (stocks.size == 1) 1 else 2),
+            GridCells.Fixed(if (stocks.size <= 1) 1 else 2),
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.Top,
             horizontalArrangement = Arrangement.Center,
@@ -320,6 +316,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
 //                                    end = Offset(size.width, verticalOffset)
 //                                )
 //                            },
+                        textDecoration = TextDecoration.Underline,
                         textAlign = TextAlign.Center,
                     )
                 }
@@ -345,7 +342,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
             }
         )
 
-        DissmissItem(
+        DismissItem(
             stock.name,
             BaseColors.LightGray,
             onSwipe = { viewModel.removeStock(stock) },

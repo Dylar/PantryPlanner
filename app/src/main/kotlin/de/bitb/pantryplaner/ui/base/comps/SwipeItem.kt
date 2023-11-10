@@ -28,7 +28,7 @@ import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 
 @Composable
-fun DissmissItem(
+fun DismissItem(
     name: String,
     color: Color,
     onSwipe: () -> Unit,
@@ -36,7 +36,7 @@ fun DissmissItem(
     onLongClick: () -> Unit = {},
     content: @Composable () -> Unit,
 ) {
-    swipeItem(
+    SwipeItem(
         color,
         "Entfernen?",
         "Möchten Sie \"$name\" entfernen?",
@@ -49,7 +49,7 @@ fun DissmissItem(
 }
 
 @Composable
-fun clearItem(
+fun ClearItem(
     name: String,
     color: Color,
     onSwipe: () -> Unit,
@@ -57,7 +57,7 @@ fun clearItem(
     onLongClick: () -> Unit = {},
     content: @Composable () -> Unit,
 ) {
-    swipeItem(
+    SwipeItem(
         color,
         "Zurücksetzen?",
         "Möchten Sie die Anzahl in ihrem Bestand von \"$name\" auf 0 setzen?",
@@ -71,7 +71,7 @@ fun clearItem(
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
-private fun swipeItem(
+private fun SwipeItem(
     color: Color,
     swipeConfirmTitle: String,
     swipeConfirmMessage: String,
@@ -113,7 +113,7 @@ private fun swipeItem(
         modifier = Modifier.padding(2.dp),
         state = dismissState,
         directions = setOf(DismissDirection.StartToEnd),
-        background = { swipeBackground(onSwipeText) },
+        background = { SwipeBackground(onSwipeText) },
         dismissContent = {
             Card(
                 elevation = 4.dp,
@@ -130,7 +130,7 @@ private fun swipeItem(
 }
 
 @Composable
-private fun swipeBackground(text: String) {
+private fun SwipeBackground(text: String) {
     Card(
         elevation = 4.dp,
         modifier = Modifier

@@ -41,7 +41,7 @@ import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
-import de.bitb.pantryplaner.ui.base.comps.DissmissItem
+import de.bitb.pantryplaner.ui.base.comps.DismissItem
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.GridListLayout
@@ -180,8 +180,8 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
     @Composable
     private fun buildContent(innerPadding: PaddingValues, checkModel: Result<CheckModel>?) {
         when {
-            checkModel?.data?.isLoading != false -> LoadingIndicator()
             checkModel is Result.Error -> ErrorScreen(checkModel.message!!.asString())
+            checkModel?.data?.isLoading != false -> LoadingIndicator()
             else -> Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
@@ -194,12 +194,8 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
                 val connectedUsers = model.connectedUser!!
 
                 val selectedUser = remember { mutableStateOf(model.sharedUser!!) }
-                val selectedStock = remember {
-                    mutableStateOf(stocks
-                        .firstOrNull { it.uuid == checklist.stock }
-                        ?: stocks.first()
-                    )
-                }
+                val selectedStock =
+                    remember { mutableStateOf(stocks.first { it.uuid == checklist.stock }) }
 
                 val canChange = model.isCreator()
                 buildStockDropDown(
@@ -261,7 +257,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
         }
 
         val checkItem = checklist.items.first { it.uuid == item.uuid }
-        DissmissItem(
+        DismissItem(
             item.name,
             color,
             onSwipe = { viewModel.removeItem(item) },

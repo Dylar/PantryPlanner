@@ -44,6 +44,8 @@ import de.bitb.pantryplaner.ui.base.testTags.ListLayoutTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.dialogs.EditCategoryDialog
 
+const val NO_CATEGORY = "Keine Kategorie"
+
 fun LazyGridScope.stickyGridHeader(
     content: @Composable LazyGridItemScope.() -> Unit,
 ) {
@@ -62,8 +64,7 @@ fun <T> GridListLayout(
 ) {
     val showItems = remember { mutableStateMapOf<String, Boolean>() }
     Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.padding(innerPadding)
+        contentAlignment = Alignment.Center, modifier = Modifier.padding(innerPadding)
     ) {
         val contentPadding = PaddingValues(
             top = 4.dp,
@@ -82,13 +83,13 @@ fun <T> GridListLayout(
                 contentPadding = contentPadding,
             ) {
                 items.forEach { (header, list) ->
-                    val headerText = header.ifBlank { "Keine" }
+                    val headerText = header.ifBlank { NO_CATEGORY }
                     stickyGridHeader {
                         GridListHeader(
                             headerText,
                             headerColor(list.first()),
                             showItems,
-                            editHeader,
+                            if (header.isBlank()) null else editHeader,
                         )
                     }
                     if (showItems[headerText] != false) {
@@ -106,13 +107,13 @@ fun <T> GridListLayout(
                 contentPadding = contentPadding,
             ) {
                 items.forEach { (header, list) ->
-                    val headerText = header.ifBlank { "Keine" }
+                    val headerText = header.ifBlank { NO_CATEGORY }
                     stickyHeader {
                         GridListHeader(
                             headerText,
                             headerColor(list.first()),
                             showItems,
-                            editHeader,
+                            if (header.isBlank()) null else editHeader,
                         )
                     }
                     if (showItems[headerText] != false) {
@@ -141,14 +142,12 @@ fun GridListHeader(
     ) {
         Card(
             border = BorderStroke(2.dp, color),
-            modifier = Modifier
-                .combinedClickable(
-                    onClick = {
-                        val value = showItems[category]
-                        showItems[category] = !(value ?: true)
-                    },
-                    onLongClick = { showEditDialog = true }
-                )
+            modifier = Modifier.combinedClickable(
+                onClick = {
+                    val value = showItems[category]
+                    showItems[category] = !(value ?: true)
+                },
+                onLongClick = { if (onEdit != null) showEditDialog = true })
         ) {
             Row(
                 modifier = Modifier.padding(vertical = 8.dp, horizontal = 8.dp),
@@ -156,17 +155,16 @@ fun GridListHeader(
             ) {
                 Text(
                     category,
-                    modifier = Modifier
-                        .drawBehind {
-                            val strokeWidthPx = 1.dp.toPx()
-                            val verticalOffset = size.height - 2.sp.toPx()
-                            drawLine(
-                                color = color,
-                                strokeWidth = strokeWidthPx,
-                                start = Offset(0f, verticalOffset),
-                                end = Offset(size.width, verticalOffset)
-                            )
-                        },
+                    modifier = Modifier.drawBehind {
+                        val strokeWidthPx = 1.dp.toPx()
+                        val verticalOffset = size.height - 2.sp.toPx()
+                        drawLine(
+                            color = color,
+                            strokeWidth = strokeWidthPx,
+                            start = Offset(0f, verticalOffset),
+                            end = Offset(size.width, verticalOffset)
+                        )
+                    },
                     textAlign = TextAlign.Center,
                 )
                 Icon(

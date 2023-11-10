@@ -16,7 +16,7 @@ import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.data.model.StockItem
 import de.bitb.pantryplaner.ui.base.BaseViewModel
-import de.bitb.pantryplaner.ui.base.NavigateEvent
+import de.bitb.pantryplaner.ui.base.NaviEvent
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
 import de.bitb.pantryplaner.usecase.StockUseCases
@@ -110,7 +110,7 @@ class RefreshViewModel @Inject constructor(
             when (val resp =
                 checkUseCases.createChecklistUC(checklist)) {
                 is Result.Error -> showSnackBar(resp.message!!)
-                else -> navigate(NavigateEvent.NavigateBack)
+                else -> navigate(NaviEvent.NavigateBack)
             }
         }
     }

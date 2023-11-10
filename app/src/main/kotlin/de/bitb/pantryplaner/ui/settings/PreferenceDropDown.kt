@@ -32,9 +32,7 @@ fun <T> PreferenceDropDown(
             title = title,
             subtitle = items.first { it.first == selectedItem }.second,
         ),
-        onClick = {
-            dropDownExpanded = true
-        },
+        onClick = { dropDownExpanded = true },
         modifier = modifier
             .background(
                 color = if (dropDownExpanded)
@@ -54,7 +52,6 @@ fun <T> PreferenceDropDown(
                 DropdownMenuItem(
                     onClick = {
                         dropDownExpanded = false
-
                         onItemSelected(item.first)
                     },
                     modifier = Modifier

@@ -14,8 +14,9 @@ import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.data.model.Settings
 import de.bitb.pantryplaner.data.model.User
+import de.bitb.pantryplaner.data.model.groupByCategory
 import de.bitb.pantryplaner.ui.base.BaseViewModel
-import de.bitb.pantryplaner.ui.base.NavigateEvent
+import de.bitb.pantryplaner.ui.base.NaviEvent
 import de.bitb.pantryplaner.ui.stock.INSTANT_SEARCH
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -68,7 +69,7 @@ class SelectItemsViewModel @Inject constructor(
                     else -> Result.Success(
                         ItemsModel(
                             settings.data,
-                            items.data?.groupBy { it.category },
+                            items.data?.groupByCategory,
                             users.data,
                         ),
                     )
@@ -101,7 +102,7 @@ class SelectItemsViewModel @Inject constructor(
             when (val resp =
                 checkUseCases.addItemsUC(fromChecklistId!!, checkedItems.value)) {
                 is Result.Error -> showSnackBar(resp.message!!)
-                else -> navigate(NavigateEvent.NavigateBack)
+                else -> navigate(NaviEvent.NavigateBack)
             }
         }
     }

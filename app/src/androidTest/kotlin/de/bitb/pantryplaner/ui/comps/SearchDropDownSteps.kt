@@ -32,18 +32,6 @@ class SearchDropDownSteps(
         waitForIdle()
     }
 
-    @And("Input {string} as Item category")
-    fun inputAsItemCategory(input: String) {
-        onNodeWithTag(SearchDropDownTag("Kategorie")).performTextReplacement(input)
-        waitForIdle()
-    }
-
-    @And("Input {string} as Checklist Stock")
-    fun inputAsChecklistStock(input: String) {
-        onNodeWithTag(SearchDropDownTag("Lager")).performTextReplacement(input)
-        waitForIdle()
-    }
-
     @Then("Dropdown option {string} is displayed")
     fun dropdownOptionIsDisplayed(name: String) {
         onNodeWithTag(DropDownItemTag(name)).assertIsDisplayed()
@@ -57,6 +45,24 @@ class SearchDropDownSteps(
     @Then("Select dropdown option {string}")
     fun selectDropdownOption(name: String) {
         onNodeWithTag(DropDownItemTag(name)).performClick()
+        waitForIdle()
+    }
+
+    @And("Input {string} as Item category")
+    fun inputAsItemCategory(input: String) {
+        onNodeWithTag(SearchDropDownTag("Kategorie")).performTextReplacement(input)
+        waitForIdle()
+    }
+
+    @And("Input {string} as Checklist Stock")
+    fun inputAsChecklistStock(input: String) {
+        onNodeWithTag(SearchDropDownTag("Lager")).performTextReplacement(input)
+        waitForIdle()
+    }
+
+    @And("Input {string} as Item shared User")
+    fun inputAsItemSharedUser(input: String) {
+        onNodeWithTag(SearchDropDownTag("Mit Benutzer teilen")).performTextReplacement(input)
         waitForIdle()
     }
 

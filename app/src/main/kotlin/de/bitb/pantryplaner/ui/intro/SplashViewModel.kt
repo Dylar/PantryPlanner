@@ -8,7 +8,7 @@ import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.core.misc.atLeast
 import de.bitb.pantryplaner.data.SettingsRepository
 import de.bitb.pantryplaner.ui.base.BaseViewModel
-import de.bitb.pantryplaner.ui.base.NavigateEvent
+import de.bitb.pantryplaner.ui.base.NaviEvent
 import de.bitb.pantryplaner.ui.base.comps.asResString
 import de.bitb.pantryplaner.usecase.UserUseCases
 import de.bitb.pantryplaner.usecase.user.DataLoadResponse
@@ -32,14 +32,14 @@ class SplashViewModel @Inject constructor(
             when {
                 userResp is Result.Error -> showSnackBar(userResp.message!!)
                 userResp.data is DataLoadResponse.DataLoaded -> {
-                    navigate(NavigateEvent.Navigate(R.id.splash_to_overview))
+                    navigate(NaviEvent.Navigate(R.id.splash_to_overview))
 //                    if (naviToRefresh) { //TODO fix whole page
 //                        navigate(NavigateEvent.Navigate(R.id.overview_to_refresh))
 //                    }
                 }
 
                 userResp.data is DataLoadResponse.NotLoggedIn -> {
-                    navigate(NavigateEvent.Navigate(R.id.splash_to_login))
+                    navigate(NaviEvent.Navigate(R.id.splash_to_login))
                 }
 
                 userResp.data is DataLoadResponse.NewAppVersion -> {
@@ -54,7 +54,7 @@ class SplashViewModel @Inject constructor(
     fun loadNewApp() {
         viewModelScope.launch {
             when (val url = settingsRepo.getAppDownloadURL()) {
-                is Result.Success -> navigate(NavigateEvent.NavigateToUrl(url.data!!))
+                is Result.Success -> navigate(NaviEvent.NavigateToUrl(url.data!!))
                 is Result.Error -> showSnackBar(url.message!!)
             }
         }

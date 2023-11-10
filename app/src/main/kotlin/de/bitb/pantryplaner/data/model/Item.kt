@@ -26,3 +26,6 @@ data class Item(
 
     fun sharedWith(userId: String): Boolean = creator == userId || sharedWith.contains(userId)
 }
+
+val List<Item>.groupByCategory: Map<String, List<Item>>
+    get() = groupBy { it.category }.toSortedMap(compareBy<String> { it != "" }.thenBy { it })

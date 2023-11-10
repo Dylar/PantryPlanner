@@ -54,8 +54,9 @@ import de.bitb.pantryplaner.data.model.Settings
 import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.StockItem
 import de.bitb.pantryplaner.data.model.User
+import de.bitb.pantryplaner.data.model.groupByCategory
 import de.bitb.pantryplaner.ui.base.BaseFragment
-import de.bitb.pantryplaner.ui.base.comps.DissmissItem
+import de.bitb.pantryplaner.ui.base.comps.DismissItem
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.GridListLayout
@@ -70,6 +71,7 @@ import de.bitb.pantryplaner.ui.base.testTags.StockPageTag
 import de.bitb.pantryplaner.ui.base.testTags.UnsharedIconTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.comps.AddSubRow
+import de.bitb.pantryplaner.ui.comps.buildBottomNavi
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 import de.bitb.pantryplaner.ui.dialogs.FilterDialog
 import de.bitb.pantryplaner.ui.dialogs.useAddItemDialog
@@ -116,7 +118,14 @@ class StockFragment : BaseFragment<StockViewModel>() {
             scaffoldState = scaffoldState,
             topBar = { buildAppBar(filter) },
             content = { buildContent(it, modelResp) },
-            floatingActionButton = { buildFab(modelResp) }
+            floatingActionButton = { buildFab(modelResp) },
+            bottomBar = {
+                buildBottomNavi(
+                    overviewRoute = R.id.stock_to_overview,
+                    profileRoute = R.id.stock_to_profile,
+                    settingsRoute = R.id.stock_to_settings,
+                )
+            }
         )
 
         if (showFilterDialog.value) {
@@ -221,23 +230,20 @@ class StockFragment : BaseFragment<StockViewModel>() {
     @Composable
     private fun buildContent(innerPadding: PaddingValues, modelResp: Result<StockModel>?) {
         when {
-            modelResp?.data?.isLoading != false -> LoadingIndicator()
             modelResp is Result.Error -> ErrorScreen(modelResp.message!!.asString())
+            modelResp?.data?.isLoading != false -> LoadingIndicator()
             else -> {
                 val model = modelResp.data
                 val settings = model.settings!!
                 val items = model.items!!
-                val categorys = items.keys.toList()
                 val stocks = model.stocks!!
-                val users = model.connectedUser ?: listOf()
                 val user = model.user!!
-                val allUser = users + listOf(user)
-
-                val pagerState = rememberPagerState { stocks.size }
+                val connectedUser = model.connectedUser!!
+                val sharedUser = model.sharedUser!!
 
                 useAddStockDialog(
                     showAddStockDialog,
-                    users,
+                    connectedUser,
                     onEdit = { loc, close ->
                         viewModel.addStock(loc)
                         if (close) showAddStockDialog.value = false
@@ -252,12 +258,13 @@ class StockFragment : BaseFragment<StockViewModel>() {
                         return
                     }
 
+                    val pagerState = rememberPagerState { stocks.size }
                     TabRow(
                         selectedTabIndex = pagerState.currentPage,
                     ) {
                         val scope = rememberCoroutineScope()
                         stocks.map { it.name }.forEachIndexed { index, title ->
-                            Tab( //TODO long press to delete
+                            Tab(
                                 modifier = Modifier.testTag(StockPageTag.StockTabTag(title)),
                                 text = { Text(title) },
                                 selected = pagerState.currentPage == index,
@@ -265,7 +272,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
                                     scope.launch {
                                         pagerState.animateScrollToPage(index)
                                     }
-                                }
+                                },
                             )
                         }
                     }
@@ -275,11 +282,10 @@ class StockFragment : BaseFragment<StockViewModel>() {
                             innerPadding,
                             settings,
                             stock,
-                            items[stock.uuid] ?: emptyList(),
-                            categorys,
-                            allUser,
-                            users,
+                            items[stock.uuid].orEmpty(),
                             user,
+                            connectedUser,
+                            sharedUser[stock.uuid].orEmpty(),
                         )
                     }
                 }
@@ -293,16 +299,15 @@ class StockFragment : BaseFragment<StockViewModel>() {
         settings: Settings,
         stock: Stock,
         items: List<Item>,
-        categorys: List<String>,
-        allUser: List<User>,
-        users: List<User>,
         user: User,
+        connectedUser: List<User>,
+        sharedUser: List<User>,
     ) {
-
+        val categorys = items.map { it.category }.toList()
         useAddItemDialog(
             showAddItemDialog,
             categorys,
-            users,
+            connectedUser,
         ) { item, close ->
             viewModel.addItem(item)
             if (close) showAddItemDialog.value = false
@@ -311,12 +316,10 @@ class StockFragment : BaseFragment<StockViewModel>() {
             modifier = Modifier.testTag(StockPageTag.StockPage(stock.name)),
             verticalArrangement = Arrangement.Top
         ) {
-            val selectedUser = remember(stock) {
-                mutableStateOf(allUser.filter { stock.sharedWith.contains(it.uuid) })
-            }
+            val selectedUser = remember(stock) { mutableStateOf(sharedUser) }
             buildUserDropDown(
                 "Lager wird nicht geteilt",
-                users,
+                connectedUser,
                 selectedUser,
                 canChange = stock.creator == user.uuid,
             ) {
@@ -328,11 +331,10 @@ class StockFragment : BaseFragment<StockViewModel>() {
                 return
             }
 
-            val mapItems = items.groupBy { it.category }
             GridListLayout(
                 innerPadding,
                 showGridLayout,
-                mapItems,
+                items.groupByCategory,
                 settings::categoryColor,
                 viewModel::editCategory
             ) { _, item ->
@@ -341,8 +343,8 @@ class StockFragment : BaseFragment<StockViewModel>() {
                     stock,
                     item,
                     categorys,
-                    users,
                     user,
+                    connectedUser,
                     color,
                 )
             }
@@ -354,8 +356,8 @@ class StockFragment : BaseFragment<StockViewModel>() {
         stock: Stock,
         item: Item,
         categorys: List<String>,
-        users: List<User>,
         user: User,
+        users: List<User>,
         color: Color,
     ) {
         val stockItem = stock.items.firstOrNull { it.uuid == item.uuid }
@@ -384,7 +386,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
             }
         }
 
-        DissmissItem(
+        DismissItem(
             item.name,
             color,
             onSwipe = { viewModel.deleteItem(item) },

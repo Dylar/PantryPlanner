@@ -5,12 +5,17 @@ Feature: ChecklistPage User management
 
   Scenario: Share with User
     Given Start on ChecklistPage "CreatorChecklist"
+    And   "ChecklistPage" shared with "Mohammed Lee"
+    And   "ChecklistPage" unshare with "Mohammed Lee"
+    Then  "ChecklistPage" shared with none
+    And   On Back
+    And   Tap on Checklist "CreatorChecklist"
     And   "ChecklistPage" shared with none
     When  "ChecklistPage" open dropdown "Mit Benutzer teilen"
     And   Dropdown option "Mohammed Lee" is displayed
     And   Dropdown option "Andre Option" is displayed
     And   Select dropdown option "Mohammed Lee"
-    Then  "ChecklistPage" shared with "Mohammed Lee"
+    And   "ChecklistPage" shared with "Mohammed Lee"
     And   On Back
     And   Tap on Checklist "CreatorChecklist"
     And   "ChecklistPage" shared with "Mohammed Lee"

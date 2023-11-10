@@ -189,7 +189,8 @@ private fun AddEditItemDialog(
         },
         dismissButton = {
             Button(
-                onClick = onDismiss,
+                modifier = Modifier.testTag(AddEditItemDialogTag.CancelButton),
+                onClick = { onDismiss() },
                 content = { Text("Abbrechen") }
             )
         }

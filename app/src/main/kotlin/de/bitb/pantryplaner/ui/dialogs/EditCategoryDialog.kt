@@ -76,7 +76,7 @@ fun EditCategoryDialog(
         },
         dismissButton = {
             Button(
-                onClick = onDismiss,
+                onClick = { onDismiss() },
                 content = { Text("ABBRECHEN") }
             )
         }

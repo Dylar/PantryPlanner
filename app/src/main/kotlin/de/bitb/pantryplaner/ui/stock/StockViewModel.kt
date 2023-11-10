@@ -42,11 +42,12 @@ data class StockModel(
     val settings: Settings? = null,
     val stocks: List<Stock>? = null,
     val items: Map<String, List<Item>>? = null,
-    val connectedUser: List<User>? = null,
     val user: User? = null,
+    val connectedUser: List<User>? = null,
+    val sharedUser: Map<String, List<User>>?,
 ) {
     val isLoading: Boolean
-        get() = settings == null || stocks == null || items == null || connectedUser == null || user == null
+        get() = settings == null || stocks == null || items == null || connectedUser == null || user == null || sharedUser == null
 }
 
 @OptIn(FlowPreview::class)
@@ -73,61 +74,71 @@ class StockViewModel @Inject constructor(
             stockRepo.getStocks(),
             getConnectedUsers().asFlow(),
             userRepo.getUser(),
-        ) { filter, settings, stocks, users, user -> listOf(filter, settings, stocks, users, user) }
-            .flatMapLatest { params ->
-                // load everything
-                val filter = params[0] as Filter
-                val settingsResp = params[1] as Result<Settings>
-                val stocksResp = params[2] as Result<List<Stock>>
-                val usersResp = params[3] as Result<List<User>>
-                val userResp = params[4] as Result<User>
-                when {
-                    settingsResp is Result.Error -> flowOf(settingsResp.castTo())
-                    stocksResp is Result.Error -> flowOf(stocksResp.castTo())
-                    usersResp is Result.Error -> flowOf(usersResp.castTo())
-                    userResp is Result.Error -> flowOf(userResp.castTo())
-                    else -> {
-                        // assemble stock info
-                        val stocks = stocksResp.data!!
-                        val stockItems = stocks.associateBy({ it.uuid }, { it.items })
-                        val stocksItemsIds =
-                            stocks.asSequence()
-                                .map { it.items }.flatten()
-                                .filter { it.amount > 0.0 }
-                                .map { it.uuid }.toList()
-                        combine(
-                            // load items
-                            itemRepo.getItems(stocksItemsIds, filter),
-                            itemRepo.getUserItems(filterBy = filter),
-                        ) { stocksItems, userItemsResp ->
-                            when {
-                                stocksItems is Result.Error -> stocksItems.castTo()
-                                userItemsResp is Result.Error -> userItemsResp.castTo()
-                                else -> {
-                                    val userItems = userItemsResp.data!!
-                                    val items = stockItems.mapValues { (_, value) ->
-                                        (userItems + value // add all items to stockItems
-                                            .asSequence()
-                                            .filter { it.amount > 0.0 } // show unshared items only with amount
-                                            .mapNotNull { stockItem -> stocksItems.data?.find { it.uuid == stockItem.uuid } })
-                                            .distinctBy { it.uuid }
-                                            .sortedBy { it.name }
-                                    }
-                                    Result.Success(
-                                        StockModel(
-                                            settingsResp.data,
-                                            stocksResp.data,
-                                            items,
-                                            usersResp.data,
-                                            userResp.data,
-                                        ),
-                                    )
+        ) { filter, settings, stocks, connectedUser, user ->
+            listOf(filter, settings, stocks, connectedUser, user)
+        }.flatMapLatest { params ->
+            // load everything
+            val filter = params[0] as Filter
+            val settingsResp = params[1] as Result<Settings>
+            val stocksResp = params[2] as Result<List<Stock>>
+            val connectedUserResp = params[3] as Result<List<User>>
+            val userResp = params[4] as Result<User>
+            when {
+                settingsResp is Result.Error -> flowOf(settingsResp.castTo())
+                stocksResp is Result.Error -> flowOf(stocksResp.castTo())
+                connectedUserResp is Result.Error -> flowOf(connectedUserResp.castTo())
+                userResp is Result.Error -> flowOf(userResp.castTo())
+                else -> {
+                    // assemble stock info
+                    val stocks = stocksResp.data!!
+                    val stockItems = stocks.associateBy({ it.uuid }, { it.items })
+                    val stocksItemsIds =
+                        stocks.asSequence()
+                            .map { it.items }.flatten()
+                            .filter { it.amount > 0.0 }
+                            .map { it.uuid }.toList()
+                    combine(
+                        // load items
+                        itemRepo.getItems(stocksItemsIds, filter),
+                        itemRepo.getUserItems(filterBy = filter),
+                        userRepo.getUser(stocks.flatMap { it.sharedWith }),
+                    ) { stocksItems, userItemsResp, allUserResp ->
+                        when {
+                            stocksItems is Result.Error -> stocksItems.castTo()
+                            userItemsResp is Result.Error -> userItemsResp.castTo()
+                            allUserResp is Result.Error -> allUserResp.castTo()
+                            else -> {
+                                val allUser = allUserResp.data!!
+                                val userItems = userItemsResp.data!!
+                                val items = stockItems.mapValues { (_, value) ->
+                                    (userItems + value // add all items to stockItems
+                                        .asSequence()
+                                        .filter { it.amount > 0.0 } // show unshared items only with amount
+                                        .mapNotNull { stockItem -> stocksItems.data?.find { it.uuid == stockItem.uuid } })
+                                        .distinctBy { it.uuid }
+                                        .sortedBy { it.name }
                                 }
+                                val stockUserMap = stocks.groupBy { it.uuid }
+                                    .mapValues { (_, stockList) ->
+                                        val shared = stockList.first().sharedWith
+                                        allUser.filter { shared.contains(it.uuid) }
+                                    }
+                                Result.Success(
+                                    StockModel(
+                                        settingsResp.data,
+                                        stocksResp.data,
+                                        items,
+                                        userResp.data,
+                                        connectedUserResp.data,
+                                        stockUserMap,
+                                    ),
+                                )
                             }
                         }
                     }
                 }
             }
+        }
             .onEach { _isSearching.update { false } }
             .asLiveData(viewModelScope.coroutineContext)
 

@@ -34,7 +34,7 @@ fun InfoDialog(naviToReleaseNotes: () -> Unit, onDismiss: () -> Unit) {
         },
         dismissButton = {
             Button(
-                onClick = onDismiss,
+                onClick = { onDismiss() },
                 content = { Text("CLOSE") }
             )
         }

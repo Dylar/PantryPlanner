@@ -47,8 +47,8 @@ class MainActivity : AppCompatActivity() {
 //    private fun setupNavigation() {
 //        onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
 //            override fun handleOnBackPressed() {
-//                Logger.printLog("" to "handleOnBackPressed")
-//                navHostFragment.navController.navigateUp()
+//                Logger.log("" to "handleOnBackPressed")
+//                navHostFragment.navController.popBackStack()
 //            }
 //        })
 //    }

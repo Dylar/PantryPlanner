@@ -20,8 +20,9 @@ import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.data.model.Settings
 import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.User
+import de.bitb.pantryplaner.data.model.groupByCategory
 import de.bitb.pantryplaner.ui.base.BaseViewModel
-import de.bitb.pantryplaner.ui.base.NavigateEvent
+import de.bitb.pantryplaner.ui.base.NaviEvent
 import de.bitb.pantryplaner.ui.base.comps.asResString
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
@@ -80,7 +81,7 @@ class ChecklistViewModel @Inject constructor(
                         .map { itemResp ->
                             castOnError(itemResp) {
                                 val newMap = itemResp.data
-                                    ?.groupBy { it.category }
+                                    ?.groupByCategory
                                     ?.mapValues { (_, value) ->
                                         value.sortedBy { item ->
                                             checklist.items
@@ -116,9 +117,10 @@ class ChecklistViewModel @Inject constructor(
                         else -> {
                             //TODO just in test?
                             val filteredItems = //items.data
-                                items.data?.mapValues { (_, list) ->
-                                    list.filter { it.uuid in itemIds }
-                                }?.filterValues { it.isNotEmpty() }
+                                items.data
+                                    ?.mapValues { (_, list) -> list.filter { it.uuid in itemIds } }
+                                    ?.filterValues { it.isNotEmpty() }
+                                    .orEmpty()
 
 //                            items.data TODO maybe this?
 //                                ?.filter { item -> item.sharedWith(user.data!!.uuid) }
@@ -176,7 +178,7 @@ class ChecklistViewModel @Inject constructor(
                 is Result.Error -> showSnackBar(resp.message!!)
                 else -> {
                     showSnackBar("Erledigt".asResString())
-                    navigate(NavigateEvent.NavigateBack)
+                    navigate(NaviEvent.NavigateBack)
                 }
             }
         }

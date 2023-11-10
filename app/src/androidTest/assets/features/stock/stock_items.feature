@@ -30,7 +30,10 @@ Feature: StockPage Items management
     And   Tap on NewItemButton
     And   AddEditItemDialog is displayed
     And   Input "NewItem" as Item name
+    And   "ItemDialog" open dropdown "Kategorie"
     And   Input "NewCategory" as Item category
+    And   Dropdown option "\"NewCategory\" wird neu angelegt" is displayed
+    And   Select dropdown option "\"NewCategory\" wird neu angelegt"
     And   "ItemDialog" shared with "Mohammed Lee"
     And   "ItemDialog" shared with "Andre Option"
     And   "ItemDialog" unshare with "Mohammed Lee"
@@ -57,6 +60,24 @@ Feature: StockPage Items management
       | StockTab     |
       | CreatorStock |
       | SharedStock  |
+
+  Scenario: Create a new Item and choose existing category
+    When  Tap on NewItemButton
+    And   Input "NewItem" as Item name
+    And   "ItemDialog" open dropdown "Kategorie"
+    And   Dropdown option "CreatorCategory" is displayed
+    And   Dropdown option "SharedCategory" is displayed
+    And   Select dropdown option "CreatorCategory"
+    And   Tap on CreateItemButton
+    Then  Item "NewItem" in category "CreatorCategory" is displayed
+    And   LongPress on Item "NewItem" in category "CreatorCategory"
+    And   Item name is "NewItem"
+    And   Item category is "CreatorCategory"
+    And   Tap on cancel ItemDialog
+    And   LongPress on Item "NewItem" in category "CreatorCategory"
+    Then  On Back
+    And   Tap on StockButton
+    And   LongPress on Item "NewItem" in category "CreatorCategory"
 
   Scenario: Try to remove a Item, but cancel confirmation
     When  Swipe to remove Item "CreatorItem" in category "CreatorCategory"
