@@ -41,7 +41,7 @@ fun FilterDialog(
         },
         dismissButton = {
             Button(
-                onClick = onDismiss,
+                onClick = { onDismiss() },
                 content = { Text("ABBRECHEN") }
             )
         }

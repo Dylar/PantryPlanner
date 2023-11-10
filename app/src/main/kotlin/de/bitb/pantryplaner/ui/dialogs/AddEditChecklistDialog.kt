@@ -158,7 +158,7 @@ private fun AddEditChecklistDialog(
         },
         dismissButton = {
             Button(
-                onClick = onDismiss,
+                onClick = { onDismiss() },
                 content = { Text("Abbrechen") }
             )
         }

@@ -28,6 +28,7 @@ sealed class AddEditItemDialogTag : TestTag {
     object DialogTag : AddEditItemDialogTag()
     object NameLabel : AddEditItemDialogTag()
     object ConfirmButton : AddEditItemDialogTag()
+    object CancelButton : AddEditItemDialogTag()
 }
 
 sealed class AddEditChecklistDialogTag : TestTag {

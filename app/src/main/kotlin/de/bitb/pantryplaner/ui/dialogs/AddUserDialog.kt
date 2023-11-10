@@ -110,7 +110,7 @@ private fun AddUserDialog(
         },
         dismissButton = {
             Button(
-                onClick = onDismiss,
+                onClick = { onDismiss() },
                 content = { Text("Abbrechen") }
             )
         }

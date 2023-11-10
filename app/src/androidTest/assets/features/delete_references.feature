@@ -3,7 +3,7 @@ Feature: Delete references
   Background:
     Given Init default Mocks
 
-  Scenario: Remove Stock reference
+  Scenario: Remove Stock and check Checklist
     Given Start on OverviewPage
     And   Checklist "SharedChecklist" is displayed
     When  Tap on ProfileButton
@@ -12,36 +12,39 @@ Feature: Delete references
     And   Tap on OverviewButton
     Then  Checklist "SharedChecklist" is NOT displayed
 
-  Scenario: Remove User reference and check Checklist
+  Scenario: Remove User and check Checklist
     Given Start on LoginPage
     #     check mohammed
     When  Login with email "mohammed@lee.to" and password "1Password!"
-    Then  Checklist "CreatorChecklist" is displayed
+    Then  Tap on Checklist "SharedChecklist"
+    And   "ChecklistPage" shared with "Peter Lustig"
+    And   On Back
     And   Tap on SettingsButton
     And   Tap on LogoutButton
     And   Tap on Confirm
     #     check peter
     When  Login with email "peter@lustig.to" and password "1Password!"
-    And   Tap on Checklist "CreatorChecklist"
-    Then  "ChecklistPage" shared with "Mohammed Lee"
+    And   Tap on Checklist "SharedChecklist"
+    Then  "ChecklistPage" shared with "Peter Lustig"
     And   On Back
     And   Tap on ProfileButton
     #     remove mohammed
     When  Swipe to remove User "Mohammed Lee"
     And   Tap on Confirm
     And   Tap on OverviewButton
-    And   Tap on Checklist "CreatorChecklist"
-    #     mohammed still visible
-    Then  "ChecklistPage" shared with "Mohammed Lee"
+    And   Tap on Checklist "SharedChecklist"
+    #     mohammed checklist still visible
+    Then  "ChecklistPage" shared with "Peter Lustig"
     And   On Back
     And   Tap on SettingsButton
     And   Tap on LogoutButton
     And   Tap on Confirm
     When  Login with email "mohammed@lee.to" and password "1Password!"
     #     mohammed still has the checklist
-    Then  Checklist "CreatorChecklist" is displayed
+    Then  Tap on Checklist "SharedChecklist"
+    And   "ChecklistPage" shared with "Peter Lustig"
 
-  Scenario: Remove User reference and check Stock
+  Scenario: Remove User and check Stock
     Given Start on OverviewPage
     When  Tap on StockButton
     And   "StockPage CreatorStock" shared with none

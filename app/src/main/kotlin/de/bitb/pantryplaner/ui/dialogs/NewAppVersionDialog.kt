@@ -41,7 +41,7 @@ fun NewAppVersionDialog(
         dismissButton = {
             Button(
                 modifier = Modifier.testTag(NewAppVersionDialogTag.CancelButton),
-                onClick = onDismiss,
+                onClick = { onDismiss() },
                 content = { Text("ABBRECHEN") }
             )
         }

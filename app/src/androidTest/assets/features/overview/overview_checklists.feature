@@ -65,15 +65,13 @@ Feature: OverviewPage Checklist management
   Scenario: Edit a created Checklist
     When  LongPress on Checklist "CreatorChecklist"
     And   AddEditChecklistDialog is displayed
-    And   "ChecklistDialog" shared with none
     And   Input "EditChecklist" as Checklist name
-    And   "ChecklistDialog" open dropdown "Mit Benutzer teilen"
-    And   Dropdown option "Mohammed Lee" is displayed
-    And   Dropdown option "Andre Option" is displayed
-    And   Select dropdown option "Mohammed Lee"
+    And   "ChecklistDialog" shared with "Mohammed Lee"
+    And   "ChecklistDialog" unshare with "Mohammed Lee"
+    And   "ChecklistDialog" shared with none
     And   Tap on CreateChecklistButton
     Then  Checklist "EditChecklist" is displayed
     And   Checklist "CreatorChecklist" is NOT displayed
     And   LongPress on Checklist "EditChecklist"
     And   Checklist name is "EditChecklist"
-    And   "ChecklistDialog" shared with "Mohammed Lee"
+    And   "ChecklistDialog" shared with none

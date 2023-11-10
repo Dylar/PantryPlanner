@@ -1,7 +1,6 @@
 package de.bitb.pantryplaner.ui.stock
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -38,12 +37,10 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,7 +56,7 @@ import de.bitb.pantryplaner.data.model.StockItem
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.data.model.groupByCategory
 import de.bitb.pantryplaner.ui.base.BaseFragment
-import de.bitb.pantryplaner.ui.base.comps.DissmissItem
+import de.bitb.pantryplaner.ui.base.comps.DismissItem
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.GridListLayout
@@ -239,7 +236,6 @@ class StockFragment : BaseFragment<StockViewModel>() {
                 val model = modelResp.data
                 val settings = model.settings!!
                 val items = model.items!!
-                val categorys = items.keys.toList()
                 val stocks = model.stocks!!
                 val user = model.user!!
                 val connectedUser = model.connectedUser!!
@@ -287,7 +283,6 @@ class StockFragment : BaseFragment<StockViewModel>() {
                             settings,
                             stock,
                             items[stock.uuid].orEmpty(),
-                            categorys,
                             user,
                             connectedUser,
                             sharedUser[stock.uuid].orEmpty(),
@@ -304,12 +299,11 @@ class StockFragment : BaseFragment<StockViewModel>() {
         settings: Settings,
         stock: Stock,
         items: List<Item>,
-        categorys: List<String>,
         user: User,
         connectedUser: List<User>,
         sharedUser: List<User>,
     ) {
-
+        val categorys = items.map { it.category }.toList()
         useAddItemDialog(
             showAddItemDialog,
             categorys,
@@ -392,7 +386,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
             }
         }
 
-        DissmissItem(
+        DismissItem(
             item.name,
             color,
             onSwipe = { viewModel.deleteItem(item) },

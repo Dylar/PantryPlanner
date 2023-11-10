@@ -55,6 +55,12 @@ class AddEditItemDialogSteps(
         waitForIdle()
     }
 
+    @And("Tap on cancel ItemDialog")
+    fun tapOnCancelItemDialog() {
+        onNodeWithTag(AddEditItemDialogTag.CancelButton).performClick()
+        waitForIdle()
+    }
+
 }
 
 fun ComposeTestRule.assertAddEditItemDialogRendered() {

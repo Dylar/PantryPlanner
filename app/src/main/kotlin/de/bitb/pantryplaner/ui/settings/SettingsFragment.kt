@@ -125,6 +125,7 @@ class SettingsFragment : BaseFragment<SettingsViewModel>() {
 //                checked = settings.refreshAlert,
 //                onChange = { viewModel.saveSettings(settings.copy(refreshAlert = it)) },
 //            )
+            // TODO import/export DB
             Button(
                 modifier = Modifier
                     .testTag(SettingsPageTag.LogoutButton)

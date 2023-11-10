@@ -41,7 +41,7 @@ import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
-import de.bitb.pantryplaner.ui.base.comps.DissmissItem
+import de.bitb.pantryplaner.ui.base.comps.DismissItem
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.GridListLayout
@@ -257,7 +257,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
         }
 
         val checkItem = checklist.items.first { it.uuid == item.uuid }
-        DissmissItem(
+        DismissItem(
             item.name,
             color,
             onSwipe = { viewModel.removeItem(item) },
