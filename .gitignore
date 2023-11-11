@@ -1,4 +1,4 @@
-scripts/updateVersion.sh
+scripts/updateVersionVars.sh
 
 # Built application files
 *.apk

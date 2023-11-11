@@ -14,5 +14,5 @@ git tag -d "$latest_tag"
 echo "Deleted tag $latest_tag locally."
 
 # Delete the remote tag
- git push origin :refs/tags/"$latest_tag"
- echo "Deleted tag $latest_tag from remote repository."
+git push origin :refs/tags/"$latest_tag"
+echo "Deleted tag $latest_tag from remote repository."
