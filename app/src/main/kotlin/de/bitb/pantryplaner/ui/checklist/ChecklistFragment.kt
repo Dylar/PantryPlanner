@@ -44,6 +44,7 @@ import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
 import de.bitb.pantryplaner.ui.base.comps.DismissItem
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
+import de.bitb.pantryplaner.ui.base.comps.FloatingExpandingButton
 import de.bitb.pantryplaner.ui.base.comps.GridListLayout
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
 import de.bitb.pantryplaner.ui.base.comps.buildStockDropDown
@@ -147,10 +148,7 @@ class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
 
     @Composable
     private fun buildFab() {
-        Column(
-            horizontalAlignment = Alignment.End,
-            verticalArrangement = Arrangement.Center,
-        ) {
+        FloatingExpandingButton {
             ExtendedFloatingActionButton(
                 modifier = Modifier.testTag(ChecklistPageTag.FinishButton),
                 onClick = { showFinishDialog.value = true },

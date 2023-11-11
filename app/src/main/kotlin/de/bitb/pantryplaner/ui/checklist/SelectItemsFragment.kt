@@ -135,7 +135,7 @@ class SelectItemsFragment : BaseFragment<SelectItemsViewModel>() {
                     filter.searchTerm,
                     viewModel::search,
                 )
-                else Text(getString(R.string.stock_title))
+                else Text(getString(R.string.item_selection_title))
             },
             actions = {
                 IconButton(

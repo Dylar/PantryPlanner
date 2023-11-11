@@ -8,7 +8,9 @@ import de.bitb.pantryplaner.core.hasTextInHierarchy
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.testTags.ChecklistPageTag
+import de.bitb.pantryplaner.ui.base.testTags.ExpandingFloatingButtonTag
 import de.bitb.pantryplaner.ui.base.testTags.SearchDropDownTag
+import de.bitb.pantryplaner.ui.tapOnFloatingActionButton
 import io.cucumber.java.en.And
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
@@ -31,14 +33,12 @@ class ChecklistPageSteps(
 
     @When("Tap on AddItemButton")
     fun tapOnAddItemButton() {
-        onNodeWithTag(ChecklistPageTag.AddItemButton).performClick()
-        waitForIdle()
+        tapOnFloatingActionButton(ChecklistPageTag.AddItemButton)
     }
 
     @When("Tap on FinishButton")
     fun tapOnFinishButton() {
-        onNodeWithTag(ChecklistPageTag.FinishButton).performClick()
-        waitForIdle()
+        tapOnFloatingActionButton(ChecklistPageTag.FinishButton)
     }
 }
 
@@ -47,6 +47,5 @@ fun ComposeTestRule.assertChecklistPageRendered() {
     onNodeWithTag(ChecklistPageTag.AppBar).assertIsDisplayed()
     onNodeWithTag(ChecklistPageTag.LayoutButton).assertIsDisplayed()
     onNodeWithTag(ChecklistPageTag.FilterButton).assertIsDisplayed()
-    onNodeWithTag(ChecklistPageTag.AddItemButton).assertIsDisplayed()
-    onNodeWithTag(ChecklistPageTag.FinishButton).assertIsDisplayed()
+    onNodeWithTag(ExpandingFloatingButtonTag).assertIsDisplayed()
 }

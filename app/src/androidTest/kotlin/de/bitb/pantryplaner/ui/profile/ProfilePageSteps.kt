@@ -7,7 +7,9 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.assertBottomNaviBar
+import de.bitb.pantryplaner.ui.base.testTags.ExpandingFloatingButtonTag
 import de.bitb.pantryplaner.ui.base.testTags.ProfilePageTag
+import de.bitb.pantryplaner.ui.tapOnFloatingActionButton
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 
@@ -23,14 +25,12 @@ class ProfilePageSteps(
 
     @When("Tap on ProfilePage NewStockButton")
     fun tapOnNewStockButton() {
-        onNodeWithTag(ProfilePageTag.NewStockButton).performClick()
-        waitForIdle()
+        tapOnFloatingActionButton(ProfilePageTag.NewStockButton)
     }
 
     @When("Tap on AddUserButton")
     fun tapOnAddUserButton() {
-        onNodeWithTag(ProfilePageTag.AddUserButton).performClick()
-        waitForIdle()
+        tapOnFloatingActionButton(ProfilePageTag.AddUserButton)
     }
 
 }
@@ -39,8 +39,7 @@ fun ComposeTestRule.assertProfilePageRendered() {
     onNodeWithTag(ProfilePageTag.AppBar).assertIsDisplayed()
     onNodeWithTag(ProfilePageTag.QRInfo).assertIsDisplayed()
     onNodeWithTag(ProfilePageTag.QRLabel).assertIsDisplayed()
-    onNodeWithTag(ProfilePageTag.NewStockButton).assertIsDisplayed()
-    onNodeWithTag(ProfilePageTag.AddUserButton).assertIsDisplayed()
+    onNodeWithTag(ExpandingFloatingButtonTag).assertIsDisplayed()
     assertBottomNaviBar()
 }
 

@@ -4,10 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.Icon
@@ -120,7 +118,6 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
                         )
                     }
                 )
-                Spacer(modifier = Modifier.height(8.dp))
             }
 
 // TODO open multi adding -> add template or checklist -> no everything is a checklist ... or more FABs -> naviBar

@@ -19,3 +19,5 @@ sealed class BottomNaviTag : TestTag {
     object ProfileButton : BottomNaviTag()
     object SettingsButton : BottomNaviTag()
 }
+
+object ExpandingFloatingButtonTag : TestTag

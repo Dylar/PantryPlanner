@@ -6,7 +6,9 @@ import androidx.compose.ui.test.performClick
 import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
+import de.bitb.pantryplaner.ui.base.testTags.ExpandingFloatingButtonTag
 import de.bitb.pantryplaner.ui.base.testTags.StockPageTag
+import de.bitb.pantryplaner.ui.tapOnFloatingActionButton
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 
@@ -38,14 +40,12 @@ class StockPageSteps(
 
     @When("Tap on StockPage NewStockButton")
     fun tapOnNewStockButton() {
-        onNodeWithTag(StockPageTag.NewStockButton).performClick()
-        waitForIdle()
+        tapOnFloatingActionButton(StockPageTag.NewStockButton)
     }
 
     @When("Tap on NewItemButton")
     fun tapOnNewItemButton() {
-        onNodeWithTag(StockPageTag.NewItemButton).performClick()
-        waitForIdle()
+        tapOnFloatingActionButton(StockPageTag.NewItemButton)
     }
 
     @Then("NewItemButton is NOT displayed")
@@ -64,6 +64,6 @@ fun ComposeTestRule.assertStockPageRendered() {
     onNodeWithTag(StockPageTag.SearchButton).assertIsDisplayed()
     onNodeWithTag(StockPageTag.LayoutButton).assertIsDisplayed()
     onNodeWithTag(StockPageTag.FilterButton).assertIsDisplayed()
-    onNodeWithTag(StockPageTag.NewStockButton).assertIsDisplayed()
+    onNodeWithTag(ExpandingFloatingButtonTag).assertIsDisplayed()
 }
 

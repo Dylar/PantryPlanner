@@ -50,6 +50,7 @@ import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.comps.DismissItem
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
+import de.bitb.pantryplaner.ui.base.comps.FloatingExpandingButton
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
 import de.bitb.pantryplaner.ui.base.comps.stickyGridHeader
 import de.bitb.pantryplaner.ui.base.naviToScan
@@ -110,10 +111,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
 
     @Composable
     private fun buildFab() {
-        Column(
-            horizontalAlignment = Alignment.End,
-            verticalArrangement = Arrangement.Center,
-        ) {
+        FloatingExpandingButton {
             ExtendedFloatingActionButton(
                 modifier = Modifier.testTag(ProfilePageTag.NewStockButton),
                 onClick = { showAddStockDialog.value = true },
