@@ -19,7 +19,7 @@ class DeleteItemUC(
                 if (userResp is Result.Error) return@tryIt userResp.castTo(false)
 
                 val user = userResp.data?.uuid
-                if (user == item.creator) { //TODO what if other user using it? -> unlucky xD
+                if (user == item.creator) { //TODO what if other user using it? -> unlucky xD -> only if last otherwise change creator (creator = owner?)
                     itemRepo.deleteItem(item)
                 } else {
                     val newList = item.sharedWith.subtract(setOf(user!!))

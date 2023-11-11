@@ -19,7 +19,7 @@ class DeleteChecklistUC(
                 if (userResp is Result.Error) return@tryIt userResp.castTo(false)
 
                 val user = userResp.data?.uuid
-                if (user == check.creator) { //TODO what if other user using it? -> unlucky xD
+                if (user == check.creator) { //TODO what if other user using it? -> unlucky xD -> only if last otherwise change creator (creator = owner?)
                     checkRepo.deleteChecklist(check)
                 } else {
                     val newList = check.sharedWith.subtract(setOf(user!!))

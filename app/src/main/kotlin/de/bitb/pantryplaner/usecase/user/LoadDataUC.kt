@@ -24,7 +24,7 @@ class LoadDataUC(
             if (!ignoreNewVersion) {
                 val appVersion = settingsRepo.getAppVersion()
                 if (appVersion is Result.Error) return@tryIt appVersion.castTo()
-                if (appVersion.data != BuildConfig.VERSION_NAME) {
+                if (newVersionAvailable(appVersion.data!!)) {
                     return@tryIt Result.Success(DataLoadResponse.NewAppVersion)
                 }
             }
@@ -37,5 +37,14 @@ class LoadDataUC(
                 else DataLoadResponse.NotLoggedIn
             )
         }
+    }
+
+    private fun newVersionAvailable(version: String): Boolean {
+        val newVersion = version.split(".").map { it.toInt() }
+        val oldVersion = BuildConfig.VERSION_NAME.split(".").map { it.toInt() }
+        for (i in newVersion.indices) {
+            if (newVersion[i] > oldVersion[i]) return true
+        }
+        return false
     }
 }
