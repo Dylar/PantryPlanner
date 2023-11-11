@@ -20,4 +20,4 @@ sealed class BottomNaviTag : TestTag {
     object SettingsButton : BottomNaviTag()
 }
 
-object ExpandingFloatingButtonTag : TestTag
+object FloatingExpandingButtonTag : TestTag

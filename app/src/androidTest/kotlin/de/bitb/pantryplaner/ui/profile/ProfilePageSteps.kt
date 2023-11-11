@@ -2,12 +2,11 @@ package de.bitb.pantryplaner.ui.profile
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
-import androidx.compose.ui.test.performClick
 import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.assertBottomNaviBar
-import de.bitb.pantryplaner.ui.base.testTags.ExpandingFloatingButtonTag
+import de.bitb.pantryplaner.ui.base.testTags.FloatingExpandingButtonTag
 import de.bitb.pantryplaner.ui.base.testTags.ProfilePageTag
 import de.bitb.pantryplaner.ui.tapOnFloatingActionButton
 import io.cucumber.java.en.Then
@@ -39,7 +38,7 @@ fun ComposeTestRule.assertProfilePageRendered() {
     onNodeWithTag(ProfilePageTag.AppBar).assertIsDisplayed()
     onNodeWithTag(ProfilePageTag.QRInfo).assertIsDisplayed()
     onNodeWithTag(ProfilePageTag.QRLabel).assertIsDisplayed()
-    onNodeWithTag(ExpandingFloatingButtonTag).assertIsDisplayed()
+    onNodeWithTag(FloatingExpandingButtonTag).assertIsDisplayed()
     assertBottomNaviBar()
 }
 

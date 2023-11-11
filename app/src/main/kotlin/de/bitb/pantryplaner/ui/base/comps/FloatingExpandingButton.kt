@@ -18,7 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import de.bitb.pantryplaner.ui.base.testTags.ExpandingFloatingButtonTag
+import de.bitb.pantryplaner.ui.base.testTags.FloatingExpandingButtonTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 
 @Composable
@@ -33,8 +33,9 @@ fun FloatingExpandingButton(
         if (expanded) buttons()
         Spacer(modifier = Modifier.height(8.dp))
         FloatingActionButton(
-            modifier = Modifier.testTag(ExpandingFloatingButtonTag),
-            onClick = { expanded = !expanded }) {
+            modifier = Modifier.testTag(FloatingExpandingButtonTag),
+            onClick = { expanded = !expanded }
+        ) {
             Icon(
                 imageVector = if (expanded) Icons.Filled.Close else Icons.Filled.Add,
                 contentDescription = if (expanded) "Schließen" else "Öffnen"

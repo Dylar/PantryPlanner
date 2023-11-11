@@ -2,11 +2,12 @@ package de.bitb.pantryplaner.ui.SelectItems
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
-import androidx.compose.ui.test.performClick
 import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
+import de.bitb.pantryplaner.ui.base.testTags.FloatingExpandingButtonTag
 import de.bitb.pantryplaner.ui.base.testTags.SelectItemsPageTag
+import de.bitb.pantryplaner.ui.tapOnFloatingActionButton
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 
@@ -22,8 +23,12 @@ class SelectItemsPageSteps(
 
     @When("Tap on AddSelectionButton")
     fun tapOnFinishButton() {
-        onNodeWithTag(SelectItemsPageTag.AddSelectionButton).performClick()
-        waitForIdle()
+        tapOnFloatingActionButton(SelectItemsPageTag.AddSelectionButton)
+    }
+
+    @When("Tap on SelectItemsPage NewItemButton")
+    fun tapOnNewItemButton() {
+        tapOnFloatingActionButton(SelectItemsPageTag.AddItemButton)
     }
 }
 
@@ -32,6 +37,6 @@ fun ComposeTestRule.assertSelectItemsPageRendered() {
     onNodeWithTag(SelectItemsPageTag.SearchButton).assertIsDisplayed()
     onNodeWithTag(SelectItemsPageTag.LayoutButton).assertIsDisplayed()
     onNodeWithTag(SelectItemsPageTag.FilterButton).assertIsDisplayed()
-    onNodeWithTag(SelectItemsPageTag.AddSelectionButton).assertIsDisplayed()
+    onNodeWithTag(FloatingExpandingButtonTag).assertIsDisplayed()
 }
 

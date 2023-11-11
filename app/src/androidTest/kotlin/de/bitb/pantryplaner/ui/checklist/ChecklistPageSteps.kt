@@ -2,13 +2,12 @@ package de.bitb.pantryplaner.ui.checklist
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
-import androidx.compose.ui.test.performClick
 import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.hasTextInHierarchy
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.testTags.ChecklistPageTag
-import de.bitb.pantryplaner.ui.base.testTags.ExpandingFloatingButtonTag
+import de.bitb.pantryplaner.ui.base.testTags.FloatingExpandingButtonTag
 import de.bitb.pantryplaner.ui.base.testTags.SearchDropDownTag
 import de.bitb.pantryplaner.ui.tapOnFloatingActionButton
 import io.cucumber.java.en.And
@@ -47,5 +46,5 @@ fun ComposeTestRule.assertChecklistPageRendered() {
     onNodeWithTag(ChecklistPageTag.AppBar).assertIsDisplayed()
     onNodeWithTag(ChecklistPageTag.LayoutButton).assertIsDisplayed()
     onNodeWithTag(ChecklistPageTag.FilterButton).assertIsDisplayed()
-    onNodeWithTag(ExpandingFloatingButtonTag).assertIsDisplayed()
+    onNodeWithTag(FloatingExpandingButtonTag).assertIsDisplayed()
 }

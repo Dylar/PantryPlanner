@@ -98,11 +98,11 @@ class StockFragment : BaseFragment<StockViewModel>() {
 
     @Composable
     override fun screenContent() {
+        showSearchBar = remember { mutableStateOf(false) }
         showGridLayout = remember { mutableStateOf(true) }
         showFilterDialog = remember { mutableStateOf(false) }
         showAddStockDialog = remember { mutableStateOf(false) }
         showAddItemDialog = remember { mutableStateOf(false) }
-        showSearchBar = remember { mutableStateOf(false) }
 
         val filter by viewModel.filterBy.collectAsState(Filter())
         onBack { onDismiss ->

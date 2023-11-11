@@ -17,8 +17,10 @@ import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.data.model.groupByCategory
 import de.bitb.pantryplaner.ui.base.BaseViewModel
 import de.bitb.pantryplaner.ui.base.NaviEvent
+import de.bitb.pantryplaner.ui.base.comps.asResString
 import de.bitb.pantryplaner.ui.stock.INSTANT_SEARCH
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
+import de.bitb.pantryplaner.usecase.ItemUseCases
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,7 +33,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class ItemsModel(
+data class SelectItemsModel(
     val settings: Settings?,
     val items: Map<String, List<Item>>?,
     val connectedUser: List<User>?,
@@ -47,6 +49,7 @@ class SelectItemsViewModel @Inject constructor(
     private val settingsRepo: SettingsRepository,
     override val userRepo: UserRepository,
     private val checkUseCases: ChecklistUseCases,
+    private val itemUseCases: ItemUseCases,
 ) : BaseViewModel(), UserDataExt {
     private var fromChecklistId: String? = null
 
@@ -54,7 +57,7 @@ class SelectItemsViewModel @Inject constructor(
     val isSearching = _isSearching.asStateFlow()
 
     val filterBy = MutableStateFlow(Filter())
-    val itemsModel: LiveData<Result<ItemsModel>> = filterBy
+    val itemsModel: LiveData<Result<SelectItemsModel>> = filterBy
         .debounce { if (!INSTANT_SEARCH && _isSearching.value) 1000L else 0L }
         .flatMapLatest { filter ->
             combine(
@@ -67,7 +70,7 @@ class SelectItemsViewModel @Inject constructor(
                     items is Result.Error -> items.castTo()
                     users is Result.Error -> users.castTo()
                     else -> Result.Success(
-                        ItemsModel(
+                        SelectItemsModel(
                             settings.data,
                             items.data?.groupByCategory,
                             users.data,
@@ -87,6 +90,11 @@ class SelectItemsViewModel @Inject constructor(
         fromChecklistId = checkUuid
     }
 
+    fun search(text: String) {
+        _isSearching.value = true
+        filterBy.value = filterBy.value.copy(searchTerm = text)
+    }
+
     fun checkItem(uuid: String) {
         checkedItems.update {
             val items = it.toMutableList()
@@ -94,6 +102,18 @@ class SelectItemsViewModel @Inject constructor(
                 items.add(uuid)
             }
             items.toList()
+        }
+    }
+
+    fun addItem(item: Item) {
+        val name = item.name
+        viewModelScope.launch {
+            val createItemResp = itemUseCases.createItemUC(item)
+            when {
+                createItemResp is Result.Error -> showSnackBar(createItemResp.message!!)
+                createItemResp.data == true -> showSnackBar("Item hinzugefügt: $name".asResString()).also { updateWidgets() }
+                else -> showSnackBar("Item gibt es schon: $name".asResString())
+            }
         }
     }
 
@@ -105,10 +125,5 @@ class SelectItemsViewModel @Inject constructor(
                 else -> navigate(NaviEvent.NavigateBack)
             }
         }
-    }
-
-    fun search(text: String) {
-        _isSearching.value = true
-        filterBy.value = filterBy.value.copy(searchTerm = text)
     }
 }

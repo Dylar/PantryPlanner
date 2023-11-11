@@ -3,10 +3,10 @@ package de.bitb.pantryplaner.ui.checklist
 import android.os.Bundle
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.Card
 import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.Icon
@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.SavedSearch
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -29,7 +30,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -44,6 +44,7 @@ import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
+import de.bitb.pantryplaner.ui.base.comps.FloatingExpandingButton
 import de.bitb.pantryplaner.ui.base.comps.GridListLayout
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
 import de.bitb.pantryplaner.ui.base.comps.SearchBar
@@ -54,6 +55,7 @@ import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.comps.SelectItemHeader
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 import de.bitb.pantryplaner.ui.dialogs.FilterDialog
+import de.bitb.pantryplaner.ui.dialogs.useAddItemDialog
 
 @AndroidEntryPoint
 class SelectItemsFragment : BaseFragment<SelectItemsViewModel>() {
@@ -62,6 +64,7 @@ class SelectItemsFragment : BaseFragment<SelectItemsViewModel>() {
     private lateinit var showGridLayout: MutableState<Boolean>
     private lateinit var showFilterDialog: MutableState<Boolean>
     private lateinit var showAddToDialog: MutableState<Boolean>
+    private lateinit var showAddItemDialog: MutableState<Boolean>
     private lateinit var showSearchBar: MutableState<Boolean>
 
     private val searchButtonIcon: ImageVector
@@ -77,10 +80,11 @@ class SelectItemsFragment : BaseFragment<SelectItemsViewModel>() {
 
     @Composable
     override fun screenContent() {
+        showSearchBar = remember { mutableStateOf(false) }
         showGridLayout = remember { mutableStateOf(true) }
         showFilterDialog = remember { mutableStateOf(false) }
         showAddToDialog = remember { mutableStateOf(false) }
-        showSearchBar = remember { mutableStateOf(false) }
+        showAddItemDialog = remember { mutableStateOf(false) }
 
         val filter by viewModel.filterBy.collectAsState(Filter())
         onBack { onDismiss ->
@@ -174,16 +178,25 @@ class SelectItemsFragment : BaseFragment<SelectItemsViewModel>() {
 
     @Composable
     private fun buildFab() {
-        Column(
-            horizontalAlignment = Alignment.End,
-            verticalArrangement = Arrangement.Center,
-        ) {
+        FloatingExpandingButton {
             ExtendedFloatingActionButton(
-                modifier = Modifier.testTag(SelectItemsPageTag.AddSelectionButton),
-                text = { Text(text = "Hinzufügen") },
+                modifier = Modifier.testTag(SelectItemsPageTag.AddItemButton),
+                text = { Text(text = "Item") },
                 icon = {
                     Icon(
                         imageVector = Icons.Rounded.Add,
+                        contentDescription = "Create item FAB",
+                    )
+                },
+                onClick = { showAddItemDialog.value = true },
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            ExtendedFloatingActionButton(
+                modifier = Modifier.testTag(SelectItemsPageTag.AddSelectionButton),
+                text = { Text(text = "Auswahl hinzufügen") },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Rounded.Check,
                         contentDescription = "Add items FAB",
                     )
                 },
@@ -201,9 +214,20 @@ class SelectItemsFragment : BaseFragment<SelectItemsViewModel>() {
             else -> {
                 val model = itemsModel!!.data!!
                 val settings = model.settings!!
-                val items = model.items
+                val items = model.items!!
+                val connectedUser = model.connectedUser!!
 
-                if (items?.isEmpty() != false) {
+                val categorys = items.keys.toList()
+                useAddItemDialog(
+                    showAddItemDialog,
+                    categorys,
+                    connectedUser,
+                ) { item, close ->
+                    viewModel.addItem(item)
+                    if (close) showAddItemDialog.value = false
+                }
+
+                if (items.isEmpty()) {
                     EmptyListComp(getString(R.string.no_items))
                 } else {
                     GridListLayout(

@@ -59,6 +59,7 @@ sealed class SelectItemsPageTag : TestTag {
     object SearchButton : SelectItemsPageTag()
     object LayoutButton : SelectItemsPageTag()
     object FilterButton : SelectItemsPageTag()
+    object AddItemButton : SelectItemsPageTag()
     object AddSelectionButton : SelectItemsPageTag()
 }
 

@@ -7,8 +7,7 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.testTags.BottomNaviTag
-import de.bitb.pantryplaner.ui.base.testTags.ExpandingFloatingButtonTag
-import de.bitb.pantryplaner.ui.base.testTags.StockPageTag
+import de.bitb.pantryplaner.ui.base.testTags.FloatingExpandingButtonTag
 import de.bitb.pantryplaner.ui.base.testTags.TestTag
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
@@ -74,7 +73,7 @@ fun ComposeTestRule.tapOnFloatingActionButton(tag: TestTag) {
     try {
         onNodeWithTag(tag).assertIsDisplayed()
     } catch (e: AssertionError) {
-        onNodeWithTag(ExpandingFloatingButtonTag).performClick()
+        onNodeWithTag(FloatingExpandingButtonTag).performClick()
         waitForIdle()
     }
     onNodeWithTag(tag).performClick()

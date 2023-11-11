@@ -1,23 +1,36 @@
-Feature: ChecklistPage Items CreatorChecklist management
+Feature: ChecklistPage CreatorChecklist Items management
 
   Background:
     Given Init default Mocks
     And   Start on ChecklistPage "CreatorChecklist"
+    And   Item "NewItem" in category "NewCategory" is NOT displayed
     And   Item "SelectItem" in category "SelectCategory" is NOT displayed
     And   Item "CreatorItem" in category "CreatorCategory" is displayed
     And   Item "SharedItem" in category "SharedCategory" is displayed
     And   Item "UnsharedItem" in category "UnsharedCategory" is NOT displayed
 
-  Scenario: Add item
+  Scenario: Create Item and add it
     When  Tap on AddItemButton
     And   SelectItemsPage rendered
-    Then  Tap on Item "SelectItem" in category "SelectCategory"
+    And   Item "NewItem" in category "NewCategory" is NOT displayed
+    And   Item "SelectItem" in category "SelectCategory" is displayed
+    # create item
+    When  Tap on SelectItemsPage NewItemButton
+    And   Input "NewItem" as Item name
+    And   Input "NewCategory" as Item category
+    And   Tap on CreateItemButton
+    Then  Item "NewItem" in category "NewCategory" is displayed
+    # select only non-created item
+    When  Tap on Item "SelectItem" in category "SelectCategory"
     And   Tap on AddSelectionButton
     And   Tap on Confirm
     Then  ChecklistPage rendered
+    # only selected item visible
+    And   Item "NewItem" in category "NewCategory" is NOT displayed
     And   Item "SelectItem" in category "SelectCategory" is displayed
-    Then  On Back
+    And   On Back
     And   Tap on Checklist "CreatorChecklist"
+    And   Item "NewItem" in category "NewCategory" is NOT displayed
     And   Item "SelectItem" in category "SelectCategory" is displayed
 
   Scenario: Remove a Item
