@@ -16,6 +16,7 @@ object UnsharedIconTag : TestTag
 sealed class BottomNaviTag : TestTag {
     object OverviewButton : BottomNaviTag()
     object StockButton : BottomNaviTag()
+    object RecipeButton : BottomNaviTag()
     object ProfileButton : BottomNaviTag()
     object SettingsButton : BottomNaviTag()
 }

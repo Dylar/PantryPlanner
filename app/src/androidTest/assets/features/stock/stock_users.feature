@@ -14,7 +14,7 @@ Feature: StockPage User management
     And   Select dropdown option "Mohammed Lee"
     Then  "StockPage CreatorStock" shared with "Mohammed Lee"
     And   On Back
-    And   Tap on StockButton
+    And   Navi to StockPage
     And   "StockPage CreatorStock" shared with "Mohammed Lee"
 
   Scenario: Prevent non-creator from sharing with User

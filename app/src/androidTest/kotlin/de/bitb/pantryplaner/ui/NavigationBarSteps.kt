@@ -20,37 +20,47 @@ class OverviewPageSteps(
     @Then("BottomNaviBar rendered")
     fun renderBottomNaviBar() = assertBottomNaviBar()
 
-    @When("Tap on OverviewButton")
+    @When("Navi to OverviewButton")
     fun performTapOnOverviewButton() {
         tapOnOverviewButton()
     }
 
-    @When("Tap on StockButton")
+    @When("Navi to RecipePage")
+    fun performTapOnRecipeButton() {
+        tapOnRecipeButton()
+    }
+
+    @When("Navi to StockPage")
     fun performTapOnStockButton() {
         tapOnStockButton()
     }
 
-    @When("Tap on ProfileButton")
+    @When("Navi to ProfilePage")
     fun performTapOnProfileButton() {
         tapOnProfileButton()
     }
 
-    @When("Tap on SettingsButton")
+    @When("Navi to SettingsPage")
     fun performTapOnSettingsButton() {
         tapOnSettingsButton()
     }
-
 }
 
 fun ComposeTestRule.assertBottomNaviBar() {
     onNodeWithTag(BottomNaviTag.OverviewButton).assertIsDisplayed()
     onNodeWithTag(BottomNaviTag.StockButton).assertIsDisplayed()
+    onNodeWithTag(BottomNaviTag.RecipeButton).assertIsDisplayed()
     onNodeWithTag(BottomNaviTag.ProfileButton).assertIsDisplayed()
     onNodeWithTag(BottomNaviTag.SettingsButton).assertIsDisplayed()
 }
 
 fun ComposeTestRule.tapOnOverviewButton() {
     onNodeWithTag(BottomNaviTag.OverviewButton).performClick()
+    waitForIdle()
+}
+
+fun ComposeTestRule.tapOnRecipeButton() {
+    onNodeWithTag(BottomNaviTag.RecipeButton).performClick()
     waitForIdle()
 }
 

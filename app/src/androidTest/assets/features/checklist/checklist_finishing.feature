@@ -13,7 +13,7 @@ Feature: ChecklistPage Un/Finish checklist
     And   Item "SharedItem" in category "SharedCategory" has amount 2.0
     When  Tap on FinishButton
     And   Tap on Confirm
-    And   Tap on StockButton
+    And   Navi to StockPage
     Then  Item "CreatorItem" in category "CreatorCategory" has amount 2.0
     And   Item "SharedItem" in category "SharedCategory" has amount 2.5
 
@@ -28,7 +28,7 @@ Feature: ChecklistPage Un/Finish checklist
     And   Tap on Item "SharedItem" in category "SharedCategory"
     And   Tap on FinishButton
     And   Tap on Confirm
-    And   Tap on StockButton
+    And   Navi to StockPage
     Then  Item "CreatorItem" in category "CreatorCategory" has amount 1.0
     And   Item "SharedItem" in category "SharedCategory" has amount 4.5
 
@@ -57,6 +57,6 @@ Feature: ChecklistPage Un/Finish checklist
     And   On Back
     When  Tap on Checklist "FinishedChecklist"
     And   Tap on Confirm
-    And   Tap on StockButton
+    And   Navi to StockPage
     Then  Item "CreatorItem" in category "CreatorCategory" has amount 0.0
     And   Item "SharedItem" in category "SharedCategory" has amount 2.5

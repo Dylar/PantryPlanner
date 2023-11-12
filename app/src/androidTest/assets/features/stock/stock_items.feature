@@ -51,7 +51,7 @@ Feature: StockPage Items management
     And   "ItemDialog" shared with "Mohammed Lee"
     And   Tap on CreateItemButton
     Then  On Back
-    And   Tap on StockButton
+    And   Navi to StockPage
     And   Item "NewItem" in category "NewCategory" is displayed
     And   LongPress on Item "NewItem" in category "NewCategory"
     And   "ItemDialog" shared with "Mohammed Lee"
@@ -76,7 +76,7 @@ Feature: StockPage Items management
     And   Tap on cancel ItemDialog
     And   LongPress on Item "NewItem" in category "CreatorCategory"
     Then  On Back
-    And   Tap on StockButton
+    And   Navi to StockPage
     And   LongPress on Item "NewItem" in category "CreatorCategory"
 
   Scenario: Try to remove a Item, but cancel confirmation
@@ -89,7 +89,7 @@ Feature: StockPage Items management
     And   Tap on Confirm
     Then  Item "CreatorItem" in category "CreatorCategory" is NOT displayed
     And   On Back
-    And   Tap on StockButton
+    And   Navi to StockPage
     And   Item "CreatorItem" in category "CreatorCategory" is NOT displayed
 
   Scenario: Remove a shared Item
@@ -99,7 +99,7 @@ Feature: StockPage Items management
     When  Set Item "SharedItem" in category "SharedCategory" amount to "0"
     Then  Item "SharedItem" in category "SharedCategory" is NOT displayed
     And   On Back
-    And   Tap on StockButton
+    And   Navi to StockPage
     And   Item "SharedItem" in category "SharedCategory" is NOT displayed
 
   Scenario: Remove all Items
@@ -118,7 +118,7 @@ Feature: StockPage Items management
     And   Item "SelectItem" in category "SelectCategory" is NOT displayed
     And   No Items displayed
     And   On Back
-    And   Tap on StockButton
+    And   Navi to StockPage
     And   Item "SharedItem" in category "SharedCategory" is NOT displayed
     And   Item "CreatorItem" in category "CreatorCategory" is NOT displayed
     And   Item "SelectItem" in category "SelectCategory" is NOT displayed
@@ -152,7 +152,7 @@ Feature: StockPage Items management
     And   Item category is "EditCategory"
     And   "ItemDialog" shared with "Mohammed Lee"
     And   On Back
-    And   Tap on StockButton
+    And   Navi to StockPage
     And   Item "EditItem" in category "EditCategory" is displayed
 
   Scenario: Search Item
@@ -175,7 +175,7 @@ Feature: StockPage Items management
     And   Item "SelectItem" in category "SelectCategory" is NOT displayed
     And   No Items displayed
     Then  On Back
-    And   Tap on StockButton
+    And   Navi to StockPage
     And   Item "CreatorItem" in category "CreatorCategory" is displayed
     And   Item "SharedItem" in category "SharedCategory" is displayed
     And   Item "SelectItem" in category "SelectCategory" is displayed

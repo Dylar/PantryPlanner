@@ -12,8 +12,8 @@ Feature: Intro Create new User
     When  Tap on NaviToRegisterButton
     And   Register with first name "Bob", last name "TheDeal", email "newUser@gmx.de" and password "Password321!"
     Then  OverviewPage rendered
-    And   Tap on ProfileButton
-    And   Tap on SettingsButton
+    And   Navi to ProfilePage
+    And   Navi to SettingsPage
     And   Tap on LogoutButton
     And   Tap on Confirm
     Then  LoginPage rendered

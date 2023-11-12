@@ -19,19 +19,24 @@ Feature: App navigation
     Then  OverviewPage rendered
 
 # start on OverviewPage
+  Scenario: Navigate to RecipePage
+    Given Start on OverviewPage
+    When  Navi to RecipeButton
+    Then  ProfilePage rendered
+
   Scenario: Navigate to StockPage
     Given Start on OverviewPage
-    When  Tap on StockButton
+    When  Navi to StockPage
     Then  StockPage rendered
 
   Scenario: Navigate to ProfilePage
     Given Start on OverviewPage
-    When  Tap on ProfileButton
+    When  Navi to ProfilePage
     Then  ProfilePage rendered
 
   Scenario: Navigate to SettingsPage
     Given Start on OverviewPage
-    When  Tap on SettingsButton
+    When  Navi to SettingsPage
     Then  SettingsPage rendered
 
   Scenario: Navigate to ChecklistPage

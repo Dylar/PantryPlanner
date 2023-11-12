@@ -12,12 +12,12 @@ Feature: App walkthrough
     Then  OverviewPage rendered
     And   No Checklists displayed
     And   NewChecklistButton is NOT displayed
-    When  Tap on StockButton
+    When  Navi to StockPage
     # StockPage
     Then  StockPage rendered
     And   No Stocks displayed
     And   On Back
-    When  Tap on ProfileButton
+    When  Navi to ProfilePage
     # ProfilePage
     Then  ProfilePage rendered
     And   No Stocks displayed
@@ -28,7 +28,7 @@ Feature: App walkthrough
     And   Input "NewStock" as Stock name
     And   Tap on CreateStockButton
     Then  Stock "NewStock" is displayed
-    When  Tap on SettingsButton
+    When  Navi to SettingsPage
     # SettingsPage
     Then  SettingsPage rendered
     And   On Back
@@ -52,7 +52,7 @@ Feature: App walkthrough
     And   OverviewPage rendered
     And   NewChecklistButton is NOT displayed
     # StockPage
-    And   Tap on StockButton
+    And   Navi to StockPage
     And   StockPage rendered
     And   NewItemButton is NOT displayed
     # Create Stock
