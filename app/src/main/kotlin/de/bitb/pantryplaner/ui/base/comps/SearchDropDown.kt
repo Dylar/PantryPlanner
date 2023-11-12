@@ -99,7 +99,7 @@ fun buildStockDropDown(
     fun optionMapper(stock: Stock): String = stock.name
     val selectedState = remember {
         val option = optionMapper(selectedStock.value)
-        mutableStateOf(TextFieldValue(option))
+        mutableStateOf(TextFieldValue(option, TextRange(option.length)))
     }
     SearchDropDown(
         stringResource(R.string.choose_stock),
