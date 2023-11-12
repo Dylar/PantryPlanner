@@ -20,7 +20,7 @@ class ChecklistsPageSteps(
     @Then("BottomNaviBar rendered")
     fun renderBottomNaviBar() = assertBottomNaviBar()
 
-    @When("Navi to ChecklistsButton")
+    @When("Navi to ChecklistsPage")
     fun performTapOnChecklistsButton() {
         tapOnChecklistsButton()
     }
@@ -49,7 +49,7 @@ class ChecklistsPageSteps(
 fun ComposeTestRule.assertBottomNaviBar() {
     onNodeWithTag(BottomNaviTag.ChecklistsButton).assertIsDisplayed()
     onNodeWithTag(BottomNaviTag.StocksButton).assertIsDisplayed()
-//    onNodeWithTag(BottomNaviTag.RecipesButton).assertIsDisplayed()
+    onNodeWithTag(BottomNaviTag.RecipesButton).assertIsDisplayed()
     onNodeWithTag(BottomNaviTag.ProfileButton).assertIsDisplayed()
     onNodeWithTag(BottomNaviTag.SettingsButton).assertIsDisplayed()
 }

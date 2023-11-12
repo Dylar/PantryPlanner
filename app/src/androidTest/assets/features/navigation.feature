@@ -19,10 +19,10 @@ Feature: App navigation
     Then  ChecklistsPage rendered
 
 # start on ChecklistsPage
-#  Scenario: Navigate to RecipePage
-#    Given Start on ChecklistsPage
-#    When  Navi to RecipeButton
-#    Then  ProfilePage rendered
+  Scenario: Navigate to RecipePage
+    Given Start on ChecklistsPage
+    When  Navi to RecipesPage
+    Then  RecipesPage rendered
 
   Scenario: Navigate to StocksPage
     Given Start on ChecklistsPage

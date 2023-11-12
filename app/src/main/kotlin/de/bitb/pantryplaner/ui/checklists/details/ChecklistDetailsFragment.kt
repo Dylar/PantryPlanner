@@ -265,7 +265,7 @@ class ChecklistDetailsFragment : BaseFragment<ChecklistViewModel>() {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .testTag(ItemTag(item.category, item.name)),
+                    .testTag(ItemTag(item.name, item.category)),
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Center,
             ) {

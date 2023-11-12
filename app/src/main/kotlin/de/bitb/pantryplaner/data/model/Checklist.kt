@@ -74,7 +74,7 @@ data class CheckItem(
 //)
 //
 // TODO Receipe page show items you need (red) and which you have (green)
-//data class RecipeList(
+//data class Recipe(
 //    val uuid: String,
 //    val name: String,
 //    val items: List<CheckItem>,

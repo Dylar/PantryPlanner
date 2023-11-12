@@ -40,7 +40,7 @@ class ItemSteps(
     @Then("Item {string} in category {string} is displayed")
     fun itemInCategoryIsDisplayed(name: String, category: String) {
         onNodeWithTextWithParentTag(
-            ItemTag(category, name),
+            ItemTag(name, category),
             name,
             true,
         ).performScrollTo().assertIsDisplayed()
@@ -49,16 +49,16 @@ class ItemSteps(
     @Then("Item {string} in category {string} is NOT displayed")
     fun itemInCategoryIsNotDisplayed(name: String, category: String) {
         try {
-            onNodeWithTag(ItemTag(category, name), true).assertIsNotDisplayed()
+            onNodeWithTag(ItemTag(name, category), true).assertIsNotDisplayed()
         } catch (_: AssertionError) {
-            onNodeWithTag(ItemTag(category, name), true).assertDoesNotExist()
+            onNodeWithTag(ItemTag(name, category), true).assertDoesNotExist()
         }
     }
 
     @Then("Item {string} in category {string} unshared icon is displayed")
     fun itemInCategoryUnsharedIconIsDisplayed(name: String, category: String) {
         onNodeWithParentTag(
-            ItemTag(category, name),
+            ItemTag(name, category),
             UnsharedIconTag,
             true,
         ).performScrollTo().assertIsDisplayed()
@@ -67,7 +67,7 @@ class ItemSteps(
     @Then("Item {string} in category {string} unshared icon is NOT displayed")
     fun itemInCategoryUnsharedIconIsNotDisplayed(name: String, category: String) {
         assertNodeWithParentTagDoesNotExists(
-            ItemTag(category, name),
+            ItemTag(name, category),
             UnsharedIconTag,
             true,
         )
@@ -76,7 +76,7 @@ class ItemSteps(
     @Then("Swipe to remove Item {string} in category {string}")
     fun swipeToRemoveItem(name: String, category: String) {
         onNodeWithTextWithParentTag(
-            ItemTag(category, name),
+            ItemTag(name, category),
             name,
             true,
         ).performTouchInput { swipeRight() }
@@ -86,7 +86,7 @@ class ItemSteps(
     @When("LongPress on Item {string} in category {string}")
     fun longPressOnItemInCategory(name: String, category: String) {
         onNodeWithTextWithParentTag(
-            ItemTag(category, name),
+            ItemTag(name, category),
             name,
             true,
         ).performTouchInput { longClick() }
@@ -96,7 +96,7 @@ class ItemSteps(
     @When("Tap on Item {string} in category {string}")
     fun tapOnItemInCategory(name: String, category: String) {
         onNodeWithTextWithParentTag(
-            ItemTag(category, name),
+            ItemTag(name, category),
             name,
             true,
         ).performClick()
@@ -105,13 +105,13 @@ class ItemSteps(
 
     @Given("Item {string} in category {string} has amount {double}")
     fun itemHasAmount(name: String, category: String, amount: Double) {
-        onNodeWithTag(ItemTag(category, name), true).hasTextInHierarchy(amount.formatted)
+        onNodeWithTag(ItemTag(name, category), true).hasTextInHierarchy(amount.formatted)
     }
 
     @When("Set Item {string} in category {string} amount to {string}")
     fun setItemAmountBy(name: String, category: String, input: String) {
         onNodeWithParentTag(
-            ItemTag(category, name),
+            ItemTag(name, category),
             AddSubRowTag.AmountText,
             true
         ).performTextReplacement(input)
@@ -122,7 +122,7 @@ class ItemSteps(
     fun increaseItemAmountBy(name: String, category: String, amount: Int) {
         for (i in 1..amount) {
             onNodeWithParentTag(
-                ItemTag(category, name),
+                ItemTag(name, category),
                 AddSubRowTag.PlusButton,
                 true
             ).performClick()
@@ -134,7 +134,7 @@ class ItemSteps(
     fun decreaseItemAmountBy(name: String, category: String, amount: Int) {
         for (i in 1..amount) {
             onNodeWithParentTag(
-                ItemTag(category, name),
+                ItemTag(name, category),
                 AddSubRowTag.MinusButton,
                 true
             ).performClick()

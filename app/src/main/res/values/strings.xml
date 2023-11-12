@@ -23,6 +23,7 @@
 
     <string name="choose_stock">Lager</string>
     <string name="no_stocks">Keine Lager vorhanden</string>
+    <string name="no_recipes">Keine Rezepte vorhanden</string>
     <string name="no_connected_users">Keine verbundenen Benutzer vorhanden</string>
     <string name="user_email">Email</string>
 

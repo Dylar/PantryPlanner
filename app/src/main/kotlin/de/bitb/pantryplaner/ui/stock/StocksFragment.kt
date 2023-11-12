@@ -404,7 +404,7 @@ class StocksFragment : BaseFragment<StockViewModel>() {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .testTag(ItemTag(item.category, item.name)),
+                .testTag(ItemTag(item.name, item.category)),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Center,
         ) {

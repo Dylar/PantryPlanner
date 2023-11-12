@@ -250,7 +250,7 @@ class SelectItemsFragment : BaseFragment<SelectItemsViewModel>() {
             elevation = 4.dp,
             border = BorderStroke(2.dp, color),
             modifier = Modifier
-                .testTag(ItemTag(item.category, item.name))
+                .testTag(ItemTag(item.name, item.category))
                 .fillMaxWidth()
                 .clickable { viewModel.checkItem(item.uuid) }
         ) {

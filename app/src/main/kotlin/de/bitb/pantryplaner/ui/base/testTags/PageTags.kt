@@ -33,6 +33,21 @@ sealed class ChecklistsPageTag : TestTag {
     object NewChecklistButton : ChecklistsPageTag()
 }
 
+sealed class RecipesPageTag : TestTag {
+    object AppBar : RecipesPageTag()
+    object LayoutButton : RecipesPageTag()
+    object NewRecipeButton : RecipesPageTag()
+}
+
+sealed class RecipeDetailsPageTag : TestTag {
+    object RecipeDetailsPage : RecipeDetailsPageTag()
+    object AppBar : RecipeDetailsPageTag()
+    object LayoutButton : RecipeDetailsPageTag()
+    object RecipeName : RecipeDetailsPageTag()
+    object RecipeCategory : RecipeDetailsPageTag()
+    object SaveRecipeButton : RecipeDetailsPageTag()
+}
+
 sealed class StocksPageTag : TestTag {
     object AppBar : StocksPageTag()
     object SearchButton : StocksPageTag()
@@ -42,8 +57,12 @@ sealed class StocksPageTag : TestTag {
     object NewItemButton : StocksPageTag()
 
     data class StockPage(val name: String) : StocksPageTag()
-    data class StockTabTag(val name: String) : TestTag
+    data class StockTabTag(val name: String) : StocksPageTag()
 }
+
+//sealed class ItemDetailPageTag : TestTag { // TODO Item detail page
+//    object AppBar : ItemDetailPageTag()
+//}
 
 sealed class ChecklistPageTag : TestTag {
     object ChecklistPage : ChecklistPageTag()

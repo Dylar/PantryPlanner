@@ -1,4 +1,4 @@
-package de.bitb.pantryplaner.ui.checklists.details
+package de.bitb.pantryplaner.ui.checklists
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule

@@ -27,7 +27,7 @@ Feature: StocksPage Items management
 
   Scenario Outline: Create a new Item on <StockTab>
     When  Tap on tab "<StockTab>"
-    And   Tap on NewItemButton
+    And   Tap on StocksPage NewItemButton
     And   AddEditItemDialog is displayed
     And   Input "NewItem" as Item name
     And   "ItemDialog" open dropdown "Kategorie"

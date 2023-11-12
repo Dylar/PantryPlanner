@@ -9,7 +9,7 @@ Feature: Delete references
     When  Navi to ProfilePage
     And   Swipe to remove Stock "SharedStock"
     And   Tap on Confirm
-    And   Navi to ChecklistsButton
+    And   Navi to ChecklistsPage
     Then  Checklist "SharedChecklist" is NOT displayed
 
   Scenario: Remove User and check Checklist
@@ -31,7 +31,7 @@ Feature: Delete references
     #     remove mohammed
     When  Swipe to remove User "Mohammed Lee"
     And   Tap on Confirm
-    And   Navi to ChecklistsButton
+    And   Navi to ChecklistsPage
     And   Tap on Checklist "SharedChecklist"
     #     mohammed checklist still visible
     Then  "ChecklistPage" shared with "Peter Lustig"
