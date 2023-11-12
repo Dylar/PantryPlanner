@@ -1,4 +1,4 @@
-package de.bitb.pantryplaner.ui.overview
+package de.bitb.pantryplaner.ui.checklists
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
@@ -7,37 +7,37 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.assertBottomNaviBar
-import de.bitb.pantryplaner.ui.base.testTags.OverviewPageTag
+import de.bitb.pantryplaner.ui.base.testTags.ChecklistsPageTag
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 
 @HiltAndroidTest
-class OverviewPageSteps(
+class ChecklistsPageSteps(
     val scenarioData: ScenarioData,
 ) : ComposeTestRule by scenarioData.composeRule {
 
-    @Then("OverviewPage rendered")
-    fun renderOverviewPage() = assertOverviewPageRendered()
+    @Then("ChecklistsPage rendered")
+    fun renderChecklistsPage() = assertChecklistsPageRendered()
 
     @When("Tap on NewChecklistButton")
     fun tapOnNewChecklistButton() {
-        onNodeWithTag(OverviewPageTag.NewChecklistButton).performClick()
+        onNodeWithTag(ChecklistsPageTag.NewChecklistButton).performClick()
         waitForIdle()
     }
 
     @Then("NewChecklistButton is NOT displayed")
     fun newChecklistButtonIsNotDisplayed() {
-        onNodeWithTag(OverviewPageTag.NewChecklistButton).assertDoesNotExist()
+        onNodeWithTag(ChecklistsPageTag.NewChecklistButton).assertDoesNotExist()
     }
 
     @Then("NewChecklistButton is displayed")
     fun newChecklistButtonIsDisplayed() {
-        onNodeWithTag(OverviewPageTag.NewChecklistButton).assertIsDisplayed()
+        onNodeWithTag(ChecklistsPageTag.NewChecklistButton).assertIsDisplayed()
     }
 }
 
-fun ComposeTestRule.assertOverviewPageRendered() {
-    onNodeWithTag(OverviewPageTag.AppBar).assertIsDisplayed()
-    onNodeWithTag(OverviewPageTag.LayoutButton).assertIsDisplayed()
+fun ComposeTestRule.assertChecklistsPageRendered() {
+    onNodeWithTag(ChecklistsPageTag.AppBar).assertIsDisplayed()
+    onNodeWithTag(ChecklistsPageTag.LayoutButton).assertIsDisplayed()
     assertBottomNaviBar()
 }

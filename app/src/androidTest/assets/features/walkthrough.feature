@@ -8,13 +8,13 @@ Feature: App walkthrough
     # Register User
     Given Tap on NaviToRegisterButton
     When  Register with first name "Bob", last name "TheDeal", email "newUser@gmx.de" and password "Password321!"
-    # OverviewPage
-    Then  OverviewPage rendered
+    # ChecklistsPage
+    Then  ChecklistsPage rendered
     And   No Checklists displayed
     And   NewChecklistButton is NOT displayed
-    When  Navi to StockPage
-    # StockPage
-    Then  StockPage rendered
+    When  Navi to StocksPage
+    # StocksPage
+    Then  StocksPage rendered
     And   No Stocks displayed
     And   On Back
     When  Navi to ProfilePage
@@ -45,18 +45,18 @@ Feature: App walkthrough
     Then  SelectItemsPage rendered
     And   No Items displayed
 
-  Scenario: StockPage create stock, manage items then create Checklist
+  Scenario: StocksPage create stock, manage items then create Checklist
     Given Mock default Users
     And   Login default User
-    # OverviewPage
-    And   OverviewPage rendered
+    # ChecklistsPage
+    And   ChecklistsPage rendered
     And   NewChecklistButton is NOT displayed
-    # StockPage
-    And   Navi to StockPage
-    And   StockPage rendered
+    # StocksPage
+    And   Navi to StocksPage
+    And   StocksPage rendered
     And   NewItemButton is NOT displayed
     # Create Stock
-    When  Tap on StockPage NewStockButton
+    When  Tap on StocksPage NewStockButton
     And   AddEditStockDialog is displayed
     And   Input "NewStock" as Stock name
     And   Tap on CreateStockButton
@@ -64,7 +64,7 @@ Feature: App walkthrough
     And   No Items displayed
     And   NewItemButton is displayed
     # Create Item
-    When  Tap on NewItemButton
+    When  Tap on StocksPage NewItemButton
     And   Input "NewItem" as Item name
     And   Input "NewCategory" as Item category
     And   Tap on CreateItemButton
@@ -73,7 +73,7 @@ Feature: App walkthrough
     When  Item "NewItem" in category "NewCategory" has amount 0.0
     And   Increase Item "NewItem" in category "NewCategory" amount by 4
     Then  Item "NewItem" in category "NewCategory" has amount 4.0
-    # OverviewPage
+    # ChecklistsPage
     When  On Back
     Then  NewChecklistButton is displayed
     # Create Checklist

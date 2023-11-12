@@ -82,8 +82,8 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
             floatingActionButton = { buildFab() },
             bottomBar = {
                 buildBottomNavi(
-                    overviewRoute = R.id.profile_to_overview,
-                    stockRoute = R.id.profile_to_stock,
+                    checklistsRoute = R.id.profile_to_checklists,
+                    stocksRoute = R.id.profile_to_stocks,
                     settingsRoute = R.id.profile_to_settings,
                 )
             },

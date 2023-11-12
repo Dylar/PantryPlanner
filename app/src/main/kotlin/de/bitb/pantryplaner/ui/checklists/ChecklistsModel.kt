@@ -1,4 +1,4 @@
-package de.bitb.pantryplaner.ui.overview
+package de.bitb.pantryplaner.ui.checklists
 
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
@@ -19,7 +19,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class OverviewModel(
+// TODO page models as single stream?
+data class ChecklistsModel(
     val stocks: List<Stock>?,
     val connectedUser: List<User>?,
     val checkList: Map<Boolean, List<Checklist>>?,
@@ -29,14 +30,14 @@ data class OverviewModel(
 }
 
 @HiltViewModel
-class OverviewViewModel @Inject constructor(
+class ChecklistsViewModel @Inject constructor(
     stockRepo: StockRepository,
     checkRepo: CheckRepository,
     override val userRepo: UserRepository,
     private val checkUseCases: ChecklistUseCases,
 ) : BaseViewModel(), UserDataExt {
 
-    val overviewModel = combine(
+    val checklistsModel = combine(
         stockRepo.getStocks(),
         checkRepo.getCheckLists(),
         getConnectedUsers().asFlow(),
@@ -52,7 +53,7 @@ class OverviewViewModel @Inject constructor(
                     ?.groupBy { it.finished }
                     ?.toSortedMap()
                 Result.Success(
-                    OverviewModel(
+                    ChecklistsModel(
                         stocks,
                         usersResp.data,
                         groupedChecklists,

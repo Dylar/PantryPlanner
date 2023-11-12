@@ -13,26 +13,26 @@ import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 
 @HiltAndroidTest
-class OverviewPageSteps(
+class ChecklistsPageSteps(
     val scenarioData: ScenarioData,
 ) : ComposeTestRule by scenarioData.composeRule {
 
     @Then("BottomNaviBar rendered")
     fun renderBottomNaviBar() = assertBottomNaviBar()
 
-    @When("Navi to OverviewButton")
-    fun performTapOnOverviewButton() {
-        tapOnOverviewButton()
+    @When("Navi to ChecklistsButton")
+    fun performTapOnChecklistsButton() {
+        tapOnChecklistsButton()
     }
 
-    @When("Navi to RecipePage")
-    fun performTapOnRecipeButton() {
-        tapOnRecipeButton()
+    @When("Navi to RecipesPage")
+    fun performTapOnRecipesButton() {
+        tapOnRecipesButton()
     }
 
-    @When("Navi to StockPage")
+    @When("Navi to StocksPage")
     fun performTapOnStockButton() {
-        tapOnStockButton()
+        tapOnStocksButton()
     }
 
     @When("Navi to ProfilePage")
@@ -47,25 +47,25 @@ class OverviewPageSteps(
 }
 
 fun ComposeTestRule.assertBottomNaviBar() {
-    onNodeWithTag(BottomNaviTag.OverviewButton).assertIsDisplayed()
-    onNodeWithTag(BottomNaviTag.StockButton).assertIsDisplayed()
-    onNodeWithTag(BottomNaviTag.RecipeButton).assertIsDisplayed()
+    onNodeWithTag(BottomNaviTag.ChecklistsButton).assertIsDisplayed()
+    onNodeWithTag(BottomNaviTag.StocksButton).assertIsDisplayed()
+//    onNodeWithTag(BottomNaviTag.RecipesButton).assertIsDisplayed()
     onNodeWithTag(BottomNaviTag.ProfileButton).assertIsDisplayed()
     onNodeWithTag(BottomNaviTag.SettingsButton).assertIsDisplayed()
 }
 
-fun ComposeTestRule.tapOnOverviewButton() {
-    onNodeWithTag(BottomNaviTag.OverviewButton).performClick()
+fun ComposeTestRule.tapOnChecklistsButton() {
+    onNodeWithTag(BottomNaviTag.ChecklistsButton).performClick()
     waitForIdle()
 }
 
-fun ComposeTestRule.tapOnRecipeButton() {
-    onNodeWithTag(BottomNaviTag.RecipeButton).performClick()
+fun ComposeTestRule.tapOnRecipesButton() {
+    onNodeWithTag(BottomNaviTag.RecipesButton).performClick()
     waitForIdle()
 }
 
-fun ComposeTestRule.tapOnStockButton() {
-    onNodeWithTag(BottomNaviTag.StockButton).performClick()
+fun ComposeTestRule.tapOnStocksButton() {
+    onNodeWithTag(BottomNaviTag.StocksButton).performClick()
     waitForIdle()
 }
 

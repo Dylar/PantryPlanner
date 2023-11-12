@@ -1,4 +1,4 @@
-package de.bitb.pantryplaner.ui.overview
+package de.bitb.pantryplaner.ui.checklists
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -43,7 +43,7 @@ import de.bitb.pantryplaner.ui.base.comps.GridListLayout
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
 import de.bitb.pantryplaner.ui.base.naviToChecklist
 import de.bitb.pantryplaner.ui.base.testTags.ChecklistTag
-import de.bitb.pantryplaner.ui.base.testTags.OverviewPageTag
+import de.bitb.pantryplaner.ui.base.testTags.ChecklistsPageTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.comps.buildBottomNavi
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
@@ -51,8 +51,8 @@ import de.bitb.pantryplaner.ui.dialogs.useAddChecklistDialog
 import de.bitb.pantryplaner.ui.dialogs.useEditChecklistDialog
 
 @AndroidEntryPoint
-class OverviewFragment : BaseFragment<OverviewViewModel>() {
-    override val viewModel: OverviewViewModel by viewModels()
+class ChecklistsFragment : BaseFragment<ChecklistsViewModel>() {
+    override val viewModel: ChecklistsViewModel by viewModels()
 
     private lateinit var showGridLayout: MutableState<Boolean>
     private lateinit var showAddDialog: MutableState<Boolean>
@@ -62,7 +62,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
         showGridLayout = remember { mutableStateOf(true) }
         showAddDialog = remember { mutableStateOf(false) }
 
-        val modelResp by viewModel.overviewModel.observeAsState(null)
+        val modelResp by viewModel.checklistsModel.observeAsState(null)
         Scaffold(
             scaffoldState = scaffoldState,
             topBar = { buildAppBar() },
@@ -70,9 +70,9 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
             floatingActionButton = { buildFab(modelResp) },
             bottomBar = {
                 buildBottomNavi(
-                    stockRoute = R.id.overview_to_stock,
-                    profileRoute = R.id.overview_to_profile,
-                    settingsRoute = R.id.overview_to_settings,
+                    stocksRoute = R.id.checklists_to_stocks,
+                    profileRoute = R.id.checklists_to_profile,
+                    settingsRoute = R.id.checklists_to_settings,
                 )
             }
         )
@@ -81,12 +81,12 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
     @Composable
     private fun buildAppBar() {
         TopAppBar(
-            modifier = Modifier.testTag(OverviewPageTag.AppBar),
-            title = { Text(getString(R.string.overview_title)) },
+            modifier = Modifier.testTag(ChecklistsPageTag.AppBar),
+            title = { Text(getString(R.string.checklists_title)) },
             actions = {
                 IconButton(
                     onClick = { showGridLayout.value = !showGridLayout.value },
-                    modifier = Modifier.testTag(OverviewPageTag.LayoutButton)
+                    modifier = Modifier.testTag(ChecklistsPageTag.LayoutButton)
                 ) {
                     Icon(
                         imageVector = if (showGridLayout.value) Icons.Default.GridOff else Icons.Default.GridOn,
@@ -98,7 +98,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
     }
 
     @Composable
-    private fun buildFab(modelResp: Result<OverviewModel>?) {
+    private fun buildFab(modelResp: Result<ChecklistsModel>?) {
         Column(
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.Center,
@@ -108,7 +108,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
                 modelResp.data.stocks?.isNotEmpty() != false
             ) {
                 ExtendedFloatingActionButton(
-                    modifier = Modifier.testTag(OverviewPageTag.NewChecklistButton),
+                    modifier = Modifier.testTag(ChecklistsPageTag.NewChecklistButton),
                     text = { Text(text = "Checklist") },
                     onClick = { showAddDialog.value = true },
                     icon = {
@@ -125,7 +125,7 @@ class OverviewFragment : BaseFragment<OverviewViewModel>() {
     }
 
     @Composable
-    private fun buildContent(innerPadding: PaddingValues, modelResp: Result<OverviewModel>?) {
+    private fun buildContent(innerPadding: PaddingValues, modelResp: Result<ChecklistsModel>?) {
         when {
             modelResp is Result.Error -> ErrorScreen(modelResp.message!!.asString())
             modelResp?.data?.isLoading != false -> LoadingIndicator()

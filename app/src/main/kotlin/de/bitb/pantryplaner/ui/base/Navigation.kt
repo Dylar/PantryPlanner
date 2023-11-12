@@ -7,9 +7,9 @@ import android.provider.Settings
 import androidx.annotation.IdRes
 import androidx.core.os.bundleOf
 import de.bitb.pantryplaner.R
-import de.bitb.pantryplaner.ui.checklist.ChecklistViewModel
+import de.bitb.pantryplaner.ui.checklists.details.ChecklistViewModel
 import de.bitb.pantryplaner.ui.intro.LoginViewModel
-import de.bitb.pantryplaner.ui.overview.OverviewViewModel
+import de.bitb.pantryplaner.ui.checklists.ChecklistsViewModel
 import de.bitb.pantryplaner.ui.profile.ProfileViewModel
 import de.bitb.pantryplaner.ui.settings.SettingsViewModel
 
@@ -38,10 +38,6 @@ fun BaseFragment<SettingsViewModel>.naviSettingsToReleaseNotes() {
     navController.navigate(R.id.settings_to_releasenotes)
 }
 
-fun BaseFragment<ProfileViewModel>.naviToSettings() {
-    navController.navigate(R.id.profile_to_settings)
-}
-
 fun BaseFragment<ProfileViewModel>.naviToScan() {
     navController.navigate(R.id.profile_to_scan)
 }
@@ -54,22 +50,14 @@ fun BaseFragment<LoginViewModel>.naviToRegister() {
     navController.navigate(R.id.login_to_register)
 }
 
-fun BaseFragment<OverviewViewModel>.naviToProfile() {
-    navController.navigate(R.id.overview_to_profile)
-}
-
-fun BaseFragment<OverviewViewModel>.naviToChecklist(uuid: String) {
+fun BaseFragment<ChecklistsViewModel>.naviToChecklist(uuid: String) {
     navController
-        .navigate(R.id.overview_to_checklist, bundleOf(KEY_CHECKLIST_UUID to uuid))
-}
-
-fun BaseFragment<OverviewViewModel>.naviOverviewToItems() {
-    navController.navigate(R.id.overview_to_stock)
+        .navigate(R.id.checklists_to_checklist_details, bundleOf(KEY_CHECKLIST_UUID to uuid))
 }
 
 fun BaseFragment<ChecklistViewModel>.naviChecklistToItems(uuid: String) {
     navController
-        .navigate(R.id.checklist_to_select_items, bundleOf(KEY_CHECKLIST_UUID to uuid))
+        .navigate(R.id.checklist_details_to_select_items, bundleOf(KEY_CHECKLIST_UUID to uuid))
 }
 
 

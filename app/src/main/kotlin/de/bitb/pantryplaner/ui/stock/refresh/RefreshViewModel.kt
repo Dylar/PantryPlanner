@@ -1,4 +1,4 @@
-package de.bitb.pantryplaner.ui.refresh
+package de.bitb.pantryplaner.ui.stock.refresh
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData

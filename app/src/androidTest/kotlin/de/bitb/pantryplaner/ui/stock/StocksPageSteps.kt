@@ -7,63 +7,63 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.testTags.FloatingExpandingButtonTag
-import de.bitb.pantryplaner.ui.base.testTags.StockPageTag
+import de.bitb.pantryplaner.ui.base.testTags.StocksPageTag
 import de.bitb.pantryplaner.ui.tapOnFloatingActionButton
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 
 @HiltAndroidTest
-class StockPageSteps(
+class StocksPageSteps(
     val scenarioData: ScenarioData,
 ) : ComposeTestRule by scenarioData.composeRule {
 
-    @Then("StockPage rendered")
-    fun renderStockPage() {
-        assertStockPageRendered()
+    @Then("StocksPage rendered")
+    fun renderStocksPage() {
+        assertStocksPageRendered()
     }
 
     @When("Tab {string} is displayed")
     fun tabIsDisplayed(name: String) {
-        onNodeWithTag(StockPageTag.StockTabTag(name)).assertIsDisplayed()
+        onNodeWithTag(StocksPageTag.StockTabTag(name)).assertIsDisplayed()
     }
 
     @When("Tab {string} is NOT displayed")
     fun tabIsNotDisplayed(name: String) {
-        onNodeWithTag(StockPageTag.StockTabTag(name)).assertDoesNotExist()
+        onNodeWithTag(StocksPageTag.StockTabTag(name)).assertDoesNotExist()
     }
 
     @When("Tap on tab {string}")
     fun tapOnTab(name: String) {
-        onNodeWithTag(StockPageTag.StockTabTag(name)).performClick()
+        onNodeWithTag(StocksPageTag.StockTabTag(name)).performClick()
         waitForIdle()
     }
 
-    @When("Tap on StockPage NewStockButton")
+    @When("Tap on StocksPage NewStockButton")
     fun tapOnNewStockButton() {
-        tapOnFloatingActionButton(StockPageTag.NewStockButton)
+        tapOnFloatingActionButton(StocksPageTag.NewStockButton)
     }
 
-    @When("Tap on StockPage NewItemButton")
+    @When("Tap on StocksPage NewItemButton")
     fun tapOnNewItemButton() {
-        tapOnFloatingActionButton(StockPageTag.NewItemButton)
+        tapOnFloatingActionButton(StocksPageTag.NewItemButton)
     }
 
     @Then("NewItemButton is NOT displayed")
     fun newItemButtonIsNotDisplayed() {
-        onNodeWithTag(StockPageTag.NewItemButton).assertDoesNotExist()
+        onNodeWithTag(StocksPageTag.NewItemButton).assertDoesNotExist()
     }
 
     @Then("NewItemButton is displayed")
     fun newItemButtonIsDisplayed() {
-        onNodeWithTag(StockPageTag.NewItemButton).assertIsDisplayed()
+        onNodeWithTag(StocksPageTag.NewItemButton).assertIsDisplayed()
     }
 }
 
-fun ComposeTestRule.assertStockPageRendered() {
-    onNodeWithTag(StockPageTag.AppBar).assertIsDisplayed()
-    onNodeWithTag(StockPageTag.SearchButton).assertIsDisplayed()
-    onNodeWithTag(StockPageTag.LayoutButton).assertIsDisplayed()
-    onNodeWithTag(StockPageTag.FilterButton).assertIsDisplayed()
+fun ComposeTestRule.assertStocksPageRendered() {
+    onNodeWithTag(StocksPageTag.AppBar).assertIsDisplayed()
+    onNodeWithTag(StocksPageTag.SearchButton).assertIsDisplayed()
+    onNodeWithTag(StocksPageTag.LayoutButton).assertIsDisplayed()
+    onNodeWithTag(StocksPageTag.FilterButton).assertIsDisplayed()
     onNodeWithTag(FloatingExpandingButtonTag).assertIsDisplayed()
 }
 

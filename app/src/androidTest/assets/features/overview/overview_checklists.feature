@@ -1,8 +1,8 @@
-Feature: OverviewPage Checklist management
+Feature: ChecklistsPage Checklist management
 
   Background:
     Given Init default Mocks
-    And   Start on OverviewPage
+    And   Start on ChecklistsPage
     And   Checklist "NewChecklist" is NOT displayed
     And   Checklist "CreatorChecklist" is displayed
     And   Checklist "SharedChecklist" is displayed

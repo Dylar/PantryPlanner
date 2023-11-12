@@ -14,9 +14,9 @@ sealed class AddSubRowTag : TestTag {
 object UnsharedIconTag : TestTag
 
 sealed class BottomNaviTag : TestTag {
-    object OverviewButton : BottomNaviTag()
-    object StockButton : BottomNaviTag()
-    object RecipeButton : BottomNaviTag()
+    object ChecklistsButton : BottomNaviTag()
+    object StocksButton : BottomNaviTag()
+    object RecipesButton : BottomNaviTag()
     object ProfileButton : BottomNaviTag()
     object SettingsButton : BottomNaviTag()
 }

@@ -2,7 +2,7 @@ Feature: ChecklistPage Stock management
 
   Background:
     Given Init default Mocks
-    And   Start on OverviewPage
+    And   Start on ChecklistsPage
 
   Scenario: Change Stock for Checklist
     Given Tap on Checklist "CreatorChecklist"

@@ -31,24 +31,24 @@ import de.bitb.pantryplaner.ui.base.testTags.testTag
 
 @Composable
 fun BaseFragment<*>.buildBottomNavi(
-    @IdRes overviewRoute: Int? = null,
-    @IdRes stockRoute: Int? = null,
+    @IdRes checklistsRoute: Int? = null,
+    @IdRes stocksRoute: Int? = null,
     @IdRes profileRoute: Int? = null,
     @IdRes settingsRoute: Int? = null,
 ) {
     BottomNavigationBar(
         listOf(
             BottomItemInfo(
-                BottomNaviTag.OverviewButton,
-                stringResource(id = R.string.overview_title),
+                BottomNaviTag.ChecklistsButton,
+                stringResource(id = R.string.checklists_title),
                 Icons.Rounded.Checklist,
-                overviewRoute?.let { NaviEvent.Navigate(it) },
+                checklistsRoute?.let { NaviEvent.Navigate(it) },
             ),
             BottomItemInfo(
-                BottomNaviTag.StockButton,
+                BottomNaviTag.StocksButton,
                 stringResource(id = R.string.stock_title),
                 Icons.Rounded.HomeWork,
-                stockRoute?.let { NaviEvent.Navigate(it) },
+                stocksRoute?.let { NaviEvent.Navigate(it) },
             ),
             BottomItemInfo(
                 BottomNaviTag.ProfileButton,

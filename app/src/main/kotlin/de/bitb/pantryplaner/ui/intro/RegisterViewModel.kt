@@ -35,7 +35,7 @@ class RegisterViewModel @Inject constructor(
         viewModelScope.launch {
             val result = userUseCases.registerUC(firstName, lastName, email, pw1, pw2)
             if (result is Result.Error) error = result.data
-            else navigate(NaviEvent.Navigate(R.id.register_to_overview))
+            else navigate(NaviEvent.Navigate(R.id.register_to_checklists))
             isLoading = false
         }
     }

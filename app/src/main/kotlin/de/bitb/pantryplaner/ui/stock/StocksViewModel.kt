@@ -38,7 +38,7 @@ import javax.inject.Inject
 //TODO just for now
 var INSTANT_SEARCH = false
 
-data class StockModel(
+data class StocksModel(
     val settings: Settings? = null,
     val stocks: List<Stock>? = null,
     val items: Map<String, List<Item>>? = null,
@@ -67,7 +67,7 @@ class StockViewModel @Inject constructor(
 
     @Suppress("UNCHECKED_CAST")
     @OptIn(ExperimentalCoroutinesApi::class)
-    val stockModel: LiveData<Result<StockModel>> =
+    val stocksModel: LiveData<Result<StocksModel>> =
         combine(
             filterBy.debounce { if (!INSTANT_SEARCH && _isSearching.value) 1000L else 0L },
             settingsRepo.getSettings(),
@@ -124,7 +124,7 @@ class StockViewModel @Inject constructor(
                                         allUser.filter { shared.contains(it.uuid) }
                                     }
                                 Result.Success(
-                                    StockModel(
+                                    StocksModel(
                                         settingsResp.data,
                                         stocksResp.data,
                                         items,

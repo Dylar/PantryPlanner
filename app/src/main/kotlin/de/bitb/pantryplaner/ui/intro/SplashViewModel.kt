@@ -32,9 +32,9 @@ class SplashViewModel @Inject constructor(
             when {
                 userResp is Result.Error -> showSnackBar(userResp.message!!)
                 userResp.data is DataLoadResponse.DataLoaded -> {
-                    navigate(NaviEvent.Navigate(R.id.splash_to_overview))
+                    navigate(NaviEvent.Navigate(R.id.splash_to_checklists))
 //                    if (naviToRefresh) { //TODO fix whole page
-//                        navigate(NavigateEvent.Navigate(R.id.overview_to_refresh))
+//                        navigate(NavigateEvent.Navigate(R.id.checklists_to_refresh))
 //                    }
                 }
 

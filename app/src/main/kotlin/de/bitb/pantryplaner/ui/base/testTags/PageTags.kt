@@ -27,21 +27,21 @@ sealed class RegisterPageTag : TestTag {
     object ErrorLabel : RegisterPageTag()
 }
 
-sealed class OverviewPageTag : TestTag {
-    object AppBar : OverviewPageTag()
-    object LayoutButton : OverviewPageTag()
-    object NewChecklistButton : OverviewPageTag()
+sealed class ChecklistsPageTag : TestTag {
+    object AppBar : ChecklistsPageTag()
+    object LayoutButton : ChecklistsPageTag()
+    object NewChecklistButton : ChecklistsPageTag()
 }
 
-sealed class StockPageTag : TestTag {
-    object AppBar : StockPageTag()
-    object SearchButton : StockPageTag()
-    object LayoutButton : StockPageTag()
-    object FilterButton : StockPageTag()
-    object NewStockButton : StockPageTag()
-    object NewItemButton : StockPageTag()
+sealed class StocksPageTag : TestTag {
+    object AppBar : StocksPageTag()
+    object SearchButton : StocksPageTag()
+    object LayoutButton : StocksPageTag()
+    object FilterButton : StocksPageTag()
+    object NewStockButton : StocksPageTag()
+    object NewItemButton : StocksPageTag()
 
-    data class StockPage(val name: String) : StockPageTag()
+    data class StockPage(val name: String) : StocksPageTag()
     data class StockTabTag(val name: String) : TestTag
 }
 

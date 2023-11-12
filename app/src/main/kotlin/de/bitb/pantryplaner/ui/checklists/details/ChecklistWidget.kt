@@ -1,4 +1,4 @@
-package de.bitb.pantryplaner.ui.checklist
+package de.bitb.pantryplaner.ui.checklists.details
 
 import android.content.Context
 import android.content.Intent

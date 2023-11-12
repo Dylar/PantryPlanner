@@ -1,4 +1,4 @@
-package de.bitb.pantryplaner.ui.checklist
+package de.bitb.pantryplaner.ui.checklists.details
 
 import android.os.Bundle
 import androidx.compose.foundation.layout.Arrangement
@@ -59,7 +59,7 @@ import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 import de.bitb.pantryplaner.ui.dialogs.FilterDialog
 
 @AndroidEntryPoint
-class ChecklistFragment : BaseFragment<ChecklistViewModel>() {
+class ChecklistDetailsFragment : BaseFragment<ChecklistViewModel>() {
     override val viewModel: ChecklistViewModel by viewModels()
 
     private lateinit var showGridLayout: MutableState<Boolean>

@@ -1,4 +1,4 @@
-package de.bitb.pantryplaner.ui.checklist
+package de.bitb.pantryplaner.ui.select
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asFlow

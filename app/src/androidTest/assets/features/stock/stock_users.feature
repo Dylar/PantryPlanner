@@ -1,8 +1,8 @@
-Feature: StockPage User management
+Feature: StocksPage User management
 
   Background:
     Given Init default Mocks
-    And   Start on StockPage
+    And   Start on StocksPage
     And   Tab "CreatorStock" is displayed
     And   Tab "SharedStock" is displayed
 #TODO load unknown user just to see them
@@ -14,7 +14,7 @@ Feature: StockPage User management
     And   Select dropdown option "Mohammed Lee"
     Then  "StockPage CreatorStock" shared with "Mohammed Lee"
     And   On Back
-    And   Navi to StockPage
+    And   Navi to StocksPage
     And   "StockPage CreatorStock" shared with "Mohammed Lee"
 
   Scenario: Prevent non-creator from sharing with User

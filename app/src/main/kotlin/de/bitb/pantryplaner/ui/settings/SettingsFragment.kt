@@ -52,8 +52,8 @@ class SettingsFragment : BaseFragment<SettingsViewModel>() {
             topBar = { buildAppBar() },
             bottomBar = {
                 buildBottomNavi(
-                    overviewRoute = R.id.settings_to_overview,
-                    stockRoute = R.id.settings_to_stock,
+                    checklistsRoute = R.id.settings_to_checklists,
+                    stocksRoute = R.id.settings_to_stocks,
                     profileRoute = R.id.settings_to_profile,
                 )
             },

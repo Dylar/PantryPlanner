@@ -9,7 +9,7 @@
 
     <string name="settings_title">Einstellungen</string>
 
-    <string name="overview_title">Übersicht</string>
+    <string name="checklists_title">Checklisten</string>
     <string name="no_checklists">Keine Listen vorhanden</string>
 
     <string name="select_items_title">Item Auswahl</string>

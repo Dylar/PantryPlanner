@@ -1,4 +1,4 @@
-package de.bitb.pantryplaner.ui.checklist
+package de.bitb.pantryplaner.ui.select
 
 import android.os.Bundle
 import androidx.compose.foundation.BorderStroke

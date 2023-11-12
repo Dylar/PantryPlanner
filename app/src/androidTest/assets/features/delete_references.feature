@@ -4,12 +4,12 @@ Feature: Delete references
     Given Init default Mocks
 
   Scenario: Remove Stock and check Checklist
-    Given Start on OverviewPage
+    Given Start on ChecklistsPage
     And   Checklist "SharedChecklist" is displayed
     When  Navi to ProfilePage
     And   Swipe to remove Stock "SharedStock"
     And   Tap on Confirm
-    And   Navi to OverviewButton
+    And   Navi to ChecklistsButton
     Then  Checklist "SharedChecklist" is NOT displayed
 
   Scenario: Remove User and check Checklist
@@ -31,7 +31,7 @@ Feature: Delete references
     #     remove mohammed
     When  Swipe to remove User "Mohammed Lee"
     And   Tap on Confirm
-    And   Navi to OverviewButton
+    And   Navi to ChecklistsButton
     And   Tap on Checklist "SharedChecklist"
     #     mohammed checklist still visible
     Then  "ChecklistPage" shared with "Peter Lustig"
@@ -45,8 +45,8 @@ Feature: Delete references
     And   "ChecklistPage" shared with "Peter Lustig"
 
   Scenario: Remove User and check Stock
-    Given Start on OverviewPage
-    When  Navi to StockPage
+    Given Start on ChecklistsPage
+    When  Navi to StocksPage
     And   "StockPage CreatorStock" shared with none
     And   "StockPage CreatorStock" open dropdown "Mit Benutzer teilen"
     And   Select dropdown option "Mohammed Lee"
@@ -54,5 +54,5 @@ Feature: Delete references
     And   Navi to ProfilePage
     When  Swipe to remove User "Mohammed Lee"
     And   Tap on Confirm
-    And   Navi to StockPage
+    And   Navi to StocksPage
     Then  "StockPage CreatorStock" shared with "Mohammed Lee"

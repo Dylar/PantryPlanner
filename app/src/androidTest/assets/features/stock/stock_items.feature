@@ -1,8 +1,8 @@
-Feature: StockPage Items management
+Feature: StocksPage Items management
 
   Background:
     Given Init default Mocks
-    And   Start on StockPage
+    And   Start on StocksPage
     And   Item "NewItem" in category "NewCategory" is NOT displayed
 
   Scenario: Render all Items and share unshared item
@@ -51,7 +51,7 @@ Feature: StockPage Items management
     And   "ItemDialog" shared with "Mohammed Lee"
     And   Tap on CreateItemButton
     Then  On Back
-    And   Navi to StockPage
+    And   Navi to StocksPage
     And   Item "NewItem" in category "NewCategory" is displayed
     And   LongPress on Item "NewItem" in category "NewCategory"
     And   "ItemDialog" shared with "Mohammed Lee"
@@ -62,7 +62,7 @@ Feature: StockPage Items management
       | SharedStock  |
 
   Scenario: Create a new Item and choose existing category
-    When  Tap on NewItemButton
+    When  Tap on StocksPage NewItemButton
     And   Input "NewItem" as Item name
     And   "ItemDialog" open dropdown "Kategorie"
     And   Dropdown option "CreatorCategory" is displayed
@@ -76,7 +76,7 @@ Feature: StockPage Items management
     And   Tap on cancel ItemDialog
     And   LongPress on Item "NewItem" in category "CreatorCategory"
     Then  On Back
-    And   Navi to StockPage
+    And   Navi to StocksPage
     And   LongPress on Item "NewItem" in category "CreatorCategory"
 
   Scenario: Try to remove a Item, but cancel confirmation
@@ -89,7 +89,7 @@ Feature: StockPage Items management
     And   Tap on Confirm
     Then  Item "CreatorItem" in category "CreatorCategory" is NOT displayed
     And   On Back
-    And   Navi to StockPage
+    And   Navi to StocksPage
     And   Item "CreatorItem" in category "CreatorCategory" is NOT displayed
 
   Scenario: Remove a shared Item
@@ -99,7 +99,7 @@ Feature: StockPage Items management
     When  Set Item "SharedItem" in category "SharedCategory" amount to "0"
     Then  Item "SharedItem" in category "SharedCategory" is NOT displayed
     And   On Back
-    And   Navi to StockPage
+    And   Navi to StocksPage
     And   Item "SharedItem" in category "SharedCategory" is NOT displayed
 
   Scenario: Remove all Items
@@ -118,7 +118,7 @@ Feature: StockPage Items management
     And   Item "SelectItem" in category "SelectCategory" is NOT displayed
     And   No Items displayed
     And   On Back
-    And   Navi to StockPage
+    And   Navi to StocksPage
     And   Item "SharedItem" in category "SharedCategory" is NOT displayed
     And   Item "CreatorItem" in category "CreatorCategory" is NOT displayed
     And   Item "SelectItem" in category "SelectCategory" is NOT displayed
@@ -152,11 +152,11 @@ Feature: StockPage Items management
     And   Item category is "EditCategory"
     And   "ItemDialog" shared with "Mohammed Lee"
     And   On Back
-    And   Navi to StockPage
+    And   Navi to StocksPage
     And   Item "EditItem" in category "EditCategory" is displayed
 
   Scenario: Search Item
-    When  Tap SearchBar on StockPage
+    When  Tap SearchBar on StocksPage
     And   Input search "CreatorItem"
     Then  Item "CreatorItem" in category "CreatorCategory" is displayed
     And   Item "SharedItem" in category "SharedCategory" is NOT displayed
@@ -175,7 +175,7 @@ Feature: StockPage Items management
     And   Item "SelectItem" in category "SelectCategory" is NOT displayed
     And   No Items displayed
     Then  On Back
-    And   Navi to StockPage
+    And   Navi to StocksPage
     And   Item "CreatorItem" in category "CreatorCategory" is displayed
     And   Item "SharedItem" in category "SharedCategory" is displayed
     And   Item "SelectItem" in category "SelectCategory" is displayed

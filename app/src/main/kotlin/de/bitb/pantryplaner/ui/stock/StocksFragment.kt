@@ -68,7 +68,7 @@ import de.bitb.pantryplaner.ui.base.comps.onBack
 import de.bitb.pantryplaner.ui.base.highlightedText
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.ItemTag
-import de.bitb.pantryplaner.ui.base.testTags.StockPageTag
+import de.bitb.pantryplaner.ui.base.testTags.StocksPageTag
 import de.bitb.pantryplaner.ui.base.testTags.UnsharedIconTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.comps.AddSubRow
@@ -81,7 +81,7 @@ import de.bitb.pantryplaner.ui.dialogs.useEditItemDialog
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class StockFragment : BaseFragment<StockViewModel>() {
+class StocksFragment : BaseFragment<StockViewModel>() {
     override val viewModel: StockViewModel by viewModels()
 
     private lateinit var showGridLayout: MutableState<Boolean>
@@ -114,7 +114,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
             )
         }
 
-        val modelResp by viewModel.stockModel.observeAsState()
+        val modelResp by viewModel.stocksModel.observeAsState()
         Scaffold(
             scaffoldState = scaffoldState,
             topBar = { buildAppBar(filter) },
@@ -122,9 +122,9 @@ class StockFragment : BaseFragment<StockViewModel>() {
             floatingActionButton = { buildFab(modelResp) },
             bottomBar = {
                 buildBottomNavi(
-                    overviewRoute = R.id.stock_to_overview,
-                    profileRoute = R.id.stock_to_profile,
-                    settingsRoute = R.id.stock_to_settings,
+                    checklistsRoute = R.id.stocks_to_checklists,
+                    profileRoute = R.id.stocks_to_profile,
+                    settingsRoute = R.id.stocks_to_settings,
                 )
             }
         )
@@ -144,7 +144,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
     @Composable
     private fun buildAppBar(filter: Filter) {
         TopAppBar(
-            modifier = Modifier.testTag(StockPageTag.AppBar),
+            modifier = Modifier.testTag(StocksPageTag.AppBar),
             title = {
                 val isSearching by viewModel.isSearching.collectAsState(false)
                 if (showSearchBar.value) SearchBar(
@@ -157,7 +157,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
             },
             actions = {
                 IconButton(
-                    modifier = Modifier.testTag(StockPageTag.SearchButton),
+                    modifier = Modifier.testTag(StocksPageTag.SearchButton),
                     onClick = { showSearchBar.value = !showSearchBar.value },
                 ) {
                     Icon(
@@ -168,7 +168,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
 
                 if (!showSearchBar.value) {
                     IconButton(
-                        modifier = Modifier.testTag(StockPageTag.FilterButton),
+                        modifier = Modifier.testTag(StocksPageTag.FilterButton),
                         onClick = { showFilterDialog.value = !showFilterDialog.value },
                     ) {
                         Icon(
@@ -177,7 +177,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
                         )
                     }
                     IconButton(
-                        modifier = Modifier.testTag(StockPageTag.LayoutButton),
+                        modifier = Modifier.testTag(StocksPageTag.LayoutButton),
                         onClick = { showGridLayout.value = !showGridLayout.value },
                     ) {
                         Icon(
@@ -191,10 +191,10 @@ class StockFragment : BaseFragment<StockViewModel>() {
     }
 
     @Composable
-    private fun buildFab(modelResp: Result<StockModel>?) {
+    private fun buildFab(modelResp: Result<StocksModel>?) {
         FloatingExpandingButton {
             ExtendedFloatingActionButton(
-                modifier = Modifier.testTag(StockPageTag.NewStockButton),
+                modifier = Modifier.testTag(StocksPageTag.NewStockButton),
                 text = { Text(text = "Lager") },
                 icon = {
                     Icon(
@@ -210,7 +210,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
             ) {
                 Spacer(modifier = Modifier.height(8.dp))
                 ExtendedFloatingActionButton(
-                    modifier = Modifier.testTag(StockPageTag.NewItemButton),
+                    modifier = Modifier.testTag(StocksPageTag.NewItemButton),
                     text = { Text(text = "Item") },
                     icon = {
                         Icon(
@@ -226,7 +226,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
 
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    private fun buildContent(innerPadding: PaddingValues, modelResp: Result<StockModel>?) {
+    private fun buildContent(innerPadding: PaddingValues, modelResp: Result<StocksModel>?) {
         when {
             modelResp is Result.Error -> ErrorScreen(modelResp.message!!.asString())
             modelResp?.data?.isLoading != false -> LoadingIndicator()
@@ -263,7 +263,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
                         val scope = rememberCoroutineScope()
                         stocks.map { it.name }.forEachIndexed { index, title ->
                             Tab(
-                                modifier = Modifier.testTag(StockPageTag.StockTabTag(title)),
+                                modifier = Modifier.testTag(StocksPageTag.StockTabTag(title)),
                                 text = { Text(title) },
                                 selected = pagerState.currentPage == index,
                                 onClick = {
@@ -311,7 +311,7 @@ class StockFragment : BaseFragment<StockViewModel>() {
             if (close) showAddItemDialog.value = false
         }
         Column(
-            modifier = Modifier.testTag(StockPageTag.StockPage(stock.name)),
+            modifier = Modifier.testTag(StocksPageTag.StockPage(stock.name)),
             verticalArrangement = Arrangement.Top
         ) {
             val selectedUser = remember(stock) { mutableStateOf(sharedUser) }

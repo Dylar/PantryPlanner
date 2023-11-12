@@ -1,4 +1,4 @@
-package de.bitb.pantryplaner.ui.refresh
+package de.bitb.pantryplaner.ui.stock.refresh
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi

@@ -9,7 +9,7 @@ import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.testTags.SearchBarTag
 import de.bitb.pantryplaner.ui.base.testTags.SelectItemsPageTag
-import de.bitb.pantryplaner.ui.base.testTags.StockPageTag
+import de.bitb.pantryplaner.ui.base.testTags.StocksPageTag
 import io.cucumber.java.en.Then
 
 @HiltAndroidTest
@@ -25,7 +25,7 @@ class SearchBarSteps(
 
     @Then("Tap SearchBar on StockPage")
     fun tapSearchBarOnStockPage() {
-        onNodeWithTag(StockPageTag.SearchButton).performClick()
+        onNodeWithTag(StocksPageTag.SearchButton).performClick()
         waitForIdle()
     }
 

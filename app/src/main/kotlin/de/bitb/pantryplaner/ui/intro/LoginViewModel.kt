@@ -31,7 +31,7 @@ class LoginViewModel @Inject constructor(
         isLoading = true
         viewModelScope.launch {
             val result = userUseCases.loginUC(email, pw)
-            if (result is Result.Success) navigate(NaviEvent.Navigate(R.id.login_to_overview))
+            if (result is Result.Success) navigate(NaviEvent.Navigate(R.id.login_to_checklists))
             else error = result.data
             isLoading = false
         }
