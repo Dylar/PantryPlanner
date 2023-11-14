@@ -1,7 +1,6 @@
 package de.bitb.pantryplaner.data.source
 
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.snapshots
 import de.bitb.pantryplaner.BuildConfig
 import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.core.misc.tryIt
@@ -33,10 +32,9 @@ class FireItemService(
             return flowOf(Result.Success(emptyList()))
         }
 
-        return collection
-            .whereIn("uuid", ids)
-            .snapshots()
-            .map { tryIt { Result.Success(it.toObjects(Item::class.java)) } }
+        return chunkQuery<Item>(ids) {
+            collection.whereIn("uuid", ids)
+        }.map { Result.Success(it) }
     }
 
     override fun getItems(
@@ -49,13 +47,15 @@ class FireItemService(
     override suspend fun saveItems(items: List<Item>): Result<Unit> {
         return tryIt {
             firestore.batch().apply {
-                collection
-                    .whereIn("uuid", items.map { it.uuid })
-                    .get().await().documents
-                    .forEach { snap ->
-                        val uuid = snap.data?.get("uuid") ?: ""
-                        set(snap.reference, items.first { it.uuid == uuid })
-                    }
+                items.chunked(10).forEach { chunk ->
+                    collection
+                        .whereIn("uuid", chunk.map { it.uuid })
+                        .get().await().documents
+                        .forEach { snap ->
+                            val uuid = snap.data?.get("uuid") ?: ""
+                            set(snap.reference, chunk.first { it.uuid == uuid })
+                        }
+                }
                 commit()
             }
             Result.Success()

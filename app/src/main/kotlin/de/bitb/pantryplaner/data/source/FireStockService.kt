@@ -66,13 +66,15 @@ class FireStockService(
     override suspend fun saveStocks(stocks: List<Stock>): Result<Unit> {
         return tryIt {
             firestore.batch().apply {
+                stocks.chunked(10).forEach { chunk ->
                 collection
-                    .whereIn("uuid", stocks.map { it.uuid })
+                    .whereIn("uuid", chunk.map { it.uuid })
                     .get().await().documents
                     .forEach { snap ->
                         val uuid = snap.data?.get("uuid") ?: ""
-                        set(snap.reference, stocks.first { it.uuid == uuid })
+                        set(snap.reference, chunk.first { it.uuid == uuid })
                     }
+                }
                 commit()
             }
             Result.Success()

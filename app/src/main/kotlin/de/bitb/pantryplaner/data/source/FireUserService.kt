@@ -2,14 +2,13 @@ package de.bitb.pantryplaner.data.source
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.snapshots
 import de.bitb.pantryplaner.BuildConfig
 import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.core.misc.asError
 import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.model.User
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 
@@ -55,15 +54,11 @@ class FireUserService(
 
     override fun getUser(uuids: List<String>): Flow<Result<List<User>>> {
         return try {
-            return collection
-                .whereIn("uuid", uuids)
-                .snapshots()
-                .map {
-                    val user = it.toObjects(User::class.java)
-                    Result.Success(user)
-                }
+            chunkQuery<User>(uuids) { chunk ->
+                collection.whereIn("uuid", chunk)
+            }.map { Result.Success(it) }
         } catch (e: Exception) {
-            MutableStateFlow(e.asError())
+            flowOf(e.asError())
         }
     }
 
