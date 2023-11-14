@@ -67,6 +67,9 @@
         android:name="de.bitb.pantryplaner.ui.checklists.ChecklistsFragment"
         android:label="checklists">
         <action
+            android:id="@+id/checklists_to_recipes"
+            app:destination="@id/recipesFragment" />
+        <action
             android:id="@+id/checklists_to_stocks"
             app:destination="@id/stocksFragment" />
         <action
@@ -101,14 +104,58 @@
         android:label="selectItems" />
 
     <fragment
+        android:id="@+id/recipesFragment"
+        android:name="de.bitb.pantryplaner.ui.recipes.RecipesFragment"
+        android:label="recipes">
+        <action
+            android:id="@+id/recipes_to_checklists"
+            app:destination="@id/checklistsFragment"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/recipes_to_stocks"
+            app:destination="@id/stocksFragment"
+            app:popUpTo="@+id/checklistsFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/recipes_to_profile"
+            app:destination="@id/profileFragment"
+            app:popUpTo="@+id/checklistsFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/recipes_to_settings"
+            app:destination="@id/settingsFragment"
+            app:popUpTo="@+id/checklistsFragment"
+            app:popUpToInclusive="false" />
+
+        <action
+            android:id="@+id/recipes_to_recipe_details"
+            app:destination="@id/recipeDetailsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/recipeDetailsFragment"
+        android:name="de.bitb.pantryplaner.ui.checklists.details.ChecklistDetailsFragment"
+        android:label="recipeDetails">
+        <action
+            android:id="@+id/checklist_details_to_select_items"
+            app:destination="@id/selectItemsFragment" />
+    </fragment>
+
+    <fragment
         android:id="@+id/stocksFragment"
         android:name="de.bitb.pantryplaner.ui.stock.StocksFragment"
-        android:label="stock">
+        android:label="stocks">
         <action
             android:id="@+id/stocks_to_checklists"
             app:destination="@id/checklistsFragment"
             app:popUpTo="@+id/nav_graph"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/stocks_to_recipes"
+            app:destination="@id/recipesFragment"
+            app:popUpTo="@+id/checklistsFragment"
+            app:popUpToInclusive="false" />
         <action
             android:id="@+id/stocks_to_profile"
             app:destination="@id/profileFragment"
@@ -126,14 +173,15 @@
         android:name="de.bitb.pantryplaner.ui.profile.ProfileFragment"
         android:label="profile">
         <action
-            android:id="@+id/profile_to_scan"
-            app:destination="@id/scanFragment" />
-
-        <action
             android:id="@+id/profile_to_checklists"
             app:destination="@id/checklistsFragment"
             app:popUpTo="@+id/nav_graph"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/profile_to_recipes"
+            app:destination="@id/recipesFragment"
+            app:popUpTo="@+id/checklistsFragment"
+            app:popUpToInclusive="false" />
         <action
             android:id="@+id/profile_to_stocks"
             app:destination="@id/stocksFragment"
@@ -144,6 +192,10 @@
             app:destination="@id/settingsFragment"
             app:popUpTo="@+id/checklistsFragment"
             app:popUpToInclusive="false" />
+
+        <action
+            android:id="@+id/profile_to_scan"
+            app:destination="@id/scanFragment" />
     </fragment>
 
     <fragment
@@ -160,6 +212,11 @@
             app:destination="@id/checklistsFragment"
             app:popUpTo="@+id/nav_graph"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/settings_to_recipes"
+            app:destination="@id/recipesFragment"
+            app:popUpTo="@+id/checklistsFragment"
+            app:popUpToInclusive="false" />
         <action
             android:id="@+id/settings_to_stocks"
             app:destination="@id/stocksFragment"

@@ -13,7 +13,9 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Checklist
 import androidx.compose.material.icons.rounded.HomeWork
+import androidx.compose.material.icons.rounded.MenuBook
 import androidx.compose.material.icons.rounded.Person
+import androidx.compose.material.icons.rounded.ReceiptLong
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -32,6 +34,7 @@ import de.bitb.pantryplaner.ui.base.testTags.testTag
 @Composable
 fun BaseFragment<*>.buildBottomNavi(
     @IdRes checklistsRoute: Int? = null,
+    @IdRes recipesRoute: Int? = null,
     @IdRes stocksRoute: Int? = null,
     @IdRes profileRoute: Int? = null,
     @IdRes settingsRoute: Int? = null,
@@ -43,6 +46,12 @@ fun BaseFragment<*>.buildBottomNavi(
                 stringResource(id = R.string.checklists_title),
                 Icons.Rounded.Checklist,
                 checklistsRoute?.let { NaviEvent.Navigate(it) },
+            ),
+            BottomItemInfo(
+                BottomNaviTag.RecipesButton,
+                stringResource(id = R.string.recipes_title),
+                Icons.Rounded.MenuBook,
+                recipesRoute?.let { NaviEvent.Navigate(it) },
             ),
             BottomItemInfo(
                 BottomNaviTag.StocksButton,

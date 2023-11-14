@@ -52,7 +52,7 @@ data class StocksModel(
 
 @OptIn(FlowPreview::class)
 @HiltViewModel
-class StockViewModel @Inject constructor(
+class StocksViewModel @Inject constructor(
     itemRepo: ItemRepository,
     stockRepo: StockRepository,
     settingsRepo: SettingsRepository,

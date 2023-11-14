@@ -83,6 +83,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
             bottomBar = {
                 buildBottomNavi(
                     checklistsRoute = R.id.profile_to_checklists,
+                    recipesRoute = R.id.profile_to_recipes,
                     stocksRoute = R.id.profile_to_stocks,
                     settingsRoute = R.id.profile_to_settings,
                 )

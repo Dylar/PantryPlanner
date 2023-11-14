@@ -3,13 +3,13 @@ package de.bitb.pantryplaner.ui.base
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import android.provider.Settings
 import androidx.annotation.IdRes
 import androidx.core.os.bundleOf
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.ui.checklists.details.ChecklistViewModel
 import de.bitb.pantryplaner.ui.intro.LoginViewModel
-import de.bitb.pantryplaner.ui.checklists.ChecklistsViewModel
 import de.bitb.pantryplaner.ui.profile.ProfileViewModel
 import de.bitb.pantryplaner.ui.settings.SettingsViewModel
 
@@ -29,8 +29,8 @@ fun Activity.navigateToURL(url: String) {
 
 sealed class NaviEvent {
     object NavigateBack : NaviEvent()
-    data class Navigate(@IdRes val route: Int) : NaviEvent()
-    data class NavigateTo(@IdRes val route: Int) : NaviEvent()
+    data class Navigate(@IdRes val route: Int, val args: Bundle? = null) : NaviEvent()
+    data class NavigateTo(@IdRes val route: Int, val args: Bundle? = null) : NaviEvent()
     data class NavigateToUrl(val url: String) : NaviEvent()
 }
 
@@ -48,11 +48,6 @@ fun BaseFragment<LoginViewModel>.naviLoginToReleaseNotes() {
 
 fun BaseFragment<LoginViewModel>.naviToRegister() {
     navController.navigate(R.id.login_to_register)
-}
-
-fun BaseFragment<ChecklistsViewModel>.naviToChecklist(uuid: String) {
-    navController
-        .navigate(R.id.checklists_to_checklist_details, bundleOf(KEY_CHECKLIST_UUID to uuid))
 }
 
 fun BaseFragment<ChecklistViewModel>.naviChecklistToItems(uuid: String) {

@@ -81,7 +81,7 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
             viewModel.clearNavi()
             when (event) {
                 NaviEvent.NavigateBack -> navController.popBackStack()
-                is NaviEvent.Navigate -> navController.navigate(event.route)
+                is NaviEvent.Navigate -> navController.navigate(event.route, event.args)
                 is NaviEvent.NavigateTo -> navController.popBackStack(event.route, false)
                 is NaviEvent.NavigateToUrl -> activity?.navigateToURL(event.url)
             }

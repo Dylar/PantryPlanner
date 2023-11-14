@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
@@ -36,12 +37,13 @@ import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseFragment
+import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
+import de.bitb.pantryplaner.ui.base.NaviEvent
 import de.bitb.pantryplaner.ui.base.comps.DismissItem
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.GridListLayout
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
-import de.bitb.pantryplaner.ui.base.naviToChecklist
 import de.bitb.pantryplaner.ui.base.testTags.ChecklistTag
 import de.bitb.pantryplaner.ui.base.testTags.ChecklistsPageTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
@@ -70,6 +72,7 @@ class ChecklistsFragment : BaseFragment<ChecklistsViewModel>() {
             floatingActionButton = { buildFab(modelResp) },
             bottomBar = {
                 buildBottomNavi(
+                    recipesRoute = R.id.checklists_to_recipes,
                     stocksRoute = R.id.checklists_to_stocks,
                     profileRoute = R.id.checklists_to_profile,
                     settingsRoute = R.id.checklists_to_settings,
@@ -216,7 +219,12 @@ class ChecklistsFragment : BaseFragment<ChecklistsViewModel>() {
             onSwipe = { viewModel.removeChecklist(checklist) },
             onClick = {
                 if (checklist.finished) showUnfinishDialog.value = true
-                else naviToChecklist(checklist.uuid)
+                else viewModel.navigate(
+                    NaviEvent.Navigate(
+                        R.id.checklists_to_checklist_details,
+                        bundleOf(KEY_CHECKLIST_UUID to checklist.uuid)
+                    )
+                )
             },
             onLongClick = { showEditDialog.value = true }
         ) {

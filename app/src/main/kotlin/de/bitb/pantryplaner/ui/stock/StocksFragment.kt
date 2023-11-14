@@ -81,8 +81,8 @@ import de.bitb.pantryplaner.ui.dialogs.useEditItemDialog
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class StocksFragment : BaseFragment<StockViewModel>() {
-    override val viewModel: StockViewModel by viewModels()
+class StocksFragment : BaseFragment<StocksViewModel>() {
+    override val viewModel: StocksViewModel by viewModels()
 
     private lateinit var showGridLayout: MutableState<Boolean>
     private lateinit var showFilterDialog: MutableState<Boolean>
@@ -123,6 +123,7 @@ class StocksFragment : BaseFragment<StockViewModel>() {
             bottomBar = {
                 buildBottomNavi(
                     checklistsRoute = R.id.stocks_to_checklists,
+                    recipesRoute = R.id.stocks_to_recipes,
                     profileRoute = R.id.stocks_to_profile,
                     settingsRoute = R.id.stocks_to_settings,
                 )

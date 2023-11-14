@@ -17,6 +17,10 @@ data class Settings(
     fun categoryColor(item: Item): Color {
         return categoryColors[item.category]?.asColor() ?: BaseColors.LightGray
     }
+
+    fun categoryColor(recipe: Recipe): Color {
+        return categoryColors[recipe.category]?.asColor() ?: BaseColors.LightGray
+    }
 //    fun freshUntilDate(itemId: String): LocalDate {
 //       return LocalDate.now().minusDays(freshUntil[itemId] ?: 0L)
 //    } //TODO fix this page

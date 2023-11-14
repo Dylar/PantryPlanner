@@ -46,6 +46,13 @@ object RepositoryModule {
 
     @Provides
     @Singleton
+    fun provideRecipeRepository(
+        remoteService: RemoteService,
+        localDatabase: LocalDatabase,
+    ): RecipeRepository = RecipeRepository(remoteService, localDatabase)
+
+    @Provides
+    @Singleton
     fun provideStockRepository(
         remoteService: RemoteService,
         localDatabase: LocalDatabase,
