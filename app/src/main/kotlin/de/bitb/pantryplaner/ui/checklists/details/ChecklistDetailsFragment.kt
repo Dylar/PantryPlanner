@@ -1,5 +1,6 @@
 package de.bitb.pantryplaner.ui.checklists.details
 
+import android.content.res.Resources.NotFoundException
 import android.os.Bundle
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
@@ -41,6 +43,7 @@ import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
+import de.bitb.pantryplaner.ui.base.NaviEvent
 import de.bitb.pantryplaner.ui.base.comps.DismissItem
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
@@ -49,7 +52,6 @@ import de.bitb.pantryplaner.ui.base.comps.GridListLayout
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
 import de.bitb.pantryplaner.ui.base.comps.buildStockDropDown
 import de.bitb.pantryplaner.ui.base.comps.buildUserDropDown
-import de.bitb.pantryplaner.ui.base.naviChecklistToItems
 import de.bitb.pantryplaner.ui.base.testTags.ChecklistPageTag
 import de.bitb.pantryplaner.ui.base.testTags.ItemTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
@@ -57,6 +59,7 @@ import de.bitb.pantryplaner.ui.comps.AddSubRow
 import de.bitb.pantryplaner.ui.comps.SelectItemHeader
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 import de.bitb.pantryplaner.ui.dialogs.FilterDialog
+import de.bitb.pantryplaner.ui.select.SelectItemsFragment
 
 @AndroidEntryPoint
 class ChecklistDetailsFragment : BaseFragment<ChecklistViewModel>() {
@@ -68,7 +71,8 @@ class ChecklistDetailsFragment : BaseFragment<ChecklistViewModel>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val uuid = arguments?.getString(KEY_CHECKLIST_UUID) ?: throw Exception()
+        val uuid = arguments?.getString(KEY_CHECKLIST_UUID)
+            ?: throw NotFoundException("KEY_CHECKLIST_UUID not found")
         viewModel.initChecklist(uuid)
     }
 
@@ -163,7 +167,9 @@ class ChecklistDetailsFragment : BaseFragment<ChecklistViewModel>() {
             Spacer(modifier = Modifier.height(8.dp))
             ExtendedFloatingActionButton(
                 modifier = Modifier.testTag(ChecklistPageTag.AddItemButton),
-                onClick = { naviChecklistToItems(viewModel.checkListId) },
+                onClick = {
+                    viewModel.navigate(SelectItemsFragment.naviFromChecklistDetails(viewModel.checkListId))
+                },
                 text = { Text(text = "Item") },
                 icon = {
                     Icon(
@@ -279,6 +285,15 @@ class ChecklistDetailsFragment : BaseFragment<ChecklistViewModel>() {
                 )
                 AddSubRow(checkItem.amount) { viewModel.changeItemAmount(item.uuid, it) }
             }
+        }
+    }
+
+    companion object {
+        fun naviFromChecklists(uuid: String): NaviEvent {
+            return NaviEvent.Navigate(
+                R.id.checklists_to_checklist_details,
+                bundleOf(KEY_CHECKLIST_UUID to uuid)
+            )
         }
     }
 }

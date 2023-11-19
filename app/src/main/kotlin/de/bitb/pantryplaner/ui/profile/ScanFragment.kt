@@ -24,6 +24,7 @@ import com.budiyev.android.codescanner.ScanMode
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.ui.base.BaseFragment
+import de.bitb.pantryplaner.ui.base.NaviEvent
 import de.bitb.pantryplaner.ui.base.comps.LifecycleComp
 import de.bitb.pantryplaner.ui.base.openAppSettings
 import de.bitb.pantryplaner.ui.base.permission.CameraPermissionTextProvider
@@ -35,6 +36,10 @@ import de.bitb.pantryplaner.ui.base.testTags.testTag
 
 @AndroidEntryPoint
 class ScanFragment : BaseFragment<ScanViewModel>(), PermissionHandler by PermissionHandlerImpl() {
+
+    companion object {
+        val naviFromProfile: NaviEvent = NaviEvent.Navigate(R.id.profile_to_scan)
+    }
 
     override val viewModel: ScanViewModel by viewModels()
 

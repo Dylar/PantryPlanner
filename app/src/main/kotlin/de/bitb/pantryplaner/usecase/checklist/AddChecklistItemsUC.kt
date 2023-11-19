@@ -7,7 +7,7 @@ import de.bitb.pantryplaner.data.CheckRepository
 import de.bitb.pantryplaner.data.model.CheckItem
 import kotlinx.coroutines.flow.first
 
-class AddItemsUC(
+class AddChecklistItemsUC(
     private val checkRepo: CheckRepository,
 ) {
     suspend operator fun invoke(checkId: String, itemIds: List<String>): Result<Boolean> {

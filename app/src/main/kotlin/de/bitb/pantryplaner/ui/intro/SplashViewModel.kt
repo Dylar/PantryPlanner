@@ -3,13 +3,13 @@ package de.bitb.pantryplaner.ui.intro
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.core.misc.atLeast
 import de.bitb.pantryplaner.data.SettingsRepository
 import de.bitb.pantryplaner.ui.base.BaseViewModel
 import de.bitb.pantryplaner.ui.base.NaviEvent
 import de.bitb.pantryplaner.ui.base.comps.asResString
+import de.bitb.pantryplaner.ui.checklists.ChecklistsFragment
 import de.bitb.pantryplaner.usecase.UserUseCases
 import de.bitb.pantryplaner.usecase.user.DataLoadResponse
 import kotlinx.coroutines.launch
@@ -32,14 +32,14 @@ class SplashViewModel @Inject constructor(
             when {
                 userResp is Result.Error -> showSnackBar(userResp.message!!)
                 userResp.data is DataLoadResponse.DataLoaded -> {
-                    navigate(NaviEvent.Navigate(R.id.splash_to_checklists))
+                    navigate(ChecklistsFragment.naviFromSplash)
 //                    if (naviToRefresh) { //TODO fix whole page
 //                        navigate(NavigateEvent.Navigate(R.id.checklists_to_refresh))
 //                    }
                 }
 
                 userResp.data is DataLoadResponse.NotLoggedIn -> {
-                    navigate(NaviEvent.Navigate(R.id.splash_to_login))
+                    navigate(LoginFragment.naviFromSplash)
                 }
 
                 userResp.data is DataLoadResponse.NewAppVersion -> {

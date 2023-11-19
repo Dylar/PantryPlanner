@@ -42,7 +42,7 @@ object Logger {
         )
     }
 
-    fun justPrint(message: String, level: PrintLevel = PrintLevel.SYSTEM) {
+    fun print(message: String, level: PrintLevel = PrintLevel.SYSTEM) {
         val log = createLog("" to message)
         val tag = "\n${LOG_BORDER_TOP}" +
                 "\nTime:${log.timeStamp}"

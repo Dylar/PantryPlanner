@@ -56,6 +56,7 @@ import de.bitb.pantryplaner.data.model.StockItem
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.data.model.groupByCategory
 import de.bitb.pantryplaner.ui.base.BaseFragment
+import de.bitb.pantryplaner.ui.base.NaviEvent
 import de.bitb.pantryplaner.ui.base.comps.DismissItem
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
@@ -71,6 +72,7 @@ import de.bitb.pantryplaner.ui.base.testTags.ItemTag
 import de.bitb.pantryplaner.ui.base.testTags.StocksPageTag
 import de.bitb.pantryplaner.ui.base.testTags.UnsharedIconTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
+import de.bitb.pantryplaner.ui.checklists.ChecklistsFragment
 import de.bitb.pantryplaner.ui.comps.AddSubRow
 import de.bitb.pantryplaner.ui.comps.buildBottomNavi
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
@@ -78,10 +80,21 @@ import de.bitb.pantryplaner.ui.dialogs.FilterDialog
 import de.bitb.pantryplaner.ui.dialogs.useAddItemDialog
 import de.bitb.pantryplaner.ui.dialogs.useAddStockDialog
 import de.bitb.pantryplaner.ui.dialogs.useEditItemDialog
+import de.bitb.pantryplaner.ui.profile.ProfileFragment
+import de.bitb.pantryplaner.ui.recipes.RecipesFragment
+import de.bitb.pantryplaner.ui.settings.SettingsFragment
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class StocksFragment : BaseFragment<StocksViewModel>() {
+
+    companion object {
+        val naviFromChecklists: NaviEvent = NaviEvent.Navigate(R.id.checklists_to_stocks)
+        val naviFromRecipes: NaviEvent = NaviEvent.Navigate(R.id.recipes_to_stocks)
+        val naviFromProfile: NaviEvent = NaviEvent.Navigate(R.id.profile_to_stocks)
+        val naviFromSettings: NaviEvent = NaviEvent.Navigate(R.id.settings_to_stocks)
+    }
+
     override val viewModel: StocksViewModel by viewModels()
 
     private lateinit var showGridLayout: MutableState<Boolean>
@@ -107,7 +120,7 @@ class StocksFragment : BaseFragment<StocksViewModel>() {
         val filter by viewModel.filterBy.collectAsState(Filter())
         onBack { onDismiss ->
             ConfirmDialog(
-                "Discard changes?",
+                "Änderungen verwerfen?",
                 "Möchten Sie die Item Auswahl verwerfen?",
                 onConfirm = { navController.popBackStack() },
                 onDismiss = { onDismiss() },
@@ -122,10 +135,10 @@ class StocksFragment : BaseFragment<StocksViewModel>() {
             floatingActionButton = { buildFab(modelResp) },
             bottomBar = {
                 buildBottomNavi(
-                    checklistsRoute = R.id.stocks_to_checklists,
-                    recipesRoute = R.id.stocks_to_recipes,
-                    profileRoute = R.id.stocks_to_profile,
-                    settingsRoute = R.id.stocks_to_settings,
+                    checklistsRoute = ChecklistsFragment.naviFromStocks,
+                    recipesRoute = RecipesFragment.naviFromStocks,
+                    profileRoute = ProfileFragment.naviFromStocks,
+                    settingsRoute = SettingsFragment.naviFromStocks,
                 )
             }
         )

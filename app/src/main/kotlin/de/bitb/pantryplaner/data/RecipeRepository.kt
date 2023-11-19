@@ -37,7 +37,7 @@ class RecipeRepository(
     fun getRecipe(uuid: String): Flow<Result<Recipe>> {
         return getRecipes(listOf(uuid)).map {
             if (it is Result.Error) it.castTo()
-            else Result.Success(it.data!!.first())
+            else Result.Success(it.data?.firstOrNull())
         }
     }
 

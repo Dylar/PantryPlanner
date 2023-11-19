@@ -135,10 +135,10 @@
 
     <fragment
         android:id="@+id/recipeDetailsFragment"
-        android:name="de.bitb.pantryplaner.ui.checklists.details.ChecklistDetailsFragment"
+        android:name="de.bitb.pantryplaner.ui.recipes.details.RecipeDetailsFragment"
         android:label="recipeDetails">
         <action
-            android:id="@+id/checklist_details_to_select_items"
+            android:id="@+id/recipe_details_to_select_items"
             app:destination="@id/selectItemsFragment" />
     </fragment>
 

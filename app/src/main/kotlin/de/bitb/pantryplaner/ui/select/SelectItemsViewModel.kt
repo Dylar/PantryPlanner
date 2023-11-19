@@ -51,7 +51,7 @@ class SelectItemsViewModel @Inject constructor(
     private val checkUseCases: ChecklistUseCases,
     private val itemUseCases: ItemUseCases,
 ) : BaseViewModel(), UserDataExt {
-    private var fromChecklistId: String? = null
+    private var fromChecklistId: String? = null // TODO from Recipe?
 
     private val _isSearching = MutableStateFlow(false)
     val isSearching = _isSearching.asStateFlow()

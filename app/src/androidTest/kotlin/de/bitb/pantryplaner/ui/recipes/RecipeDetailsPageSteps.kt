@@ -1,17 +1,15 @@
-package de.bitb.pantryplaner.ui.recipe
+package de.bitb.pantryplaner.ui.recipes
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
-import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
 import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.hasTextInHierarchy
-import de.bitb.pantryplaner.core.onNodeWithParentTag
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
-import de.bitb.pantryplaner.ui.base.testTags.AddEditItemDialogTag
 import de.bitb.pantryplaner.ui.base.testTags.RecipeDetailsPageTag
 import de.bitb.pantryplaner.ui.base.testTags.SearchDropDownTag
+import de.bitb.pantryplaner.ui.tapOnFloatingActionButton
 import io.cucumber.java.en.And
 import io.cucumber.java.en.Then
 
@@ -26,11 +24,9 @@ class RecipeDetailsPageSteps(
     }
 
     @Then("Recipe name is {string}")
-    fun itemRecipeIs(name: String) {
-        onNodeWithParentTag(
-            AddEditItemDialogTag.DialogTag,
-            AddEditItemDialogTag.NameLabel
-        ).hasTextInHierarchy(name)
+    fun recipeNameIs(name: String) {
+        onNodeWithTag(RecipeDetailsPageTag.RecipeName)
+            .hasTextInHierarchy(name)
             .assertIsDisplayed()
     }
 
@@ -54,16 +50,15 @@ class RecipeDetailsPageSteps(
     }
 
     @And("Tap on SaveRecipeButton")
-    fun tapOnCreateItemButton() {
-        onNodeWithTag(RecipeDetailsPageTag.SaveRecipeButton).performClick()
-        waitForIdle()
+    fun tapOnCreateRecipeButton() {
+        tapOnFloatingActionButton(RecipeDetailsPageTag.SaveRecipeButton)
     }
 }
 
 fun ComposeTestRule.assertRecipeDetailsPageRendered() {
+    onNodeWithTag(RecipeDetailsPageTag.RecipeDetailsPage).assertIsDisplayed()
     onNodeWithTag(RecipeDetailsPageTag.AppBar).assertIsDisplayed()
-//    onNodeWithTag(RecipePageTag.SearchButton).assertIsDisplayed() // TODO is search needed?
     onNodeWithTag(RecipeDetailsPageTag.LayoutButton).assertIsDisplayed()
-//    onNodeWithTag(FloatingExpandingButtonTag).assertIsDisplayed() // TODO if more needed
+    onNodeWithTag(RecipeDetailsPageTag.RecipeName).assertIsDisplayed()
 }
 

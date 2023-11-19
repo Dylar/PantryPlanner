@@ -6,7 +6,7 @@ import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.CheckRepository
 import kotlinx.coroutines.flow.first
 
-class SetItemAmountUC(
+class SetChecklistItemAmountUC(
     private val checkRepo: CheckRepository,
 ) {
     suspend operator fun invoke(

@@ -1,15 +1,15 @@
 package de.bitb.pantryplaner.usecase
 
 import de.bitb.pantryplaner.usecase.alert.RefreshAlertUC
-import de.bitb.pantryplaner.usecase.checklist.AddItemsUC
+import de.bitb.pantryplaner.usecase.checklist.AddChecklistItemsUC
 import de.bitb.pantryplaner.usecase.checklist.CheckItemUC
 import de.bitb.pantryplaner.usecase.checklist.CreateChecklistUC
 import de.bitb.pantryplaner.usecase.checklist.DeleteChecklistUC
 import de.bitb.pantryplaner.usecase.checklist.FinishChecklistUC
-import de.bitb.pantryplaner.usecase.checklist.RemoveItemsUC
+import de.bitb.pantryplaner.usecase.checklist.RemoveChecklistItemsUC
 import de.bitb.pantryplaner.usecase.checklist.SaveChecklistUC
-import de.bitb.pantryplaner.usecase.checklist.SetItemAmountUC
-import de.bitb.pantryplaner.usecase.checklist.SetSharedWithUC
+import de.bitb.pantryplaner.usecase.checklist.SetChecklistItemAmountUC
+import de.bitb.pantryplaner.usecase.checklist.SetChecklistSharedWithUC
 import de.bitb.pantryplaner.usecase.checklist.SetStockWithUC
 import de.bitb.pantryplaner.usecase.checklist.UnfinishChecklistUC
 import de.bitb.pantryplaner.usecase.item.CreateItemUC
@@ -17,6 +17,13 @@ import de.bitb.pantryplaner.usecase.item.DeleteItemUC
 import de.bitb.pantryplaner.usecase.item.EditCategoryUC
 import de.bitb.pantryplaner.usecase.item.EditItemUC
 import de.bitb.pantryplaner.usecase.item.ShareItemUC
+import de.bitb.pantryplaner.usecase.recipe.AddRecipeItemsUC
+import de.bitb.pantryplaner.usecase.recipe.CreateRecipeUC
+import de.bitb.pantryplaner.usecase.recipe.DeleteRecipeUC
+import de.bitb.pantryplaner.usecase.recipe.RemoveRecipeItemsUC
+import de.bitb.pantryplaner.usecase.recipe.SaveRecipeUC
+import de.bitb.pantryplaner.usecase.recipe.SetRecipeItemAmountUC
+import de.bitb.pantryplaner.usecase.recipe.SetRecipeSharedWithUC
 import de.bitb.pantryplaner.usecase.stock.AddEditStockItemUC
 import de.bitb.pantryplaner.usecase.stock.AddStockUC
 import de.bitb.pantryplaner.usecase.stock.DeleteStockUC
@@ -59,13 +66,23 @@ data class StockUseCases(
 data class ChecklistUseCases(
     val createChecklistUC: CreateChecklistUC,
     val deleteChecklistUC: DeleteChecklistUC,
-    val addItemsUC: AddItemsUC,
-    val removeItemsUC: RemoveItemsUC,
+    val addItemsUC: AddChecklistItemsUC,
+    val removeItemsUC: RemoveChecklistItemsUC,
     val checkItemUC: CheckItemUC,
     val finishChecklistUC: FinishChecklistUC,
     val unfinishChecklistUC: UnfinishChecklistUC,
-    val setItemAmountUC: SetItemAmountUC, //TODO make one single edit UC
-    val setSharedWithUC: SetSharedWithUC,
+    val setItemAmountUC: SetChecklistItemAmountUC, //TODO make one single edit UC
+    val setSharedWithUC: SetChecklistSharedWithUC,
     val setStockWithUC: SetStockWithUC,
     val saveChecklistUC: SaveChecklistUC,
+)
+
+data class RecipeUseCases(
+    val createRecipeUC: CreateRecipeUC,
+    val deleteRecipeUC: DeleteRecipeUC,
+    val addItemsUC: AddRecipeItemsUC,
+    val removeItemsUC: RemoveRecipeItemsUC,
+    val setItemAmountUC: SetRecipeItemAmountUC,
+    val setSharedWithUC: SetRecipeSharedWithUC,
+    val saveRecipeUC: SaveRecipeUC,
 )

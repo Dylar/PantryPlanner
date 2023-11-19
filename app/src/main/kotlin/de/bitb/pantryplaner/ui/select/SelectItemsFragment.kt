@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
@@ -42,6 +43,8 @@ import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
+import de.bitb.pantryplaner.ui.base.KEY_RECIPE_UUID
+import de.bitb.pantryplaner.ui.base.NaviEvent
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.FloatingExpandingButton
@@ -59,6 +62,23 @@ import de.bitb.pantryplaner.ui.dialogs.useAddItemDialog
 
 @AndroidEntryPoint
 class SelectItemsFragment : BaseFragment<SelectItemsViewModel>() {
+
+    companion object {
+        fun naviFromChecklistDetails(uuid: String): NaviEvent {
+            return NaviEvent.Navigate(
+                R.id.checklist_details_to_select_items,
+                bundleOf(KEY_CHECKLIST_UUID to uuid)
+            )
+        }
+
+        fun naviFromRecipeDetails(uuid: String): NaviEvent {
+            return NaviEvent.Navigate(
+                R.id.recipe_details_to_select_items,
+                bundleOf(KEY_RECIPE_UUID to uuid)
+            )
+        }
+    }
+
     override val viewModel: SelectItemsViewModel by viewModels()
 
     private lateinit var showGridLayout: MutableState<Boolean>
@@ -89,7 +109,7 @@ class SelectItemsFragment : BaseFragment<SelectItemsViewModel>() {
         val filter by viewModel.filterBy.collectAsState(Filter())
         onBack { onDismiss ->
             ConfirmDialog(
-                "Discard changes?",
+                "Änderungen verwerfen?",
                 "Möchten Sie die Item Auswahl verwerfen?",
                 onConfirm = { navController.popBackStack() },
                 onDismiss = { onDismiss() },

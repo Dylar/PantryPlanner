@@ -1,10 +1,11 @@
-package de.bitb.pantryplaner.ui.recipe
+package de.bitb.pantryplaner.ui.recipes
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
+import de.bitb.pantryplaner.ui.base.testTags.FloatingExpandingButtonTag
 import de.bitb.pantryplaner.ui.base.testTags.RecipesPageTag
 import de.bitb.pantryplaner.ui.tapOnFloatingActionButton
 import io.cucumber.java.en.Then
@@ -30,7 +31,6 @@ fun ComposeTestRule.assertRecipesPageRendered() {
     onNodeWithTag(RecipesPageTag.AppBar).assertIsDisplayed()
 //    onNodeWithTag(RecipePageTag.SearchButton).assertIsDisplayed() // TODO is search needed?
     onNodeWithTag(RecipesPageTag.LayoutButton).assertIsDisplayed()
-    onNodeWithTag(RecipesPageTag.NewRecipeButton).assertIsDisplayed()
-//    onNodeWithTag(FloatingExpandingButtonTag).assertIsDisplayed() // TODO if more needed
+    onNodeWithTag(FloatingExpandingButtonTag).assertIsDisplayed()
 }
 

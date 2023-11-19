@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
@@ -33,7 +34,9 @@ fun FloatingExpandingButton(
         if (expanded) buttons()
         Spacer(modifier = Modifier.height(8.dp))
         FloatingActionButton(
-            modifier = Modifier.testTag(FloatingExpandingButtonTag),
+            modifier = Modifier
+                .testTag(FloatingExpandingButtonTag)
+                .size(if (expanded) 36.dp else 64.dp),
             onClick = { expanded = !expanded }
         ) {
             Icon(

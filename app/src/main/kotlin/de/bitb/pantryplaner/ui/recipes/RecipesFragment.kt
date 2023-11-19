@@ -30,19 +30,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Result
-import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.data.model.Recipe
-import de.bitb.pantryplaner.data.model.StockItem
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.data.model.groupByCategory
 import de.bitb.pantryplaner.ui.base.BaseFragment
-import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
-import de.bitb.pantryplaner.ui.base.KEY_RECIPE_UUID
 import de.bitb.pantryplaner.ui.base.NaviEvent
 import de.bitb.pantryplaner.ui.base.comps.DismissItem
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
@@ -50,17 +45,28 @@ import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.FloatingExpandingButton
 import de.bitb.pantryplaner.ui.base.comps.GridListLayout
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
-import de.bitb.pantryplaner.ui.base.testTags.ItemTag
 import de.bitb.pantryplaner.ui.base.testTags.RecipeTag
 import de.bitb.pantryplaner.ui.base.testTags.RecipesPageTag
 import de.bitb.pantryplaner.ui.base.testTags.UnsharedIconTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
-import de.bitb.pantryplaner.ui.comps.AddSubRow
+import de.bitb.pantryplaner.ui.checklists.ChecklistsFragment
 import de.bitb.pantryplaner.ui.comps.buildBottomNavi
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
+import de.bitb.pantryplaner.ui.profile.ProfileFragment
+import de.bitb.pantryplaner.ui.recipes.details.RecipeDetailsFragment
+import de.bitb.pantryplaner.ui.settings.SettingsFragment
+import de.bitb.pantryplaner.ui.stock.StocksFragment
 
 @AndroidEntryPoint
 class RecipesFragment : BaseFragment<RecipesViewModel>() {
+
+    companion object {
+        val naviFromChecklists: NaviEvent = NaviEvent.Navigate(R.id.checklists_to_recipes)
+        val naviFromStocks: NaviEvent = NaviEvent.Navigate(R.id.stocks_to_recipes)
+        val naviFromProfile: NaviEvent = NaviEvent.Navigate(R.id.profile_to_recipes)
+        val naviFromSettings: NaviEvent = NaviEvent.Navigate(R.id.settings_to_recipes)
+    }
+
     override val viewModel: RecipesViewModel by viewModels()
 
     private lateinit var showGridLayout: MutableState<Boolean>
@@ -76,10 +82,10 @@ class RecipesFragment : BaseFragment<RecipesViewModel>() {
             floatingActionButton = { buildFab() },
             bottomBar = {
                 buildBottomNavi(
-                    checklistsRoute = R.id.stocks_to_checklists,
-                    recipesRoute = R.id.stocks_to_recipes,
-                    profileRoute = R.id.stocks_to_profile,
-                    settingsRoute = R.id.stocks_to_settings,
+                    checklistsRoute = ChecklistsFragment.naviFromRecipes,
+                    stocksRoute = StocksFragment.naviFromRecipes,
+                    profileRoute = ProfileFragment.naviFromRecipes,
+                    settingsRoute = SettingsFragment.naviFromRecipes,
                 )
             }
         )
@@ -183,14 +189,7 @@ class RecipesFragment : BaseFragment<RecipesViewModel>() {
             color,
             onSwipe = { viewModel.deleteRecipe(recipe) },
             onClick = { showActionDialog.value = true },
-            onLongClick = {
-                viewModel.navigate(
-                    NaviEvent.Navigate(
-                        R.id.checklists_to_checklist_details,
-                        bundleOf(KEY_RECIPE_UUID to recipe.uuid)
-                    )
-                )
-            },
+            onLongClick = { viewModel.navigate(RecipeDetailsFragment.naviFromRecipes(recipe.uuid)) },
         ) { RecipeItem(isShared, recipe) }
     }
 
@@ -228,4 +227,5 @@ class RecipesFragment : BaseFragment<RecipesViewModel>() {
 //TODO check stock if cookable
         }
     }
+
 }

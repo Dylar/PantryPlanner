@@ -8,7 +8,7 @@ import de.bitb.pantryplaner.data.UserRepository
 import de.bitb.pantryplaner.data.model.User
 import kotlinx.coroutines.flow.first
 
-class SetSharedWithUC(
+class SetChecklistSharedWithUC(
     private val userRepo: UserRepository,
     private val checkRepo: CheckRepository,
 ) {

@@ -1,4 +1,4 @@
-package de.bitb.pantryplaner.ui.recipe
+package de.bitb.pantryplaner.ui.recipes
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule

@@ -1,0 +1,226 @@
+package de.bitb.pantryplaner.ui.recipes.details
+
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import de.bitb.pantryplaner.core.misc.Logger
+import de.bitb.pantryplaner.core.misc.Result
+import de.bitb.pantryplaner.data.ItemRepository
+import de.bitb.pantryplaner.data.RecipeRepository
+import de.bitb.pantryplaner.data.SettingsRepository
+import de.bitb.pantryplaner.data.StockRepository
+import de.bitb.pantryplaner.data.UserDataExt
+import de.bitb.pantryplaner.data.UserRepository
+import de.bitb.pantryplaner.data.model.Item
+import de.bitb.pantryplaner.data.model.Recipe
+import de.bitb.pantryplaner.data.model.Settings
+import de.bitb.pantryplaner.data.model.Stock
+import de.bitb.pantryplaner.data.model.User
+import de.bitb.pantryplaner.ui.base.BaseViewModel
+import de.bitb.pantryplaner.ui.base.NaviEvent
+import de.bitb.pantryplaner.usecase.ItemUseCases
+import de.bitb.pantryplaner.usecase.RecipeUseCases
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import java.util.UUID
+import javax.inject.Inject
+
+data class RecipeModel(
+    val settings: Settings? = null,
+    val recipe: Recipe? = null,
+    val items: List<Item>? = null,
+    val stocks: List<Stock>? = null,
+    val user: User? = null,
+    val connectedUser: List<User>? = null,
+    val sharedUser: List<User>? = null,
+) {
+    val isLoading: Boolean
+        get() = settings == null || recipe == null || items == null || stocks == null || user == null || connectedUser == null || sharedUser == null
+
+    fun isCreator(): Boolean = recipe?.isNew() == true || user?.uuid == recipe?.creator
+    fun isSharedWith(item: Item): Boolean = item.sharedWith(user?.uuid ?: "")
+}
+
+@OptIn(ExperimentalCoroutinesApi::class)
+@HiltViewModel
+class RecipeViewModel @Inject constructor(
+    private val settingsRepo: SettingsRepository,
+    override val userRepo: UserRepository,
+    private val stockRepo: StockRepository,
+    private val itemRepo: ItemRepository,
+    private val recipeRepo: RecipeRepository,
+    private val recipeUseCases: RecipeUseCases,
+    private val itemUseCases: ItemUseCases,
+) : BaseViewModel(), UserDataExt {
+
+    lateinit var recipeModel: LiveData<Result<RecipeModel>>
+    private val recipeData: MutableStateFlow<Recipe?> = MutableStateFlow(null)
+
+    var recipeName by mutableStateOf("")
+    val recipeCategory = mutableStateOf(TextFieldValue())
+
+    override fun isBackable(): Boolean {
+        return false // TODO check changes
+    }
+
+    fun initRecipe(uuid: String?) {
+        recipeModel = initialLoad(uuid)
+            .flatMapLatest(::recipeLoad)
+            .asLiveData(viewModelScope.coroutineContext)
+    }
+
+    private fun initialLoad(uuid: String?): Flow<Result<RecipeModel>> {
+        val isNew = uuid == null
+        val recipeListId = uuid ?: UUID.randomUUID().toString()
+        val recipeFlow = // load recipe from DB or create new
+            if (isNew) flowOf(Result.Success(Recipe(recipeListId)))
+            else recipeRepo.getRecipe(recipeListId)
+        return flow { emit(recipeFlow.first()) } // emit just once
+            .flatMapLatest { resp ->
+                if (resp is Result.Error) return@flatMapLatest flowOf(resp.castTo())
+                val recipe = resp.data // initial recipe data
+                val cat = recipe?.category?.ifBlank { "" }.orEmpty()
+                recipeName = recipe?.name?.ifBlank { "" }.orEmpty()
+                recipeCategory.value = TextFieldValue(cat, TextRange(cat.length))
+                recipeData.value = recipe
+
+                combine(
+                    settingsRepo.getSettings(),
+                    userRepo.getUser(),
+                    getConnectedUsers().asFlow(),
+                    stockRepo.getStocks(),
+                ) { settings, user, users, stocks ->
+                    when {
+                        settings is Result.Error -> settings.castTo()
+                        user is Result.Error -> user.castTo()
+                        users is Result.Error -> users.castTo()
+                        stocks is Result.Error -> stocks.castTo()
+                        else -> Result.Success(
+                            RecipeModel(
+                                settings = settings.data,
+                                user = user.data,
+                                connectedUser = users.data,
+                                stocks = stocks.data,
+                            )
+                        )
+                    }
+                }
+            }
+            .flatMapLatest { resp -> // flatmap to recipe data
+                if (resp is Result.Error) return@flatMapLatest flowOf(resp.castTo())
+                recipeData.map { recipe -> Result.Success(resp.data?.copy(recipe = recipe)) }
+            }
+    }
+
+    private fun recipeLoad(modelResp: Result<RecipeModel>): Flow<Result<RecipeModel>> {
+        if (modelResp is Result.Error) return flowOf(modelResp.castTo())
+        val model = modelResp.data
+        val recipe = model?.recipe
+        val itemIds = recipe?.items?.map { it.uuid }
+        return combine(
+            userRepo.getUser(recipe?.sharedWith.orEmpty()),
+            itemRepo.getItems(itemIds.orEmpty()),
+        ) { user, items ->
+            when {
+                user is Result.Error -> user.castTo()
+                items is Result.Error -> items.castTo()
+                else -> Result.Success(
+                    model?.copy(
+                        items = items.data,
+                        sharedUser = user.data,
+                    )
+                )
+            }
+        }
+    }
+
+    fun shareItem(item: Item) {
+        viewModelScope.launch {
+            when (val resp = itemUseCases.shareItemUC(item)) {
+                is Result.Error -> showSnackBar(resp.message!!)
+                else -> updateWidgets()
+            }
+        }
+    }
+
+    fun removeItem(item: Item) {
+        viewModelScope.launch {
+            recipeData.value?.let { recipe ->
+                recipe.items.removeIf { it.uuid == item.uuid }
+                recipeData.emit(recipe)
+            }
+        }
+    }
+
+    fun changeItemAmount(itemId: String, amount: String) {
+        viewModelScope.launch {
+            recipeData.value?.let { recipe ->
+                val amountDouble = amount.replace(",", ".").toDouble()
+                val item = recipe.items.first { it.uuid == itemId }
+                item.amount = amountDouble
+                recipeData.emit(recipe)
+            }
+        }
+    }
+
+    fun setName(text: String) {
+        Logger.log("setName" to text)
+//        viewModelScope.launch {
+        recipeData.value?.let { recipe ->
+            recipe.name = text
+            recipeName = text
+//                recipeData.emit(recipe)
+//        }
+        }
+    }
+
+    fun setCategory(text: String) {
+        Logger.log("setCategory" to text)
+//        viewModelScope.launch {
+        recipeData.value?.let { recipe ->
+            recipe.category = text
+            recipeCategory.value = TextFieldValue(text, TextRange(text.length))
+//                recipeData.emit(recipe)
+//            }
+        }
+    }
+
+    fun setSharedWith(users: List<User>) {
+        viewModelScope.launch {
+            recipeData.value?.let { recipe ->
+                recipe.sharedWith.clear()
+                recipe.sharedWith.addAll(users.map { it.uuid })
+                recipeData.emit(recipe)
+            }
+        }
+    }
+
+    fun saveRecipe() {
+        viewModelScope.launch {
+            recipeData.value?.let { recipe ->
+                val result =
+                    if (recipe.isNew()) recipeUseCases.createRecipeUC(recipe)
+                    else recipeUseCases.saveRecipeUC(recipe)
+                when (result) {
+                    is Result.Error -> showSnackBar(result.message!!)
+                    else -> navigate(NaviEvent.NavigateBack)
+                }
+            }
+        }
+    }
+}

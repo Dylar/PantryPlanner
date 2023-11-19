@@ -47,7 +47,6 @@ Feature: RecipesPage Recipe management
   Scenario: Remove a shared Recipe
     Given Swipe to remove Recipe "SharedRecipe" in category "SharedCategory"
     And   Tap on Confirm
-    And   Recipe "SharedRecipe" in category "SharedCategory" is displayed
     Then  Recipe "SharedRecipe" in category "SharedCategory" is NOT displayed
     And   On Back
     And   Navi to RecipesPage
@@ -71,26 +70,18 @@ Feature: RecipesPage Recipe management
   Scenario: Prevent non-creator from editing a Recipe
     When  LongPress on Recipe "SharedRecipe" in category "SharedCategory"
     And   RecipeDetailsPage rendered
-    And   Input "EditRecipe" as Recipe name
-    And   Recipe name is "SharedRecipe"
-    And   Input "EditCategory" as Recipe category
-    And   Recipe category is "SharedCategory"
-    And   Tap on SaveRecipeButton
-    And   RecipeDetailsPage rendered
-    And   On Back
-    Then  Recipe "EditRecipe" in category "EditCategory" is NOT displayed
-    And   Recipe "SharedRecipe" in category "SharedCategory" is displayed
+    And   FloatingActionButton is NOT displayed
 
   Scenario: Edit a created Recipe
     When  LongPress on Recipe "CreatorRecipe" in category "CreatorCategory"
     And   RecipeDetailsPage rendered
-    And   "RecipeDetailsPage" shared with none
+    And   "RecipeDetailsPage" shared with "Mohammed Lee"
     And   Input "EditRecipe" as Recipe name
     And   Input "EditCategory" as Recipe category
     And   "RecipeDetailsPage" open dropdown "Mit Benutzer teilen"
-    And   Dropdown option "Mohammed Lee" is displayed
+    And   Dropdown option "Mohammed Lee" is NOT displayed
     And   Dropdown option "Andre Option" is displayed
-    And   Select dropdown option "Mohammed Lee"
+    And   Select dropdown option "Andre Option"
     And   Tap on SaveRecipeButton
     And   RecipesPage rendered
     Then  Recipe "EditRecipe" in category "EditCategory" is displayed
@@ -98,7 +89,7 @@ Feature: RecipesPage Recipe management
     And   LongPress on Recipe "EditRecipe" in category "EditCategory"
     And   Recipe name is "EditRecipe"
     And   Recipe category is "EditCategory"
-    And   "RecipeDetailsPage" shared with "Mohammed Lee"
+    And   "RecipeDetailsPage" shared with "Andre Option"
     And   On Back
     And   Navi to RecipesPage
     And   Recipe "EditRecipe" in category "EditCategory" is displayed

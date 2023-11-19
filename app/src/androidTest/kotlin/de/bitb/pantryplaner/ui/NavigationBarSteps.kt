@@ -13,12 +13,16 @@ import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 
 @HiltAndroidTest
-class ChecklistsPageSteps(
+class NavigationSteps(
     val scenarioData: ScenarioData,
 ) : ComposeTestRule by scenarioData.composeRule {
 
     @Then("BottomNaviBar rendered")
     fun renderBottomNaviBar() = assertBottomNaviBar()
+
+    @Then("FloatingActionButton is NOT displayed")
+    fun floatingExpandingButtonIsNotDisplayed() =
+        onNodeWithTag(FloatingExpandingButtonTag).assertDoesNotExist()
 
     @When("Navi to ChecklistsPage")
     fun performTapOnChecklistsButton() {

@@ -1,4 +1,4 @@
-package de.bitb.pantryplaner.usecase.checklist
+package de.bitb.pantryplaner.usecase.recipe
 
 import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.core.misc.asError
@@ -6,7 +6,7 @@ import de.bitb.pantryplaner.core.misc.tryIt
 import de.bitb.pantryplaner.data.CheckRepository
 import kotlinx.coroutines.flow.first
 
-class RemoveItemsUC(
+class RemoveRecipeItemsUC(
     private val checkRepo: CheckRepository,
 ) {
     suspend operator fun invoke(checkId: String, itemIds: List<String>): Result<Boolean> {

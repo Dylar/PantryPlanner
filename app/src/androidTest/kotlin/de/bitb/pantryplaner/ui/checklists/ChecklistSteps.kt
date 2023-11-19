@@ -24,19 +24,16 @@ class ChecklistSteps(
     @Then("No Checklists displayed")
     fun noChecklistsDisplayed() {
         onNodeWithText(getString(R.string.no_checklists)).assertIsDisplayed()
-        waitForIdle()
     }
 
     @Then("Checklist {string} is displayed")
     fun checklistIsDisplayed(name: String) {
         onNodeWithTag(ChecklistTag(name), true).assertIsDisplayed()
-        waitForIdle()
     }
 
     @Then("Checklist {string} is NOT displayed")
     fun checklistIsNotDisplayed(name: String) {
         onNodeWithTag(ChecklistTag(name), true).assertDoesNotExist()
-        waitForIdle()
     }
 
     @Then("Swipe to remove Checklist {string}")

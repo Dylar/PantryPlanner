@@ -89,17 +89,21 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
     }
 
     private fun observeSnackBarEvent() {
-        viewModel.snackBarEvents.observe(viewLifecycleOwner) { showSnackBar(it) }
+        viewModel.snackBarEvents.observe(viewLifecycleOwner) {
+            showSnackBar(it)
+        }
     }
 
-    fun showSnackBar(msg: ResString) {
+    fun showSnackBar(msg: ResString?) {
         if (SNACKBARS_ENABLED) {
             lifecycleScope.launch {
-                if (::scaffoldState.isInitialized)
+                if (::scaffoldState.isInitialized && msg != null) {
+                    viewModel.clearSnackBar()
                     scaffoldState.snackbarHostState.showSnackbar(
                         message = msg.asString(resources::getString),
 //                    actionLabel = "Do something"
                     )
+                }
             }
         }
     }

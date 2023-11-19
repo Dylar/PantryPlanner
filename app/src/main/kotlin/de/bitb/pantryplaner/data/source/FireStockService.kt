@@ -67,13 +67,13 @@ class FireStockService(
         return tryIt {
             firestore.batch().apply {
                 stocks.chunked(10).forEach { chunk ->
-                collection
-                    .whereIn("uuid", chunk.map { it.uuid })
-                    .get().await().documents
-                    .forEach { snap ->
-                        val uuid = snap.data?.get("uuid") ?: ""
-                        set(snap.reference, chunk.first { it.uuid == uuid })
-                    }
+                    collection
+                        .whereIn("uuid", chunk.map { it.uuid })
+                        .get().await().documents
+                        .forEach { snap ->
+                            val uuid = snap.data?.get("uuid") ?: ""
+                            set(snap.reference, chunk.first { it.uuid == uuid })
+                        }
                 }
                 commit()
             }

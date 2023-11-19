@@ -5,14 +5,14 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.test.defaultPW
 import de.bitb.pantryplaner.test.parseUser
-import de.bitb.pantryplaner.ui.checklists.assertChecklistsPageRendered
 import de.bitb.pantryplaner.ui.checklists.assertChecklistPageRendered
+import de.bitb.pantryplaner.ui.checklists.assertChecklistsPageRendered
+import de.bitb.pantryplaner.ui.checklists.tapOnChecklist
 import de.bitb.pantryplaner.ui.intro.SPLASH_TIMER
 import de.bitb.pantryplaner.ui.intro.assertLoginPageRendered
 import de.bitb.pantryplaner.ui.intro.loginUserWith
-import de.bitb.pantryplaner.ui.checklists.tapOnChecklist
 import de.bitb.pantryplaner.ui.profile.assertProfilePageRendered
-import de.bitb.pantryplaner.ui.recipe.assertRecipesPageRendered
+import de.bitb.pantryplaner.ui.recipes.assertRecipesPageRendered
 import de.bitb.pantryplaner.ui.settings.assertSettingsPageRendered
 import de.bitb.pantryplaner.ui.stock.INSTANT_SEARCH
 import de.bitb.pantryplaner.ui.stock.assertStocksPageRendered

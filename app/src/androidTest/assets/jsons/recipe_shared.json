@@ -1,7 +1,7 @@
 {
   "uuid": "recipe321",
   "name": "SharedRecipe",
-  "category": "CreatorCategory",
+  "category": "SharedCategory",
   "items": [
     {
       "uuid": "item666",

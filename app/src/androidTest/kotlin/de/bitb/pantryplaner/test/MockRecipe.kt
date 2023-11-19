@@ -13,14 +13,14 @@ import kotlinx.coroutines.flow.flowOf
 
 fun parseRecipeCreator(): Recipe = parsePOKO("recipe_creator")
 fun parseRecipeShared(): Recipe = parsePOKO("recipe_shared")
-fun parseRecipeFinished(): Recipe = parsePOKO("recipe_finished")
 
 @OptIn(ExperimentalCoroutinesApi::class)
 fun RecipeRemoteDao.mockRecipeDao(
     recipes: List<Recipe> = emptyList()
 ) {
     val allFlow = MutableStateFlow(recipes)
-    val recipesFlows = createFlows(recipes) { recipe -> (listOf(recipe.creator) + recipe.sharedWith) }
+    val recipesFlows =
+        createFlows(recipes) { recipe -> (listOf(recipe.creator) + recipe.sharedWith) }
 
     coEvery { getRecipes(any(), any()) }.answers {
         val userId = firstArg<String>()

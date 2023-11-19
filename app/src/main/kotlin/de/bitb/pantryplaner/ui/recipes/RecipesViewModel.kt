@@ -14,7 +14,10 @@ import de.bitb.pantryplaner.data.model.Recipe
 import de.bitb.pantryplaner.data.model.Settings
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseViewModel
+import de.bitb.pantryplaner.ui.base.comps.asResString
+import de.bitb.pantryplaner.usecase.RecipeUseCases
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class RecipesModel(
@@ -31,7 +34,7 @@ class RecipesViewModel @Inject constructor(
     recipeRepo: RecipeRepository,
     settingsRepo: SettingsRepository,
     override val userRepo: UserRepository,
-//    private val recipeUseCases: RecipeUseCases,
+    private val recipeUseCases: RecipeUseCases,
 ) : BaseViewModel(), UserDataExt {
     val recipesModel: LiveData<Result<RecipesModel>> =
         combine(
@@ -55,33 +58,15 @@ class RecipesViewModel @Inject constructor(
             }
         }.asLiveData(viewModelScope.coroutineContext)
 
-    fun addRecipe(stock: Recipe) {
-//        viewModelScope.launch {
-//            when (val resp = stockUseCases.addStockUC(stock)) {
-//                is Result.Error -> showSnackBar(resp.message!!)
-//                else -> showSnackBar("Lager hinzugefügt: ${stock.name}".asResString())
-//            }
-//        }
-    }
-
     fun deleteRecipe(recipe: Recipe) {
-//        viewModelScope.launch {
-//            val deleteItemResp = itemUseCases.deleteItemUC(item)
-//            when {
-//                deleteItemResp is Result.Error -> showSnackBar(deleteItemResp.message!!)
-//                deleteItemResp.data == true -> showSnackBar("Item entfernt: ${item.name}".asResString()).also { updateWidgets() }
-//                else -> showSnackBar("Item nicht entfernt: ${item.name}".asResString())
-//            }
-//        }
-    }
-
-    fun editRecipe(recipe: Recipe) {
-//        viewModelScope.launch {
-//            when (val editItemResp = itemUseCases.editItemUC(item)) {
-//                is Result.Error -> showSnackBar(editItemResp.message!!)
-//                else -> showSnackBar("Item editiert".asResString()).also { updateWidgets() }
-//            }
-//        }
+        viewModelScope.launch {
+            val deleteRecipeResp = recipeUseCases.deleteRecipeUC(recipe)
+            when {
+                deleteRecipeResp is Result.Error -> showSnackBar(deleteRecipeResp.message!!)
+                deleteRecipeResp.data == true -> showSnackBar("Item entfernt: ${recipe.name}".asResString()).also { updateWidgets() }
+                else -> showSnackBar("Item nicht entfernt: ${recipe.name}".asResString())
+            }
+        }
     }
 
     fun editCategory(
@@ -89,6 +74,7 @@ class RecipesViewModel @Inject constructor(
         newCategory: String,
         color: Color
     ) {
+        //TODO
 //        viewModelScope.launch {
 //            when (val resp = itemUseCases.editCategoryUC(
 //                previousCategory,
@@ -102,6 +88,7 @@ class RecipesViewModel @Inject constructor(
     }
 
     fun shareRecipe(recipe: Recipe) {
+        //TODO
 //        viewModelScope.launch {
 //            when (val resp = itemUseCases.shareItemUC(item)) {
 //                is Result.Error -> showSnackBar(resp.message!!)
