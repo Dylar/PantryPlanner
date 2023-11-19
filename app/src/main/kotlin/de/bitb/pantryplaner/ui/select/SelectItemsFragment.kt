@@ -30,11 +30,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
@@ -42,8 +42,6 @@ import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.BaseFragment
-import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
-import de.bitb.pantryplaner.ui.base.KEY_RECIPE_UUID
 import de.bitb.pantryplaner.ui.base.NaviEvent
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
@@ -59,24 +57,18 @@ import de.bitb.pantryplaner.ui.comps.SelectItemHeader
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 import de.bitb.pantryplaner.ui.dialogs.FilterDialog
 import de.bitb.pantryplaner.ui.dialogs.useAddItemDialog
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SelectItemsFragment : BaseFragment<SelectItemsViewModel>() {
 
     companion object {
-        fun naviFromChecklistDetails(uuid: String): NaviEvent {
-            return NaviEvent.Navigate(
-                R.id.checklist_details_to_select_items,
-                bundleOf(KEY_CHECKLIST_UUID to uuid)
-            )
-        }
+        const val REQUEST_ITEMS = "itemsRequest"
+        const val ITEMS_KEY = "itemIds"
 
-        fun naviFromRecipeDetails(uuid: String): NaviEvent {
-            return NaviEvent.Navigate(
-                R.id.recipe_details_to_select_items,
-                bundleOf(KEY_RECIPE_UUID to uuid)
-            )
-        }
+        val naviFromChecklistDetails = NaviEvent.Navigate(R.id.checklist_details_to_select_items)
+        val naviFromRecipeDetails = NaviEvent.Navigate(R.id.recipe_details_to_select_items)
     }
 
     override val viewModel: SelectItemsViewModel by viewModels()
@@ -93,11 +85,6 @@ class SelectItemsFragment : BaseFragment<SelectItemsViewModel>() {
             else if (viewModel.filterBy.value.filterByTerm) Icons.Default.SavedSearch
             else Icons.Default.Search
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel.initItems(arguments?.getString(KEY_CHECKLIST_UUID))
-    }
-
     @Composable
     override fun screenContent() {
         showSearchBar = remember { mutableStateOf(false) }
@@ -110,7 +97,7 @@ class SelectItemsFragment : BaseFragment<SelectItemsViewModel>() {
         onBack { onDismiss ->
             ConfirmDialog(
                 "Änderungen verwerfen?",
-                "Möchten Sie die Item Auswahl verwerfen?",
+                "Möchten Sie die Item-Auswahl verwerfen?",
                 onConfirm = { navController.popBackStack() },
                 onDismiss = { onDismiss() },
             )
@@ -135,12 +122,23 @@ class SelectItemsFragment : BaseFragment<SelectItemsViewModel>() {
         }
 
         if (showAddToDialog.value) {
+            val scope = rememberCoroutineScope()
             ConfirmDialog(
                 "Hinzufügen?",
                 "Möchten Sie alle markierten Items der Checklist hinzufügen?",
                 onConfirm = {
-                    viewModel.addToChecklist()
-                    showAddToDialog.value = false
+                    scope.launch {
+                        showAddToDialog.value = false
+                        val result = Bundle().apply {
+                            putStringArray(
+                                ITEMS_KEY,
+                                viewModel.checkedItems.first().toTypedArray()
+                            )
+                        }
+                        parentFragmentManager.setFragmentResult(REQUEST_ITEMS, result)
+                        navController.popBackStack()
+                    }
+
                 },
                 onDismiss = { showAddToDialog.value = false },
             )

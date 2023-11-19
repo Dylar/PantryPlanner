@@ -12,7 +12,7 @@ data class Stock(
     val creator: String = "",
     val createdAt: String = "",
     val sharedWith: List<String> = listOf(),
-    val items: MutableList<StockItem> = mutableListOf(),
+    val items: List<StockItem> = listOf(),
     val isDeleted: Boolean = false,
 )
 

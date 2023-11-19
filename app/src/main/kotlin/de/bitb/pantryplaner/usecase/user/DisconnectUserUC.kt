@@ -10,16 +10,16 @@ class DisconnectUserUC(
     private val userRepo: UserRepository,
 ) {
     suspend operator fun invoke(removeUser: User): Result<Unit> {
-        // TODO disconnect both ?
         return tryIt {
             val userResp = userRepo.getUser().first()
             if (userResp is Result.Error) {
                 return@tryIt userResp.castTo()
             }
 
+            // TODO disconnect both ?
             val user = userResp.data!!
-            user.connectedUser.remove(removeUser.uuid)
-            val saveUserResp = userRepo.saveUser(user)
+            val conUser =  user.connectedUser.toMutableList().apply { remove(removeUser.uuid) }
+            val saveUserResp = userRepo.saveUser(user.copy(connectedUser = conUser))
             if (saveUserResp is Result.Error) saveUserResp.castTo()
             else Result.Success()
         }

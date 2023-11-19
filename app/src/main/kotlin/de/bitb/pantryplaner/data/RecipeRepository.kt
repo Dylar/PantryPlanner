@@ -23,7 +23,6 @@ class RecipeRepository(
         remoteDB.getUser(listOf(localDB.getUser()))
             .flatMapLatest { resp ->
                 if (resp is Result.Error) return@flatMapLatest flow { emit(resp.castTo()) }
-
                 val user = resp.data!!.firstOrNull() //TODO needed?
                     ?: return@flatMapLatest flow { emit("Benutzer nicht gefunden".asError()) }
                 remoteDB.getRecipes(user.uuid, uuids)

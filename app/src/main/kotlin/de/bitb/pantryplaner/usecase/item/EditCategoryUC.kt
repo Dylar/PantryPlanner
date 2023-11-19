@@ -27,10 +27,12 @@ class EditCategoryUC(
 
             val newCat = newCategory.capitalizeFirstCharacter()
             val oldCat = oldCategory.capitalizeFirstCharacter()
-            val settings = settingsResp.data!!.apply {
-                categoryColors.remove(oldCat)
-                categoryColors[newCat] = color.toArgb()
+            val oldSettings = settingsResp.data!!
+            val categoryColors =oldSettings .categoryColors.toMutableMap().apply {
+                remove(oldCat)
+                this[newCat] = color.toArgb()
             }
+            val settings = oldSettings.copy(categoryColors = categoryColors)
             val items = itemsResp.data!!
                 .toMutableList()
                 .apply {

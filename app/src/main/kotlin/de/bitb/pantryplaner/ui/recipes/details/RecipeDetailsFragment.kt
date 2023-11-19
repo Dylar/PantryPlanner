@@ -48,7 +48,6 @@ import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.data.model.Recipe
 import de.bitb.pantryplaner.data.model.groupByCategory
 import de.bitb.pantryplaner.ui.base.BaseFragment
-import de.bitb.pantryplaner.ui.base.KEY_RECIPE_UUID
 import de.bitb.pantryplaner.ui.base.NaviEvent
 import de.bitb.pantryplaner.ui.base.comps.DismissItem
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
@@ -72,6 +71,7 @@ import kotlinx.coroutines.launch
 class RecipeDetailsFragment : BaseFragment<RecipeViewModel>() {
 
     companion object {
+        const val KEY_RECIPE_UUID = "keyRecipeUUID"
         fun naviFromRecipes(uuid: String): NaviEvent =
             NaviEvent.Navigate(
                 R.id.recipes_to_recipe_details,
@@ -87,6 +87,14 @@ class RecipeDetailsFragment : BaseFragment<RecipeViewModel>() {
         super.onCreate(savedInstanceState)
         val uuid = arguments?.getString(KEY_RECIPE_UUID)
         viewModel.initRecipe(uuid)
+
+        parentFragmentManager.setFragmentResultListener(
+            SelectItemsFragment.REQUEST_ITEMS,
+            this
+        ) { _, bundle ->
+            val result = bundle.getStringArray(SelectItemsFragment.ITEMS_KEY)
+            viewModel.addItems(result?.toList().orEmpty())
+        }
     }
 
     @Composable
@@ -151,9 +159,7 @@ class RecipeDetailsFragment : BaseFragment<RecipeViewModel>() {
                     modifier = Modifier.testTag(RecipeDetailsPageTag.AddItemButton),
                     onClick = {
                         lifecycleScope.launch {
-                            viewModel.recipeModel.value?.data?.recipe?.uuid?.let {
-                                viewModel.navigate(SelectItemsFragment.naviFromRecipeDetails(it))
-                            }
+                            viewModel.navigate(SelectItemsFragment.naviFromRecipeDetails)
                         }
                     },
                     text = { Text(text = "Item") },
@@ -195,7 +201,7 @@ class RecipeDetailsFragment : BaseFragment<RecipeViewModel>() {
                 val items = model.items!!
                 // TODO stock tabs to check items available on each stock
                 val stocks = model.stocks!!
-                RecipeDetails(model, items, recipe)
+                RecipeDetails(model)
                 if (items.isEmpty()) {
                     EmptyListComp(getString(R.string.no_items))
                 } else {
@@ -219,13 +225,8 @@ class RecipeDetailsFragment : BaseFragment<RecipeViewModel>() {
     }
 
     @Composable
-    private fun RecipeDetails(
-        model: RecipeModel,
-        items: List<Item>,
-        recipe: Recipe,
-    ) {
+    private fun RecipeDetails(model: RecipeModel) {
         val isCreator = model.isCreator()
-        Logger.log("isCreator" to isCreator, "name" to recipe.name)
 
         buildUserDropDown(
             "Rezept wird nicht geteilt",
@@ -250,7 +251,7 @@ class RecipeDetailsFragment : BaseFragment<RecipeViewModel>() {
 
         buildCategoryDropDown(
             viewModel.recipeCategory,
-            items.map { it.category }.toList(),
+            model.items?.map { it.category }.orEmpty(),
             canChange = isCreator
         ) {
             viewModel.setCategory(it)

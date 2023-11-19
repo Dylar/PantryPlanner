@@ -20,6 +20,7 @@ import de.bitb.pantryplaner.data.UserDataExt
 import de.bitb.pantryplaner.data.UserRepository
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.data.model.Recipe
+import de.bitb.pantryplaner.data.model.RecipeItem
 import de.bitb.pantryplaner.data.model.Settings
 import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.User
@@ -123,7 +124,9 @@ class RecipeViewModel @Inject constructor(
             }
             .flatMapLatest { resp -> // flatmap to recipe data
                 if (resp is Result.Error) return@flatMapLatest flowOf(resp.castTo())
-                recipeData.map { recipe -> Result.Success(resp.data?.copy(recipe = recipe)) }
+                recipeData.map { recipe ->
+                    Result.Success(resp.data?.copy(recipe = recipe))
+                }
             }
     }
 
@@ -149,6 +152,17 @@ class RecipeViewModel @Inject constructor(
         }
     }
 
+    fun addItems(itemIds: List<String>) {
+        viewModelScope.launch {
+            recipeData.value?.let { recipe ->
+                val items = recipe.items.toMutableList().apply {
+                    addAll(itemIds.map { RecipeItem(it) })
+                }
+                recipeData.emit(recipe.copy(items = items))
+            }
+        }
+    }
+
     fun shareItem(item: Item) {
         viewModelScope.launch {
             when (val resp = itemUseCases.shareItemUC(item)) {
@@ -161,8 +175,10 @@ class RecipeViewModel @Inject constructor(
     fun removeItem(item: Item) {
         viewModelScope.launch {
             recipeData.value?.let { recipe ->
-                recipe.items.removeIf { it.uuid == item.uuid }
-                recipeData.emit(recipe)
+                val items = recipe.items.toMutableList().apply {
+                    removeIf { it.uuid == item.uuid }
+                }
+                recipeData.emit(recipe.copy(items = items))
             }
         }
     }
@@ -179,33 +195,31 @@ class RecipeViewModel @Inject constructor(
     }
 
     fun setName(text: String) {
-        Logger.log("setName" to text)
-//        viewModelScope.launch {
-        recipeData.value?.let { recipe ->
-            recipe.name = text
-            recipeName = text
-//                recipeData.emit(recipe)
-//        }
+        viewModelScope.launch {
+            recipeData.value?.let { recipe ->
+                recipeName = text
+                recipeData.emit(recipe.copy(name = text))
+            }
         }
     }
 
     fun setCategory(text: String) {
-        Logger.log("setCategory" to text)
-//        viewModelScope.launch {
-        recipeData.value?.let { recipe ->
-            recipe.category = text
-            recipeCategory.value = TextFieldValue(text, TextRange(text.length))
-//                recipeData.emit(recipe)
-//            }
+        viewModelScope.launch {
+            recipeData.value?.let { recipe ->
+                recipeCategory.value = TextFieldValue(text, TextRange(text.length))
+                recipeData.emit(recipe.copy(category = text))
+            }
         }
     }
 
     fun setSharedWith(users: List<User>) {
         viewModelScope.launch {
             recipeData.value?.let { recipe ->
-                recipe.sharedWith.clear()
-                recipe.sharedWith.addAll(users.map { it.uuid })
-                recipeData.emit(recipe)
+                val sharedUser = recipe.sharedWith.toMutableList().apply {
+                    clear()
+                    addAll(users.map { it.uuid })
+                }
+                recipeData.emit(recipe.copy(sharedWith = sharedUser))
             }
         }
     }
@@ -223,4 +237,5 @@ class RecipeViewModel @Inject constructor(
             }
         }
     }
+
 }

@@ -5,11 +5,11 @@ import java.util.UUID
 // TODO Receipe page show items you need (red) and which you have (green)
 data class Recipe(
     val uuid: String = UUID.randomUUID().toString(),
-    var name: String = "",
-    var category: String = "",
-    val items: MutableList<RecipeItem> = mutableListOf(),
+    val name: String = "",
+    val category: String = "",
+    val items: List<RecipeItem> = listOf(),
     val creator: String = "",
-    val sharedWith: MutableList<String> = mutableListOf(),
+    val sharedWith: List<String> = listOf(),
     val createdAt: String = "",
     val updatedAt: String = "",
 ) {

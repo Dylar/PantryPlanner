@@ -20,7 +20,12 @@ Feature: RecipesPage Recipe management
     And   Dropdown option "Mohammed Lee" is displayed
     And   Dropdown option "Andre Option" is displayed
     And   Select dropdown option "Mohammed Lee"
-#   TODO add items
+    And   Tap on RecipeDetailsPage AddItemButton
+    And   SelectItemsPage rendered
+    And   Tap on Item "SelectItem" in category "SelectCategory"
+    And   Tap on AddSelectionButton
+    And   Tap on Confirm
+    And   RecipeDetailsPage rendered
     And   Tap on SaveRecipeButton
     Then  RecipesPage rendered
     And   Recipe "NewRecipe" in category "NewCategory" is displayed
@@ -29,7 +34,7 @@ Feature: RecipesPage Recipe management
     And   Recipe name is "NewRecipe"
     And   Recipe category is "NewCategory"
     And   "RecipeDetailsPage" shared with "Mohammed Lee"
-#   TODO check items
+    And   Item "SelectItem" in category "SelectCategory" is displayed
 
   Scenario: Try to remove a Recipe, but cancel confirmation
     When  Swipe to remove Recipe "CreatorRecipe" in category "CreatorCategory"

@@ -10,7 +10,7 @@ Feature: ChecklistPage CreatorChecklist Items management
     And   Item "UnsharedItem" in category "UnsharedCategory" is NOT displayed
 
   Scenario: Create Item and add it
-    When  Tap on AddItemButton
+    When  Tap on ChecklistPage AddItemButton
     And   SelectItemsPage rendered
     And   Item "NewItem" in category "NewCategory" is NOT displayed
     And   Item "SelectItem" in category "SelectCategory" is displayed

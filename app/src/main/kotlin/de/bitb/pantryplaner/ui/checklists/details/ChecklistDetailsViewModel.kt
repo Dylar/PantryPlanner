@@ -193,6 +193,16 @@ class ChecklistViewModel @Inject constructor(
         }
     }
 
+    fun addItems(itemIds: List<String>) {
+        viewModelScope.launch {
+            when (val resp =
+                checkUseCases.addItemsUC(checkListId, itemIds)) {
+                is Result.Error -> showSnackBar(resp.message!!)
+                else -> showSnackBar("Items hinzugefügt".asResString())
+            }
+        }
+    }
+
     fun setSharedWith(users: List<User>) {
         viewModelScope.launch {
             when (val resp = checkUseCases.setSharedWithUC(checkListId, users)) {

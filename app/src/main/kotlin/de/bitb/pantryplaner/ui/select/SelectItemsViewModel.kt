@@ -16,10 +16,8 @@ import de.bitb.pantryplaner.data.model.Settings
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.data.model.groupByCategory
 import de.bitb.pantryplaner.ui.base.BaseViewModel
-import de.bitb.pantryplaner.ui.base.NaviEvent
 import de.bitb.pantryplaner.ui.base.comps.asResString
 import de.bitb.pantryplaner.ui.stock.INSTANT_SEARCH
-import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -48,10 +46,8 @@ class SelectItemsViewModel @Inject constructor(
     itemRepo: ItemRepository,
     private val settingsRepo: SettingsRepository,
     override val userRepo: UserRepository,
-    private val checkUseCases: ChecklistUseCases,
     private val itemUseCases: ItemUseCases,
 ) : BaseViewModel(), UserDataExt {
-    private var fromChecklistId: String? = null // TODO from Recipe?
 
     private val _isSearching = MutableStateFlow(false)
     val isSearching = _isSearching.asStateFlow()
@@ -86,10 +82,6 @@ class SelectItemsViewModel @Inject constructor(
 
     override fun isBackable(): Boolean = checkedItems.value.isEmpty()
 
-    fun initItems(checkUuid: String?) {
-        fromChecklistId = checkUuid
-    }
-
     fun search(text: String) {
         _isSearching.value = true
         filterBy.value = filterBy.value.copy(searchTerm = text)
@@ -117,13 +109,4 @@ class SelectItemsViewModel @Inject constructor(
         }
     }
 
-    fun addToChecklist() {
-        viewModelScope.launch {
-            when (val resp =
-                checkUseCases.addItemsUC(fromChecklistId!!, checkedItems.value)) {
-                is Result.Error -> showSnackBar(resp.message!!)
-                else -> navigate(NaviEvent.NavigateBack)
-            }
-        }
-    }
 }

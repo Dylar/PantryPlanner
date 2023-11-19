@@ -40,7 +40,7 @@ Feature: App walkthrough
     # ChecklistPage
     Then  ChecklistPage rendered
     And   No Items displayed
-    When  Tap on AddItemButton
+    When  Tap on ChecklistPage AddItemButton
     # SelectItemsPage
     Then  SelectItemsPage rendered
     And   No Items displayed
@@ -84,7 +84,7 @@ Feature: App walkthrough
     # ChecklistPage
     When  ChecklistPage rendered
     And   No Items displayed
-    Then  Tap on AddItemButton
+    Then  Tap on ChecklistPage AddItemButton
     # SelectItemsPage
     When  SelectItemsPage rendered
     And   Item "NewItem" in category "NewCategory" is displayed

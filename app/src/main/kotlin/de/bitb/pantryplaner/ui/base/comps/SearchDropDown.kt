@@ -56,7 +56,6 @@ fun buildCategoryDropDown(
         options = categorys,
         optionMapper = { it },
     ) { cat ->
-        Logger.log("SearchDropDown" to cat)
         category.value = TextFieldValue(cat, selection = TextRange(cat.length))
         onSelect(cat)
     }
@@ -202,7 +201,6 @@ private fun <T> SearchDropDown(
 //                        .background(BaseColors.FireRed.copy(alpha = .5f))
                         .testTag(DropDownItemTag(mappedOption)),
                     onClick = {
-                        Logger.log("SELECT" to mappedOption)
                         selectedState.value =
                             if (clearOnSelection) {
                                 TextFieldValue("")

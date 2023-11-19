@@ -14,7 +14,6 @@ class SaveRecipeUC(
     private val recipeRepo: RecipeRepository
 ) {
     suspend operator fun invoke(recipe: Recipe): Result<Boolean> {
-        Logger.log("SaveRecipeUC" to recipe)
         return tryIt(
             onError = { Result.Error(it, false) },
             onTry = {

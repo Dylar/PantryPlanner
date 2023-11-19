@@ -43,12 +43,13 @@ class AddEditStockItemUC(
 //                    freshUntil = freshUntil,
 //                    remindAfter = remindAfter,
                 )
-                stock.items
+                val items = stock.items.toMutableList()
+                items
                     .find { it.uuid == stockItem.uuid }
-                    ?.let { stock.items[stock.items.indexOf(it)] = updatedItem }
-                    ?: stock.items.add(updatedItem)
+                    ?.let { items[stock.items.indexOf(it)] = updatedItem }
+                    ?: items.add(updatedItem)
 
-                stockRepo.saveStock(stock)
+                stockRepo.saveStock(stock.copy(items = items))
             },
         )
     }

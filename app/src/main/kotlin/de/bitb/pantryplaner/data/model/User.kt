@@ -8,7 +8,7 @@ data class User(
     val email: String = "",
     val firstName: String = "",
     val lastName: String = "",
-    val connectedUser: MutableList<String> = mutableListOf(),
+    val connectedUser: List<String> = listOf(),
 ) {
     @get:Exclude
     val fullName: String

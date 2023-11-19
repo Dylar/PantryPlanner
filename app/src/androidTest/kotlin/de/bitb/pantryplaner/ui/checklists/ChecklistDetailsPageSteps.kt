@@ -15,7 +15,7 @@ import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 
 @HiltAndroidTest
-class ChecklistPageSteps(
+class ChecklistDetailsPageSteps(
     val scenarioData: ScenarioData,
 ) : ComposeTestRule by scenarioData.composeRule {
 
@@ -30,7 +30,7 @@ class ChecklistPageSteps(
         waitForIdle()
     }
 
-    @When("Tap on AddItemButton")
+    @When("Tap on ChecklistPage AddItemButton")
     fun tapOnAddItemButton() {
         tapOnFloatingActionButton(ChecklistPageTag.AddItemButton)
     }

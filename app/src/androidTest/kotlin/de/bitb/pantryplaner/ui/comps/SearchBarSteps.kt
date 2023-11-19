@@ -23,8 +23,8 @@ class SearchBarSteps(
         waitForIdle()
     }
 
-    @Then("Tap SearchBar on StockPage")
-    fun tapSearchBarOnStockPage() {
+    @Then("Tap SearchBar on StocksPage")
+    fun tapSearchBarOnStocksPage() {
         onNodeWithTag(StocksPageTag.SearchButton).performClick()
         waitForIdle()
     }

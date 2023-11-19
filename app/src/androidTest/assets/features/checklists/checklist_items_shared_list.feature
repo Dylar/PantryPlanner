@@ -9,7 +9,7 @@ Feature: ChecklistPage SharedChecklist Items management
     And   Item "UnsharedItem" in category "UnsharedCategory" is displayed
 
   Scenario: Add item
-    When  Tap on AddItemButton
+    When  Tap on ChecklistPage AddItemButton
     And   Tap on Item "SelectItem" in category "SelectCategory"
     And   Tap on AddSelectionButton
     And   Tap on Confirm

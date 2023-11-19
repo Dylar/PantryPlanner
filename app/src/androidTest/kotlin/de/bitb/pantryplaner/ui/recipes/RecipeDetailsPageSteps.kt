@@ -12,6 +12,7 @@ import de.bitb.pantryplaner.ui.base.testTags.SearchDropDownTag
 import de.bitb.pantryplaner.ui.tapOnFloatingActionButton
 import io.cucumber.java.en.And
 import io.cucumber.java.en.Then
+import io.cucumber.java.en.When
 
 @HiltAndroidTest
 class RecipeDetailsPageSteps(
@@ -47,6 +48,11 @@ class RecipeDetailsPageSteps(
     fun inputAsRecipeCategory(input: String) {
         onNodeWithTag(SearchDropDownTag("Kategorie")).performTextReplacement(input)
         waitForIdle()
+    }
+
+    @When("Tap on RecipeDetailsPage AddItemButton")
+    fun tapOnAddItemButton() {
+        tapOnFloatingActionButton(RecipeDetailsPageTag.AddItemButton)
     }
 
     @And("Tap on SaveRecipeButton")

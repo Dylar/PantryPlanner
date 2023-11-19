@@ -31,12 +31,12 @@ class ConnectUserUC(
                 return@tryIt "Benutzer schon verbunden".asError()
             }
 
-            user.connectedUser.add(newUserId)
-            val saveUserResp = userRepo.saveUser(user)
+            val conUser = user.connectedUser.toMutableList().apply { add(newUserId) }
+            val saveUserResp = userRepo.saveUser(user.copy(connectedUser = conUser))
             if (saveUserResp is Result.Error) return@tryIt saveUserResp.castTo()
 
-            newUser.connectedUser.add(user.uuid)
-            val saveNewUserResp = userRepo.saveUser(newUser)
+            val newConUser = newUser.connectedUser.toMutableList().apply { add(user.uuid) }
+            val saveNewUserResp = userRepo.saveUser(newUser.copy(connectedUser = newConUser))
             if (saveNewUserResp is Result.Error) saveNewUserResp.castTo()
             else Result.Success()
         }

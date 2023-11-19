@@ -10,7 +10,7 @@ import java.util.UUID
 data class Checklist(
     val uuid: String = UUID.randomUUID().toString(),
     val name: String = "",
-    val items: MutableList<CheckItem> = mutableListOf(),
+    val items: List<CheckItem> = listOf(),
     val finishedAt: String = "",
     val createdAt: String = "",
     val updatedAt: String = "",

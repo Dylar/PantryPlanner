@@ -42,7 +42,6 @@ import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.data.model.Filter
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.BaseFragment
-import de.bitb.pantryplaner.ui.base.KEY_CHECKLIST_UUID
 import de.bitb.pantryplaner.ui.base.NaviEvent
 import de.bitb.pantryplaner.ui.base.comps.DismissItem
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
@@ -60,9 +59,21 @@ import de.bitb.pantryplaner.ui.comps.SelectItemHeader
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 import de.bitb.pantryplaner.ui.dialogs.FilterDialog
 import de.bitb.pantryplaner.ui.select.SelectItemsFragment
+import de.bitb.pantryplaner.ui.select.SelectItemsFragment.Companion.ITEMS_KEY
+import de.bitb.pantryplaner.ui.select.SelectItemsFragment.Companion.REQUEST_ITEMS
 
 @AndroidEntryPoint
 class ChecklistDetailsFragment : BaseFragment<ChecklistViewModel>() {
+    companion object {
+        const val KEY_CHECKLIST_UUID = "keyChecklistUUID"
+        fun naviFromChecklists(uuid: String): NaviEvent {
+            return NaviEvent.Navigate(
+                R.id.checklists_to_checklist_details,
+                bundleOf(KEY_CHECKLIST_UUID to uuid)
+            )
+        }
+    }
+
     override val viewModel: ChecklistViewModel by viewModels()
 
     private lateinit var showGridLayout: MutableState<Boolean>
@@ -74,6 +85,10 @@ class ChecklistDetailsFragment : BaseFragment<ChecklistViewModel>() {
         val uuid = arguments?.getString(KEY_CHECKLIST_UUID)
             ?: throw NotFoundException("KEY_CHECKLIST_UUID not found")
         viewModel.initChecklist(uuid)
+        parentFragmentManager.setFragmentResultListener(REQUEST_ITEMS, this) { _, bundle ->
+            val result = bundle.getStringArray(ITEMS_KEY)
+            viewModel.addItems(result?.toList().orEmpty())
+        }
     }
 
     @Composable
@@ -167,9 +182,7 @@ class ChecklistDetailsFragment : BaseFragment<ChecklistViewModel>() {
             Spacer(modifier = Modifier.height(8.dp))
             ExtendedFloatingActionButton(
                 modifier = Modifier.testTag(ChecklistPageTag.AddItemButton),
-                onClick = {
-                    viewModel.navigate(SelectItemsFragment.naviFromChecklistDetails(viewModel.checkListId))
-                },
+                onClick = { viewModel.navigate(SelectItemsFragment.naviFromChecklistDetails) },
                 text = { Text(text = "Item") },
                 icon = {
                     Icon(
@@ -285,15 +298,6 @@ class ChecklistDetailsFragment : BaseFragment<ChecklistViewModel>() {
                 )
                 AddSubRow(checkItem.amount) { viewModel.changeItemAmount(item.uuid, it) }
             }
-        }
-    }
-
-    companion object {
-        fun naviFromChecklists(uuid: String): NaviEvent {
-            return NaviEvent.Navigate(
-                R.id.checklists_to_checklist_details,
-                bundleOf(KEY_CHECKLIST_UUID to uuid)
-            )
         }
     }
 }
