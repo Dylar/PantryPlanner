@@ -117,6 +117,7 @@ object UsecaseModule {
     @Singleton
     fun provideRecipeUseCases(
         userRepo: UserRepository,
+        stockRepo: StockRepository,
         checkRepo: CheckRepository,
         recipeRepo: RecipeRepository,
     ): RecipeUseCases {
@@ -127,7 +128,9 @@ object UsecaseModule {
             removeItemsUC = RemoveRecipeItemsUC(checkRepo),
             setItemAmountUC = SetRecipeItemAmountUC(checkRepo),
             setSharedWithUC = SetRecipeSharedWithUC(userRepo, checkRepo),
-            saveRecipeUC = SaveRecipeUC(userRepo, recipeRepo)
+            saveRecipeUC = SaveRecipeUC(userRepo, recipeRepo),
+            isCookableUC = IsCookableUC(),
+            cookRecipeUC = CookRecipeUC(stockRepo),
         )
     }
 

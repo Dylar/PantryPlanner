@@ -70,7 +70,6 @@ import de.bitb.pantryplaner.ui.base.highlightedText
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.ItemTag
 import de.bitb.pantryplaner.ui.base.testTags.StocksPageTag
-import de.bitb.pantryplaner.ui.base.testTags.UnsharedIconTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.checklists.ChecklistsFragment
 import de.bitb.pantryplaner.ui.comps.AddSubRow
@@ -438,7 +437,7 @@ class StocksFragment : BaseFragment<StocksViewModel>() {
                     Icon(
                         Icons.Filled.LinkOff,
                         modifier = Modifier
-                            .testTag(UnsharedIconTag)
+                            .testTag(ItemTag.UnsharedIconTag)
                             .padding(4.dp)
                             .size(18.dp),
                         contentDescription = null,

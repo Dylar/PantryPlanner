@@ -18,8 +18,10 @@ import de.bitb.pantryplaner.usecase.item.EditCategoryUC
 import de.bitb.pantryplaner.usecase.item.EditItemUC
 import de.bitb.pantryplaner.usecase.item.ShareItemUC
 import de.bitb.pantryplaner.usecase.recipe.AddRecipeItemsUC
+import de.bitb.pantryplaner.usecase.recipe.CookRecipeUC
 import de.bitb.pantryplaner.usecase.recipe.CreateRecipeUC
 import de.bitb.pantryplaner.usecase.recipe.DeleteRecipeUC
+import de.bitb.pantryplaner.usecase.recipe.IsCookableUC
 import de.bitb.pantryplaner.usecase.recipe.RemoveRecipeItemsUC
 import de.bitb.pantryplaner.usecase.recipe.SaveRecipeUC
 import de.bitb.pantryplaner.usecase.recipe.SetRecipeItemAmountUC
@@ -85,4 +87,6 @@ data class RecipeUseCases(
     val setItemAmountUC: SetRecipeItemAmountUC,
     val setSharedWithUC: SetRecipeSharedWithUC,
     val saveRecipeUC: SaveRecipeUC,
+    val isCookableUC: IsCookableUC,
+    val cookRecipeUC: CookRecipeUC,
 )

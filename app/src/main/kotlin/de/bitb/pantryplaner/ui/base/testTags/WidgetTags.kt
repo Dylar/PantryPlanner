@@ -11,8 +11,6 @@ sealed class AddSubRowTag : TestTag {
     object MinusButton : AddSubRowTag()
 }
 
-object UnsharedIconTag : TestTag
-
 sealed class BottomNaviTag : TestTag {
     object ChecklistsButton : BottomNaviTag()
     object StocksButton : BottomNaviTag()

@@ -1,12 +1,14 @@
 package de.bitb.pantryplaner.ui.recipes
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -14,9 +16,9 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.GridOff
 import androidx.compose.material.icons.filled.GridOn
-import androidx.compose.material.icons.filled.LinkOff
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -26,7 +28,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,7 +36,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.data.model.Recipe
-import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.data.model.groupByCategory
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.NaviEvent
@@ -45,13 +45,12 @@ import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.FloatingExpandingButton
 import de.bitb.pantryplaner.ui.base.comps.GridListLayout
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
+import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.RecipeTag
 import de.bitb.pantryplaner.ui.base.testTags.RecipesPageTag
-import de.bitb.pantryplaner.ui.base.testTags.UnsharedIconTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.checklists.ChecklistsFragment
 import de.bitb.pantryplaner.ui.comps.buildBottomNavi
-import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 import de.bitb.pantryplaner.ui.profile.ProfileFragment
 import de.bitb.pantryplaner.ui.recipes.details.RecipeDetailsFragment
 import de.bitb.pantryplaner.ui.settings.SettingsFragment
@@ -137,7 +136,7 @@ class RecipesFragment : BaseFragment<RecipesViewModel>() {
                 val model = modelResp!!.data!!
                 val settings = model.settings!!
                 val recipes = model.recipes!!
-                val user = model.user!!
+                val cookableMap = model.cookableMap!!
 
                 Column(
                     verticalArrangement = Arrangement.Top
@@ -155,7 +154,16 @@ class RecipesFragment : BaseFragment<RecipesViewModel>() {
                         viewModel::editCategory
                     ) { _, recipe ->
                         val color = settings.categoryColor(recipe)
-                        ListItem(recipe, user, color)
+                        DismissItem(
+                            recipe.name,
+                            color,
+                            onSwipe = { viewModel.deleteRecipe(recipe) },
+                            onClick = {
+                                viewModel.navigate(
+                                    RecipeDetailsFragment.naviFromRecipes(recipe.uuid)
+                                )
+                            },
+                        ) { RecipeItem(recipe, cookableMap[recipe.uuid] ?: false) }
                     }
                 }
             }
@@ -163,41 +171,12 @@ class RecipesFragment : BaseFragment<RecipesViewModel>() {
     }
 
     @Composable
-    private fun ListItem(
-        recipe: Recipe,
-        user: User,
-        color: Color,
-    ) {
-        val showActionDialog = remember { mutableStateOf(false) }
-        val isShared = recipe.sharedWith(user.uuid)
-        if (!isShared) {
-            if (showActionDialog.value) {
-                ConfirmDialog(
-                    "Rezept hinzufügen",
-                    "Möchten Sie das Rezept ihrem Rezept-Pool hinzufügen?",
-                    onConfirm = {
-                        showActionDialog.value = false
-                        viewModel.shareRecipe(recipe)
-                    },
-                    onDismiss = { showActionDialog.value = false },
-                )
-            }
-        }
-
-        DismissItem(
-            recipe.name,
-            color,
-            onSwipe = { viewModel.deleteRecipe(recipe) },
-            onClick = { showActionDialog.value = true },
-            onLongClick = { viewModel.navigate(RecipeDetailsFragment.naviFromRecipes(recipe.uuid)) },
-        ) { RecipeItem(isShared, recipe) }
-    }
-
-    @Composable
-    private fun RecipeItem(isShared: Boolean, recipe: Recipe) {
+    private fun RecipeItem(recipe: Recipe, isCookable: Boolean) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .defaultMinSize(minHeight = 48.dp)
+                .padding(12.dp)
                 .testTag(RecipeTag(recipe.name, recipe.category)),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Center,
@@ -209,22 +188,21 @@ class RecipesFragment : BaseFragment<RecipesViewModel>() {
                     recipe.name,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1f)
-                        .padding(horizontal = 12.dp, vertical = 4.dp),
+                        .weight(1f),
                     fontSize = 16.sp,
                     textAlign = TextAlign.Start
                 )
-                if (!isShared)
-                    Icon(
-                        Icons.Filled.LinkOff,
-                        modifier = Modifier
-                            .testTag(UnsharedIconTag)
-                            .padding(4.dp)
-                            .size(18.dp),
-                        contentDescription = null,
-                    )
+                Icon(
+                    modifier = Modifier
+                        .testTag(if (isCookable) RecipeTag.CookableIconTag else RecipeTag.UncookableIconTag)
+                        .background(
+                            if (isCookable) BaseColors.Green else BaseColors.Red,
+                            shape = CircleShape
+                        ),
+                    imageVector = Icons.Default.Circle,
+                    contentDescription = "cookable indicator"
+                )
             }
-//TODO check stock if cookable
         }
     }
 

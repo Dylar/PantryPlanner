@@ -2,12 +2,16 @@ package de.bitb.pantryplaner.ui.recipes
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextReplacement
 import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.hasTextInHierarchy
+import de.bitb.pantryplaner.core.onNodeWithParentTag
 import de.bitb.pantryplaner.core.onNodeWithTag
+import de.bitb.pantryplaner.core.sleepFor
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.testTags.RecipeDetailsPageTag
+import de.bitb.pantryplaner.ui.base.testTags.RecipeTag
 import de.bitb.pantryplaner.ui.base.testTags.SearchDropDownTag
 import de.bitb.pantryplaner.ui.tapOnFloatingActionButton
 import io.cucumber.java.en.And
@@ -22,6 +26,27 @@ class RecipeDetailsPageSteps(
     @Then("RecipeDetailsPage rendered")
     fun renderRecipeDetailsPage() {
         assertRecipeDetailsPageRendered()
+    }
+
+    @Then("Recipe is cookable")
+    fun recipeIsCookable() {
+        onNodeWithParentTag(
+            RecipeDetailsPageTag.AppBar,
+            RecipeTag.CookableIconTag,
+            true,
+        ).assertIsDisplayed()
+        waitForIdle()
+    }
+
+    @Then("Recipe is NOT cookable")
+    fun recipeIsNotCookable() {
+        sleepFor()
+        onNodeWithParentTag(
+            RecipeDetailsPageTag.AppBar,
+            RecipeTag.UncookableIconTag,
+            true,
+        ).assertIsDisplayed()
+        waitForIdle()
     }
 
     @Then("Recipe name is {string}")
@@ -55,9 +80,29 @@ class RecipeDetailsPageSteps(
         tapOnFloatingActionButton(RecipeDetailsPageTag.AddItemButton)
     }
 
+    @And("Tap on CookButton")
+    fun tapOnCreateCookButton() {
+        tapOnFloatingActionButton(RecipeDetailsPageTag.CookButton)
+    }
+
     @And("Tap on SaveRecipeButton")
     fun tapOnCreateRecipeButton() {
         tapOnFloatingActionButton(RecipeDetailsPageTag.SaveRecipeButton)
+    }
+
+    @And("SaveRecipeButton is NOT displayed")
+    fun assertSaveRecipeButtonIsNotDisplayed() {
+        onNodeWithTag(RecipeDetailsPageTag.SaveRecipeButton).assertDoesNotExist()
+    }
+
+    @And("CookButton is displayed")
+    fun assertCookButtonIsDisplayed() {
+        onNodeWithTag(RecipeDetailsPageTag.CookButton).assertIsDisplayed()
+    }
+
+    @And("CookButton is NOT displayed")
+    fun assertCookButtonIsNotDisplayed() {
+        onNodeWithTag(RecipeDetailsPageTag.CookButton).assertDoesNotExist()
     }
 }
 

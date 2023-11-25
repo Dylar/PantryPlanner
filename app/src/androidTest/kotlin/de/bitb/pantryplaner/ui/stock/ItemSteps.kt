@@ -22,7 +22,6 @@ import de.bitb.pantryplaner.core.onNodeWithTextWithParentTag
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.testTags.AddSubRowTag
 import de.bitb.pantryplaner.ui.base.testTags.ItemTag
-import de.bitb.pantryplaner.ui.base.testTags.UnsharedIconTag
 import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
@@ -59,7 +58,7 @@ class ItemSteps(
     fun itemInCategoryUnsharedIconIsDisplayed(name: String, category: String) {
         onNodeWithParentTag(
             ItemTag(name, category),
-            UnsharedIconTag,
+            ItemTag.UnsharedIconTag,
             true,
         ).performScrollTo().assertIsDisplayed()
     }
@@ -68,7 +67,7 @@ class ItemSteps(
     fun itemInCategoryUnsharedIconIsNotDisplayed(name: String, category: String) {
         assertNodeWithParentTagDoesNotExists(
             ItemTag(name, category),
-            UnsharedIconTag,
+            ItemTag.UnsharedIconTag,
             true,
         )
     }

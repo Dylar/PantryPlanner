@@ -29,7 +29,7 @@ Feature: RecipesPage Recipe management
     And   Tap on SaveRecipeButton
     Then  RecipesPage rendered
     And   Recipe "NewRecipe" in category "NewCategory" is displayed
-    And   LongPress on Recipe "NewRecipe" in category "NewCategory"
+    And   Tap on Recipe "NewRecipe" in category "NewCategory"
     And   RecipeDetailsPage rendered
     And   Recipe name is "NewRecipe"
     And   Recipe category is "NewCategory"
@@ -73,12 +73,13 @@ Feature: RecipesPage Recipe management
     And   No Recipes displayed
 
   Scenario: Prevent non-creator from editing a Recipe
-    When  LongPress on Recipe "SharedRecipe" in category "SharedCategory"
+    When  Tap on Recipe "SharedRecipe" in category "SharedCategory"
     And   RecipeDetailsPage rendered
-    And   FloatingActionButton is NOT displayed
+    And   Tap on FloatingActionButton
+    Then  SaveRecipeButton is NOT displayed
 
   Scenario: Edit a created Recipe
-    When  LongPress on Recipe "CreatorRecipe" in category "CreatorCategory"
+    When  Tap on Recipe "CreatorRecipe" in category "CreatorCategory"
     And   RecipeDetailsPage rendered
     And   "RecipeDetailsPage" shared with "Mohammed Lee"
     And   Input "EditRecipe" as Recipe name
@@ -91,7 +92,7 @@ Feature: RecipesPage Recipe management
     And   RecipesPage rendered
     Then  Recipe "EditRecipe" in category "EditCategory" is displayed
     And   Recipe "CreatorRecipe" in category "CreatorCategory" is NOT displayed
-    And   LongPress on Recipe "EditRecipe" in category "EditCategory"
+    And   Tap on Recipe "EditRecipe" in category "EditCategory"
     And   Recipe name is "EditRecipe"
     And   Recipe category is "EditCategory"
     And   "RecipeDetailsPage" shared with "Andre Option"

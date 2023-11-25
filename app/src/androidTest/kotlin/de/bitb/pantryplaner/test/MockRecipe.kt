@@ -1,6 +1,6 @@
 package de.bitb.pantryplaner.test
 
-import de.bitb.pantryplaner.core.createFlows
+import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.core.parsePOKO
 import de.bitb.pantryplaner.data.model.Recipe
@@ -10,6 +10,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.onEach
 
 fun parseRecipeCreator(): Recipe = parsePOKO("recipe_creator")
 fun parseRecipeShared(): Recipe = parsePOKO("recipe_shared")
@@ -19,24 +20,18 @@ fun RecipeRemoteDao.mockRecipeDao(
     recipes: List<Recipe> = emptyList()
 ) {
     val allFlow = MutableStateFlow(recipes)
-    val recipesFlows =
-        createFlows(recipes) { recipe -> (listOf(recipe.creator) + recipe.sharedWith) }
-
     coEvery { getRecipes(any(), any()) }.answers {
         val userId = firstArg<String>()
         val uuids = secondArg<List<String>?>()
 
-        val flow = recipesFlows[userId] ?: MutableStateFlow(Result.Success(emptyList()))
-        recipesFlows[userId] = flow
-
         allFlow.flatMapLatest { recipesList ->
-            flow.apply {
-                value = Result.Success(
-                    recipesList
-                        .filter { uuids?.contains(it.uuid) ?: true }
-                        .filter { it.creator == userId || it.sharedWith.contains(userId) }
-                )
-            }
+            val flow = MutableStateFlow<Result<List<Recipe>>>(Result.Success(emptyList()))
+            flow.value = Result.Success(
+                recipesList
+                    .filter { uuids?.contains(it.uuid) ?: true }
+                    .filter { it.creator == userId || it.sharedWith.contains(userId) }
+            )
+            flow
         }
     }
     coEvery { addRecipe(any()) }.answers {

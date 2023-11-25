@@ -24,6 +24,11 @@ class NavigationSteps(
     fun floatingExpandingButtonIsNotDisplayed() =
         onNodeWithTag(FloatingExpandingButtonTag).assertDoesNotExist()
 
+    @When("Tap on FloatingActionButton")
+    fun performTapOnFloatingActionButton() {
+        onNodeWithTag(FloatingExpandingButtonTag).performClick()
+    }
+
     @When("Navi to ChecklistsPage")
     fun performTapOnChecklistsButton() {
         tapOnChecklistsButton()

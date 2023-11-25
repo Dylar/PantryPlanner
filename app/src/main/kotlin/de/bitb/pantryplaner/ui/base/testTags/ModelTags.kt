@@ -12,6 +12,11 @@ sealed class SharedWithTag : TestTag {
 
 data class UserTag(val fullName: String) : TestTag
 data class StockTag(val name: String) : TestTag
-data class ItemTag(val name: String, val category: String) : TestTag
+data class ItemTag(val name: String, val category: String) : TestTag{
+    object UnsharedIconTag : TestTag
+}
 data class ChecklistTag(val name: String) : TestTag
-data class RecipeTag(val name: String, val category: String) : TestTag
+data class RecipeTag(val name: String, val category: String) : TestTag {
+    object CookableIconTag : TestTag
+    object UncookableIconTag : TestTag
+}

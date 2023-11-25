@@ -10,7 +10,6 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.data.ItemRepository
 import de.bitb.pantryplaner.data.RecipeRepository
@@ -26,6 +25,7 @@ import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseViewModel
 import de.bitb.pantryplaner.ui.base.NaviEvent
+import de.bitb.pantryplaner.ui.base.comps.asResString
 import de.bitb.pantryplaner.usecase.ItemUseCases
 import de.bitb.pantryplaner.usecase.RecipeUseCases
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -49,9 +49,12 @@ data class RecipeModel(
     val user: User? = null,
     val connectedUser: List<User>? = null,
     val sharedUser: List<User>? = null,
+    val isCookable: Boolean? = null,
 ) {
     val isLoading: Boolean
-        get() = settings == null || recipe == null || items == null || stocks == null || user == null || connectedUser == null || sharedUser == null
+        get() = settings == null || stocks == null ||
+                recipe == null || items == null || isCookable == null ||
+                user == null || connectedUser == null || sharedUser == null
 
     fun isCreator(): Boolean = recipe?.isNew() == true || user?.uuid == recipe?.creator
     fun isSharedWith(item: Item): Boolean = item.sharedWith(user?.uuid ?: "")
@@ -111,14 +114,16 @@ class RecipeViewModel @Inject constructor(
                         user is Result.Error -> user.castTo()
                         users is Result.Error -> users.castTo()
                         stocks is Result.Error -> stocks.castTo()
-                        else -> Result.Success(
-                            RecipeModel(
-                                settings = settings.data,
-                                user = user.data,
-                                connectedUser = users.data,
-                                stocks = stocks.data,
+                        else -> {
+                            Result.Success(
+                                RecipeModel(
+                                    settings = settings.data,
+                                    user = user.data,
+                                    connectedUser = users.data,
+                                    stocks = stocks.data,
+                                )
                             )
-                        )
+                        }
                     }
                 }
             }
@@ -142,12 +147,20 @@ class RecipeViewModel @Inject constructor(
             when {
                 user is Result.Error -> user.castTo()
                 items is Result.Error -> items.castTo()
-                else -> Result.Success(
-                    model?.copy(
-                        items = items.data,
-                        sharedUser = user.data,
+                else -> {
+                    val cookableMap = recipeUseCases.isCookableUC(
+                        model?.stocks.orEmpty(),
+                        model?.recipe?.let { listOf(it) }.orEmpty()
                     )
-                )
+                    if (cookableMap is Result.Error) return@combine cookableMap.castTo()
+                    Result.Success(
+                        model?.copy(
+                            items = items.data,
+                            sharedUser = user.data,
+                            isCookable = cookableMap.data.orEmpty().values.first(),
+                        )
+                    )
+                }
             }
         }
     }
@@ -233,6 +246,29 @@ class RecipeViewModel @Inject constructor(
                 when (result) {
                     is Result.Error -> showSnackBar(result.message!!)
                     else -> navigate(NaviEvent.NavigateBack)
+                }
+            }
+        }
+    }
+
+    fun cookRecipe() {
+        viewModelScope.launch {
+            recipeModel.value?.data?.let { model ->
+                val recipe = model.recipe!!
+                val stock = model.stocks?.find { stock ->
+                    recipe.items.all { recipeItem ->
+                        stock.items.any { stockItem -> //TODO selectStockDialog
+                            recipeItem.uuid == stockItem.uuid && stockItem.amount >= recipeItem.amount
+                        }
+                    }
+                }
+                if (stock == null) {
+                    showSnackBar("Kein Bestand gefunden".asResString())
+                } else {
+                    when (val result = recipeUseCases.cookRecipeUC(recipe, stock)) {
+                        is Result.Error -> showSnackBar(result.message!!)
+                        else -> showSnackBar("Hoffentlich hat es geschmeckt <3".asResString())
+                    }
                 }
             }
         }
