@@ -49,7 +49,6 @@ class ChecklistsViewModel @Inject constructor(
             else -> {
                 val stocks = stocksResp.data
                 val groupedChecklists = checklistsResp.data
-                    ?.filter { check -> stocks?.any { check.stock == it.uuid } ?: false }
                     ?.groupBy { it.finished }
                     ?.toSortedMap()
                 Result.Success(

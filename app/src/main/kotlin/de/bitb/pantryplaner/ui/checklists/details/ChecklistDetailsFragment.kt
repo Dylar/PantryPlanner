@@ -58,6 +58,7 @@ import de.bitb.pantryplaner.ui.comps.AddSubRow
 import de.bitb.pantryplaner.ui.comps.SelectItemHeader
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 import de.bitb.pantryplaner.ui.dialogs.FilterDialog
+import de.bitb.pantryplaner.ui.dialogs.useSelectStockDialog
 import de.bitb.pantryplaner.ui.select.SelectItemsFragment
 import de.bitb.pantryplaner.ui.select.SelectItemsFragment.Companion.ITEMS_KEY
 import de.bitb.pantryplaner.ui.select.SelectItemsFragment.Companion.REQUEST_ITEMS
@@ -209,10 +210,10 @@ class ChecklistDetailsFragment : BaseFragment<ChecklistViewModel>() {
                 val items = model.items!!
                 val stocks = model.stocks!!
                 val connectedUsers = model.connectedUser!!
+                val stockFound = stocks.firstOrNull { it.uuid == checklist.stock } ?: stocks.first()
 
                 val selectedUser = remember { mutableStateOf(model.sharedUser!!) }
-                val selectedStock =
-                    remember { mutableStateOf(stocks.first { it.uuid == checklist.stock }) }
+                val selectedStock = remember { mutableStateOf(stockFound) }
 
                 val canChange = model.isCreator()
                 buildStockDropDown(
@@ -222,6 +223,7 @@ class ChecklistDetailsFragment : BaseFragment<ChecklistViewModel>() {
                 ) {
                     viewModel.changeStock(it)
                 }
+
                 buildUserDropDown(
                     "Checkliste wird nicht geteilt",
                     connectedUsers,

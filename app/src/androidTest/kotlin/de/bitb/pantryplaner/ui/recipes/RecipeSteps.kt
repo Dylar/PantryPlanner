@@ -62,7 +62,7 @@ class RecipeSteps(
     }
 
     @When("Tap on Recipe {string} in category {string}")
-    fun tpOnRecipe(name: String, category: String) {
+    fun tapOnRecipe(name: String, category: String) {
         onNodeWithTag(RecipeTag(name, category), true).performClick()
         waitForIdle()
     }

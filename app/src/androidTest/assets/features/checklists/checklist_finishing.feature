@@ -32,6 +32,16 @@ Feature: ChecklistPage Un/Finish checklist
     Then  Item "CreatorItem" in category "CreatorCategory" has amount 1.0
     And   Item "SharedItem" in category "SharedCategory" has amount 4.5
 
+  Scenario: Prevent Checklist without Stock from finishing
+    Given Swipe to remove Stock "CreatorStock"
+    And   Tap on Confirm
+    And   Navi to ChecklistsPage
+    And   Tap on Checklist "CreatorChecklist"
+    When  Tap on FinishButton
+    Then  SelectStockDialog is displayed
+    And   Tap on Stock "SharedStock"
+    And   ChecklistsPage rendered
+
   Scenario: Prevent non-creator from finish Checklist
     Given On Back
     And   Tap on Checklist "SharedChecklist"

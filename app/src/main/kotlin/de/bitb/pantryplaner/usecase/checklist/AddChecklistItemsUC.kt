@@ -25,7 +25,7 @@ class AddChecklistItemsUC(
 
                 val checklist = getResp.data!!.first()
                 val items = itemIds
-                    .filter { item -> checklist.items.firstOrNull { it.uuid == item } == null }
+                    .filter { item -> checklist.items.none { it.uuid == item } }
                     .map { CheckItem(it) }
                 val saveChecklist = checklist.copy(
                     items = setOf(

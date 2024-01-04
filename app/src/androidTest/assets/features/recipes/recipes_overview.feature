@@ -7,7 +7,7 @@ Feature: RecipesPage Recipe management
     And   Recipe "CreatorRecipe" in category "CreatorCategory" is displayed
     And   Recipe "SharedRecipe" in category "SharedCategory" is displayed
 
-# TODO filter for cookable
+#TODO filter for cookable
 
   Scenario: Create a new Recipe
     Given Tap on NewRecipeButton
@@ -99,3 +99,5 @@ Feature: RecipesPage Recipe management
     And   On Back
     And   Navi to RecipesPage
     And   Recipe "EditRecipe" in category "EditCategory" is displayed
+
+    #TODO  Long press add to checklist

@@ -11,12 +11,14 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.bitb.pantryplaner.core.misc.Result
+import de.bitb.pantryplaner.data.CheckRepository
 import de.bitb.pantryplaner.data.ItemRepository
 import de.bitb.pantryplaner.data.RecipeRepository
 import de.bitb.pantryplaner.data.SettingsRepository
 import de.bitb.pantryplaner.data.StockRepository
 import de.bitb.pantryplaner.data.UserDataExt
 import de.bitb.pantryplaner.data.UserRepository
+import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.data.model.Recipe
 import de.bitb.pantryplaner.data.model.RecipeItem
@@ -26,6 +28,7 @@ import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseViewModel
 import de.bitb.pantryplaner.ui.base.NaviEvent
 import de.bitb.pantryplaner.ui.base.comps.asResString
+import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
 import de.bitb.pantryplaner.usecase.RecipeUseCases
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -46,13 +49,14 @@ data class RecipeModel(
     val recipe: Recipe? = null,
     val items: List<Item>? = null,
     val stocks: List<Stock>? = null,
+    val checklists: List<Checklist>? = null,
     val user: User? = null,
     val connectedUser: List<User>? = null,
     val sharedUser: List<User>? = null,
     val isCookable: Boolean? = null,
 ) {
     val isLoading: Boolean
-        get() = settings == null || stocks == null ||
+        get() = settings == null || stocks == null || checklists == null ||
                 recipe == null || items == null || isCookable == null ||
                 user == null || connectedUser == null || sharedUser == null
 
@@ -66,10 +70,12 @@ class RecipeViewModel @Inject constructor(
     private val settingsRepo: SettingsRepository,
     override val userRepo: UserRepository,
     private val stockRepo: StockRepository,
+    private val checkRepo: CheckRepository,
     private val itemRepo: ItemRepository,
     private val recipeRepo: RecipeRepository,
     private val recipeUseCases: RecipeUseCases,
     private val itemUseCases: ItemUseCases,
+    private val checkUseCases: ChecklistUseCases,
 ) : BaseViewModel(), UserDataExt {
 
     lateinit var recipeModel: LiveData<Result<RecipeModel>>
@@ -108,12 +114,14 @@ class RecipeViewModel @Inject constructor(
                     userRepo.getUser(),
                     getConnectedUsers().asFlow(),
                     stockRepo.getStocks(),
-                ) { settings, user, users, stocks ->
+                    checkRepo.getCheckLists(),
+                ) { settings, user, users, stocks, checklists ->
                     when {
                         settings is Result.Error -> settings.castTo()
                         user is Result.Error -> user.castTo()
                         users is Result.Error -> users.castTo()
                         stocks is Result.Error -> stocks.castTo()
+                        checklists is Result.Error -> checklists.castTo()
                         else -> {
                             Result.Success(
                                 RecipeModel(
@@ -121,6 +129,7 @@ class RecipeViewModel @Inject constructor(
                                     user = user.data,
                                     connectedUser = users.data,
                                     stocks = stocks.data,
+                                    checklists = checklists.data?.filter { !it.finished }
                                 )
                             )
                         }
@@ -270,6 +279,15 @@ class RecipeViewModel @Inject constructor(
                         else -> showSnackBar("Hoffentlich hat es geschmeckt <3".asResString())
                     }
                 }
+            }
+        }
+    }
+
+    fun addRecipeToChecklist(check: Checklist, recipe: Recipe) {
+        viewModelScope.launch {
+            when (val resp = checkUseCases.addRecipeUC(check, recipe)) {
+                is Result.Error -> showSnackBar(resp.message!!)
+                else -> showSnackBar("Zutaten wurden \"${check.name}\" hinzugefügt".asResString())
             }
         }
     }

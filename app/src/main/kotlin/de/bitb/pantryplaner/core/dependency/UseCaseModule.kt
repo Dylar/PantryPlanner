@@ -9,6 +9,7 @@ import de.bitb.pantryplaner.data.source.*
 import de.bitb.pantryplaner.usecase.*
 import de.bitb.pantryplaner.usecase.alert.RefreshAlertUC
 import de.bitb.pantryplaner.usecase.checklist.AddChecklistItemsUC
+import de.bitb.pantryplaner.usecase.checklist.AddRecipeToChecklistUC
 import de.bitb.pantryplaner.usecase.checklist.CheckItemUC
 import de.bitb.pantryplaner.usecase.checklist.CreateChecklistUC
 import de.bitb.pantryplaner.usecase.checklist.DeleteChecklistUC
@@ -101,6 +102,7 @@ object UsecaseModule {
         return ChecklistUseCases(
             createChecklistUC = CreateChecklistUC(userRepo, checkRepo),
             deleteChecklistUC = DeleteChecklistUC(userRepo, checkRepo),
+            addRecipeUC = AddRecipeToChecklistUC(checkRepo),
             addItemsUC = AddChecklistItemsUC(checkRepo),
             removeItemsUC = RemoveChecklistItemsUC(checkRepo),
             checkItemUC = CheckItemUC(checkRepo),

@@ -69,6 +69,7 @@ import de.bitb.pantryplaner.ui.base.testTags.RecipeTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.comps.AddSubRow
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
+import de.bitb.pantryplaner.ui.dialogs.useSelectChecklistDialog
 import de.bitb.pantryplaner.ui.select.SelectItemsFragment
 import kotlinx.coroutines.launch
 
@@ -149,6 +150,7 @@ class RecipeDetailsFragment : BaseFragment<RecipeViewModel>() {
                         imageVector = Icons.Default.Circle,
                         contentDescription = "cookable indicator"
                     )
+                    Spacer(modifier = Modifier.padding(start = 8.dp))
                     Text(
                         recipeModel?.data?.recipe?.name ?: getString(R.string.loading_text),
                         maxLines = 1,
@@ -176,8 +178,8 @@ class RecipeDetailsFragment : BaseFragment<RecipeViewModel>() {
         if (recipeModel?.data?.isLoading != false) return
         FloatingExpandingButton {
             val model = recipeModel.data
-            val recipe = model.recipe
-            val isOld = recipe?.isNew() == false
+            val recipe = model.recipe!!
+            val isOld = !recipe.isNew()
             if (isCookable && isOld) {
                 var showCookConfirmDialog by remember { mutableStateOf(false) }
                 if (showCookConfirmDialog) {
@@ -205,22 +207,13 @@ class RecipeDetailsFragment : BaseFragment<RecipeViewModel>() {
                 Spacer(modifier = Modifier.height(8.dp))
             }
             if (isOld) {
-                var showSelectChecklistDialog by remember { mutableStateOf(false) }
-                if (showSelectChecklistDialog) {
-                    //TODO open checklist selection
-                    ConfirmDialog(
-                        "Kaufen?",
-                        "Möchten Sie das Rezept kaufen?",
-                        onConfirm = {
-                            showSelectChecklistDialog = false
-//                            viewModel.shareItem(item)
-                        },
-                        onDismiss = { showSelectChecklistDialog = false },
-                    )
+                val showSelectChecklistDialog = remember { mutableStateOf(false) }
+                useSelectChecklistDialog(showSelectChecklistDialog, model.checklists!!) { check ->
+                    viewModel.addRecipeToChecklist(check, recipe)
                 }
                 ExtendedFloatingActionButton(
-                    modifier = Modifier.testTag(RecipeDetailsPageTag.ShopButton),
-                    onClick = { showSelectChecklistDialog = true },
+                    modifier = Modifier.testTag(RecipeDetailsPageTag.BuyButton),
+                    onClick = { showSelectChecklistDialog.value = true },
                     text = { Text(text = "Kaufen") },
                     icon = {
                         Icon(

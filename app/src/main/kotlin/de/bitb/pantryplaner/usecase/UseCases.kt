@@ -2,6 +2,7 @@ package de.bitb.pantryplaner.usecase
 
 import de.bitb.pantryplaner.usecase.alert.RefreshAlertUC
 import de.bitb.pantryplaner.usecase.checklist.AddChecklistItemsUC
+import de.bitb.pantryplaner.usecase.checklist.AddRecipeToChecklistUC
 import de.bitb.pantryplaner.usecase.checklist.CheckItemUC
 import de.bitb.pantryplaner.usecase.checklist.CreateChecklistUC
 import de.bitb.pantryplaner.usecase.checklist.DeleteChecklistUC
@@ -68,6 +69,7 @@ data class StockUseCases(
 data class ChecklistUseCases(
     val createChecklistUC: CreateChecklistUC,
     val deleteChecklistUC: DeleteChecklistUC,
+    val addRecipeUC: AddRecipeToChecklistUC,
     val addItemsUC: AddChecklistItemsUC,
     val removeItemsUC: RemoveChecklistItemsUC,
     val checkItemUC: CheckItemUC,

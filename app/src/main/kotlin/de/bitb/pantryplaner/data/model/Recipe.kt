@@ -20,7 +20,9 @@ data class Recipe(
 data class RecipeItem(
     val uuid: String = "",
     var amount: Double = 1.0,
-)
+) {
+    fun toCheckItem(): CheckItem = CheckItem(uuid)
+}
 
 val List<Recipe>.groupByCategory: Map<String, List<Recipe>>
     get() = groupBy { it.category }.toSortedMap(compareBy<String> { it != "" }.thenBy { it })

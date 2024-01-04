@@ -36,3 +36,13 @@ sealed class AddEditChecklistDialogTag : TestTag {
     object NameLabel : AddEditChecklistDialogTag()
     object ConfirmButton : AddEditChecklistDialogTag()
 }
+
+sealed class SelectChecklistDialogTag : TestTag {
+    object DialogTag : SelectChecklistDialogTag()
+    object NewButton : SelectChecklistDialogTag()
+}
+
+sealed class SelectStockDialogTag : TestTag {
+    object DialogTag : SelectStockDialogTag()
+    object NewButton : SelectStockDialogTag()
+}

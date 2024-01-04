@@ -51,6 +51,7 @@ import de.bitb.pantryplaner.ui.base.testTags.RecipesPageTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 import de.bitb.pantryplaner.ui.checklists.ChecklistsFragment
 import de.bitb.pantryplaner.ui.comps.buildBottomNavi
+import de.bitb.pantryplaner.ui.dialogs.useSelectChecklistDialog
 import de.bitb.pantryplaner.ui.profile.ProfileFragment
 import de.bitb.pantryplaner.ui.recipes.details.RecipeDetailsFragment
 import de.bitb.pantryplaner.ui.settings.SettingsFragment
@@ -135,6 +136,7 @@ class RecipesFragment : BaseFragment<RecipesViewModel>() {
             else -> {
                 val model = modelResp!!.data!!
                 val settings = model.settings!!
+                val checklists = model.checklists!!
                 val recipes = model.recipes!!
                 val cookableMap = model.cookableMap!!
 
@@ -153,11 +155,16 @@ class RecipesFragment : BaseFragment<RecipesViewModel>() {
                         settings::categoryColor,
                         viewModel::editCategory
                     ) { _, recipe ->
+                        val showSelectChecklistDialog = remember { mutableStateOf(false) }
+                        useSelectChecklistDialog(showSelectChecklistDialog, checklists) { check ->
+                            viewModel.addRecipeToChecklist(check, recipe)
+                        }
                         val color = settings.categoryColor(recipe)
                         DismissItem(
                             recipe.name,
                             color,
                             onSwipe = { viewModel.deleteRecipe(recipe) },
+                            onLongClick = {showSelectChecklistDialog.value = true},
                             onClick = {
                                 viewModel.navigate(
                                     RecipeDetailsFragment.naviFromRecipes(recipe.uuid)

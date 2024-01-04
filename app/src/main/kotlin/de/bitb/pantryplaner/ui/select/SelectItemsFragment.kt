@@ -125,7 +125,7 @@ class SelectItemsFragment : BaseFragment<SelectItemsViewModel>() {
             val scope = rememberCoroutineScope()
             ConfirmDialog(
                 "Hinzufügen?",
-                "Möchten Sie alle markierten Items der Checklist hinzufügen?",
+                "Möchten Sie alle markierten Items hinzufügen?",
                 onConfirm = {
                     scope.launch {
                         showAddToDialog.value = false

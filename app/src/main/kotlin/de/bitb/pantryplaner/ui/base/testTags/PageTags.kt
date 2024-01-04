@@ -44,8 +44,8 @@ sealed class RecipeDetailsPageTag : TestTag {
     object AppBar : RecipeDetailsPageTag()
     object LayoutButton : RecipeDetailsPageTag()
     object RecipeName : RecipeDetailsPageTag()
-    object ShopButton : RecipeDetailsPageTag()
     object CookButton : RecipeDetailsPageTag()
+    object BuyButton : RecipeDetailsPageTag()
     object AddItemButton : RecipeDetailsPageTag()
     object SaveRecipeButton : RecipeDetailsPageTag()
 }

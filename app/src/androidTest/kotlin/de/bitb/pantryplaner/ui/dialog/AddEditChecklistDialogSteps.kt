@@ -20,7 +20,8 @@ class AddEditChecklistDialogSteps(
 
     @Then("AddEditChecklistDialog is displayed")
     fun addEditChecklistDialogIsDisplayed() {
-        assertAddEditChecklistDialogRendered()
+        onNodeWithTag(AddEditChecklistDialogTag.NameLabel).assertIsDisplayed()
+        onNodeWithTag(AddEditChecklistDialogTag.ConfirmButton).assertIsDisplayed()
     }
 
     @Then("Checklist name is {string}")
@@ -49,9 +50,4 @@ class AddEditChecklistDialogSteps(
         waitForIdle()
     }
 
-}
-
-fun ComposeTestRule.assertAddEditChecklistDialogRendered() {
-    onNodeWithTag(AddEditChecklistDialogTag.NameLabel).assertIsDisplayed()
-    onNodeWithTag(AddEditChecklistDialogTag.ConfirmButton).assertIsDisplayed()
 }

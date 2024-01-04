@@ -24,6 +24,7 @@ import de.bitb.pantryplaner.data.model.groupByCategory
 import de.bitb.pantryplaner.ui.base.BaseViewModel
 import de.bitb.pantryplaner.ui.base.NaviEvent
 import de.bitb.pantryplaner.ui.base.comps.asResString
+import de.bitb.pantryplaner.ui.dialogs.useSelectChecklistDialog
 import de.bitb.pantryplaner.usecase.ChecklistUseCases
 import de.bitb.pantryplaner.usecase.ItemUseCases
 import kotlinx.coroutines.ExperimentalCoroutinesApi

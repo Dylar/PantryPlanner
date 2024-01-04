@@ -2,13 +2,11 @@ package de.bitb.pantryplaner.ui.recipes
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
-import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextReplacement
 import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.core.hasTextInHierarchy
 import de.bitb.pantryplaner.core.onNodeWithParentTag
 import de.bitb.pantryplaner.core.onNodeWithTag
-import de.bitb.pantryplaner.core.sleepFor
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.testTags.RecipeDetailsPageTag
 import de.bitb.pantryplaner.ui.base.testTags.RecipeTag
@@ -25,7 +23,10 @@ class RecipeDetailsPageSteps(
 
     @Then("RecipeDetailsPage rendered")
     fun renderRecipeDetailsPage() {
-        assertRecipeDetailsPageRendered()
+        onNodeWithTag(RecipeDetailsPageTag.RecipeDetailsPage).assertIsDisplayed()
+        onNodeWithTag(RecipeDetailsPageTag.AppBar).assertIsDisplayed()
+        onNodeWithTag(RecipeDetailsPageTag.LayoutButton).assertIsDisplayed()
+        onNodeWithTag(RecipeDetailsPageTag.RecipeName).assertIsDisplayed()
     }
 
     @Then("Recipe is cookable")
@@ -40,7 +41,6 @@ class RecipeDetailsPageSteps(
 
     @Then("Recipe is NOT cookable")
     fun recipeIsNotCookable() {
-        sleepFor()
         onNodeWithParentTag(
             RecipeDetailsPageTag.AppBar,
             RecipeTag.UncookableIconTag,
@@ -81,8 +81,13 @@ class RecipeDetailsPageSteps(
     }
 
     @And("Tap on CookButton")
-    fun tapOnCreateCookButton() {
+    fun tapOnCookButton() {
         tapOnFloatingActionButton(RecipeDetailsPageTag.CookButton)
+    }
+
+    @And("Tap on BuyButton")
+    fun tapOnBuyButton() {
+        tapOnFloatingActionButton(RecipeDetailsPageTag.BuyButton)
     }
 
     @And("Tap on SaveRecipeButton")
@@ -104,12 +109,5 @@ class RecipeDetailsPageSteps(
     fun assertCookButtonIsNotDisplayed() {
         onNodeWithTag(RecipeDetailsPageTag.CookButton).assertDoesNotExist()
     }
-}
-
-fun ComposeTestRule.assertRecipeDetailsPageRendered() {
-    onNodeWithTag(RecipeDetailsPageTag.RecipeDetailsPage).assertIsDisplayed()
-    onNodeWithTag(RecipeDetailsPageTag.AppBar).assertIsDisplayed()
-    onNodeWithTag(RecipeDetailsPageTag.LayoutButton).assertIsDisplayed()
-    onNodeWithTag(RecipeDetailsPageTag.RecipeName).assertIsDisplayed()
 }
 
