@@ -27,6 +27,7 @@ Feature: RecipeDetailsPage check cookability
     And  Tap on FloatingActionButton
     And  CookButton is displayed
     And  On Back
+    And  On Back
     When Tap on Recipe "SharedRecipe" in category "SharedCategory"
     Then Recipe is NOT cookable
     And  Tap on FloatingActionButton
@@ -44,6 +45,7 @@ Feature: RecipeDetailsPage check cookability
     # TODO select stock (first with selectionDialog then with tabs?)
     And   Tap on Confirm
     Then  Recipe is NOT cookable
+    And   On Back
     And   On Back
     And   Navi to StocksPage
     And   Item "CreatorItem" in category "CreatorCategory" has amount 0.0

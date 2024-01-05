@@ -78,15 +78,17 @@ class RecipeViewModel @Inject constructor(
     private val checkUseCases: ChecklistUseCases,
 ) : BaseViewModel(), UserDataExt {
 
+    private var initialRecipe: Recipe? = null
     lateinit var recipeModel: LiveData<Result<RecipeModel>>
     private val recipeData: MutableStateFlow<Recipe?> = MutableStateFlow(null)
 
     var recipeName by mutableStateOf("")
     val recipeCategory = mutableStateOf(TextFieldValue())
 
-    override fun isBackable(): Boolean {
-        return false // TODO check changes
-    }
+    override fun isBackable(): Boolean =
+        recipeData.value == initialRecipe &&
+                recipeName == initialRecipe?.name &&
+                recipeCategory.value.text == initialRecipe?.category
 
     fun initRecipe(uuid: String?) {
         recipeModel = initialLoad(uuid)
@@ -103,11 +105,11 @@ class RecipeViewModel @Inject constructor(
         return flow { emit(recipeFlow.first()) } // emit just once
             .flatMapLatest { resp ->
                 if (resp is Result.Error) return@flatMapLatest flowOf(resp.castTo())
-                val recipe = resp.data // initial recipe data
-                val cat = recipe?.category?.ifBlank { "" }.orEmpty()
-                recipeName = recipe?.name?.ifBlank { "" }.orEmpty()
+                initialRecipe = resp.data // initial recipe data
+                val cat = initialRecipe?.category?.ifBlank { "" }.orEmpty()
+                recipeName = initialRecipe?.name?.ifBlank { "" }.orEmpty()
                 recipeCategory.value = TextFieldValue(cat, TextRange(cat.length))
-                recipeData.value = recipe
+                recipeData.value = initialRecipe
 
                 combine(
                     settingsRepo.getSettings(),

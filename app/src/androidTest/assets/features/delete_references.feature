@@ -3,14 +3,18 @@ Feature: Delete references
   Background:
     Given Init default Mocks
 
-  Scenario: Remove Stock and check Checklist
+  Scenario: Remove Stock and check Checklist, first stock selected
     Given Start on ChecklistsPage
     And   Checklist "SharedChecklist" is displayed
+    And   Tap on Checklist "SharedChecklist"
+    And   Checklist Stock "SharedStock" is displayed
+    And   On Back
     When  Navi to ProfilePage
     And   Swipe to remove Stock "SharedStock"
     And   Tap on Confirm
     And   Navi to ChecklistsPage
-    Then  Checklist "SharedChecklist" is NOT displayed
+    And   Tap on Checklist "SharedChecklist"
+    And   Checklist Stock "CreatorStock" is displayed
 
   Scenario: Remove User and check Checklist
     Given Start on LoginPage

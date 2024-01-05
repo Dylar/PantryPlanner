@@ -16,6 +16,7 @@ Feature: ChecklistPage Stock management
     And   Select dropdown option "SharedStock"
     Then  Checklist Stock "SharedStock" is displayed
     And   On Back
+    And   On Back
     And   Tap on Checklist "CreatorChecklist"
     And   Checklist Stock "SharedStock" is displayed
 

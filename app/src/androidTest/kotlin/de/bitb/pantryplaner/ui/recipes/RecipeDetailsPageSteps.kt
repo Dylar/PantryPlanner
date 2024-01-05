@@ -109,5 +109,6 @@ class RecipeDetailsPageSteps(
     fun assertCookButtonIsNotDisplayed() {
         onNodeWithTag(RecipeDetailsPageTag.CookButton).assertDoesNotExist()
     }
+
 }
 

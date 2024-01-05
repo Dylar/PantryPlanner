@@ -5,12 +5,11 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.onNodeWithText
-import androidx.navigation.fragment.NavHostFragment
+import androidx.test.espresso.Espresso
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import dagger.hilt.android.testing.HiltAndroidTest
-import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.SNACKBARS_ENABLED
 import io.cucumber.java.en.Then
@@ -22,11 +21,7 @@ class CommonSteps(
 
     @Then("On Back")
     fun onBack() {
-        scenarioData.scenario?.onActivity { activity ->
-            val fragManger = activity.supportFragmentManager
-            val navFrag = (fragManger.findFragmentById(R.id.nav_host_fragment) as NavHostFragment)
-            navFrag.navController.popBackStack()
-        }
+        Espresso.pressBack()
         waitForIdle()
     }
 

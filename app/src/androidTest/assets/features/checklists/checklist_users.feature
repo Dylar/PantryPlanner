@@ -17,6 +17,7 @@ Feature: ChecklistPage User management
     And   Select dropdown option "Mohammed Lee"
     And   "ChecklistPage" shared with "Mohammed Lee"
     And   On Back
+    And   On Back
     And   Tap on Checklist "CreatorChecklist"
     And   "ChecklistPage" shared with "Mohammed Lee"
 

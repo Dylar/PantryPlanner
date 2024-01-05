@@ -97,7 +97,6 @@ Feature: RecipesPage Recipe management
     And   Recipe category is "EditCategory"
     And   "RecipeDetailsPage" shared with "Andre Option"
     And   On Back
+    And   On Back
     And   Navi to RecipesPage
     And   Recipe "EditRecipe" in category "EditCategory" is displayed
-
-    #TODO  Long press add to checklist

@@ -17,6 +17,7 @@ Feature: Add Recipe to Checklist
     Then  SelectChecklistDialog is NOT displayed
     And   SnackBar shown: "Zutaten wurden \"CreatorChecklist\" hinzugefügt"
     When  On Back
+    And   On Back
     And   Navi to ChecklistsPage
     And   Tap on Checklist "CreatorChecklist"
     Then  Item "CreatorItem" in category "CreatorCategory" has amount 2.0

@@ -40,5 +40,6 @@ fun ComposeTestRule.assertProfilePageRendered() {
     onNodeWithTag(ProfilePageTag.QRLabel).assertIsDisplayed()
     onNodeWithTag(FloatingExpandingButtonTag).assertIsDisplayed()
     assertBottomNaviBar()
+    waitForIdle()
 }
 
