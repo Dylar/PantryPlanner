@@ -281,10 +281,12 @@ class RecipeDetailsFragment : BaseFragment<RecipeViewModel>() {
                         settings::categoryColor,
                     ) { _, item ->
                         val color = settings.categoryColor(item)
+                        val isCreator = model.isCreator()
                         RecipeListItem(
                             recipe,
                             item,
                             model.isSharedWith(item),
+                            isCreator,
                             color,
                         )
                     }
@@ -332,6 +334,7 @@ class RecipeDetailsFragment : BaseFragment<RecipeViewModel>() {
         recipe: Recipe,
         item: Item,
         isShared: Boolean,
+        isCreator: Boolean,
         color: Color,
     ) {
         var showActionDialog by remember { mutableStateOf(false) }
@@ -384,7 +387,9 @@ class RecipeDetailsFragment : BaseFragment<RecipeViewModel>() {
                         )
                 }
 
-                AddSubRow(recipeItem.amount) { viewModel.changeItemAmount(item.uuid, it) }
+                AddSubRow(recipeItem.amount, isChangeable = isCreator) {
+                    viewModel.changeItemAmount(item.uuid, it)
+                }
             }
         }
     }

@@ -43,6 +43,7 @@ import java.lang.Double.max
 @Composable
 fun AddSubRow(
     amount: Double,
+    isChangeable: Boolean = true,
     onChange: (String) -> Unit,
 ) {
     Row(
@@ -57,6 +58,7 @@ fun AddSubRow(
             }
 
         IconButton(
+            enabled = isChangeable,
             modifier = Modifier
                 .testTag(AddSubRowTag.MinusButton)
                 .size(48.dp),
@@ -73,8 +75,8 @@ fun AddSubRow(
             )
         }
         EditText(amountState) { onChange(it) }
-
         IconButton(
+            enabled = isChangeable,
             modifier = Modifier
                 .testTag(AddSubRowTag.PlusButton)
                 .size(48.dp),

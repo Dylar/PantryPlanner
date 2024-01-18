@@ -27,7 +27,6 @@ Feature: RecipeDetailsPage check cookability
     And  Tap on FloatingActionButton
     And  CookButton is displayed
     And  On Back
-    And  On Back
     When Tap on Recipe "SharedRecipe" in category "SharedCategory"
     Then Recipe is NOT cookable
     And  Tap on FloatingActionButton

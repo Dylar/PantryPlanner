@@ -211,9 +211,11 @@ class RecipeViewModel @Inject constructor(
         viewModelScope.launch {
             recipeData.value?.let { recipe ->
                 val amountDouble = amount.replace(",", ".").toDouble()
-                val item = recipe.items.first { it.uuid == itemId }
-                item.amount = amountDouble
-                recipeData.emit(recipe)
+                val items = recipe.items.map {
+                    if (it.uuid == itemId) it.copy(amount = amountDouble)
+                    else it
+                }
+                recipeData.emit(recipe.copy(items = items))
             }
         }
     }

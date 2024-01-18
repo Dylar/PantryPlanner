@@ -9,7 +9,6 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.getString
 import de.bitb.pantryplaner.core.onNodeWithTag
-import de.bitb.pantryplaner.core.sleepFor
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.testTags.UserTag
 import io.cucumber.java.en.Then
