@@ -21,7 +21,7 @@ data class RecipeItem(
     val uuid: String = "",
     var amount: Double = 1.0,
 ) {
-    fun toCheckItem(): CheckItem = CheckItem(uuid)
+    fun toCheckItem(): CheckItem = CheckItem(uuid, amount = amount)
 }
 
 val List<Recipe>.groupByCategory: Map<String, List<Recipe>>

@@ -19,20 +19,19 @@ class AddRecipeToChecklistUC(
                     return@tryIt "Rezept hat keine Zutaten".asError()
                 }
 
-                val saveItems = items
-                    .map { item ->
-                        val saveItem = checklist.items.firstOrNull { it.uuid == item.uuid }
-                        saveItem?.copy(amount = saveItem.amount + item.amount) ?: item.toCheckItem()
-                    }
-                val restItems = saveItems
-                    .filter { item -> checklist.items.none { it.uuid == item.uuid } }
-                val saveChecklist = checklist.copy(
-                    items = setOf(
-                        *restItems.toTypedArray(),
-                        *saveItems.toTypedArray()
-                    ).toMutableList()
-                )
+                val updatedItems = checklist.items.map { item ->
+                    items.firstOrNull { it.uuid == item.uuid }
+                        ?.let { item.copy(amount = item.amount + it.amount) }
+                        ?: item
+                }.toMutableList()
 
+                items.forEach { item ->
+                    if (checklist.items.none { it.uuid == item.uuid }) {
+                        updatedItems.add(item.toCheckItem())
+                    }
+                }
+
+                val saveChecklist = checklist.copy(items = updatedItems)
                 val saveResp = checkRepo.saveChecklist(saveChecklist)
                 if (saveResp is Result.Error) {
                     return@tryIt saveResp.castTo(false)

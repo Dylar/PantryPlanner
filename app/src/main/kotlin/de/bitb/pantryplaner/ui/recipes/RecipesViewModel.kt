@@ -63,7 +63,7 @@ class RecipesViewModel @Inject constructor(
                     Result.Success(
                         RecipesModel(
                             settingsResp.data,
-                            checkResp.data,
+                            checkResp.data?.filter { !it.finished },
                             recipesResp.data,
                             cookableMap.data,
                         ),
