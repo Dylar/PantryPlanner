@@ -64,7 +64,8 @@ Feature: Add Recipe to Checklist
     And   Item "SharedItem" in category "SharedCategory" has amount 2.0
     And   Item "UnsharedItem" in category "UnsharedCategory" has amount 7.77
 
-#  Scenario: Create new Checklist with Recipe
+  # TODO make this
+#  Scenario: Create new Checklist on Recipe adding
 #    Given Navi to StocksPage
 #    And   Item "CreatorItem" in category "CreatorCategory" has amount 1.0
 #    And   Item "SharedItem" in category "SharedCategory" has amount 2.5

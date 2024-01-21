@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import de.bitb.pantryplaner.ui.base.testTags.CategoryTag
 import de.bitb.pantryplaner.ui.base.testTags.GridLayoutTag
 import de.bitb.pantryplaner.ui.base.testTags.ListLayoutTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
@@ -142,7 +143,9 @@ fun GridListHeader(
     ) {
         Card(
             border = BorderStroke(2.dp, color),
-            modifier = Modifier.combinedClickable(
+            modifier = Modifier
+                .testTag(CategoryTag(category))
+                .combinedClickable(
                 onClick = {
                     val value = showItems[category]
                     showItems[category] = !(value ?: true)

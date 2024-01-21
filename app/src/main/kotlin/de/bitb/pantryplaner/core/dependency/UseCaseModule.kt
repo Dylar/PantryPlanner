@@ -72,7 +72,7 @@ object UsecaseModule {
             createItemUC = CreateItemUC(userRepo, itemRepo),
             deleteItemUC = DeleteItemUC(userRepo, itemRepo),
             editItemUC = EditItemUC(userRepo, itemRepo),
-            editCategoryUC = EditCategoryUC(settingsRepo, itemRepo),
+            editCategoryUC = EditItemCategoryUC(settingsRepo, itemRepo),
             shareItemUC = ShareItemUC(userRepo, itemRepo),
         )
     }
@@ -118,6 +118,7 @@ object UsecaseModule {
     @Provides
     @Singleton
     fun provideRecipeUseCases(
+        settingsRepo: SettingsRepository,
         userRepo: UserRepository,
         stockRepo: StockRepository,
         checkRepo: CheckRepository,
@@ -131,6 +132,7 @@ object UsecaseModule {
             setItemAmountUC = SetRecipeItemAmountUC(checkRepo),
             setSharedWithUC = SetRecipeSharedWithUC(userRepo, checkRepo),
             saveRecipeUC = SaveRecipeUC(userRepo, recipeRepo),
+            editCategoryUC = EditRecipeCategoryUC(settingsRepo, recipeRepo),
             isCookableUC = IsCookableUC(),
             cookRecipeUC = CookRecipeUC(stockRepo),
         )

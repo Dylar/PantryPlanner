@@ -48,7 +48,7 @@ fun <T> createFlows(
 }
 
 fun getParentTag(parent: String): TestTag {
-    val tag = when { // TODO no make this differently
+    val tag = when { // TODO no, make this diffrently
         parent == "StockDialog" -> AddEditStockDialogTag.DialogTag
         parent == "ItemDialog" -> AddEditItemDialogTag.DialogTag
         parent == "ChecklistDialog" -> AddEditChecklistDialogTag.DialogTag

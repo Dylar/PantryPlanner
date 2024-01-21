@@ -1,8 +1,8 @@
 package de.bitb.pantryplaner.test
 
-import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.core.parsePOKO
+import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.data.model.Recipe
 import de.bitb.pantryplaner.data.source.RecipeRemoteDao
 import io.mockk.coEvery
@@ -10,7 +10,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.onEach
 
 fun parseRecipeCreator(): Recipe = parsePOKO("recipe_creator")
 fun parseRecipeShared(): Recipe = parsePOKO("recipe_shared")
@@ -46,12 +45,12 @@ fun RecipeRemoteDao.mockRecipeDao(
         Result.Success(true)
     }
 
-    coEvery { saveRecipe(any()) }.answers {
-        val saveRecipe = firstArg<Recipe>()
-        allFlow.value = allFlow.value
-            .map { if (it.uuid == saveRecipe.uuid) saveRecipe else it }
+    coEvery { saveRecipes(any()) }.answers {
+        val saveRecipes = firstArg<List<Recipe>>().associateBy { it.uuid }
+        allFlow.value = allFlow.value.map { saveRecipes[it.uuid] ?: it }
         Result.Success()
     }
+
 }
 
 // TODO test errors
@@ -68,5 +67,5 @@ fun RecipeRemoteDao.mockErrorRecipeDao(
     if (deleteRecipeError != null)
         coEvery { deleteRecipe(any()) }.answers { deleteRecipeError }
     if (saveRecipeError != null)
-        coEvery { saveRecipe(any()) }.answers { saveRecipeError }
+        coEvery { saveRecipes(any()) }.answers { saveRecipeError }
 }

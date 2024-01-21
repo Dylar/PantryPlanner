@@ -155,6 +155,28 @@ Feature: StocksPage Items management
     And   Navi to StocksPage
     And   Item "EditItem" in category "EditCategory" is displayed
 
+  Scenario: Edit Item category
+    Given Item "CreatorItem" in category "CreatorCategory" is displayed
+    And   Item "CreatorItem" in category "SharedCategory" is NOT displayed
+    And   Item "SharedItem" in category "SharedCategory" is displayed
+    And   Item "SelectItem" in category "SelectCategory" is displayed
+    When  LongPress on Category "CreatorCategory"
+    And   EditCategoryDialog is displayed
+    And   Input "SharedCategory" as category
+    And   Tap on SaveCategoryButton
+    Then  Item "CreatorItem" in category "CreatorCategory" is NOT displayed
+    And   Item "CreatorItem" in category "SharedCategory" is displayed
+    And   Item "SharedItem" in category "SharedCategory" is displayed
+    And   Item "SelectItem" in category "SelectCategory" is displayed
+    When  LongPress on Category "SharedCategory"
+    And   EditCategoryDialog is displayed
+    And   Input "CreatorCategory" as category
+    And   Tap on SaveCategoryButton
+    Then  Item "CreatorItem" in category "CreatorCategory" is displayed
+    And   Item "CreatorItem" in category "SharedCategory" is NOT displayed
+    And   Item "SharedItem" in category "SharedCategory" is displayed
+    And   Item "SelectItem" in category "SelectCategory" is displayed
+
   Scenario: Search Item
     When  Tap SearchBar on StocksPage
     And   Input search "CreatorItem"

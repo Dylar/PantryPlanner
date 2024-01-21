@@ -37,6 +37,12 @@ sealed class AddEditChecklistDialogTag : TestTag {
     object ConfirmButton : AddEditChecklistDialogTag()
 }
 
+sealed class EditCategoryDialogTag : TestTag {
+    object DialogTag : EditCategoryDialogTag()
+    object CategoryLabel : EditCategoryDialogTag()
+    object SaveButton : EditCategoryDialogTag()
+}
+
 sealed class SelectChecklistDialogTag : TestTag {
     object DialogTag : SelectChecklistDialogTag()
     object NewButton : SelectChecklistDialogTag()

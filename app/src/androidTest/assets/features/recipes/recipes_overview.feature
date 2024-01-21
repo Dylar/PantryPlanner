@@ -100,3 +100,22 @@ Feature: RecipesPage Recipe management
     And   On Back
     And   Navi to RecipesPage
     And   Recipe "EditRecipe" in category "EditCategory" is displayed
+
+  Scenario: Edit Recipe category
+    Given Recipe "CreatorRecipe" in category "CreatorCategory" is displayed
+    And   Recipe "CreatorRecipe" in category "SharedCategory" is NOT displayed
+    And   Recipe "SharedRecipe" in category "SharedCategory" is displayed
+    When  LongPress on Category "CreatorCategory"
+    And   EditCategoryDialog is displayed
+    And   Input "SharedCategory" as category
+    And   Tap on SaveCategoryButton
+    Then  Recipe "CreatorRecipe" in category "CreatorCategory" is NOT displayed
+    And   Recipe "CreatorRecipe" in category "SharedCategory" is displayed
+    And   Recipe "SharedRecipe" in category "SharedCategory" is displayed
+    When  LongPress on Category "SharedCategory"
+    And   EditCategoryDialog is displayed
+    And   Input "CreatorCategory" as category
+    And   Tap on SaveCategoryButton
+    Then  Recipe "CreatorRecipe" in category "CreatorCategory" is displayed
+    And   Recipe "CreatorRecipe" in category "SharedCategory" is NOT displayed
+    And   Recipe "SharedRecipe" in category "SharedCategory" is displayed

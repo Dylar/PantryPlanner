@@ -64,11 +64,6 @@ android {
 
     flavorDimensions = ["env"]
     productFlavors {
-        gherkins {
-            dimension "env"
-            applicationIdSuffix ".test"
-            resValue "string", "app_name", "PantryPlaner TEST"
-        }
         dev {
             dimension "env"
             applicationIdSuffix ".dev"

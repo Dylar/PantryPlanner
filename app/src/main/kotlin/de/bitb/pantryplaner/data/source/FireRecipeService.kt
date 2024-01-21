@@ -9,19 +9,19 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.tasks.await
 
 class FireRecipeService(
-    firestore: FirebaseFirestore,
+    val firestore: FirebaseFirestore,
 ) : RecipeRemoteDao {
 
-    private val recipeCollection = firestore
+    private val collection = firestore
         .collection("stage")
         .document(BuildConfig.FLAVOR)
         .collection("recipes")
 
     private fun ownerCollection(id: String) =
-        recipeCollection.whereEqualTo("creator", id)
+        collection.whereEqualTo("creator", id)
 
     private fun sharedCollection(id: String) =
-        recipeCollection.whereArrayContains("sharedWith", id)
+        collection.whereArrayContains("sharedWith", id)
 
     override fun getRecipes(
         userId: String,
@@ -30,25 +30,32 @@ class FireRecipeService(
         return getOwnedOrShared(userId, ids, ::ownerCollection, ::sharedCollection)
     }
 
-    override suspend fun saveRecipe(recipe: Recipe): Result<Unit> {
+    override suspend fun saveRecipes(recipes: List<Recipe>): Result<Unit> {
         return tryIt {
-            recipeCollection
-                .whereEqualTo("uuid", recipe.uuid)
-                .get().await()
-                .documents.first()
-                .reference.set(recipe)
+            firestore.batch().apply {
+                recipes.chunked(10).forEach { chunk ->
+                    collection
+                        .whereIn("uuid", chunk.map { it.uuid })
+                        .get().await().documents
+                        .forEach { snap ->
+                            val uuid = snap.data?.get("uuid") ?: ""
+                            set(snap.reference, chunk.first { it.uuid == uuid })
+                        }
+                }
+                commit()
+            }
             Result.Success()
         }
     }
 
     override suspend fun addRecipe(recipe: Recipe): Result<Boolean> {
         return tryIt {
-            val querySnapshot = recipeCollection
+            val querySnapshot = collection
                 .whereEqualTo("uuid", recipe.uuid)
                 .get().await()
 
             if (querySnapshot.isEmpty) {
-                recipeCollection.add(recipe).await()
+                collection.add(recipe).await()
                 Result.Success(true)
             } else {
                 Result.Success(false)
@@ -58,7 +65,7 @@ class FireRecipeService(
 
     override suspend fun deleteRecipe(recipe: Recipe): Result<Boolean> {
         return tryIt {
-            val querySnapshot = recipeCollection
+            val querySnapshot = collection
                 .whereEqualTo("uuid", recipe.uuid)
                 .get().await()
 

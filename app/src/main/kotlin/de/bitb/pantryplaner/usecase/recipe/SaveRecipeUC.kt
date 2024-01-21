@@ -1,6 +1,5 @@
 package de.bitb.pantryplaner.usecase.recipe
 
-import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.core.misc.asError
 import de.bitb.pantryplaner.core.misc.tryIt

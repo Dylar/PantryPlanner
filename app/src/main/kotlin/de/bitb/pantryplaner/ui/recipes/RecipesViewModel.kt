@@ -50,7 +50,7 @@ class RecipesViewModel @Inject constructor(
             checkRepo.getCheckLists(),
             stockRepo.getStocks(),
             recipeRepo.getRecipes(),
-        ) { settingsResp, checkResp,stocksResp, recipesResp ->
+        ) { settingsResp, checkResp, stocksResp, recipesResp ->
             when {
                 settingsResp is Result.Error -> settingsResp.castTo()
                 checkResp is Result.Error -> checkResp.castTo()
@@ -88,17 +88,16 @@ class RecipesViewModel @Inject constructor(
         newCategory: String,
         color: Color
     ) {
-        //TODO
-//        viewModelScope.launch {
-//            when (val resp = itemUseCases.editCategoryUC(
-//                previousCategory,
-//                newCategory,
-//                color
-//            )) {
-//                is Result.Error -> showSnackBar(resp.message!!)
-//                else -> showSnackBar("Kategorie editiert".asResString()).also { updateWidgets() }
-//            }
-//        }
+        viewModelScope.launch {
+            when (val resp = recipeUseCases.editCategoryUC(
+                previousCategory,
+                newCategory,
+                color
+            )) {
+                is Result.Error -> showSnackBar(resp.message!!)
+                else -> showSnackBar("Kategorie editiert".asResString()).also { updateWidgets() }
+            }
+        }
     }
 
     fun addRecipeToChecklist(check: Checklist, recipe: Recipe) {

@@ -15,13 +15,14 @@ import de.bitb.pantryplaner.usecase.checklist.SetStockWithUC
 import de.bitb.pantryplaner.usecase.checklist.UnfinishChecklistUC
 import de.bitb.pantryplaner.usecase.item.CreateItemUC
 import de.bitb.pantryplaner.usecase.item.DeleteItemUC
-import de.bitb.pantryplaner.usecase.item.EditCategoryUC
+import de.bitb.pantryplaner.usecase.item.EditItemCategoryUC
 import de.bitb.pantryplaner.usecase.item.EditItemUC
 import de.bitb.pantryplaner.usecase.item.ShareItemUC
 import de.bitb.pantryplaner.usecase.recipe.AddRecipeItemsUC
 import de.bitb.pantryplaner.usecase.recipe.CookRecipeUC
 import de.bitb.pantryplaner.usecase.recipe.CreateRecipeUC
 import de.bitb.pantryplaner.usecase.recipe.DeleteRecipeUC
+import de.bitb.pantryplaner.usecase.recipe.EditRecipeCategoryUC
 import de.bitb.pantryplaner.usecase.recipe.IsCookableUC
 import de.bitb.pantryplaner.usecase.recipe.RemoveRecipeItemsUC
 import de.bitb.pantryplaner.usecase.recipe.SaveRecipeUC
@@ -55,7 +56,7 @@ data class ItemUseCases(
     val createItemUC: CreateItemUC,
     val deleteItemUC: DeleteItemUC,
     val editItemUC: EditItemUC,
-    val editCategoryUC: EditCategoryUC,
+    val editCategoryUC: EditItemCategoryUC,
     val shareItemUC: ShareItemUC,
 )
 
@@ -89,6 +90,7 @@ data class RecipeUseCases(
     val setItemAmountUC: SetRecipeItemAmountUC,
     val setSharedWithUC: SetRecipeSharedWithUC,
     val saveRecipeUC: SaveRecipeUC,
+    val editCategoryUC: EditRecipeCategoryUC,
     val isCookableUC: IsCookableUC,
     val cookRecipeUC: CookRecipeUC,
 )

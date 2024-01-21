@@ -21,7 +21,11 @@ class AddEditItemDialogSteps(
 
     @Then("AddEditItemDialog is displayed")
     fun addEditItemDialogIsDisplayed() {
-        assertAddEditItemDialogRendered()
+        onNodeWithParentTag(
+            AddEditItemDialogTag.DialogTag,
+            AddEditItemDialogTag.NameLabel
+        ).assertIsDisplayed()
+        onNodeWithTag(AddEditItemDialogTag.ConfirmButton).assertIsDisplayed()
     }
 
     @Then("Item name is {string}")
@@ -61,12 +65,4 @@ class AddEditItemDialogSteps(
         waitForIdle()
     }
 
-}
-
-fun ComposeTestRule.assertAddEditItemDialogRendered() {
-    onNodeWithParentTag(
-        AddEditItemDialogTag.DialogTag,
-        AddEditItemDialogTag.NameLabel
-    ).assertIsDisplayed()
-    onNodeWithTag(AddEditItemDialogTag.ConfirmButton).assertIsDisplayed()
 }

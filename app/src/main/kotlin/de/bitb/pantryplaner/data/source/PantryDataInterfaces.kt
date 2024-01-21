@@ -75,7 +75,7 @@ interface RecipeRemoteDao {
     fun getRecipes(userId: String, ids: List<String>?): Flow<Result<List<Recipe>>>
     suspend fun addRecipe(recipe: Recipe): Result<Boolean>
     suspend fun deleteRecipe(recipe: Recipe): Result<Boolean>
-    suspend fun saveRecipe(recipe: Recipe): Result<Unit>
+    suspend fun saveRecipes(recipes: List<Recipe>): Result<Unit>
 }
 
 interface StockRemoteDao {

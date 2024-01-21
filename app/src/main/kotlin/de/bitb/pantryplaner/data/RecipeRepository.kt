@@ -4,6 +4,8 @@ import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.core.misc.asError
 import de.bitb.pantryplaner.core.misc.castOnError
 import de.bitb.pantryplaner.core.misc.formatDateNow
+import de.bitb.pantryplaner.data.model.Filter
+import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.data.model.Recipe
 import de.bitb.pantryplaner.data.source.LocalDatabase
 import de.bitb.pantryplaner.data.source.RemoteService
@@ -17,6 +19,10 @@ class RecipeRepository(
     private val remoteDB: RemoteService,
     private val localDB: LocalDatabase,
 ) {
+
+    fun getUserRecipes(
+        ids: List<String>? = null,
+    ): Flow<Result<List<Recipe>>> = remoteDB.getRecipes(localDB.getUser(), ids)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getRecipes(uuids: List<String>? = null): Flow<Result<List<Recipe>>> =
@@ -49,6 +55,9 @@ class RecipeRepository(
     suspend fun deleteRecipe(recipe: Recipe): Result<Boolean> =
         remoteDB.deleteRecipe(recipe)
 
-    suspend fun saveRecipe(recipe: Recipe): Result<Unit> =
-        remoteDB.saveRecipe(recipe.copy(updatedAt = formatDateNow()))
+    suspend fun saveRecipe(recipe: Recipe): Result<Unit> = saveRecipes(listOf(recipe))
+
+    suspend fun saveRecipes(recipes: List<Recipe>): Result<Unit> =
+        remoteDB.saveRecipes(recipes.map { it.copy(updatedAt = formatDateNow()) })
+
 }

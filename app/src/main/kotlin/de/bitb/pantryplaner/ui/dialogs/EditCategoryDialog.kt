@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.ui.base.comps.CircleRow
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
+import de.bitb.pantryplaner.ui.base.testTags.EditCategoryDialogTag
+import de.bitb.pantryplaner.ui.base.testTags.testTag
 
 @Composable
 fun EditCategoryDialog(
@@ -43,8 +45,8 @@ fun EditCategoryDialog(
         )
     }
     val colorState = remember { mutableStateOf(color) }
-    val focusRequester = remember { FocusRequester() }
     AlertDialog(
+        modifier = Modifier.testTag(EditCategoryDialogTag.DialogTag),
         onDismissRequest = onDismiss,
         text = {
             Column {
@@ -52,8 +54,8 @@ fun EditCategoryDialog(
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
                     modifier = Modifier
-                        .padding(4.dp)
-                        .focusRequester(focusRequester),
+                        .testTag(EditCategoryDialogTag.CategoryLabel)
+                        .padding(4.dp),
                     singleLine = true,
                     label = { Text(stringResource(R.string.item_category)) },
                     value = categoryState,
@@ -70,6 +72,7 @@ fun EditCategoryDialog(
         },
         confirmButton = {
             Button(
+                modifier = Modifier.testTag(EditCategoryDialogTag.SaveButton),
                 onClick = { onConfirm(categoryState.text, colorState.value) },
                 content = { Text("BEARBEITEN") }
             )
@@ -81,7 +84,4 @@ fun EditCategoryDialog(
             )
         }
     )
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
 }
