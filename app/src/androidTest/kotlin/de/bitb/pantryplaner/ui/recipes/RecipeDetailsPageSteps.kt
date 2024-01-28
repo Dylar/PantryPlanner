@@ -2,15 +2,16 @@ package de.bitb.pantryplaner.ui.recipes
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
 import dagger.hilt.android.testing.HiltAndroidTest
+import de.bitb.pantryplaner.core.assertNodeWithParentTagDoesNotExists
+import de.bitb.pantryplaner.core.getParentTag
 import de.bitb.pantryplaner.core.hasTextInHierarchy
 import de.bitb.pantryplaner.core.onNodeWithParentTag
 import de.bitb.pantryplaner.core.onNodeWithTag
 import de.bitb.pantryplaner.test.ScenarioData
-import de.bitb.pantryplaner.ui.base.testTags.RecipeDetailsPageTag
-import de.bitb.pantryplaner.ui.base.testTags.RecipeTag
-import de.bitb.pantryplaner.ui.base.testTags.SearchDropDownTag
+import de.bitb.pantryplaner.ui.base.testTags.*
 import de.bitb.pantryplaner.ui.tapOnFloatingActionButton
 import io.cucumber.java.en.And
 import io.cucumber.java.en.Then
@@ -26,7 +27,30 @@ class RecipeDetailsPageSteps(
         onNodeWithTag(RecipeDetailsPageTag.RecipeDetailsPage).assertIsDisplayed()
         onNodeWithTag(RecipeDetailsPageTag.AppBar).assertIsDisplayed()
         onNodeWithTag(RecipeDetailsPageTag.LayoutButton).assertIsDisplayed()
+        onNodeWithTag(RecipeDetailsPageTag.DetailsButton).assertIsDisplayed()
+        onNodeWithTag(FloatingExpandingButtonTag).assertIsDisplayed()
+    }
+
+    @Then("RecipeDetailsPage details is NOT rendered")
+    fun detailsIsNotDisplayed() {
+        onNodeWithTag(RecipeDetailsPageTag.RecipeName).assertDoesNotExist()
+        assertNodeWithParentTagDoesNotExists(getParentTag("RecipeDetailsPage"), SearchDropDownTag("Kategorie"))
+        assertNodeWithParentTagDoesNotExists(getParentTag("RecipeDetailsPage"), SearchDropDownTag("Mit Benutzer teilen"))
+        onNodeWithTag(SharedWithTag.SharedWith).assertDoesNotExist()
+    }
+
+    @Then("RecipeDetailsPage details is rendered")
+    fun detailsIsDisplayed() {
         onNodeWithTag(RecipeDetailsPageTag.RecipeName).assertIsDisplayed()
+        onNodeWithParentTag(getParentTag("RecipeDetailsPage"), SearchDropDownTag("Kategorie")).assertIsDisplayed()
+        onNodeWithParentTag(getParentTag("RecipeDetailsPage"), SearchDropDownTag("Mit Benutzer teilen")).assertIsDisplayed()
+        onNodeWithTag(SharedWithTag.SharedWith).assertIsDisplayed()
+    }
+
+    @Then("RecipeDetailsPage tap on DetailsButton")
+    fun tapOnDetailsButton() {
+        onNodeWithTag(RecipeDetailsPageTag.DetailsButton).performClick()
+        waitForIdle()
     }
 
     @Then("Recipe is cookable")

@@ -36,7 +36,6 @@ fun ComposeTestRule.assertSelectItemsPageRendered() {
     onNodeWithTag(SelectItemsPageTag.AppBar).assertIsDisplayed()
     onNodeWithTag(SelectItemsPageTag.SearchButton).assertIsDisplayed()
     onNodeWithTag(SelectItemsPageTag.LayoutButton).assertIsDisplayed()
-    onNodeWithTag(SelectItemsPageTag.FilterButton).assertIsDisplayed()
     onNodeWithTag(FloatingExpandingButtonTag).assertIsDisplayed()
 }
 

@@ -22,6 +22,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.GridOff
 import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material.icons.filled.LinkOff
@@ -96,6 +97,7 @@ class StocksFragment : BaseFragment<StocksViewModel>() {
 
     override val viewModel: StocksViewModel by viewModels()
 
+    private lateinit var showDetails: MutableState<Boolean>
     private lateinit var showGridLayout: MutableState<Boolean>
     private lateinit var showFilterDialog: MutableState<Boolean>
     private lateinit var showAddStockDialog: MutableState<Boolean>
@@ -111,6 +113,7 @@ class StocksFragment : BaseFragment<StocksViewModel>() {
     @Composable
     override fun screenContent() {
         showSearchBar = remember { mutableStateOf(false) }
+        showDetails = remember { mutableStateOf(false) }
         showGridLayout = remember { mutableStateOf(true) }
         showFilterDialog = remember { mutableStateOf(false) }
         showAddStockDialog = remember { mutableStateOf(false) }
@@ -181,14 +184,24 @@ class StocksFragment : BaseFragment<StocksViewModel>() {
 
                 if (!showSearchBar.value) {
                     IconButton(
-                        modifier = Modifier.testTag(StocksPageTag.FilterButton),
-                        onClick = { showFilterDialog.value = !showFilterDialog.value },
+                        onClick = { showDetails.value = !showDetails.value },
+                        modifier = Modifier.testTag(StocksPageTag.DetailsButton)
                     ) {
                         Icon(
-                            imageVector = Icons.Outlined.FilterList,
-                            contentDescription = "Filter button"
+                            imageVector = if (showDetails.value) Icons.Default.Cancel else Icons.Default.Edit,
+                            contentDescription = "Details button"
                         )
                     }
+
+//                    IconButton( //TODO make filter
+//                        modifier = Modifier.testTag(StocksPageTag.FilterButton),
+//                        onClick = { showFilterDialog.value = !showFilterDialog.value },
+//                    ) {
+//                        Icon(
+//                            imageVector = Icons.Outlined.FilterList,
+//                            contentDescription = "Filter button"
+//                        )
+//                    }
                     IconButton(
                         modifier = Modifier.testTag(StocksPageTag.LayoutButton),
                         onClick = { showGridLayout.value = !showGridLayout.value },
@@ -328,13 +341,16 @@ class StocksFragment : BaseFragment<StocksViewModel>() {
             verticalArrangement = Arrangement.Top
         ) {
             val selectedUser = remember(stock) { mutableStateOf(sharedUser) }
-            buildUserDropDown(
-                "Lager wird nicht geteilt",
-                connectedUser,
-                selectedUser,
-                canChange = stock.creator == user.uuid,
-            ) {
-                viewModel.setSharedWith(stock, it)
+
+            if (showDetails.value) {
+                buildUserDropDown(
+                    "Lager wird nicht geteilt",
+                    connectedUser,
+                    selectedUser,
+                    canChange = stock.creator == user.uuid,
+                ) {
+                    viewModel.setSharedWith(stock, it)
+                }
             }
 
             if (items.isEmpty()) {

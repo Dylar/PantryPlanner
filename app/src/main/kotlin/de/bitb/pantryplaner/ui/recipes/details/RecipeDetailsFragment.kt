@@ -20,9 +20,12 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Circle
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.GridOff
 import androidx.compose.material.icons.filled.GridOn
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LinkOff
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Restaurant
@@ -88,6 +91,7 @@ class RecipeDetailsFragment : BaseFragment<RecipeViewModel>() {
     override val viewModel: RecipeViewModel by viewModels()
 
     private lateinit var showGridLayout: MutableState<Boolean>
+    private lateinit var showDetails: MutableState<Boolean>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,6 +110,7 @@ class RecipeDetailsFragment : BaseFragment<RecipeViewModel>() {
     @Composable
     override fun screenContent() {
         showGridLayout = remember { mutableStateOf(true) }
+        showDetails = remember { mutableStateOf(false) }
 
         onBack { onDismiss ->
             ConfirmDialog(
@@ -160,6 +165,16 @@ class RecipeDetailsFragment : BaseFragment<RecipeViewModel>() {
                 }
             },
             actions = {
+                IconButton(
+                    onClick = { showDetails.value = !showDetails.value },
+                    modifier = Modifier.testTag(RecipeDetailsPageTag.DetailsButton)
+                ) {
+                    Icon(
+                        imageVector = if (showDetails.value) Icons.Default.Cancel else Icons.Default.Edit,
+                        contentDescription = "Details button"
+                    )
+                }
+
                 IconButton(
                     onClick = { showGridLayout.value = !showGridLayout.value },
                     modifier = Modifier.testTag(RecipeDetailsPageTag.LayoutButton)
@@ -270,7 +285,9 @@ class RecipeDetailsFragment : BaseFragment<RecipeViewModel>() {
                 val recipe = model.recipe!!
                 val items = model.items!!
                 // TODO stock tabs to check items available on each stock
-                RecipeDetails(model)
+                if (showDetails.value) {
+                    RecipeDetails(model)
+                }
                 if (items.isEmpty()) {
                     EmptyListComp(getString(R.string.no_items))
                 } else {
@@ -298,16 +315,6 @@ class RecipeDetailsFragment : BaseFragment<RecipeViewModel>() {
     @Composable
     private fun RecipeDetails(model: RecipeModel) {
         val isCreator = model.isCreator()
-
-        buildUserDropDown(
-            "Rezept wird nicht geteilt",
-            model.connectedUser!!,
-            remember { mutableStateOf(model.sharedUser!!) },
-            canChange = isCreator
-        ) {
-            viewModel.setSharedWith(it)
-        }
-
         OutlinedTextField(
             readOnly = !isCreator,
             modifier = Modifier
@@ -326,6 +333,15 @@ class RecipeDetailsFragment : BaseFragment<RecipeViewModel>() {
             canChange = isCreator
         ) {
             viewModel.setCategory(it)
+        }
+
+        buildUserDropDown(
+            "Rezept wird nicht geteilt",
+            model.connectedUser!!,
+            remember { mutableStateOf(model.sharedUser!!) },
+            canChange = isCreator
+        ) {
+            viewModel.setSharedWith(it)
         }
     }
 

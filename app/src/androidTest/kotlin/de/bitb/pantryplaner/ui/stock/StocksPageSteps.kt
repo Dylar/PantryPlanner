@@ -4,10 +4,9 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.performClick
 import dagger.hilt.android.testing.HiltAndroidTest
-import de.bitb.pantryplaner.core.onNodeWithTag
+import de.bitb.pantryplaner.core.*
 import de.bitb.pantryplaner.test.ScenarioData
-import de.bitb.pantryplaner.ui.base.testTags.FloatingExpandingButtonTag
-import de.bitb.pantryplaner.ui.base.testTags.StocksPageTag
+import de.bitb.pantryplaner.ui.base.testTags.*
 import de.bitb.pantryplaner.ui.tapOnFloatingActionButton
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
@@ -20,6 +19,22 @@ class StocksPageSteps(
     @Then("StocksPage rendered")
     fun renderStocksPage() {
         assertStocksPageRendered()
+    }
+
+    @Then("StocksPage {string} details is NOT rendered")
+    fun detailsIsNotDisplayed(stock: String) {
+        onNodeWithTag(SharedWithTag.SharedWith).assertDoesNotExist()
+    }
+
+    @Then("StocksPage {string} details is rendered")
+    fun detailsIsDisplayed(stock: String) {
+        onNodeWithTag(SharedWithTag.SharedWith).assertIsDisplayed()
+    }
+
+    @Then("StocksPage tap on DetailsButton")
+    fun tapOnDetailsButton() {
+        onNodeWithTag(StocksPageTag.DetailsButton).performClick()
+        waitForIdle()
     }
 
     @When("Tab {string} is displayed")
@@ -63,7 +78,7 @@ fun ComposeTestRule.assertStocksPageRendered() {
     onNodeWithTag(StocksPageTag.AppBar).assertIsDisplayed()
     onNodeWithTag(StocksPageTag.SearchButton).assertIsDisplayed()
     onNodeWithTag(StocksPageTag.LayoutButton).assertIsDisplayed()
-    onNodeWithTag(StocksPageTag.FilterButton).assertIsDisplayed()
+    onNodeWithTag(StocksPageTag.DetailsButton).assertIsDisplayed()
     onNodeWithTag(FloatingExpandingButtonTag).assertIsDisplayed()
 }
 

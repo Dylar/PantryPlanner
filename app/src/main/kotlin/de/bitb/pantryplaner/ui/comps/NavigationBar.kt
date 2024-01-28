@@ -65,7 +65,7 @@ fun BaseFragment<*>.buildBottomNavi(
             ),
             BottomItemInfo(
                 BottomNaviTag.SettingsButton,
-                stringResource(id = R.string.settings_title),
+                "",
                 Icons.Rounded.Settings,
                 settingsRoute,
             ),

@@ -21,6 +21,7 @@ Feature: Delete references
     #     check mohammed
     When  Login with email "mohammed@lee.to" and password "1Password!"
     Then  Tap on Checklist "SharedChecklist"
+    And   ChecklistPage tap on DetailsButton
     And   "ChecklistPage" shared with "Peter Lustig"
     And   On Back
     And   Navi to SettingsPage
@@ -29,6 +30,7 @@ Feature: Delete references
     #     check peter
     When  Login with email "peter@lustig.to" and password "1Password!"
     And   Tap on Checklist "SharedChecklist"
+    And   ChecklistPage tap on DetailsButton
     Then  "ChecklistPage" shared with "Peter Lustig"
     And   On Back
     And   Navi to ProfilePage
@@ -37,6 +39,7 @@ Feature: Delete references
     And   Tap on Confirm
     And   Navi to ChecklistsPage
     And   Tap on Checklist "SharedChecklist"
+    And   ChecklistPage tap on DetailsButton
     #     mohammed checklist still visible
     Then  "ChecklistPage" shared with "Peter Lustig"
     And   On Back
@@ -46,11 +49,13 @@ Feature: Delete references
     When  Login with email "mohammed@lee.to" and password "1Password!"
     #     mohammed still has the checklist
     Then  Tap on Checklist "SharedChecklist"
+    And   ChecklistPage tap on DetailsButton
     And   "ChecklistPage" shared with "Peter Lustig"
 
   Scenario: Remove User and check Stock
     Given Start on ChecklistsPage
     When  Navi to StocksPage
+    And   StocksPage tap on DetailsButton
     And   "StockPage CreatorStock" shared with none
     And   "StockPage CreatorStock" open dropdown "Mit Benutzer teilen"
     And   Select dropdown option "Mohammed Lee"
@@ -59,4 +64,7 @@ Feature: Delete references
     When  Swipe to remove User "Mohammed Lee"
     And   Tap on Confirm
     And   Navi to StocksPage
+    And   StocksPage tap on DetailsButton
     Then  "StockPage CreatorStock" shared with "Mohammed Lee"
+
+    # TODO recipe deletion ?

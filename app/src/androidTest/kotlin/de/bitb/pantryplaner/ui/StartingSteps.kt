@@ -25,6 +25,7 @@ class StartingSteps(
 
     @Given("Run App")
     fun runApp() {
+        waitForIdle()
         SPLASH_TIMER = 0L
         INSTANT_SEARCH = true
         scenarioData.launch()

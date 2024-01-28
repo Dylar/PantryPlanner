@@ -229,6 +229,7 @@ private fun ConnectedUser(
 ) {
     Card(
         modifier = Modifier
+            .testTag(SharedWithTag.SharedWith)
             .defaultMinSize(minHeight = 32.dp)
             .padding(4.dp)
             .fillMaxWidth(),

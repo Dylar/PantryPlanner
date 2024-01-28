@@ -171,15 +171,15 @@ class SelectItemsFragment : BaseFragment<SelectItemsViewModel>() {
                 }
 
                 if (!showSearchBar.value) {
-                    IconButton(
-                        modifier = Modifier.testTag(SelectItemsPageTag.FilterButton),
-                        onClick = { showFilterDialog.value = !showFilterDialog.value },
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.FilterList,
-                            contentDescription = "Filter button"
-                        )
-                    }
+//                    IconButton( //TODO make filter
+//                        modifier = Modifier.testTag(SelectItemsPageTag.FilterButton),
+//                        onClick = { showFilterDialog.value = !showFilterDialog.value },
+//                    ) {
+//                        Icon(
+//                            imageVector = Icons.Outlined.FilterList,
+//                            contentDescription = "Filter button"
+//                        )
+//                    }
                     IconButton(
                         modifier = Modifier.testTag(SelectItemsPageTag.LayoutButton),
                         onClick = { showGridLayout.value = !showGridLayout.value },

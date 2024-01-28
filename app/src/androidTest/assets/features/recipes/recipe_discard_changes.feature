@@ -9,10 +9,13 @@ Feature: Discard Recipe changes
 
   Scenario: Create Recipe, but discard it
     Given Tap on NewRecipeButton
+    And   RecipeDetailsPage details is NOT rendered
+    And   RecipeDetailsPage tap on DetailsButton
+    And   RecipeDetailsPage details is rendered
     And   Input "NewRecipe" as Recipe name
     And   Input "NewCategory" as Recipe category
     When  On Back
-    When  On Back
+    And   On Back
     And   Tap on dismiss
     Then  RecipesPage rendered
     And   Recipe "NewRecipe" in category "NewCategory" is NOT displayed
@@ -29,6 +32,7 @@ Feature: Discard Recipe changes
 
   Scenario: Edit Recipe name, but discard it
     Given Tap on Recipe "CreatorRecipe" in category "CreatorCategory"
+    And   RecipeDetailsPage tap on DetailsButton
     And   Input "EditRecipe" as Recipe name
     When  On Back
     When  On Back
@@ -39,6 +43,7 @@ Feature: Discard Recipe changes
 
   Scenario: Edit Recipe category, but discard it
     Given Tap on Recipe "CreatorRecipe" in category "CreatorCategory"
+    And   RecipeDetailsPage tap on DetailsButton
     And   Input "EditCategory" as Recipe category
     When  On Back
     When  On Back
@@ -49,6 +54,7 @@ Feature: Discard Recipe changes
 
   Scenario: Edit Recipe shared User, but discard it
     Given Tap on Recipe "CreatorRecipe" in category "CreatorCategory"
+    And   RecipeDetailsPage tap on DetailsButton
     And   "RecipeDetailsPage" shared with "Mohammed Lee"
     And   "RecipeDetailsPage" open dropdown "Mit Benutzer teilen"
     And   Select dropdown option "Andre Option"
@@ -58,4 +64,5 @@ Feature: Discard Recipe changes
     And   Tap on dismiss
     Then  RecipesPage rendered
     And   Tap on Recipe "CreatorRecipe" in category "CreatorCategory"
+    And   RecipeDetailsPage tap on DetailsButton
     And   "RecipeDetailsPage" shared with "Mohammed Lee"

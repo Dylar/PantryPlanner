@@ -9,7 +9,7 @@
 
     <string name="settings_title">Einstellungen</string>
 
-    <string name="checklists_title">Checklisten</string>
+    <string name="checklists_title">Listen</string>
     <string name="no_checklists">Keine Listen vorhanden</string>
 
     <string name="recipes_title">Rezepte</string>
@@ -28,7 +28,6 @@
     <string name="no_recipes">Keine Rezepte vorhanden</string>
     <string name="no_connected_users">Keine verbundenen Benutzer vorhanden</string>
     <string name="user_email">Email</string>
-
 
     <string name="refresh_title">Aktualisieren</string>
 

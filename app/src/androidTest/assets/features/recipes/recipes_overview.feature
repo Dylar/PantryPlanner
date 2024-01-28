@@ -12,6 +12,7 @@ Feature: RecipesPage Recipe management
   Scenario: Create a new Recipe
     Given Tap on NewRecipeButton
     And   RecipeDetailsPage rendered
+    And   RecipeDetailsPage tap on DetailsButton
     And   "RecipeDetailsPage" shared with none
     And   No Items displayed
     When  Input "NewRecipe" as Recipe name
@@ -31,6 +32,7 @@ Feature: RecipesPage Recipe management
     And   Recipe "NewRecipe" in category "NewCategory" is displayed
     And   Tap on Recipe "NewRecipe" in category "NewCategory"
     And   RecipeDetailsPage rendered
+    And   RecipeDetailsPage tap on DetailsButton
     And   Recipe name is "NewRecipe"
     And   Recipe category is "NewCategory"
     And   "RecipeDetailsPage" shared with "Mohammed Lee"
@@ -81,6 +83,7 @@ Feature: RecipesPage Recipe management
   Scenario: Edit a created Recipe
     When  Tap on Recipe "CreatorRecipe" in category "CreatorCategory"
     And   RecipeDetailsPage rendered
+    And   RecipeDetailsPage tap on DetailsButton
     And   "RecipeDetailsPage" shared with "Mohammed Lee"
     And   Input "EditRecipe" as Recipe name
     And   Input "EditCategory" as Recipe category
@@ -93,6 +96,7 @@ Feature: RecipesPage Recipe management
     Then  Recipe "EditRecipe" in category "EditCategory" is displayed
     And   Recipe "CreatorRecipe" in category "CreatorCategory" is NOT displayed
     And   Tap on Recipe "EditRecipe" in category "EditCategory"
+    And   RecipeDetailsPage tap on DetailsButton
     And   Recipe name is "EditRecipe"
     And   Recipe category is "EditCategory"
     And   "RecipeDetailsPage" shared with "Andre Option"

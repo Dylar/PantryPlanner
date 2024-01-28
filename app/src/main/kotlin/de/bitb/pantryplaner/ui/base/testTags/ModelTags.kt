@@ -6,6 +6,7 @@ data class SearchDropDownTag(val name: String) : TestTag
 data class DropDownItemTag(val name: String) : TestTag
 
 sealed class SharedWithTag : TestTag {
+    object SharedWith : SharedWithTag()
     object NothingShared : SharedWithTag()
     data class SharedChip(val name: String) : SharedWithTag()
 }

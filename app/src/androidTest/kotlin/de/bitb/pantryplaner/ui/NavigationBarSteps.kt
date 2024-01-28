@@ -91,7 +91,7 @@ fun ComposeTestRule.tapOnSettingsButton() {
 fun ComposeTestRule.tapOnFloatingActionButton(tag: TestTag) {
     try {
         onNodeWithTag(tag).assertIsDisplayed()
-    } catch (e: AssertionError) {
+    } catch (_: AssertionError) {
         onNodeWithTag(FloatingExpandingButtonTag).performClick()
         waitForIdle()
     }

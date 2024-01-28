@@ -42,6 +42,7 @@ sealed class RecipesPageTag : TestTag {
 sealed class RecipeDetailsPageTag : TestTag {
     object RecipeDetailsPage : RecipeDetailsPageTag()
     object AppBar : RecipeDetailsPageTag()
+    object DetailsButton : RecipeDetailsPageTag()
     object LayoutButton : RecipeDetailsPageTag()
     object RecipeName : RecipeDetailsPageTag()
     object CookButton : RecipeDetailsPageTag()
@@ -53,6 +54,7 @@ sealed class RecipeDetailsPageTag : TestTag {
 sealed class StocksPageTag : TestTag {
     object AppBar : StocksPageTag()
     object SearchButton : StocksPageTag()
+    object DetailsButton : StocksPageTag()
     object LayoutButton : StocksPageTag()
     object FilterButton : StocksPageTag()
     object NewStockButton : StocksPageTag()
@@ -69,6 +71,7 @@ sealed class StocksPageTag : TestTag {
 sealed class ChecklistPageTag : TestTag {
     object ChecklistPage : ChecklistPageTag()
     object AppBar : ChecklistPageTag()
+    object DetailsButton : ChecklistPageTag()
     object LayoutButton : ChecklistPageTag()
     object FilterButton : ChecklistPageTag()
     object AddItemButton : ChecklistPageTag()

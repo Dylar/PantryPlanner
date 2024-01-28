@@ -15,6 +15,8 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.GridOff
 import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material.icons.outlined.FilterList
@@ -58,7 +60,6 @@ import de.bitb.pantryplaner.ui.comps.AddSubRow
 import de.bitb.pantryplaner.ui.comps.SelectItemHeader
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 import de.bitb.pantryplaner.ui.dialogs.FilterDialog
-import de.bitb.pantryplaner.ui.dialogs.useSelectStockDialog
 import de.bitb.pantryplaner.ui.select.SelectItemsFragment
 import de.bitb.pantryplaner.ui.select.SelectItemsFragment.Companion.ITEMS_KEY
 import de.bitb.pantryplaner.ui.select.SelectItemsFragment.Companion.REQUEST_ITEMS
@@ -77,6 +78,7 @@ class ChecklistDetailsFragment : BaseFragment<ChecklistViewModel>() {
 
     override val viewModel: ChecklistViewModel by viewModels()
 
+    private lateinit var showDetails: MutableState<Boolean>
     private lateinit var showGridLayout: MutableState<Boolean>
     private lateinit var showFilterDialog: MutableState<Boolean>
     private lateinit var showFinishDialog: MutableState<Boolean>
@@ -94,6 +96,7 @@ class ChecklistDetailsFragment : BaseFragment<ChecklistViewModel>() {
 
     @Composable
     override fun screenContent() {
+        showDetails = remember { mutableStateOf(false) }
         showGridLayout = remember { mutableStateOf(true) }
         showFilterDialog = remember { mutableStateOf(false) }
         showFinishDialog = remember { mutableStateOf(false) }
@@ -145,14 +148,23 @@ class ChecklistDetailsFragment : BaseFragment<ChecklistViewModel>() {
             },
             actions = {
                 IconButton(
-                    onClick = { showFilterDialog.value = !showFilterDialog.value },
-                    modifier = Modifier.testTag(ChecklistPageTag.FilterButton)
+                    onClick = { showDetails.value = !showDetails.value },
+                    modifier = Modifier.testTag(ChecklistPageTag.DetailsButton)
                 ) {
                     Icon(
-                        imageVector = Icons.Outlined.FilterList,
-                        contentDescription = "Filter button"
+                        imageVector = if (showDetails.value) Icons.Default.Cancel else Icons.Default.Edit,
+                        contentDescription = "Details button"
                     )
                 }
+//                IconButton( //TODO make filter
+//                    onClick = { showFilterDialog.value = !showFilterDialog.value },
+//                    modifier = Modifier.testTag(ChecklistPageTag.FilterButton)
+//                ) {
+//                    Icon(
+//                        imageVector = Icons.Outlined.FilterList,
+//                        contentDescription = "Filter button"
+//                    )
+//                }
                 IconButton(
                     onClick = { showGridLayout.value = !showGridLayout.value },
                     modifier = Modifier.testTag(ChecklistPageTag.LayoutButton)
@@ -215,22 +227,24 @@ class ChecklistDetailsFragment : BaseFragment<ChecklistViewModel>() {
                 val selectedUser = remember { mutableStateOf(model.sharedUser!!) }
                 val selectedStock = remember { mutableStateOf(stockFound) }
 
-                val canChange = model.isCreator()
-                buildStockDropDown(
-                    selectedStock = selectedStock,
-                    stocks = stocks,
-                    canChange = canChange
-                ) {
-                    viewModel.changeStock(it)
-                }
+                if (showDetails.value) {
+                    val canChange = model.isCreator()
+                    buildStockDropDown(
+                        selectedStock = selectedStock,
+                        stocks = stocks,
+                        canChange = canChange
+                    ) {
+                        viewModel.changeStock(it)
+                    }
 
-                buildUserDropDown(
-                    "Checkliste wird nicht geteilt",
-                    connectedUsers,
-                    selectedUser,
-                    canChange = canChange
-                ) {
-                    viewModel.setSharedWith(it)
+                    buildUserDropDown(
+                        "Checkliste wird nicht geteilt",
+                        connectedUsers,
+                        selectedUser,
+                        canChange = canChange
+                    ) {
+                        viewModel.setSharedWith(it)
+                    }
                 }
                 if (items.isEmpty()) {
                     EmptyListComp(getString(R.string.no_items))
