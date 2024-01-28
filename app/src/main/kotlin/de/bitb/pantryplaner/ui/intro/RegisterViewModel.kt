@@ -5,10 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.ui.base.BaseViewModel
-import de.bitb.pantryplaner.ui.base.NaviEvent
+import de.bitb.pantryplaner.ui.checklists.ChecklistsFragment
 import de.bitb.pantryplaner.usecase.UserUseCases
 import de.bitb.pantryplaner.usecase.user.RegisterResponse
 import kotlinx.coroutines.launch
@@ -35,7 +34,7 @@ class RegisterViewModel @Inject constructor(
         viewModelScope.launch {
             val result = userUseCases.registerUC(firstName, lastName, email, pw1, pw2)
             if (result is Result.Error) error = result.data
-            else navigate(NaviEvent.Navigate(R.id.register_to_overview))
+            else navigate(ChecklistsFragment.naviFromRegister)
             isLoading = false
         }
     }

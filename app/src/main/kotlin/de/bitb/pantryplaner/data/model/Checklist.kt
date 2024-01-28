@@ -10,7 +10,7 @@ import java.util.UUID
 data class Checklist(
     val uuid: String = UUID.randomUUID().toString(),
     val name: String = "",
-    val items: MutableList<CheckItem> = mutableListOf(),
+    val items: List<CheckItem> = listOf(),
     val finishedAt: String = "",
     val createdAt: String = "",
     val updatedAt: String = "",
@@ -53,30 +53,3 @@ data class CheckItem(
     var amount: Double = 1.0,
     //TODO timestamp?
 )
-
-//data class ItemList(
-//    val uuid: String = UUID.randomUUID().toString(),
-//    val name: String = "",
-//    val items: MutableList<Item> = mutableListOf(),
-//)
-//
-//data class CheckList(
-//    val uuid: String = UUID.randomUUID().toString(),
-//    val name: String = "",
-//    val items: MutableList<CheckItem> = mutableListOf(),
-//    val finished: Boolean = false,
-//)
-//
-//data class TemplateList(
-//    val uuid: String,
-//    val name: String,
-//    val items: List<String>,
-//)
-//
-// TODO Receipe page show items you need (red) and which you have (green)
-//data class RecipeList(
-//    val uuid: String,
-//    val name: String,
-//    val items: List<CheckItem>,
-//)
-

@@ -26,6 +26,7 @@ class UserSteps(
 
     @Then("User {string} is displayed")
     fun userIsDisplayed(name: String) {
+        waitForIdle()
         onNodeWithTag(UserTag(name), true).assertIsDisplayed()
         waitForIdle()
     }

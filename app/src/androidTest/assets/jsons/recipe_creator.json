@@ -1,0 +1,21 @@
+{
+  "uuid": "recipe123",
+  "name": "CreatorRecipe",
+  "category": "CreatorCategory",
+  "items": [
+    {
+      "uuid": "item123",
+      "amount": 1.0
+    },
+    {
+      "uuid": "item321",
+      "amount": 2.0
+    }
+  ],
+  "createdAt": "2022-01-01T12:00:00Z",
+  "updatedAt": "",
+  "creator": "user123",
+  "sharedWith": [
+    "user321"
+  ]
+}

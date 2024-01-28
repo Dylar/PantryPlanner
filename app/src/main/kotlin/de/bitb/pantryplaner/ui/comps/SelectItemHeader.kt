@@ -25,8 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
+import de.bitb.pantryplaner.ui.base.testTags.ItemTag
 import de.bitb.pantryplaner.ui.base.testTags.SelectItemHeaderTag
-import de.bitb.pantryplaner.ui.base.testTags.UnsharedIconTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
 
 @Composable
@@ -73,7 +73,7 @@ fun SelectItemHeader(
             Icon(
                 Icons.Filled.LinkOff,
                 modifier = Modifier
-                    .testTag(UnsharedIconTag)
+                    .testTag(ItemTag.UnsharedIconTag)
                     .padding(4.dp)
                     .size(18.dp),
                 contentDescription = null,

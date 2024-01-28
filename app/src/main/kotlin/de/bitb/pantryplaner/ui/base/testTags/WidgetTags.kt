@@ -11,11 +11,12 @@ sealed class AddSubRowTag : TestTag {
     object MinusButton : AddSubRowTag()
 }
 
-object UnsharedIconTag : TestTag
-
 sealed class BottomNaviTag : TestTag {
-    object OverviewButton : BottomNaviTag()
-    object StockButton : BottomNaviTag()
+    object ChecklistsButton : BottomNaviTag()
+    object StocksButton : BottomNaviTag()
+    object RecipesButton : BottomNaviTag()
     object ProfileButton : BottomNaviTag()
     object SettingsButton : BottomNaviTag()
 }
+
+object FloatingExpandingButtonTag : TestTag

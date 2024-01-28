@@ -5,10 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.ui.base.BaseViewModel
-import de.bitb.pantryplaner.ui.base.NaviEvent
+import de.bitb.pantryplaner.ui.checklists.ChecklistsFragment
 import de.bitb.pantryplaner.usecase.UserUseCases
 import de.bitb.pantryplaner.usecase.user.LoginResponse
 import kotlinx.coroutines.launch
@@ -31,7 +30,7 @@ class LoginViewModel @Inject constructor(
         isLoading = true
         viewModelScope.launch {
             val result = userUseCases.loginUC(email, pw)
-            if (result is Result.Success) navigate(NaviEvent.Navigate(R.id.login_to_overview))
+            if (result is Result.Success) navigate(ChecklistsFragment.naviFromLogin)
             else error = result.data
             isLoading = false
         }

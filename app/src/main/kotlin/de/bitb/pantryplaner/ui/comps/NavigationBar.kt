@@ -1,6 +1,5 @@
 package de.bitb.pantryplaner.ui.comps
 
-import androidx.annotation.IdRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -13,6 +12,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Checklist
 import androidx.compose.material.icons.rounded.HomeWork
+import androidx.compose.material.icons.rounded.MenuBook
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.runtime.Composable
@@ -31,36 +31,43 @@ import de.bitb.pantryplaner.ui.base.testTags.testTag
 
 @Composable
 fun BaseFragment<*>.buildBottomNavi(
-    @IdRes overviewRoute: Int? = null,
-    @IdRes stockRoute: Int? = null,
-    @IdRes profileRoute: Int? = null,
-    @IdRes settingsRoute: Int? = null,
+    checklistsRoute: NaviEvent? = null,
+    recipesRoute: NaviEvent? = null,
+    stocksRoute: NaviEvent? = null,
+    profileRoute: NaviEvent? = null,
+    settingsRoute: NaviEvent? = null,
 ) {
     BottomNavigationBar(
         listOf(
             BottomItemInfo(
-                BottomNaviTag.OverviewButton,
-                stringResource(id = R.string.overview_title),
+                BottomNaviTag.ChecklistsButton,
+                stringResource(id = R.string.checklists_title),
                 Icons.Rounded.Checklist,
-                overviewRoute?.let { NaviEvent.Navigate(it) },
+                checklistsRoute,
             ),
             BottomItemInfo(
-                BottomNaviTag.StockButton,
+                BottomNaviTag.RecipesButton,
+                stringResource(id = R.string.recipes_title),
+                Icons.Rounded.MenuBook,
+                recipesRoute,
+            ),
+            BottomItemInfo(
+                BottomNaviTag.StocksButton,
                 stringResource(id = R.string.stock_title),
                 Icons.Rounded.HomeWork,
-                stockRoute?.let { NaviEvent.Navigate(it) },
+                stocksRoute,
             ),
             BottomItemInfo(
                 BottomNaviTag.ProfileButton,
                 stringResource(id = R.string.profile_title),
                 Icons.Rounded.Person,
-                profileRoute?.let { NaviEvent.Navigate(it) },
+                profileRoute,
             ),
             BottomItemInfo(
                 BottomNaviTag.SettingsButton,
-                stringResource(id = R.string.settings_title),
+                "",
                 Icons.Rounded.Settings,
-                settingsRoute?.let { NaviEvent.Navigate(it) },
+                settingsRoute,
             ),
         )
     )

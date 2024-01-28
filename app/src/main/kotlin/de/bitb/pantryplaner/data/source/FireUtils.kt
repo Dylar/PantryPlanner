@@ -5,36 +5,60 @@ import com.google.firebase.firestore.ktx.snapshots
 import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.core.misc.asError
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 
 inline fun <reified T> getOwnedOrShared(
     userId: String,
     ids: List<String>? = null,
-    ownerCollection: (String) -> Query,
-    sharedCollection: (String) -> Query,
+    crossinline ownerCollection: (String) -> Query,
+    crossinline sharedCollection: (String) -> Query,
 ): Flow<Result<List<T>>> {
     return try {
         if (ids?.isEmpty() == true) {
-            return MutableStateFlow(Result.Success(emptyList()))
+            return flowOf(Result.Success(emptyList()))
         }
 
         val ownerQuery =
-            if (ids == null) ownerCollection(userId)
-            else ownerCollection(userId).whereIn("uuid", ids)
+            chunkQuery<T>(
+                ids,
+                onNull = { ownerCollection(userId) },
+            ) { chunk ->
+                ownerCollection(userId).whereIn("uuid", chunk)
+            }
 
         val sharedQuery =
-            if (ids == null) sharedCollection(userId)
-            else sharedCollection(userId).whereIn("uuid", ids)
+            chunkQuery<T>(
+                ids,
+                onNull = { sharedCollection(userId) },
+            ) { chunk ->
+                sharedCollection(userId).whereIn("uuid", chunk)
+            }
 
         combine(
-            ownerQuery.snapshots().map { it.toObjects(T::class.java) },
-            sharedQuery.snapshots().map { it.toObjects(T::class.java) }
-        ) { owner, shared ->
-            Result.Success(setOf(*owner.toTypedArray(), *shared.toTypedArray()).toList())
+            ownerQuery,
+            sharedQuery
+        ) { result ->
+            Result.Success(result.toList().flatten())
         }
     } catch (e: Exception) {
-        MutableStateFlow(e.asError(emptyList()))
+        flowOf(e.asError(emptyList()))
+    }
+}
+
+inline fun <reified T> chunkQuery(
+    uuids: List<String>?,
+    onNull: () -> Query = { throw NotImplementedError() },
+    query: (List<String>) -> Query,
+): Flow<List<T>> {
+    if (uuids == null) return onNull().snapshots().map { it.toObjects(T::class.java) }
+    return combine(
+        uuids
+            .chunked(10)
+            .map(query)
+            .map { it.snapshots().map { snap -> snap.toObjects(T::class.java) } }
+    ) {
+        it.toList().flatten()
     }
 }

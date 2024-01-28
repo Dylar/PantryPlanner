@@ -43,6 +43,7 @@ object DataModule {
         val userService = FireUserService(fireStore, fireAuth)
         val itemService = FireItemService(fireStore)
         val checkService = FireCheckService(fireStore)
+        val recipeService = FireRecipeService(fireStore)
         val stockItemService = FireStockService(fireStore)
 
         fireConfig.setConfigSettingsAsync(
@@ -55,6 +56,7 @@ object DataModule {
             userService,
             itemService,
             checkService,
+            recipeService,
             stockItemService,
         )
     }

@@ -8,8 +8,20 @@ import de.bitb.pantryplaner.data.*
 import de.bitb.pantryplaner.data.source.*
 import de.bitb.pantryplaner.usecase.*
 import de.bitb.pantryplaner.usecase.alert.RefreshAlertUC
-import de.bitb.pantryplaner.usecase.checklist.*
+import de.bitb.pantryplaner.usecase.checklist.AddChecklistItemsUC
+import de.bitb.pantryplaner.usecase.checklist.AddRecipeToChecklistUC
+import de.bitb.pantryplaner.usecase.checklist.CheckItemUC
+import de.bitb.pantryplaner.usecase.checklist.CreateChecklistUC
+import de.bitb.pantryplaner.usecase.checklist.DeleteChecklistUC
+import de.bitb.pantryplaner.usecase.checklist.FinishChecklistUC
+import de.bitb.pantryplaner.usecase.checklist.RemoveChecklistItemsUC
+import de.bitb.pantryplaner.usecase.checklist.SaveChecklistUC
+import de.bitb.pantryplaner.usecase.checklist.SetChecklistItemAmountUC
+import de.bitb.pantryplaner.usecase.checklist.SetChecklistSharedWithUC
+import de.bitb.pantryplaner.usecase.checklist.SetStockWithUC
+import de.bitb.pantryplaner.usecase.checklist.UnfinishChecklistUC
 import de.bitb.pantryplaner.usecase.item.*
+import de.bitb.pantryplaner.usecase.recipe.*
 import de.bitb.pantryplaner.usecase.stock.AddEditStockItemUC
 import de.bitb.pantryplaner.usecase.stock.AddStockUC
 import de.bitb.pantryplaner.usecase.stock.DeleteStockUC
@@ -60,7 +72,7 @@ object UsecaseModule {
             createItemUC = CreateItemUC(userRepo, itemRepo),
             deleteItemUC = DeleteItemUC(userRepo, itemRepo),
             editItemUC = EditItemUC(userRepo, itemRepo),
-            editCategoryUC = EditCategoryUC(settingsRepo, itemRepo),
+            editCategoryUC = EditItemCategoryUC(settingsRepo, itemRepo),
             shareItemUC = ShareItemUC(userRepo, itemRepo),
         )
     }
@@ -81,7 +93,7 @@ object UsecaseModule {
 
     @Provides
     @Singleton
-    fun provideCheckListUseCases(
+    fun provideChecklistUseCases(
         localDB: LocalDatabase,
         userRepo: UserRepository,
         checkRepo: CheckRepository,
@@ -90,15 +102,39 @@ object UsecaseModule {
         return ChecklistUseCases(
             createChecklistUC = CreateChecklistUC(userRepo, checkRepo),
             deleteChecklistUC = DeleteChecklistUC(userRepo, checkRepo),
-            addItemsUC = AddItemsUC(checkRepo),
-            removeItemsUC = RemoveItemsUC(checkRepo),
+            addRecipeUC = AddRecipeToChecklistUC(checkRepo),
+            addItemsUC = AddChecklistItemsUC(checkRepo),
+            removeItemsUC = RemoveChecklistItemsUC(checkRepo),
             checkItemUC = CheckItemUC(checkRepo),
             finishChecklistUC = FinishChecklistUC(localDB, checkRepo, stockRepo),
             unfinishChecklistUC = UnfinishChecklistUC(localDB, checkRepo, stockRepo),
-            setItemAmountUC = SetItemAmountUC(checkRepo),
-            setSharedWithUC = SetSharedWithUC(userRepo, checkRepo),
+            setItemAmountUC = SetChecklistItemAmountUC(checkRepo),
+            setSharedWithUC = SetChecklistSharedWithUC(userRepo, checkRepo),
             setStockWithUC = SetStockWithUC(userRepo, checkRepo),
             saveChecklistUC = SaveChecklistUC(userRepo, checkRepo)
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideRecipeUseCases(
+        settingsRepo: SettingsRepository,
+        userRepo: UserRepository,
+        stockRepo: StockRepository,
+        checkRepo: CheckRepository,
+        recipeRepo: RecipeRepository,
+    ): RecipeUseCases {
+        return RecipeUseCases(
+            createRecipeUC = CreateRecipeUC(userRepo, recipeRepo),
+            deleteRecipeUC = DeleteRecipeUC(userRepo, recipeRepo),
+            addItemsUC = AddRecipeItemsUC(checkRepo),
+            removeItemsUC = RemoveRecipeItemsUC(checkRepo),
+            setItemAmountUC = SetRecipeItemAmountUC(checkRepo),
+            setSharedWithUC = SetRecipeSharedWithUC(userRepo, checkRepo),
+            saveRecipeUC = SaveRecipeUC(userRepo, recipeRepo),
+            editCategoryUC = EditRecipeCategoryUC(settingsRepo, recipeRepo),
+            isCookableUC = IsCookableUC(),
+            cookRecipeUC = CookRecipeUC(stockRepo),
         )
     }
 

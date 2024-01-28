@@ -35,11 +35,11 @@ Feature: ProfilePage User management
 
   Scenario Outline: Connect a new User via <Method> and see if other user is connected too
     # logout and login other user
-    Given Tap on SettingsButton
+    Given Navi to SettingsPage
     And   Tap on LogoutButton
     And   Tap on Confirm
     And   Login with email "excludie@yellow.to" and password "1Password!"
-    And   Tap on ProfileButton
+    And   Navi to ProfilePage
     And   User "Peter Lustig" is NOT displayed
     And   User "Mohammed Lee" is NOT displayed
     And   User "Andre Option" is NOT displayed
@@ -48,11 +48,11 @@ Feature: ProfilePage User management
     And   Connect User "peter@lustig.to" via <Method>
     And   User "Peter Lustig" is displayed
   # logout and login user
-    Then  Tap on SettingsButton
+    Then  Navi to SettingsPage
     And   Tap on LogoutButton
     And   Tap on Confirm
     And   Login with email "peter@lustig.to" and password "1Password!"
-    And   Tap on ProfileButton
+    And   Navi to ProfilePage
     And   User "Excludie Yellow" is displayed
 
     Examples:

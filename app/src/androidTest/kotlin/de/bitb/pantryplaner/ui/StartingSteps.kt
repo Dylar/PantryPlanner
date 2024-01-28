@@ -5,16 +5,17 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.test.defaultPW
 import de.bitb.pantryplaner.test.parseUser
-import de.bitb.pantryplaner.ui.checklist.assertChecklistPageRendered
+import de.bitb.pantryplaner.ui.checklists.assertChecklistPageRendered
+import de.bitb.pantryplaner.ui.checklists.assertChecklistsPageRendered
+import de.bitb.pantryplaner.ui.checklists.tapOnChecklist
 import de.bitb.pantryplaner.ui.intro.SPLASH_TIMER
 import de.bitb.pantryplaner.ui.intro.assertLoginPageRendered
 import de.bitb.pantryplaner.ui.intro.loginUserWith
-import de.bitb.pantryplaner.ui.overview.assertOverviewPageRendered
-import de.bitb.pantryplaner.ui.overview.tapOnChecklist
 import de.bitb.pantryplaner.ui.profile.assertProfilePageRendered
+import de.bitb.pantryplaner.ui.recipes.assertRecipesPageRendered
 import de.bitb.pantryplaner.ui.settings.assertSettingsPageRendered
 import de.bitb.pantryplaner.ui.stock.INSTANT_SEARCH
-import de.bitb.pantryplaner.ui.stock.assertStockPageRendered
+import de.bitb.pantryplaner.ui.stock.assertStocksPageRendered
 import io.cucumber.java.en.Given
 
 @HiltAndroidTest
@@ -24,6 +25,7 @@ class StartingSteps(
 
     @Given("Run App")
     fun runApp() {
+        waitForIdle()
         SPLASH_TIMER = 0L
         INSTANT_SEARCH = true
         scenarioData.launch()
@@ -36,38 +38,45 @@ class StartingSteps(
         assertLoginPageRendered()
     }
 
-    @Given("Start on OverviewPage")
-    fun startOnOverviewPage() {
+    @Given("Start on ChecklistsPage")
+    fun startOnChecklistsPage() {
         startOnLoginPage()
         val user = parseUser()
         loginUserWith(user.email, defaultPW)
-        assertOverviewPageRendered()
+        assertChecklistsPageRendered()
     }
 
     @Given("Start on ChecklistPage {string}")
     fun startOnChecklistPage(name: String) {
-        startOnOverviewPage()
+        startOnChecklistsPage()
         tapOnChecklist(name)
         assertChecklistPageRendered()
     }
 
-    @Given("Start on StockPage")
-    fun startOnStockPage() {
-        startOnOverviewPage()
-        tapOnStockButton()
-        assertStockPageRendered()
+    @Given("Start on RecipesPage")
+    fun startOnRecipesPage() {
+        startOnChecklistsPage()
+        tapOnRecipesButton()
+        assertRecipesPageRendered()
+    }
+
+    @Given("Start on StocksPage")
+    fun startOnStocksPage() {
+        startOnChecklistsPage()
+        tapOnStocksButton()
+        assertStocksPageRendered()
     }
 
     @Given("Start on ProfilePage")
     fun startOnProfilePage() {
-        startOnOverviewPage()
+        startOnChecklistsPage()
         tapOnProfileButton()
         assertProfilePageRendered()
     }
 
     @Given("Start on SettingsPage")
     fun startOnSettingsPage() {
-        startOnOverviewPage()
+        startOnChecklistsPage()
         tapOnSettingsButton()
         assertSettingsPageRendered()
     }

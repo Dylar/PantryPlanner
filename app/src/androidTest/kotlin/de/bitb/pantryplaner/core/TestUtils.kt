@@ -8,7 +8,8 @@ import de.bitb.pantryplaner.ui.base.testTags.AddEditChecklistDialogTag
 import de.bitb.pantryplaner.ui.base.testTags.AddEditItemDialogTag
 import de.bitb.pantryplaner.ui.base.testTags.AddEditStockDialogTag
 import de.bitb.pantryplaner.ui.base.testTags.ChecklistPageTag
-import de.bitb.pantryplaner.ui.base.testTags.StockPageTag
+import de.bitb.pantryplaner.ui.base.testTags.RecipeDetailsPageTag
+import de.bitb.pantryplaner.ui.base.testTags.StocksPageTag
 import de.bitb.pantryplaner.ui.base.testTags.TestTag
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,12 +48,13 @@ fun <T> createFlows(
 }
 
 fun getParentTag(parent: String): TestTag {
-    val tag = when {
+    val tag = when { // TODO no, make this diffrently
         parent == "StockDialog" -> AddEditStockDialogTag.DialogTag
         parent == "ItemDialog" -> AddEditItemDialogTag.DialogTag
         parent == "ChecklistDialog" -> AddEditChecklistDialogTag.DialogTag
-        parent.startsWith("StockPage") -> StockPageTag.StockPage(parent.replace("StockPage ", ""))
+        parent.startsWith("StockPage") -> StocksPageTag.StockPage(parent.replace("StockPage ", ""))
         parent == "ChecklistPage" -> ChecklistPageTag.ChecklistPage
+        parent == "RecipeDetailsPage" -> RecipeDetailsPageTag.RecipeDetailsPage
         else -> throw AssertionError("Tag for \"$parent\" not found")
     }
     return tag

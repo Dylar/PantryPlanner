@@ -28,13 +28,12 @@ import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.ui.base.testTags.AddUserDialogTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
-import kotlin.reflect.KFunction0
 
 @Composable
 fun useAddUserDialog(
     showDialog: MutableState<Boolean>,
     onEdit: (String, Boolean) -> Unit,
-    onScanOption: KFunction0<Unit>,
+    onScanOption: () -> Unit,
 ) {
     if (showDialog.value) {
         AddUserDialog(

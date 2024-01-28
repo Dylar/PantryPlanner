@@ -14,9 +14,11 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
+import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.readTextFromAsset
 import de.bitb.pantryplaner.ui.base.BaseFragment
 import de.bitb.pantryplaner.ui.base.BaseViewModel
+import de.bitb.pantryplaner.ui.base.NaviEvent
 
 data class ReleaseVersion(val version: String, val commits: List<String>)
 
@@ -35,8 +37,11 @@ class ReleaseNotesViewModel : BaseViewModel() {
 @AndroidEntryPoint
 class ReleaseNotesFragment : BaseFragment<ReleaseNotesViewModel>() {
     companion object {
+        val naviFromLogin: NaviEvent = NaviEvent.Navigate(R.id.login_to_releasenotes)
+        val naviFromSetting: NaviEvent = NaviEvent.Navigate(R.id.settings_to_releasenotes)
+
         const val APPBAR_TAG = "ReleaseNotesAppbar"
-        const val LIST_TAG = "ReleaseNotesList"
+        const val LIST_TAG = "ReleaseNotesList" //TODO make TestTag
     }
 
     override val viewModel: ReleaseNotesViewModel = ReleaseNotesViewModel()

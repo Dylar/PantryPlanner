@@ -33,6 +33,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.bitb.pantryplaner.R
+import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.testTags.DropDownItemTag
@@ -45,6 +46,7 @@ fun buildCategoryDropDown(
     category: MutableState<TextFieldValue>,
     categorys: List<String>,
     canChange: Boolean = true,
+    onSelect: (String) -> Unit = {},
 ) {
     SearchDropDown(
         stringResource(R.string.item_category),
@@ -55,6 +57,7 @@ fun buildCategoryDropDown(
         optionMapper = { it },
     ) { cat ->
         category.value = TextFieldValue(cat, selection = TextRange(cat.length))
+        onSelect(cat)
     }
 }
 
@@ -77,7 +80,7 @@ fun buildUserDropDown(
             optionMapper = { it.fullName },
         ) { selection ->
             val user = users.first { it.fullName == selection }
-            //TODO oh oh was passiert wenn wir uns ne liste teilen und ich hab den user nicht den du teilst ... aaahhh xD
+            //TODO oh oh was passiert wenn wir uns ne liste teilen und ich hab den user nicht den du teilst ... aaahhh xD -> is fixed we load every user ?
             val list = selectedUser.value.toMutableList()
             if (!list.remove(user)) {
                 list.add(user)
@@ -99,7 +102,7 @@ fun buildStockDropDown(
     fun optionMapper(stock: Stock): String = stock.name
     val selectedState = remember {
         val option = optionMapper(selectedStock.value)
-        mutableStateOf(TextFieldValue(option))
+        mutableStateOf(TextFieldValue(option, TextRange(option.length)))
     }
     SearchDropDown(
         stringResource(R.string.choose_stock),
@@ -108,9 +111,10 @@ fun buildStockDropDown(
         options = stocks,
         optionMapper = ::optionMapper
     ) { selection ->
-        val stock = stocks.first { it.name == selection }
-        selectedStock.value = stock
-        onSelect(stock)
+        stocks.firstOrNull { it.name == selection }?.let { stock ->
+            selectedStock.value = stock
+            onSelect(stock)
+        }
     }
 }
 
@@ -153,7 +157,10 @@ private fun <T> SearchDropDown(
             readOnly = !canChange,
             enabled = canChange,
             value = selectedState.value,
-            onValueChange = { selectedState.value = it },
+            onValueChange = {
+                selectedState.value = it
+                onConfirm(it.text)
+            },
             modifier = Modifier
                 .fillMaxWidth()
 //                .menuAnchor()
@@ -161,7 +168,10 @@ private fun <T> SearchDropDown(
             label = { Text(hint) },
             colors = ExposedDropdownMenuDefaults.textFieldColors(),
             singleLine = true,
-            keyboardActions = KeyboardActions(onDone = { onConfirm(selectedState.value.text) }),
+            keyboardActions = KeyboardActions(onDone = {
+                onConfirm(selectedState.value.text)
+                expanded = false
+            }),
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
         )
 
@@ -219,6 +229,7 @@ private fun ConnectedUser(
 ) {
     Card(
         modifier = Modifier
+            .testTag(SharedWithTag.SharedWith)
             .defaultMinSize(minHeight = 32.dp)
             .padding(4.dp)
             .fillMaxWidth(),

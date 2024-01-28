@@ -9,11 +9,14 @@
 
     <string name="settings_title">Einstellungen</string>
 
-    <string name="overview_title">Übersicht</string>
+    <string name="checklists_title">Listen</string>
     <string name="no_checklists">Keine Listen vorhanden</string>
+
+    <string name="recipes_title">Rezepte</string>
 
     <string name="select_items_title">Item Auswahl</string>
     <string name="stock_title">Bestand</string>
+    <string name="item_selection_title">Item Auswahl</string>
     <string name="no_items">Keine Items vorhanden</string>
 
     <string name="no_check">Nichts zum abchecken</string>
@@ -22,9 +25,9 @@
 
     <string name="choose_stock">Lager</string>
     <string name="no_stocks">Keine Lager vorhanden</string>
+    <string name="no_recipes">Keine Rezepte vorhanden</string>
     <string name="no_connected_users">Keine verbundenen Benutzer vorhanden</string>
     <string name="user_email">Email</string>
-
 
     <string name="refresh_title">Aktualisieren</string>
 

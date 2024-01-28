@@ -7,6 +7,7 @@ import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.test.defaultPW
 import de.bitb.pantryplaner.test.mockChecklistDao
 import de.bitb.pantryplaner.test.mockItemDao
+import de.bitb.pantryplaner.test.mockRecipeDao
 import de.bitb.pantryplaner.test.mockSettingsDao
 import de.bitb.pantryplaner.test.mockStockDao
 import de.bitb.pantryplaner.test.mockUserDao
@@ -17,6 +18,8 @@ import de.bitb.pantryplaner.test.parseItemCreator
 import de.bitb.pantryplaner.test.parseItemSelect
 import de.bitb.pantryplaner.test.parseItemShared
 import de.bitb.pantryplaner.test.parseItemUnshared
+import de.bitb.pantryplaner.test.parseRecipeCreator
+import de.bitb.pantryplaner.test.parseRecipeShared
 import de.bitb.pantryplaner.test.parseSettings
 import de.bitb.pantryplaner.test.parseStockCreator
 import de.bitb.pantryplaner.test.parseStockShared
@@ -42,6 +45,7 @@ class MockingSteps(
         remoteService.mockStockDao()
         remoteService.mockItemDao()
         remoteService.mockChecklistDao()
+        remoteService.mockRecipeDao()
     }
 
     @Given("Mock App Version {string}")
@@ -57,6 +61,7 @@ class MockingSteps(
         mockDefaultStocks()
         mockDefaultItems()
         mockDefaultChecklists()
+        mockDefaultRecipes()
     }
 
     @Given("Mock default Settings")
@@ -104,4 +109,10 @@ class MockingSteps(
         remoteService.mockChecklistDao(listOf(check1, check2, check3))
     }
 
+    @Given("Mock default Recipes")
+    fun mockDefaultRecipes() {
+        val recipe1 = parseRecipeCreator()
+        val recipe2 = parseRecipeShared()
+        remoteService.mockRecipeDao(listOf(recipe1, recipe2))
+    }
 }

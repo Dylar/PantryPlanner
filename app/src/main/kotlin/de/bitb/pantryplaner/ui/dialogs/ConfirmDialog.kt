@@ -17,6 +17,8 @@ import de.bitb.pantryplaner.ui.base.testTags.testTag
 fun ConfirmDialog(
     title: String,
     msg: String,
+    confirmBtn: String = "",
+    cancelBtn: String = "",
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -36,14 +38,14 @@ fun ConfirmDialog(
             Button(
                 modifier = Modifier.testTag(ConfirmDialogTag.ConfirmButton),
                 onClick = { onConfirm() },
-                content = { Text("OK") }
+                content = { Text(confirmBtn.ifBlank { "OK" }) }
             )
         },
         dismissButton = {
             Button(
                 modifier = Modifier.testTag(ConfirmDialogTag.DismissButton),
                 onClick = { onDismiss() },
-                content = { Text("ABBRECHEN") }
+                content = { Text(cancelBtn.ifBlank { "ABBRECHEN" }) }
             )
         }
     )

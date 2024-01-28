@@ -44,7 +44,8 @@ fun useAddItemDialog(
     val item = Item()
     useDialog(
         showDialog,
-        "Item erstellen", "Hinzufügen",
+        "Item erstellen",
+        "Hinzufügen",
         item,
         categorys,
         users,
@@ -121,12 +122,19 @@ private fun AddEditItemDialog(
         mutableStateOf(
             TextFieldValue(
                 text = item.name,
-                selection = TextRange(item.name.length)
+                selection = TextRange(item.name.length),
             )
         )
     }
 
-    val category = remember { mutableStateOf(TextFieldValue(item.category)) }
+    val category = remember {
+        mutableStateOf(
+            TextFieldValue(
+                text = item.category,
+                selection = TextRange(item.category.length),
+            )
+        )
+    }
     val selectedUser = remember {
         val selected = users.filter { sharedWith.contains(it.uuid) }
         mutableStateOf(selected)
@@ -140,8 +148,7 @@ private fun AddEditItemDialog(
         sharedWith = selectedUser.value.map { it.uuid }.toList(),
     )
 
-    AlertDialog(
-        modifier = Modifier.testTag(AddEditItemDialogTag.DialogTag),
+    AlertDialog(modifier = Modifier.testTag(AddEditItemDialogTag.DialogTag),
         onDismissRequest = onDismiss,
         text = {
             Column {
@@ -181,20 +188,15 @@ private fun AddEditItemDialog(
             }
         },
         confirmButton = {
-            Button(
-                modifier = Modifier.testTag(AddEditItemDialogTag.ConfirmButton),
+            Button(modifier = Modifier.testTag(AddEditItemDialogTag.ConfirmButton),
                 onClick = { onConfirm(copyItem(), true) },
-                content = { Text(confirmButton) }
-            )
+                content = { Text(confirmButton) })
         },
         dismissButton = {
-            Button(
-                modifier = Modifier.testTag(AddEditItemDialogTag.CancelButton),
+            Button(modifier = Modifier.testTag(AddEditItemDialogTag.CancelButton),
                 onClick = { onDismiss() },
-                content = { Text("Abbrechen") }
-            )
-        }
-    )
+                content = { Text("Abbrechen") })
+        })
 }
 
 @Composable

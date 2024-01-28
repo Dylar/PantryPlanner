@@ -28,20 +28,32 @@ import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.data.model.Settings
+import de.bitb.pantryplaner.ui.ReleaseNotesFragment
 import de.bitb.pantryplaner.ui.base.BaseFragment
+import de.bitb.pantryplaner.ui.base.NaviEvent
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
-import de.bitb.pantryplaner.ui.base.naviSettingsToReleaseNotes
 import de.bitb.pantryplaner.ui.base.testTags.SettingsPageTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
+import de.bitb.pantryplaner.ui.checklists.ChecklistsFragment
 import de.bitb.pantryplaner.ui.comps.buildBottomNavi
 import de.bitb.pantryplaner.ui.dialogs.ConfirmDialog
 import de.bitb.pantryplaner.ui.dialogs.InfoDialog
+import de.bitb.pantryplaner.ui.profile.ProfileFragment
+import de.bitb.pantryplaner.ui.recipes.RecipesFragment
+import de.bitb.pantryplaner.ui.stock.StocksFragment
 
 data class PreferenceItem(val title: String, val subtitle: String)
 
 @AndroidEntryPoint
 class SettingsFragment : BaseFragment<SettingsViewModel>() {
+
+    companion object {
+        val naviFromChecklists: NaviEvent = NaviEvent.Navigate(R.id.checklists_to_settings)
+        val naviFromRecipes: NaviEvent = NaviEvent.Navigate(R.id.recipes_to_settings)
+        val naviFromProfile: NaviEvent = NaviEvent.Navigate(R.id.profile_to_settings)
+        val naviFromStocks: NaviEvent = NaviEvent.Navigate(R.id.stocks_to_settings)
+    }
 
     override val viewModel: SettingsViewModel by viewModels()
 
@@ -52,9 +64,10 @@ class SettingsFragment : BaseFragment<SettingsViewModel>() {
             topBar = { buildAppBar() },
             bottomBar = {
                 buildBottomNavi(
-                    overviewRoute = R.id.settings_to_overview,
-                    stockRoute = R.id.settings_to_stock,
-                    profileRoute = R.id.settings_to_profile,
+                    checklistsRoute = ChecklistsFragment.naviFromSettings,
+                    recipesRoute = RecipesFragment.naviFromSettings,
+                    stocksRoute = StocksFragment.naviFromSettings,
+                    profileRoute = ProfileFragment.naviFromSettings,
                 )
             },
             content = { buildContent(it) },
@@ -65,7 +78,7 @@ class SettingsFragment : BaseFragment<SettingsViewModel>() {
     private fun buildAppBar() {
         val showInfoDialog = remember { mutableStateOf(false) }
         if (showInfoDialog.value) {
-            InfoDialog(naviToReleaseNotes = ::naviSettingsToReleaseNotes) {
+            InfoDialog(naviToReleaseNotes = { viewModel.navigate(ReleaseNotesFragment.naviFromSetting) }) {
                 showInfoDialog.value = false
             }
         }
@@ -104,7 +117,7 @@ class SettingsFragment : BaseFragment<SettingsViewModel>() {
             ConfirmDialog(
                 "Abmelden?",
                 "Möchten sie sich abmelden?",
-                viewModel::logout
+                onConfirm = viewModel::logout
             ) {
                 showLogoutDialog.value = false
             }

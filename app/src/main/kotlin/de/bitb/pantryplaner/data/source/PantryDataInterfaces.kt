@@ -3,6 +3,7 @@ package de.bitb.pantryplaner.data.source
 import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.data.model.Checklist
 import de.bitb.pantryplaner.data.model.Item
+import de.bitb.pantryplaner.data.model.Recipe
 import de.bitb.pantryplaner.data.model.Settings
 import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.User
@@ -18,6 +19,7 @@ interface RemoteService :
     UserRemoteDao,
     ItemRemoteDao,
     CheckRemoteDao,
+    RecipeRemoteDao,
     StockRemoteDao,
     SettingsRemoteDao
 
@@ -26,6 +28,7 @@ class PantryRemoteService(
     userService: FireUserService,
     itemService: FireItemService,
     checkService: FireCheckService,
+    recipeService: FireRecipeService,
     stockItemService: FireStockService,
 ) :
     RemoteService,
@@ -33,7 +36,8 @@ class PantryRemoteService(
     ItemRemoteDao by itemService,
     CheckRemoteDao by checkService,
     StockRemoteDao by stockItemService,
-    SettingsRemoteDao by settingsService
+    SettingsRemoteDao by settingsService,
+    RecipeRemoteDao by recipeService
 
 interface SettingsRemoteDao {
     suspend fun getAppVersion(): Result<String>
@@ -65,6 +69,13 @@ interface CheckRemoteDao {
     suspend fun addChecklist(check: Checklist): Result<Boolean>
     suspend fun deleteChecklist(check: Checklist): Result<Boolean>
     suspend fun saveChecklist(check: Checklist): Result<Unit>
+}
+
+interface RecipeRemoteDao {
+    fun getRecipes(userId: String, ids: List<String>?): Flow<Result<List<Recipe>>>
+    suspend fun addRecipe(recipe: Recipe): Result<Boolean>
+    suspend fun deleteRecipe(recipe: Recipe): Result<Boolean>
+    suspend fun saveRecipes(recipes: List<Recipe>): Result<Unit>
 }
 
 interface StockRemoteDao {

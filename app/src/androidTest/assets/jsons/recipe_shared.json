@@ -1,0 +1,20 @@
+{
+  "uuid": "recipe321",
+  "name": "SharedRecipe",
+  "category": "SharedCategory",
+  "items": [
+    {
+      "uuid": "item666",
+      "checked": false,
+      "amount": 7.77
+    }
+  ],
+  "finishedAt": "",
+  "createdAt": "2022-01-01T12:00:00Z",
+  "updatedAt": "",
+  "creator": "user321",
+  "stock": "stock321",
+  "sharedWith": [
+    "user123"
+  ]
+}

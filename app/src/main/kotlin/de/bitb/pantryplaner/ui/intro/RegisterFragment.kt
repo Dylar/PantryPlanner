@@ -37,6 +37,7 @@ import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.ui.base.BaseFragment
+import de.bitb.pantryplaner.ui.base.NaviEvent
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.RegisterPageTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
@@ -44,6 +45,10 @@ import de.bitb.pantryplaner.usecase.user.RegisterResponse
 
 @AndroidEntryPoint
 class RegisterFragment : BaseFragment<RegisterViewModel>() {
+
+    companion object {
+        val naviFromLogin: NaviEvent = NaviEvent.Navigate(R.id.login_to_register)
+    }
 
     override val viewModel: RegisterViewModel by viewModels()
 

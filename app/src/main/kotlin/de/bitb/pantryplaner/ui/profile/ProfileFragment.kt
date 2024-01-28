@@ -47,24 +47,36 @@ import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.data.model.Stock
 import de.bitb.pantryplaner.data.model.User
 import de.bitb.pantryplaner.ui.base.BaseFragment
+import de.bitb.pantryplaner.ui.base.NaviEvent
 import de.bitb.pantryplaner.ui.base.comps.DismissItem
 import de.bitb.pantryplaner.ui.base.comps.EmptyListComp
 import de.bitb.pantryplaner.ui.base.comps.ErrorScreen
+import de.bitb.pantryplaner.ui.base.comps.FloatingExpandingButton
 import de.bitb.pantryplaner.ui.base.comps.LoadingIndicator
 import de.bitb.pantryplaner.ui.base.comps.stickyGridHeader
-import de.bitb.pantryplaner.ui.base.naviToScan
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.ProfilePageTag
 import de.bitb.pantryplaner.ui.base.testTags.StockTag
 import de.bitb.pantryplaner.ui.base.testTags.UserTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
+import de.bitb.pantryplaner.ui.checklists.ChecklistsFragment
 import de.bitb.pantryplaner.ui.comps.buildBottomNavi
 import de.bitb.pantryplaner.ui.dialogs.useAddStockDialog
 import de.bitb.pantryplaner.ui.dialogs.useAddUserDialog
 import de.bitb.pantryplaner.ui.dialogs.useEditStockDialog
+import de.bitb.pantryplaner.ui.recipes.RecipesFragment
+import de.bitb.pantryplaner.ui.settings.SettingsFragment
+import de.bitb.pantryplaner.ui.stock.StocksFragment
 
 @AndroidEntryPoint
 class ProfileFragment : BaseFragment<ProfileViewModel>() {
+
+    companion object {
+        val naviFromChecklists: NaviEvent = NaviEvent.Navigate(R.id.checklists_to_profile)
+        val naviFromRecipes: NaviEvent = NaviEvent.Navigate(R.id.recipes_to_profile)
+        val naviFromStocks: NaviEvent = NaviEvent.Navigate(R.id.stocks_to_profile)
+        val naviFromSettings: NaviEvent = NaviEvent.Navigate(R.id.settings_to_profile)
+    }
 
     override val viewModel: ProfileViewModel by viewModels()
 
@@ -81,9 +93,10 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
             floatingActionButton = { buildFab() },
             bottomBar = {
                 buildBottomNavi(
-                    overviewRoute = R.id.profile_to_overview,
-                    stockRoute = R.id.profile_to_stock,
-                    settingsRoute = R.id.profile_to_settings,
+                    checklistsRoute = ChecklistsFragment.naviFromProfile,
+                    recipesRoute = RecipesFragment.naviFromProfile,
+                    stocksRoute = StocksFragment.naviFromProfile,
+                    settingsRoute = SettingsFragment.naviFromProfile,
                 )
             },
             content = { buildContent(it) },
@@ -110,10 +123,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
 
     @Composable
     private fun buildFab() {
-        Column(
-            horizontalAlignment = Alignment.End,
-            verticalArrangement = Arrangement.Center,
-        ) {
+        FloatingExpandingButton {
             ExtendedFloatingActionButton(
                 modifier = Modifier.testTag(ProfilePageTag.NewStockButton),
                 onClick = { showAddStockDialog.value = true },
@@ -213,7 +223,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
     private fun ConnectedUserList(connectedUser: List<User>) {
         useAddUserDialog(
             showAddUserDialog,
-            onScanOption = ::naviToScan,
+            onScanOption = { viewModel.navigate(ScanFragment.naviFromProfile) },
             onEdit = { email, close ->
                 viewModel.connectUser(email)
                 if (close) showAddUserDialog.value = false

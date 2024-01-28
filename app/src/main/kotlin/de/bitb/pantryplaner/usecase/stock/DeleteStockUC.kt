@@ -19,7 +19,7 @@ class DeleteStockUC(
                 if (userResp is Result.Error) return@tryIt userResp.castTo(false)
 
                 val user = userResp.data?.uuid
-                if (user == stock.creator) { //TODO what if other user using it? -> unlucky xD
+                if (user == stock.creator) { //TODO what if other user using it? -> unlucky xD -> only if last otherwise change creator (creator = owner?)
                     stockRepo.deleteStock(stock)
                 } else {
                     val newList = stock.sharedWith.subtract(setOf(user!!))

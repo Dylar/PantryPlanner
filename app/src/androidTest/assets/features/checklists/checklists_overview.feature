@@ -1,0 +1,77 @@
+Feature: ChecklistsPage Checklist management
+
+  Background:
+    Given Init default Mocks
+    And   Start on ChecklistsPage
+    And   Checklist "NewChecklist" is NOT displayed
+    And   Checklist "CreatorChecklist" is displayed
+    And   Checklist "SharedChecklist" is displayed
+
+  Scenario: Create a new Checklist
+    When  Tap on NewChecklistButton
+    And   AddEditChecklistDialog is displayed
+    And   Checklist Stock is "CreatorStock"
+    And   "ChecklistDialog" shared with none
+    And   Input "NewChecklist" as Checklist name
+    And   "ChecklistDialog" open dropdown "Lager"
+    And   Dropdown option "CreatorStock" is displayed
+    And   Dropdown option "SharedStock" is NOT displayed
+    And   Input "" as Checklist Stock
+    And   Dropdown option "CreatorStock" is displayed
+    And   Dropdown option "SharedStock" is displayed
+    And   Select dropdown option "SharedStock"
+    And   "ChecklistDialog" open dropdown "Mit Benutzer teilen"
+    And   Select dropdown option "Mohammed Lee"
+    And   Tap on CreateChecklistButton
+    Then  Checklist "NewChecklist" is displayed
+    And   LongPress on Checklist "NewChecklist"
+    And   Checklist name is "NewChecklist"
+    And   Checklist Stock is "SharedStock"
+    And   "ChecklistDialog" shared with "Mohammed Lee"
+
+  Scenario: Try to remove a Checklist, but cancel confirmation
+    When  Swipe to remove Checklist "CreatorChecklist"
+    And   Tap on dismiss
+    Then  Checklist "CreatorChecklist" is displayed
+
+  Scenario: Remove a Checklist
+    When  Swipe to remove Checklist "CreatorChecklist"
+    And   Tap on Confirm
+    Then  Checklist "CreatorChecklist" is NOT displayed
+
+  Scenario: Remove a shared Checklist
+    When  Swipe to remove Checklist "SharedChecklist"
+    And   Tap on Confirm
+    Then  Checklist "SharedChecklist" is NOT displayed
+
+  Scenario: Remove all Checklist
+    When  Swipe to remove Checklist "CreatorChecklist"
+    And   Tap on Confirm
+    And   Swipe to remove Checklist "SharedChecklist"
+    And   Tap on Confirm
+    And   Swipe to remove Checklist "FinishedChecklist"
+    And   Tap on Confirm
+    Then  No Checklists displayed
+
+  Scenario: Prevent non-creator from editing a Checklist
+    When  LongPress on Checklist "SharedChecklist"
+    And   AddEditChecklistDialog is displayed
+    And   Input "EditChecklist" as Checklist name
+    And   Tap on CreateChecklistButton
+    Then  Checklist "EditChecklist" is NOT displayed
+    And   Checklist "SharedChecklist" is displayed
+    And   SnackBar shown: "Nur der Ersteller kann die Checklist ändern"
+
+  Scenario: Edit a created Checklist
+    When  LongPress on Checklist "CreatorChecklist"
+    And   AddEditChecklistDialog is displayed
+    And   Input "EditChecklist" as Checklist name
+    And   "ChecklistDialog" shared with "Mohammed Lee"
+    And   "ChecklistDialog" unshare with "Mohammed Lee"
+    And   "ChecklistDialog" shared with none
+    And   Tap on CreateChecklistButton
+    Then  Checklist "EditChecklist" is displayed
+    And   Checklist "CreatorChecklist" is NOT displayed
+    And   LongPress on Checklist "EditChecklist"
+    And   Checklist name is "EditChecklist"
+    And   "ChecklistDialog" shared with none

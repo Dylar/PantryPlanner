@@ -40,7 +40,7 @@ class CheckRepository(
     fun getCheckList(uuid: String): Flow<Result<Checklist>> {
         return getCheckLists(listOf(uuid)).map {
             if (it is Result.Error) it.castTo()
-            else Result.Success(it.data!!.first())
+            else Result.Success(it.data?.firstOrNull())
         }
     }
 

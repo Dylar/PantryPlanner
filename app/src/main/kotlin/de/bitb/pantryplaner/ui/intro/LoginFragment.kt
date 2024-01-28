@@ -37,9 +37,9 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import de.bitb.pantryplaner.R
+import de.bitb.pantryplaner.ui.ReleaseNotesFragment
 import de.bitb.pantryplaner.ui.base.BaseFragment
-import de.bitb.pantryplaner.ui.base.naviLoginToReleaseNotes
-import de.bitb.pantryplaner.ui.base.naviToRegister
+import de.bitb.pantryplaner.ui.base.NaviEvent
 import de.bitb.pantryplaner.ui.base.styles.BaseColors
 import de.bitb.pantryplaner.ui.base.testTags.LoginPageTag
 import de.bitb.pantryplaner.ui.base.testTags.testTag
@@ -48,6 +48,11 @@ import de.bitb.pantryplaner.usecase.user.LoginResponse
 
 @AndroidEntryPoint
 class LoginFragment : BaseFragment<LoginViewModel>() {
+
+    companion object {
+        val naviFromSplash: NaviEvent = NaviEvent.Navigate(R.id.splash_to_login)
+        val naviFromSettings: NaviEvent = NaviEvent.Navigate(R.id.settings_to_login)
+    }
 
     override val viewModel: LoginViewModel by viewModels()
 
@@ -64,7 +69,9 @@ class LoginFragment : BaseFragment<LoginViewModel>() {
     private fun buildAppBar() {
         var showDialog by remember { mutableStateOf(false) }
         if (showDialog) {
-            InfoDialog(::naviLoginToReleaseNotes) { showDialog = false }
+            InfoDialog({ viewModel.navigate(ReleaseNotesFragment.naviFromLogin) }) {
+                showDialog = false
+            }
         }
         TopAppBar(
             modifier = Modifier.testTag(LoginPageTag.AppBar),
@@ -143,7 +150,7 @@ class LoginFragment : BaseFragment<LoginViewModel>() {
                 modifier = Modifier
                     .padding(top = 16.dp, start = 16.dp, end = 16.dp)
                     .testTag(LoginPageTag.RegisterButton),
-                onClick = ::naviToRegister,
+                onClick = { viewModel.navigate(RegisterFragment.naviFromLogin) },
                 content = {
                     Text(
                         text = getString(R.string.login_register_account),

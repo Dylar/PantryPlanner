@@ -9,13 +9,17 @@ data class Settings(
     val uuid: String = UUID.randomUUID().toString(),
     val darkMode: Boolean? = null,
     val refreshAlert: Boolean = false,
-    val categoryColors: MutableMap<String, Int> = mutableMapOf(),
+    val categoryColors: Map<String, Int> = emptyMap(),
     val freshUntil: Map<String, Long> = emptyMap(),
     val remindAfter: Map<String, Long> = emptyMap(),
     // TODO setting for showing small info (like User without Name etc)
 ) {
     fun categoryColor(item: Item): Color {
         return categoryColors[item.category]?.asColor() ?: BaseColors.LightGray
+    }
+
+    fun categoryColor(recipe: Recipe): Color {
+        return categoryColors[recipe.category]?.asColor() ?: BaseColors.LightGray
     }
 //    fun freshUntilDate(itemId: String): LocalDate {
 //       return LocalDate.now().minusDays(freshUntil[itemId] ?: 0L)

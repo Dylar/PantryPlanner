@@ -3,13 +3,12 @@ package de.bitb.pantryplaner.ui.settings
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.bitb.pantryplaner.R
 import de.bitb.pantryplaner.core.misc.Result
 import de.bitb.pantryplaner.data.SettingsRepository
 import de.bitb.pantryplaner.data.model.Settings
 import de.bitb.pantryplaner.ui.base.BaseViewModel
-import de.bitb.pantryplaner.ui.base.NaviEvent
 import de.bitb.pantryplaner.ui.base.comps.asResString
+import de.bitb.pantryplaner.ui.intro.LoginFragment
 import de.bitb.pantryplaner.usecase.UserUseCases
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,7 +33,7 @@ class SettingsViewModel @Inject constructor(
                 is Result.Error -> showSnackBar(resp.message!!)
                 else -> {
                     showSnackBar("Benutzer abgemeldet".asResString())
-                    navigate(NaviEvent.Navigate(R.id.settings_to_login))
+                    navigate(LoginFragment.naviFromSettings)
                 }
             }
         }
