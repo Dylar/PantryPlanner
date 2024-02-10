@@ -1,7 +1,10 @@
 package de.bitb.pantryplaner.ui
 
 import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.compose.ui.test.performTextReplacement
 import dagger.hilt.android.testing.HiltAndroidTest
+import de.bitb.pantryplaner.core.onNodeWithTag
+import de.bitb.pantryplaner.data.model.Item
 import de.bitb.pantryplaner.data.source.RemoteService
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.test.defaultPW
@@ -27,6 +30,8 @@ import de.bitb.pantryplaner.test.parseUser
 import de.bitb.pantryplaner.test.parseUserConnected
 import de.bitb.pantryplaner.test.parseUserExcludie
 import de.bitb.pantryplaner.test.parseUserOther
+import de.bitb.pantryplaner.ui.base.testTags.SearchDropDownTag
+import de.bitb.pantryplaner.ui.base.testTags.SelectItemsPageTag
 import io.cucumber.java.en.Given
 import javax.inject.Inject
 
@@ -99,6 +104,16 @@ class MockingSteps(
         val item3 = parseItemSelect()
         val item4 = parseItemUnshared()
         remoteService.mockItemDao(mutableListOf(item1, item2, item3, item4))
+    }
+
+    @Given("Mock {int} Items")
+    fun mockXItems(count: Int) {
+        val items = mutableListOf<Item>()
+        for (i in count downTo 1) {
+            val item = parseItemCreator()
+            items.add(item.copy(uuid = "item$i", name = "NewItem $i", category = "NewCategory $i"))
+        }
+        remoteService.mockItemDao(items)
     }
 
     @Given("Mock default Checklists")

@@ -47,19 +47,19 @@ fun ItemRemoteDao.mockItemDao(
     }
     coEvery { addItem(any()) }.answers {
         val addItem = firstArg<Item>()
-        allFlow.value = allFlow.value + listOf(addItem)
+        allFlow.value += listOf(addItem)
         Result.Success(true)
     }
 
     coEvery { deleteItem(any()) }.answers {
         val deleteItem = firstArg<Item>()
-        allFlow.value = allFlow.value - setOf(deleteItem)
+        allFlow.value -= setOf(deleteItem)
         Result.Success(true)
     }
 
     coEvery { saveItems(any()) }.answers {
         val saveItems = firstArg<List<Item>>().associateBy { it.uuid }
-        allFlow.value = allFlow.value.map { saveItems[it.uuid] ?: it }
+        allFlow.value.map { saveItems[it.uuid] ?: it }.also { allFlow.value = it }
         Result.Success()
     }
 }

@@ -67,7 +67,7 @@ class ChecklistViewModel @Inject constructor(
 
     lateinit var checkModel: LiveData<Result<CheckModel>>
 
-    lateinit var checkListId: String
+    private lateinit var checkListId: String
 
     @Suppress("UNCHECKED_CAST")
     fun initChecklist(uuid: String) {

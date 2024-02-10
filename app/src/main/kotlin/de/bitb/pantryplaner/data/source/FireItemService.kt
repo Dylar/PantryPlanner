@@ -32,8 +32,8 @@ class FireItemService(
             return flowOf(Result.Success(emptyList()))
         }
 
-        return chunkQuery<Item>(ids) {
-            collection.whereIn("uuid", ids)
+        return chunkQuery<Item>(ids) { chunk ->
+            collection.whereIn("uuid", chunk)
         }.map { Result.Success(it) }
     }
 

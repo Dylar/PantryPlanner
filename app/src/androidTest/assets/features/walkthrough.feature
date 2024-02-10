@@ -4,6 +4,8 @@ Feature: App walkthrough
     Given Init Mocks
     When  Run App
 
+    # TODO recipe page
+
   Scenario: Empty App walkthrough
     # Register User
     Given Tap on NaviToRegisterButton

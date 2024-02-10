@@ -443,3 +443,5 @@ daemon
 .tmp
 #wrapper
 native
+/app/prod/
+/app/stage/

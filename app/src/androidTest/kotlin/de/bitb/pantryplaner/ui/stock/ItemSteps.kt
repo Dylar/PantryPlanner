@@ -12,13 +12,9 @@ import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeRight
 import dagger.hilt.android.testing.HiltAndroidTest
 import de.bitb.pantryplaner.R
-import de.bitb.pantryplaner.core.assertNodeWithParentTagDoesNotExists
-import de.bitb.pantryplaner.core.getString
-import de.bitb.pantryplaner.core.hasTextInHierarchy
+import de.bitb.pantryplaner.core.*
+import de.bitb.pantryplaner.core.misc.Logger
 import de.bitb.pantryplaner.core.misc.formatted
-import de.bitb.pantryplaner.core.onNodeWithParentTag
-import de.bitb.pantryplaner.core.onNodeWithTag
-import de.bitb.pantryplaner.core.onNodeWithTextWithParentTag
 import de.bitb.pantryplaner.test.ScenarioData
 import de.bitb.pantryplaner.ui.base.testTags.AddSubRowTag
 import de.bitb.pantryplaner.ui.base.testTags.ItemTag
@@ -94,6 +90,7 @@ class ItemSteps(
 
     @When("Tap on Item {string} in category {string}")
     fun tapOnItemInCategory(name: String, category: String) {
+        Logger.print("TAP ON ${ItemTag(name, category)}")
         onNodeWithTextWithParentTag(
             ItemTag(name, category),
             name,
